@@ -18,6 +18,9 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+        buildConfigField('String', 'OPENAI_API_KEY', OPENAI_API_KEY)
+        buildConfigField('String', 'ORGANIZATION_ID', ORGANIZATION_ID)
+        buildConfigField('String', 'BASE_URL', BASE_URL)
     }
 
     buildTypes {
@@ -60,4 +63,12 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
+
+    //GoogleServices
+    implementation "com.google.android.gms:play-services-ads:22.2.0"
+
+    //Api
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
 }
