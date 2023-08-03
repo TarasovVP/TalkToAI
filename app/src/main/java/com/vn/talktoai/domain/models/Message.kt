@@ -1,4 +1,4 @@
-package com.vn.talktoai
+package com.vn.talktoai.domain.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

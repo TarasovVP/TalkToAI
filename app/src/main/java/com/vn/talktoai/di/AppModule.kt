@@ -1,8 +1,15 @@
-package com.vn.talktoai
+package com.vn.talktoai.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.vn.talktoai.Constants.SERVER_TIMEOUT_IN_SECONDS
+import com.vn.talktoai.BuildConfig
+import com.vn.talktoai.data.AIRepositoryImpl
+import com.vn.talktoai.infrastructure.Constants.SERVER_TIMEOUT
+import com.vn.talktoai.data.ApiService
+import com.vn.talktoai.data.HeaderInterceptor
+import com.vn.talktoai.domain.repositories.AIRepository
+import com.vn.talktoai.domain.usecases.ChatUseCase
+import com.vn.talktoai.presentation.chat.ChatUseCaseImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,9 +45,9 @@ object AppModule {
     @Provides
     fun provideHttpClient(headerInterceptor: HeaderInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
-            .connectTimeout(SERVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
-            .readTimeout(SERVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
-            .writeTimeout(SERVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
+            .connectTimeout(SERVER_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(SERVER_TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(SERVER_TIMEOUT, TimeUnit.SECONDS)
             .addInterceptor(headerInterceptor)
             .addInterceptor(HttpLoggingInterceptor())
             .build()
@@ -61,5 +68,17 @@ object AppModule {
         return retrofit.create(ApiService::class.java)
     }
 
+    @Singleton
+    @Provides
+    fun provideAIRepository(
+        apiService: ApiService
+    ): AIRepository {
+        return AIRepositoryImpl(apiService)
+    }
 
+    @Singleton
+    @Provides
+    fun provideChatUseCase(aiRepository: AIRepository): ChatUseCase {
+        return ChatUseCaseImpl(aiRepository)
+    }
 }

@@ -1,5 +1,6 @@
-package com.vn.talktoai
+package com.vn.talktoai.data
 
+import com.vn.talktoai.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response
 
