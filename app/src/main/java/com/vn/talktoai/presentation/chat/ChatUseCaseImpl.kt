@@ -7,5 +7,5 @@ import javax.inject.Inject
 
 class ChatUseCaseImpl @Inject constructor(private val aiRepository: AIRepository) : ChatUseCase {
 
-    override fun getCompletions(apiRequest: ApiRequest) = aiRepository.getCompletions(apiRequest)
+    override suspend fun getCompletions(apiRequest: ApiRequest) = aiRepository.getCompletions(apiRequest)
 }

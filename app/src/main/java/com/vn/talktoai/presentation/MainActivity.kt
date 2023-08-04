@@ -3,11 +3,13 @@ package com.vn.talktoai.presentation
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.google.accompanist.insets.ProvideWindowInsets
 import com.vn.talktoai.R
 import com.vn.talktoai.databinding.ContentMainBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,9 +22,10 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(
             ComposeView(this).apply {
-                consumeWindowInsets = false
                 setContent {
-                    AndroidViewBinding(ContentMainBinding::inflate)
+                    ProvideWindowInsets(consumeWindowInsets = false) {
+                        AndroidViewBinding(ContentMainBinding::inflate)
+                    }
                 }
             }
         )
