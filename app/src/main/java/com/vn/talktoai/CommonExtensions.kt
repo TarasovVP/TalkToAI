@@ -1,5 +1,8 @@
 package com.vn.talktoai
 
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import retrofit2.Response
 import com.vn.talktoai.data.Result
 
@@ -16,5 +19,16 @@ object CommonExtensions {
         } catch (e: Exception) {
             return Result.Failure(e.localizedMessage)
         }
+    }
+
+    private fun <T> LiveData<T>.safeObserve(owner: LifecycleOwner, observer: (t: T) -> Unit) {
+        this.observe(owner) {
+            it?.let(observer)
+        }
+    }
+
+    fun <T> MutableLiveData<T>.safeSingleObserve(owner: LifecycleOwner, observer: (t: T) -> Unit) {
+        safeObserve(owner, observer)
+        value = null
     }
 }
