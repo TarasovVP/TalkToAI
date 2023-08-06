@@ -8,10 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,15 +23,15 @@ import com.vn.talktoai.domain.models.Message
 
 @Composable
 fun ChatContent(viewModel: ChatViewModel, lifecycleOwner: LifecycleOwner) {
-    var items = remember { mutableStateOf(mutableListOf(Choice(message = Message(role = "Init", content = "Start"), "reason", 0))) }
+    var items = mutableListOf(Choice(message = Message(role = "Init", content = "Start"), "reason", 0)).toMutableStateList()
     viewModel.completionLiveData.safeSingleObserve(lifecycleOwner) { apiResponse ->
-        val updatedItems = items.value.toMutableList()
+        val updatedItems = items
         updatedItems.addAll(apiResponse.choices.orEmpty())
-        items.value = updatedItems
-        Log.e("apiTAG", "ChatComposable ChatContent safeSingleObserve items.value ${items.value}")
+        items = updatedItems
+        Log.e("apiTAG", "ChatComposable ChatContent safeSingleObserve items $items")
     }
     val inputValue = remember { mutableStateOf(TextFieldValue()) }
-    Log.e("apiTAG", "ChatComposable ChatContent items.value ${items.value}")
+    Log.e("apiTAG", "ChatComposable fun ChatContent items $items")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,13 +39,7 @@ fun ChatContent(viewModel: ChatViewModel, lifecycleOwner: LifecycleOwner) {
         verticalArrangement = Arrangement.Top
     ) {
 
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            items(items.value) { choice ->
-                CustomTextView(text = "${choice.message?.role.orEmpty()}: ${choice.message?.content.orEmpty()}")
-            }
-        }
+        MessageList(items)
 
         Spacer(modifier = Modifier
             .weight(1f))
@@ -63,11 +54,23 @@ fun ChatContent(viewModel: ChatViewModel, lifecycleOwner: LifecycleOwner) {
             SendButton {
                 val apiRequest = ApiRequest(model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(Message(role = "user", content = inputValue.value.text)))
                 viewModel.getCompletions(apiRequest)
-                val updatedItems = items.value.toMutableList()
+                val updatedItems = items
                 updatedItems.add(Choice(message = Message(role = "me", content = inputValue.value.text), "reason", 0))
-                items.value = updatedItems
+                items = updatedItems
                 inputValue.value = TextFieldValue("")
+                Log.e("apiTAG", "ChatComposable ChatContent SendButton items $items")
             }
+        }
+    }
+}
+
+@Composable
+fun MessageList(messages: List<Choice>) {
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        items(messages) { choice ->
+            CustomTextView(text = "${choice.message?.role.orEmpty()}: ${choice.message?.content.orEmpty()}")
         }
     }
 }
@@ -98,6 +101,7 @@ fun SendButton(onSendClick: () -> Unit) {
     Button(
         onClick = onSendClick,
         modifier = Modifier
+            .wrapContentHeight()
             .wrapContentWidth()
     ) {
         Text(text = "Send")

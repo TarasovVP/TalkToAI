@@ -1,6 +1,7 @@
 package com.vn.talktoai.presentation.chat
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,7 @@ class ChatFragment : Fragment() {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
+        Log.e("apiTAG", "ChatFragment onCreateView")
         setContent {
             ChatContent(viewModel, viewLifecycleOwner)
         }
