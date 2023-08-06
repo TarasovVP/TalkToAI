@@ -26,29 +26,9 @@ import com.vn.talktoai.domain.models.Choice
 import com.vn.talktoai.domain.models.Message
 
 @Composable
-fun ChatScreen(viewModel: ChatViewModel, lifecycleOwner: LifecycleOwner) {
-    Scaffold(
-        topBar = {
-            TopBar(title = "Talk to AI")
-        }) { paddingValues ->
-        ChatContent(viewModel, lifecycleOwner, paddingValues)
-    }
-
-}
-
-@Composable
-fun TopBar(title: String) {
-    TopAppBar(
-        title = { Text(text = title) },
-        navigationIcon = { Icon(Icons.Filled.Menu, "Navigation icon") }
-    )
-}
-
-@Composable
 fun ChatContent(
     viewModel: ChatViewModel,
-    lifecycleOwner: LifecycleOwner,
-    paddingValues: PaddingValues
+    lifecycleOwner: LifecycleOwner
 ) {
     var items = mutableListOf<Choice>().toMutableStateList()
     viewModel.completionLiveData.safeSingleObserve(lifecycleOwner) { apiResponse ->
@@ -142,7 +122,6 @@ fun UserMessage(text: String) {
             )
         }
     }
-
 }
 
 @Composable

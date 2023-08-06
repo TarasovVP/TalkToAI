@@ -26,9 +26,7 @@ class ChatFragment : Fragment() {
         )
         Log.e("apiTAG", "ChatFragment onCreateView")
         setContent {
-            TalkToAITheme {
-                ChatScreen(viewModel, viewLifecycleOwner)
-            }
+            ChatContent(viewModel, viewLifecycleOwner)
         }
     }
 }
