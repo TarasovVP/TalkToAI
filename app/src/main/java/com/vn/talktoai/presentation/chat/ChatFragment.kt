@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
+import com.vn.talktoai.ui.theme.TalkToAITheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,7 +26,9 @@ class ChatFragment : Fragment() {
         )
         Log.e("apiTAG", "ChatFragment onCreateView")
         setContent {
-            ChatContent(viewModel, viewLifecycleOwner)
+            TalkToAITheme {
+                ChatScreen(viewModel, viewLifecycleOwner)
+            }
         }
     }
 }
