@@ -2,14 +2,14 @@ package com.vn.talktoai.presentation.chat
 
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,59 +18,42 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LifecycleOwner
-import com.vn.talktoai.CommonExtensions.safeSingleObserve
 import com.vn.talktoai.R
-import com.vn.talktoai.domain.ApiRequest
 import com.vn.talktoai.domain.models.Choice
-import com.vn.talktoai.domain.models.Message
+import com.vn.talktoai.presentation.ChatUiState
 
 @Composable
 fun ChatContent(
-    viewModel: ChatViewModel,
-    lifecycleOwner: LifecycleOwner
-) {
-    var items = mutableListOf<Choice>().toMutableStateList()
-    viewModel.completionLiveData.safeSingleObserve(lifecycleOwner) { apiResponse ->
-        val updatedItems = items
-        updatedItems.addAll(apiResponse.choices.orEmpty())
-        items = updatedItems
-        Log.e("apiTAG", "ChatComposable ChatContent safeSingleObserve items $items")
-    }
+    chatUiState: ChatUiState,
+    onSendClick: (MutableState<TextFieldValue>) -> Unit) {
+
     val inputValue = remember { mutableStateOf(TextFieldValue()) }
-    Log.e("apiTAG", "ChatComposable fun ChatContent items $items")
-    Column(
-        modifier = Modifier
+
+    Log.e("apiTAG", "ChatComposable fun ChatContent choices ${chatUiState.choices.toList()} isLoadingProgress ${chatUiState.isLoadingProgress}")
+
+    Column(modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-
-        MessageList(items)
-
-        Spacer(modifier = Modifier
-            .weight(1f))
-
-        ChatInputField(inputValue = inputValue)  {
-            val apiRequest = ApiRequest(model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(Message(role = "user", content = inputValue.value.text)))
-            viewModel.getCompletions(apiRequest)
-            val updatedItems = items
-            updatedItems.add(Choice(message = Message(role = "me", content = inputValue.value.text), "reason", 0))
-            items = updatedItems
-            inputValue.value = TextFieldValue("")
-            Log.e("apiTAG", "ChatComposable ChatContent SendButton items $items")
+        if (chatUiState.choices.isEmpty()) {
+            IntroMessage(modifier = Modifier
+                .fillMaxSize().weight(1f))
+        } else {
+            MessageList(chatUiState.choices, modifier = Modifier.weight(1f))
         }
-
+        ChatInputField(inputValue = inputValue) {
+            onSendClick.invoke(inputValue)
+        }
     }
+    if (chatUiState.isLoadingProgress) CircularProgressBar()
 }
 
 @Composable
-fun MessageList(messages: List<Choice>) {
-    if (messages.isEmpty()) {
-        IntroMessage()
-    } else {
+fun MessageList(messages: List<Choice>,  modifier: Modifier = Modifier) {
+    Box(modifier = modifier) {
         LazyColumn(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxSize()
         ) {
             items(messages) { choice ->
                 if (choice.message?.role == "me") {
@@ -84,14 +67,16 @@ fun MessageList(messages: List<Choice>) {
 }
 
 @Composable
-fun IntroMessage() {
-    Text(
-        text = "You haven`t hot message. Start conversation with AI.",
-        fontSize = 16.sp,
-        modifier = Modifier
-            .wrapContentSize()
-            .background(Color.Green)
-    )
+fun IntroMessage(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "You haven't got messages. Start a conversation with AI.",
+            fontSize = 16.sp
+        )
+    }
 }
 
 @Composable
@@ -163,7 +148,7 @@ fun ChatInputField(inputValue: MutableState<TextFieldValue>, onSendClick: () -> 
         verticalAlignment = Alignment.CenterVertically
     ) {
         ChatOutlinedTextField(inputValue)
-        SendButton(onSendClick)
+        SendButton(inputValue, onSendClick)
     }
 }
 
@@ -177,14 +162,24 @@ fun ChatOutlinedTextField(inputValue: MutableState<TextFieldValue>) {
 }
 
 @Composable
-fun SendButton(onSendClick: () -> Unit) {
-    Button(
+fun SendButton(inputValue: MutableState<TextFieldValue>, onSendClick: () -> Unit) {
+    IconButton(
         onClick = onSendClick,
         modifier = Modifier
             .height(IntrinsicSize.Min)
             .fillMaxWidth(1f)
             .padding(top = 5.dp)
     ) {
-        Text(text = "Send")
+        Icon(imageVector = if (inputValue.value.text.isEmpty()) Icons.Default.ThumbUp else Icons.Default.Send, contentDescription = "Send message button")
     }
+}
+
+@Composable
+fun CircularProgressBar() {
+    CircularProgressIndicator(
+        modifier = Modifier
+            .size(16.dp)
+            .padding(16.dp),
+        color = Color.Green
+    )
 }
