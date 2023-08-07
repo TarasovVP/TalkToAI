@@ -2,6 +2,7 @@ package com.vn.talktoai.presentation.chat
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,7 +14,10 @@ import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -84,8 +88,7 @@ fun IntroMessage(modifier: Modifier = Modifier) {
 fun UserMessage(text: String) {
     Box(modifier = Modifier
         .fillMaxWidth()
-        .padding(bottom = 8.dp)
-        .border(width = 1.dp, color = Color.LightGray)) {
+        .padding(bottom = 8.dp)) {
         Row(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically,
@@ -94,17 +97,11 @@ fun UserMessage(text: String) {
             Text(
                 text = text,
                 fontSize = 16.sp,
+                color = Color.White,
                 modifier = Modifier
                     .padding(8.dp)
+                    .paint(painterResource(id = R.drawable.message_user))
                     .wrapContentSize()
-            )
-            Image (
-                painter = painterResource(id = R.drawable.user_avatar),
-                contentDescription = "User avatar",
-                modifier = Modifier
-                    .padding(8.dp)
-                    .width(24.dp)
-                    .height(24.dp)
             )
         }
     }
@@ -114,27 +111,27 @@ fun UserMessage(text: String) {
 fun AIMessage(text: String) {
     Box(modifier = Modifier
         .fillMaxWidth()
-        .padding(bottom = 8.dp)
-        .border(width = 1.dp, color = Color.LightGray)) {
+        .padding(bottom = 8.dp)) {
         Row(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
             Image (
-                painter = painterResource(id = R.drawable.ai_avatar),
+                painter = painterResource(id = R.drawable.avatar_ai),
                 contentDescription = "AI avatar",
                 modifier = Modifier
                     .padding(8.dp)
-                    .width(24.dp)
-                    .height(24.dp)
+
             )
             Text(
                 text = text,
                 fontSize = 16.sp,
+                color = Color.White,
                 modifier = Modifier
                     .padding(bottom = 8.dp)
-                    .fillMaxWidth()
+                    .paint(painterResource(id = R.drawable.message_ai))
+                    .wrapContentSize()
             )
         }
     }
