@@ -29,16 +29,17 @@ fun ChatContent(
 
     val inputValue = remember { mutableStateOf(TextFieldValue()) }
 
-    Log.e("apiTAG", "ChatComposable fun ChatContent choices ${chatUiState.choices.toList()} isLoadingProgress ${chatUiState.isLoadingProgress}")
+    Log.e("apiTAG", "ChatComposable fun ChatContent choices ${chatUiState.choices.toList()} isLoadingState.value ${chatUiState.isLoadingState.value} ")
 
     Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        .fillMaxSize()
+        .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
         if (chatUiState.choices.isEmpty()) {
             IntroMessage(modifier = Modifier
-                .fillMaxSize().weight(1f))
+                .fillMaxSize()
+                .weight(1f))
         } else {
             MessageList(chatUiState.choices, modifier = Modifier.weight(1f))
         }
@@ -46,7 +47,7 @@ fun ChatContent(
             onSendClick.invoke(inputValue)
         }
     }
-    if (chatUiState.isLoadingProgress) CircularProgressBar()
+    if (chatUiState.isLoadingState.value) CircularProgressBar()
 }
 
 @Composable
@@ -176,10 +177,11 @@ fun SendButton(inputValue: MutableState<TextFieldValue>, onSendClick: () -> Unit
 
 @Composable
 fun CircularProgressBar() {
-    CircularProgressIndicator(
-        modifier = Modifier
-            .size(16.dp)
-            .padding(16.dp),
-        color = Color.Green
-    )
+    Box(contentAlignment = Alignment.Center) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .fillMaxSize(0.25f),
+            color = Color.Green
+        )
+    }
 }

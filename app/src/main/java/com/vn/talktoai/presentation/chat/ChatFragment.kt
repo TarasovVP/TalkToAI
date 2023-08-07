@@ -46,8 +46,8 @@ class ChatFragment : Fragment() {
             }
         }
         viewModel.isProgressProcessLiveData.safeSingleObserve(viewLifecycleOwner) { isLoading ->
-            Log.e("apiTAG", "ChatFragment onCreateView isProgressProcessLiveData isLoading $isLoading ")
-            chatUiState.changeLoading(isLoading)
+            chatUiState.isLoadingState.value = isLoading
+            Log.e("apiTAG", "ChatFragment onCreateView isProgressProcessLiveData isLoading $isLoading isLoadingProgress ${chatUiState.isLoadingState.value}")
         }
     }
 

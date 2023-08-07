@@ -8,14 +8,9 @@ data class ChatUiState(var choiceList: List<Choice>, var loading: Boolean) {
     private val choiceStateList: MutableList<Choice> = choiceList.toMutableStateList()
     val choices: List<Choice> = choiceStateList
 
-    private var isLoadingState = mutableStateOf(loading)
-    val isLoadingProgress: Boolean = isLoadingState.value
+    var isLoadingState = mutableStateOf(loading)
 
     fun addChoice(choice: Choice) {
         choiceStateList.add(choice)
-    }
-
-    fun changeLoading(isLoading: Boolean) {
-        loading = isLoading
     }
 }
