@@ -10,6 +10,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.vn.talktoai.CommonExtensions.safeSingleObserve
 import com.vn.talktoai.domain.ApiRequest
 import com.vn.talktoai.domain.models.Choice
@@ -21,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class ChatFragment : Fragment() {
 
     private val viewModel: ChatViewModel by viewModels()
+    private val args: ChatFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,7 +32,7 @@ class ChatFragment : Fragment() {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
-        val chatUiState = ChatUiState(listOf(), false)
+        val chatUiState = if (args.chatName == "Chat1") ChatUiState(listOf(), false) else ChatUiState(listOf(), false)
         setContent {
             ChatContent(chatUiState)   { inputValue ->
                 if (inputValue.value.text.isEmpty()) {
@@ -41,9 +43,7 @@ class ChatFragment : Fragment() {
             }
         }
         viewModel.completionLiveData.safeSingleObserve(viewLifecycleOwner) { apiResponse ->
-            apiResponse.choices?.forEach {
-                chatUiState.addChoice(it)
-            }
+            chatUiState.addChoices(apiResponse.choices.orEmpty())
         }
 
         viewModel.isProgressProcessLiveData.safeSingleObserve(viewLifecycleOwner) { isLoading ->
@@ -57,7 +57,7 @@ class ChatFragment : Fragment() {
             Message(role = "user", content = inputValue.value.text)
         ))
         viewModel.getCompletions(apiRequest)
-        chatUiState.addChoice(Choice(message = Message(role = "me", content = inputValue.value.text), "reason", 0))
+        chatUiState.addChoices(listOf(Choice(message = Message(role = "me", content = inputValue.value.text), "reason", 0)))
         inputValue.value = TextFieldValue("")
     }
 }

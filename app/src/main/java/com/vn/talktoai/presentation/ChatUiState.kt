@@ -10,7 +10,7 @@ data class ChatUiState(var choiceList: List<Choice>, var loading: Boolean) {
 
     var isLoadingState = mutableStateOf(loading)
 
-    fun addChoice(choice: Choice) {
-        choiceStateList.add(choice)
+    fun addChoices(choice: List<Choice>) {
+        choiceStateList.addAll(choice)
     }
 }

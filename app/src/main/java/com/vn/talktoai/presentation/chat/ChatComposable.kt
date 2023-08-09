@@ -57,7 +57,7 @@ fun ChatContent(
         } else {
             MessageList(chatUiState.choices, modifier = Modifier.weight(1f).padding(16.dp))
         }
-        ChatOutlinedTextField(inputValue = inputValue, onSendClick)
+        ChatTextField(inputValue = inputValue, onSendClick)
     }
     if (chatUiState.isLoadingState.value) CircularProgressBar()
 }
@@ -171,13 +171,11 @@ fun AIMessage(text: String) {
 }
 
 @Composable
-fun ChatOutlinedTextField(inputValue: MutableState<TextFieldValue>, onSendClick: (MutableState<TextFieldValue>) -> Unit) {
-    Box(
-        modifier = Modifier
+fun ChatTextField(inputValue: MutableState<TextFieldValue>, onSendClick: (MutableState<TextFieldValue>) -> Unit) {
+    Box(modifier = Modifier
             .fillMaxWidth()
             .background(color = DarkGreen)
-            .height(IntrinsicSize.Min)
-    ) {
+            .height(IntrinsicSize.Min)) {
         TextField(value = inputValue.value,
             onValueChange = { newValue ->
             inputValue.value = newValue
