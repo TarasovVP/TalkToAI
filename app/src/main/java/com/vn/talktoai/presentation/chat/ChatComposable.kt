@@ -20,13 +20,16 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vn.talktoai.R
 import com.vn.talktoai.domain.models.Choice
 import com.vn.talktoai.presentation.ChatUiState
-import com.vn.talktoai.ui.theme.DarkGreen
-import com.vn.talktoai.ui.theme.Green
+import com.vn.talktoai.ui.theme.Primary300
+import com.vn.talktoai.ui.theme.Primary500
+import com.vn.talktoai.ui.theme.Primary600
+import com.vn.talktoai.ui.theme.Primary800
 
 @Composable
 fun ChatContent(
@@ -51,7 +54,7 @@ fun ChatContent(
             IntroMessage(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(45.dp)
                     .weight(1f)
             )
         } else {
@@ -83,11 +86,14 @@ fun MessageList(messages: List<Choice>, modifier: Modifier = Modifier) {
 fun IntroMessage(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier,
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = "You haven't got messages. Start a conversation with AI.",
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            modifier = Modifier.wrapContentSize()
+                .border(1.dp, Primary300, shape = RoundedCornerShape(18.dp))
+                .padding(16.dp)
         )
     }
 }
@@ -106,12 +112,12 @@ fun UserMessage(text: String) {
                 .wrapContentSize()
                 .widthIn(0.dp, (LocalConfiguration.current.screenWidthDp * 0.8).dp)
                 .background(
-                    color = Green,
+                    color = Primary500,
                     shape = RoundedCornerShape(
-                        topStart = 8.dp,
-                        topEnd = 8.dp,
-                        bottomStart = 8.dp,
-                        bottomEnd = 0.dp
+                        topStart = 16.dp,
+                        topEnd = 16.dp,
+                        bottomStart = 16.dp,
+                        bottomEnd = 2.dp
                     )
                 )
         ) {
@@ -120,7 +126,7 @@ fun UserMessage(text: String) {
                 fontSize = 16.sp,
                 color = Color.White,
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(10.dp)
                     .wrapContentSize()
 
             )
@@ -148,12 +154,12 @@ fun AIMessage(text: String) {
                 .padding(start = 8.dp)
                 .widthIn(0.dp, (LocalConfiguration.current.screenWidthDp * 0.8).dp)
                 .background(
-                    color = DarkGreen,
+                    color = Primary600,
                     shape = RoundedCornerShape(
-                        topStart = 8.dp,
-                        topEnd = 8.dp,
-                        bottomStart = 0.dp,
-                        bottomEnd = 8.dp
+                        topStart = 16.dp,
+                        topEnd = 16.dp,
+                        bottomStart = 2.dp,
+                        bottomEnd = 16.dp
                     )
                 )
         ) {
@@ -162,7 +168,7 @@ fun AIMessage(text: String) {
                 fontSize = 16.sp,
                 color = Color.White,
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(10.dp)
                     .wrapContentSize()
 
             )
@@ -174,7 +180,7 @@ fun AIMessage(text: String) {
 fun ChatTextField(inputValue: MutableState<TextFieldValue>, onSendClick: (MutableState<TextFieldValue>) -> Unit) {
     Box(modifier = Modifier
             .fillMaxWidth()
-            .background(color = DarkGreen)
+            .background(color = Primary800)
             .height(IntrinsicSize.Min)) {
         TextField(value = inputValue.value,
             onValueChange = { newValue ->
@@ -190,14 +196,14 @@ fun ChatTextField(inputValue: MutableState<TextFieldValue>, onSendClick: (Mutabl
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
             ),
-            shape = RoundedCornerShape(22.dp),
+            shape = RoundedCornerShape(16.dp),
             modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .border(1.dp, Green, shape = RoundedCornerShape(22.dp))
+            .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
             .background(
                 color = Color.White,
-                shape = RoundedCornerShape(22.dp)
+                shape = RoundedCornerShape(16.dp)
             ),
             maxLines = 6,
             trailingIcon = {
@@ -210,7 +216,7 @@ fun ChatTextField(inputValue: MutableState<TextFieldValue>, onSendClick: (Mutabl
                 Icon(
                     painter = painterResource(if (inputValue.value.text.isEmpty()) R.drawable.ic_voice_record else R.drawable.ic_message_send),
                     contentDescription = "Send message button",
-                    tint = DarkGreen
+                    tint = Primary800
                 )
             }
         }
@@ -227,4 +233,16 @@ fun CircularProgressBar() {
             color = Color.Green
         )
     }
+}
+
+@Preview
+@Composable
+fun MyComposable() {
+    Text(text = "Hi there!",
+        modifier = Modifier
+            .border(2.dp, Color.Green)
+            .padding(50.dp)
+            .border(2.dp, Color.Red)
+            .padding(50.dp)
+    )
 }
