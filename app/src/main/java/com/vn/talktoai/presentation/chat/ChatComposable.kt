@@ -18,16 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vn.talktoai.R
 import com.vn.talktoai.domain.models.Choice
-import com.vn.talktoai.presentation.ChatUiState
+import com.vn.talktoai.presentation.uistates.ChatUiState
 import com.vn.talktoai.ui.theme.*
 
 @Composable

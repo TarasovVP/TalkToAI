@@ -1,4 +1,4 @@
-package com.vn.talktoai.presentation
+package com.vn.talktoai.presentation.uistates
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList

@@ -1,4 +1,4 @@
-package com.vn.talktoai.presentation
+package com.vn.talktoai.presentation.main
 
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -13,6 +13,7 @@ import com.google.accompanist.insets.ProvideWindowInsets
 import com.vn.talktoai.CommonExtensions.safeSingleObserve
 import com.vn.talktoai.MainNavigationDirections
 import com.vn.talktoai.R
+import com.vn.talktoai.data.database.db_entities.Chat
 import com.vn.talktoai.databinding.ContentMainBinding
 import com.vn.talktoai.ui.theme.TalkToAITheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val chatList = mutableListOf<String>().toMutableStateList()
+        val chatList = mutableListOf<Chat>().toMutableStateList()
         WindowCompat.setDecorFitsSystemWindows(window, true)
         setContentView(
             ComposeView(this).apply {
@@ -33,9 +34,14 @@ class MainActivity : AppCompatActivity() {
                         TalkToAITheme {
                             MainScreen (chatList, {
                                 AndroidViewBinding(ContentMainBinding::inflate)
-                            }, { chatName ->
+                            }, {
+                               mainViewModel.insertChat(Chat(name = "New Chat"))
+                            },
+                                { chatName ->
                                 findNavController().navigate(MainNavigationDirections.startChatFragment(chatName))
-                        })
+                                }, {
+
+                                })
                         }
                     }
                 }

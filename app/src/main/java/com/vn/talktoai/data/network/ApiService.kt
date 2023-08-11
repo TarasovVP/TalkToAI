@@ -1,4 +1,4 @@
-package com.vn.talktoai.data
+package com.vn.talktoai.data.network
 
 import com.vn.talktoai.domain.ApiRequest
 import com.vn.talktoai.domain.ApiResponse

@@ -4,7 +4,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import retrofit2.Response
-import com.vn.talktoai.data.Result
+import com.vn.talktoai.data.network.Result
 
 object CommonExtensions {
 
@@ -31,4 +31,7 @@ object CommonExtensions {
         safeObserve(owner, observer)
         value = null
     }
+
+    val String.Companion.EMPTY: String
+        get() = ""
 }

@@ -1,4 +1,4 @@
-package com.vn.talktoai.presentation
+package com.vn.talktoai.presentation.main
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -15,11 +15,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vn.talktoai.R
+import com.vn.talktoai.data.database.db_entities.Chat
 import com.vn.talktoai.ui.theme.*
 import kotlinx.coroutines.launch
 
 @Composable
-fun MainScreen(chats: List<String>, content: @Composable (PaddingValues) -> Unit, onChatClicked: (String) -> Unit) {
+fun MainScreen(chats: List<Chat>, content: @Composable (PaddingValues) -> Unit, onAddChatClicked: () -> Unit, onChatClicked: (String) -> Unit, onSettingsClicked: () -> Unit) {
     val scope = rememberCoroutineScope()
 
     val scaffoldState = rememberScaffoldState()
@@ -64,27 +65,17 @@ fun MainScreen(chats: List<String>, content: @Composable (PaddingValues) -> Unit
                     .fillMaxSize()
                     .background(color = Primary900)
             ) {
-                AddChatItem {
-                    Log.e(
-                        "apiTAG",
-                        "MainScreen drawerContent AddChatButton onClick"
-                    )
-                }
+                AddChatItem(onAddChatClicked)
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
                 ) {
                     items(chats) { chat ->
-                        ChatItem(text = chat, onChatClicked = onChatClicked)
+                        ChatItem(text = chat.name, onChatClicked = onChatClicked)
                     }
                 }
-                SettingsItem {
-                    Log.e(
-                        "apiTAG",
-                        "MainScreen drawerContent SettingsItem onClick"
-                    )
-                }
+                SettingsItem(onSettingsClicked)
             }
         }, content = content
     )

@@ -1,18 +1,27 @@
 package com.vn.talktoai.di
 
+import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.vn.talktoai.BuildConfig
-import com.vn.talktoai.data.AIRepositoryImpl
+import com.vn.talktoai.data.database.AppDatabase
+import com.vn.talktoai.data.database.dao.ChatDao
+import com.vn.talktoai.data.database.dao.MessageDao
 import com.vn.talktoai.infrastructure.Constants.SERVER_TIMEOUT
-import com.vn.talktoai.data.ApiService
-import com.vn.talktoai.data.HeaderInterceptor
-import com.vn.talktoai.domain.repositories.AIRepository
+import com.vn.talktoai.data.network.ApiService
+import com.vn.talktoai.data.network.HeaderInterceptor
+import com.vn.talktoai.data.repositoryimpl.ChatRepositoryImpl
+import com.vn.talktoai.data.repositoryimpl.MessageRepositoryImpl
+import com.vn.talktoai.domain.repositories.ChatRepository
+import com.vn.talktoai.domain.repositories.MessageRepository
 import com.vn.talktoai.domain.usecases.ChatUseCase
+import com.vn.talktoai.domain.usecases.MainUseCase
 import com.vn.talktoai.presentation.chat.ChatUseCaseImpl
+import com.vn.talktoai.presentation.main.MainUseCaseImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -70,15 +79,44 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideAIRepository(
-        apiService: ApiService
-    ): AIRepository {
-        return AIRepositoryImpl(apiService)
+    fun provideDatabase(@ApplicationContext appContext: Context): AppDatabase {
+        return AppDatabase.getDatabase(appContext)
     }
 
     @Singleton
     @Provides
-    fun provideChatUseCase(aiRepository: AIRepository): ChatUseCase {
-        return ChatUseCaseImpl(aiRepository)
+    fun provideChatDao(db: AppDatabase) = db.chatDao()
+
+    @Singleton
+    @Provides
+    fun provideMessageDao(db: AppDatabase) = db.messageDao()
+
+    @Singleton
+    @Provides
+    fun provideChatRepository(
+        chatDao: ChatDao
+    ): ChatRepository {
+        return ChatRepositoryImpl(chatDao)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMessageRepository(
+        messageDao: MessageDao,
+        apiService: ApiService
+    ): MessageRepository {
+        return MessageRepositoryImpl(messageDao, apiService)
+    }
+
+    @Singleton
+    @Provides
+    fun provideChatUseCase(messageRepository: MessageRepository): ChatUseCase {
+        return ChatUseCaseImpl(messageRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMainUseCase(chatRepository: ChatRepository): MainUseCase {
+        return MainUseCaseImpl(chatRepository)
     }
 }

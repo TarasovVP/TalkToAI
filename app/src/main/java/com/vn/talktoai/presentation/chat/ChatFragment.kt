@@ -15,7 +15,7 @@ import com.vn.talktoai.CommonExtensions.safeSingleObserve
 import com.vn.talktoai.domain.ApiRequest
 import com.vn.talktoai.domain.models.Choice
 import com.vn.talktoai.domain.models.Message
-import com.vn.talktoai.presentation.ChatUiState
+import com.vn.talktoai.presentation.uistates.ChatUiState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
