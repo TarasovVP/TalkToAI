@@ -1,24 +1,21 @@
 package com.vn.talktoai.presentation
 
+import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vn.talktoai.R
-import com.vn.talktoai.ui.theme.Primary500
-import com.vn.talktoai.ui.theme.Primary800
+import com.vn.talktoai.ui.theme.*
 import kotlinx.coroutines.launch
 
 @Composable
@@ -32,6 +29,8 @@ fun MainScreen(chats: List<String>, content: @Composable (PaddingValues) -> Unit
         topBar = {
             TopAppBar(
                 title = { Text(text = "Talk to AI") },
+                backgroundColor = Primary900,
+                contentColor = Neutral50,
                 navigationIcon = {
                     IconButton(onClick = {
                         scope.launch {
@@ -42,23 +41,49 @@ fun MainScreen(chats: List<String>, content: @Composable (PaddingValues) -> Unit
                             }
                         }
                     }) {
-                        Icon(painter = painterResource(id = R.drawable.ic_navigation), contentDescription = "Toolbar")
+                        Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_navigation), contentDescription = "Navigation icon", tint = Primary100)
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            Log.e(
+                                "apiTAG",
+                                "MainScreen TopAppBar actions onClick"
+                            )
+                        }
+                    ) {
+                        Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_edit), contentDescription = "Edit title", tint = Primary100)
                     }
                 }
             )
         },
         drawerContent = {
-            AddChatButton {
-
-            }
-            LazyColumn(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 24.dp, start = 8.dp, end = 8.dp)
-                    .background(color = Primary500)
+                    .background(color = Primary900)
             ) {
-                items(chats) { chat ->
-                    ChatItem(text = chat, onChatClicked = onChatClicked)
+                AddChatItem {
+                    Log.e(
+                        "apiTAG",
+                        "MainScreen drawerContent AddChatButton onClick"
+                    )
+                }
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    items(chats) { chat ->
+                        ChatItem(text = chat, onChatClicked = onChatClicked)
+                    }
+                }
+                SettingsItem {
+                    Log.e(
+                        "apiTAG",
+                        "MainScreen drawerContent SettingsItem onClick"
+                    )
                 }
             }
         }, content = content
@@ -66,49 +91,69 @@ fun MainScreen(chats: List<String>, content: @Composable (PaddingValues) -> Unit
 }
 
 @Composable
-fun ChatItem(text: String, onChatClicked: (String) -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp)
-            .clickable {
-                onChatClicked.invoke(text)
-            }
-            .border(1.dp, Primary500, shape = RoundedCornerShape(8.dp))
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_chat_add),
+fun AddChatItem(onAddChatClicked: () -> Unit) {
+    Row(modifier = Modifier.fillMaxWidth().padding(top = 40.dp, bottom = 32.dp, start = 32.dp, end = 32.dp).clickable {
+        onAddChatClicked.invoke()
+    }) {
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_chat_add),
             contentDescription = "Add chat button",
-            tint = Primary800,
             modifier = Modifier
-                .padding(vertical = 16.dp, horizontal = 8.dp)
+                .padding(end = 8.dp)
         )
-
         Text(
-            text = text,
+            text = "New chat",
             fontSize = 16.sp,
-            modifier = Modifier
-                .padding(vertical = 16.dp)
+            color = Neutral50
         )
     }
 }
 
 @Composable
-fun AddChatButton(onAddChatClicked: () -> Unit) {
-    Button(onClick = { onAddChatClicked.invoke() }) {
-        Icon(
-            imageVector = Icons.Default.Info,
-            contentDescription = "Send message button",
-            tint = Primary800,
+fun ChatItem(text: String, onChatClicked: (String) -> Unit) {
+    Row(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp, start = 32.dp, end = 32.dp).clickable {
+        onChatClicked.invoke(text)
+    }) {
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_chat),
+            contentDescription = "Chat item icon",
             modifier = Modifier
-                .padding(vertical = 16.dp, horizontal = 8.dp)
+                .padding(end = 8.dp)
         )
-
         Text(
-            text = "New chat",
+            text = text,
             fontSize = 16.sp,
+            color = Neutral50,
+            modifier = Modifier.weight(1f)
+        )
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_delete),
+            contentDescription = "Delete chat button",
             modifier = Modifier
-                .padding(vertical = 16.dp)
+                .padding(end = 8.dp)
+        )
+    }
+}
+
+@Composable
+fun SettingsItem(onSettingsClicked: () -> Unit) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .background(color = Primary700)
+        .clickable {
+        onSettingsClicked.invoke()
+    }) {
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_settings),
+            contentDescription = "Settings item icon",
+            modifier = Modifier
+                .padding(top = 16.dp, bottom = 40.dp, start = 32.dp, end = 8.dp)
+        )
+        Text(
+            text = "Settings",
+            fontSize = 16.sp,
+            color = Neutral50,
+            modifier = Modifier.weight(1f).padding(top = 16.dp, bottom = 40.dp, end = 32.dp)
         )
     }
 }

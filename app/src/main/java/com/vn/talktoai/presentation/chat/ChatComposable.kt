@@ -16,8 +16,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,10 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.vn.talktoai.R
 import com.vn.talktoai.domain.models.Choice
 import com.vn.talktoai.presentation.ChatUiState
-import com.vn.talktoai.ui.theme.Primary300
-import com.vn.talktoai.ui.theme.Primary500
-import com.vn.talktoai.ui.theme.Primary600
-import com.vn.talktoai.ui.theme.Primary800
+import com.vn.talktoai.ui.theme.*
 
 @Composable
 fun ChatContent(
@@ -144,7 +143,7 @@ fun AIMessage(text: String) {
             .padding(bottom = 16.dp)
     ) {
         Image(
-            painter = painterResource(id = R.drawable.avatar_ai),
+            imageVector = ImageVector.vectorResource(id = R.drawable.avatar_ai),
             contentDescription = "AI avatar"
 
         )
@@ -180,7 +179,7 @@ fun AIMessage(text: String) {
 fun ChatTextField(inputValue: MutableState<TextFieldValue>, onSendClick: (MutableState<TextFieldValue>) -> Unit) {
     Box(modifier = Modifier
             .fillMaxWidth()
-            .background(color = Primary800)
+            .background(color = Primary900)
             .height(IntrinsicSize.Min)) {
         TextField(value = inputValue.value,
             onValueChange = { newValue ->
@@ -214,9 +213,9 @@ fun ChatTextField(inputValue: MutableState<TextFieldValue>, onSendClick: (Mutabl
                     }
             ) {
                 Icon(
-                    painter = painterResource(if (inputValue.value.text.isEmpty()) R.drawable.ic_voice_record else R.drawable.ic_message_send),
+                    imageVector = ImageVector.vectorResource(if (inputValue.value.text.isEmpty()) R.drawable.ic_voice_record else R.drawable.ic_message_send),
                     contentDescription = "Send message button",
-                    tint = Primary800
+                    tint = Primary900
                 )
             }
         }
@@ -233,16 +232,4 @@ fun CircularProgressBar() {
             color = Color.Green
         )
     }
-}
-
-@Preview
-@Composable
-fun MyComposable() {
-    Text(text = "Hi there!",
-        modifier = Modifier
-            .border(2.dp, Color.Green)
-            .padding(50.dp)
-            .border(2.dp, Color.Red)
-            .padding(50.dp)
-    )
 }
