@@ -8,12 +8,10 @@ import javax.inject.Inject
 
 class ChatUseCaseImpl @Inject constructor(private val messageRepository: MessageRepository) : ChatUseCase {
 
-    override suspend fun insertMessage(message: Message) {
-        messageRepository.insertMessage(message)
-    }
+    override suspend fun insertMessage(message: Message) = messageRepository.insertMessage(message)
 
     override suspend fun getMessagesFromChat(chatId: Int) = messageRepository.getMessagesFromChat(chatId)
 
-    override suspend fun getCompletions(apiRequest: ApiRequest) = messageRepository.getCompletions(apiRequest)
+    override suspend fun sendRequest(apiRequest: ApiRequest) = messageRepository.sendRequest(apiRequest)
 
 }

@@ -37,4 +37,18 @@ class MainViewModel @Inject constructor(private val mainUseCase: MainUseCase, ap
             }
         }
     }
+
+    fun updateChat(chat: Chat) {
+        showProgress()
+        viewModelScope.launch {
+            mainUseCase.updateChat(chat)
+        }
+    }
+
+    fun deleteChat(chat: Chat) {
+        showProgress()
+        viewModelScope.launch {
+            mainUseCase.deleteChat(chat)
+        }
+    }
 }

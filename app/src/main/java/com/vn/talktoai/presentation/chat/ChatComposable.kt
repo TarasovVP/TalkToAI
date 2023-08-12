@@ -24,7 +24,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vn.talktoai.R
-import com.vn.talktoai.domain.models.Choice
+import com.vn.talktoai.data.database.db_entities.Message
 import com.vn.talktoai.presentation.uistates.ChatUiState
 import com.vn.talktoai.ui.theme.*
 
@@ -38,7 +38,7 @@ fun ChatContent(
 
     Log.e(
         "apiTAG",
-        "ChatComposable fun ChatContent choices ${chatUiState.choices.toList()} isLoadingState.value ${chatUiState.isLoadingState.value} "
+        "ChatComposable fun ChatContent messages ${chatUiState.messages.toList()} isLoadingState.value ${chatUiState.isLoadingState.value} "
     )
 
     Column(
@@ -47,7 +47,7 @@ fun ChatContent(
         ,
         verticalArrangement = Arrangement.Top
     ) {
-        if (chatUiState.choices.isEmpty()) {
+        if (chatUiState.messages.isEmpty()) {
             IntroMessage(
                 modifier = Modifier
                     .fillMaxSize()
@@ -55,7 +55,7 @@ fun ChatContent(
                     .weight(1f)
             )
         } else {
-            MessageList(chatUiState.choices, modifier = Modifier.weight(1f).padding(16.dp))
+            MessageList(chatUiState.messages, modifier = Modifier.weight(1f).padding(16.dp))
         }
         ChatTextField(inputValue = inputValue, onSendClick)
     }
@@ -63,16 +63,16 @@ fun ChatContent(
 }
 
 @Composable
-fun MessageList(messages: List<Choice>, modifier: Modifier = Modifier) {
+fun MessageList(messages: List<Message>, modifier: Modifier = Modifier) {
     Box(modifier = modifier) {
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            items(messages) { choice ->
-                if (choice.message?.role == "me") {
-                    UserMessage(text = choice.message.content.orEmpty())
+            items(messages) { message ->
+                if (message.author == "me") {
+                    UserMessage(text = message.message)
                 } else {
-                    AIMessage(text = choice.message?.content.orEmpty())
+                    AIMessage(text = message.message)
                 }
             }
         }

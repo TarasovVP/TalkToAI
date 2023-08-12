@@ -9,5 +9,5 @@ import retrofit2.http.POST
 interface ApiService {
 
     @POST("chat/completions")
-    suspend fun getCompletions(@Body apiRequest: ApiRequest): Response<ApiResponse>
+    suspend fun sendRequest(@Body apiRequest: ApiRequest): Response<ApiResponse>
 }

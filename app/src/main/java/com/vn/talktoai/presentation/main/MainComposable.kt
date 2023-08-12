@@ -1,6 +1,5 @@
 package com.vn.talktoai.presentation.main
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,7 +19,7 @@ import com.vn.talktoai.ui.theme.*
 import kotlinx.coroutines.launch
 
 @Composable
-fun MainScreen(chats: List<Chat>, content: @Composable (PaddingValues) -> Unit, onAddChatClicked: () -> Unit, onChatClicked: (String) -> Unit, onSettingsClicked: () -> Unit) {
+fun MainScreen(chats: List<Chat>, onAddChatClicked: () -> Unit, onDeleteChatClicked: (Chat) -> Unit, onEditChatClicked: (Chat) -> Unit, onChatClicked: (Chat) -> Unit, onSettingsClicked: () -> Unit, content: @Composable (PaddingValues) -> Unit) {
     val scope = rememberCoroutineScope()
 
     val scaffoldState = rememberScaffoldState()
@@ -29,7 +28,7 @@ fun MainScreen(chats: List<Chat>, content: @Composable (PaddingValues) -> Unit, 
         scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
-                title = { Text(text = "Talk to AI") },
+                title = { Text(text = chats.firstOrNull()?.name.orEmpty()) },
                 backgroundColor = Primary900,
                 contentColor = Neutral50,
                 navigationIcon = {
@@ -48,10 +47,7 @@ fun MainScreen(chats: List<Chat>, content: @Composable (PaddingValues) -> Unit, 
                 actions = {
                     IconButton(
                         onClick = {
-                            Log.e(
-                                "apiTAG",
-                                "MainScreen TopAppBar actions onClick"
-                            )
+                            onEditChatClicked.invoke(chats.first())
                         }
                     ) {
                         Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_edit), contentDescription = "Edit title", tint = Primary100)
@@ -72,7 +68,7 @@ fun MainScreen(chats: List<Chat>, content: @Composable (PaddingValues) -> Unit, 
                         .weight(1f)
                 ) {
                     items(chats) { chat ->
-                        ChatItem(text = chat.name, onChatClicked = onChatClicked)
+                        ChatItem(chat = chat, onChatClicked = onChatClicked, onDeleteChatClicked = onDeleteChatClicked)
                     }
                 }
                 SettingsItem(onSettingsClicked)
@@ -101,9 +97,9 @@ fun AddChatItem(onAddChatClicked: () -> Unit) {
 }
 
 @Composable
-fun ChatItem(text: String, onChatClicked: (String) -> Unit) {
+fun ChatItem(chat: Chat, onChatClicked: (Chat) -> Unit, onDeleteChatClicked: (Chat) -> Unit) {
     Row(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp, start = 32.dp, end = 32.dp).clickable {
-        onChatClicked.invoke(text)
+        onChatClicked.invoke(chat)
     }) {
         Image(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_chat),
@@ -112,7 +108,7 @@ fun ChatItem(text: String, onChatClicked: (String) -> Unit) {
                 .padding(end = 8.dp)
         )
         Text(
-            text = text,
+            text = chat.name,
             fontSize = 16.sp,
             color = Neutral50,
             modifier = Modifier.weight(1f)
@@ -122,6 +118,9 @@ fun ChatItem(text: String, onChatClicked: (String) -> Unit) {
             contentDescription = "Delete chat button",
             modifier = Modifier
                 .padding(end = 8.dp)
+                .clickable {
+                    onDeleteChatClicked.invoke(chat)
+                }
         )
     }
 }

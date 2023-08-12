@@ -8,4 +8,8 @@ interface MainUseCase {
     suspend fun insertChat(chat: Chat)
 
     suspend fun getChats(): Flow<List<Chat>>
+
+    suspend fun updateChat(chat: Chat)
+
+    suspend fun deleteChat(chat: Chat)
 }

@@ -11,12 +11,14 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.vn.talktoai.CommonExtensions.EMPTY
 import com.vn.talktoai.CommonExtensions.safeSingleObserve
+import com.vn.talktoai.data.database.db_entities.Message
 import com.vn.talktoai.domain.ApiRequest
-import com.vn.talktoai.domain.models.Choice
-import com.vn.talktoai.domain.models.Message
+import com.vn.talktoai.domain.models.MessageApi
 import com.vn.talktoai.presentation.uistates.ChatUiState
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Date
 
 @AndroidEntryPoint
 class ChatFragment : Fragment() {
@@ -32,32 +34,33 @@ class ChatFragment : Fragment() {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
-        val chatUiState = if (args.chatName == "Chat1") ChatUiState(listOf(), false) else ChatUiState(listOf(), false)
+        val chatUiState = ChatUiState(listOf(), false)
         setContent {
             ChatContent(chatUiState)   { inputValue ->
                 if (inputValue.value.text.isEmpty()) {
                     Log.e("apiTAG", "ChatFragment onCreateView inputValue.value.text.isEmpty()")
                 } else {
-                    getCompletions(inputValue, chatUiState)
+                    viewModel.sendRequest(ApiRequest(model = "gpt-3.5-turbo", temperature = 0.7f, messageApis = listOf(
+                        MessageApi(role = "user", content = inputValue.value.text)
+                    )))
+                    viewModel.insertMessage(Message(chatId = args.chatId, author = "me", message = inputValue.value.text, createdAt = Date().time))
+                    inputValue.value = TextFieldValue(String.EMPTY)
                 }
             }
         }
-        viewModel.completionLiveData.safeSingleObserve(viewLifecycleOwner) { apiResponse ->
-            chatUiState.addChoices(apiResponse.choices.orEmpty())
+        viewModel.getMessagesFromChat(args.chatId)
+        viewModel.messagesLiveData.safeSingleObserve(viewLifecycleOwner) { messages ->
+            chatUiState.clearMessages()
+            messages.forEach {
+                chatUiState.addMessage(it)
+            }
         }
-
+        viewModel.sendRequestLiveData.safeSingleObserve(viewLifecycleOwner) { apiResponse ->
+            viewModel.insertMessage(Message(chatId = args.chatId, author = apiResponse.model.orEmpty(), message = apiResponse.choices?.firstOrNull()?.message?.content.orEmpty(), createdAt = apiResponse.created?.toLongOrNull() ?: 0))
+        }
         viewModel.isProgressProcessLiveData.safeSingleObserve(viewLifecycleOwner) { isLoading ->
             chatUiState.isLoadingState.value = isLoading
             Log.e("apiTAG", "ChatFragment onCreateView isProgressProcessLiveData isLoading $isLoading isLoadingProgress ${chatUiState.isLoadingState.value}")
         }
-    }
-
-    private fun getCompletions(inputValue: MutableState<TextFieldValue>, chatUiState: ChatUiState) {
-        val apiRequest = ApiRequest(model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
-            Message(role = "user", content = inputValue.value.text)
-        ))
-        viewModel.getCompletions(apiRequest)
-        chatUiState.addChoices(listOf(Choice(message = Message(role = "me", content = inputValue.value.text), "reason", 0)))
-        inputValue.value = TextFieldValue("")
     }
 }

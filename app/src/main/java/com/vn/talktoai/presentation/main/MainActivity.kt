@@ -10,6 +10,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.accompanist.insets.ProvideWindowInsets
+import com.vn.talktoai.CommonExtensions.moveElementToTop
 import com.vn.talktoai.CommonExtensions.safeSingleObserve
 import com.vn.talktoai.MainNavigationDirections
 import com.vn.talktoai.R
@@ -32,15 +33,26 @@ class MainActivity : AppCompatActivity() {
                 setContent {
                     ProvideWindowInsets(consumeWindowInsets = false) {
                         TalkToAITheme {
-                            MainScreen (chatList, {
-                                AndroidViewBinding(ContentMainBinding::inflate)
-                            }, {
-                               mainViewModel.insertChat(Chat(name = "New Chat"))
-                            },
-                                { chatName ->
-                                findNavController().navigate(MainNavigationDirections.startChatFragment(chatName))
-                                }, {
+                            MainScreen (chatList,
+                                onAddChatClicked = {
+                                    mainViewModel.insertChat(Chat(name = "New Chat"))
+                                },
+                                onDeleteChatClicked = { chat ->
+                                    mainViewModel.deleteChat(chat)
+                                },
+                                onEditChatClicked = { chat ->
+                                    mainViewModel.insertChat(chat.apply {
+                                        name = "Edited Chat"
+                                    })
+                                },
+                                onChatClicked = { chat ->
+                                    chatList.moveElementToTop(chat)
+                                    findNavController().navigate(MainNavigationDirections.startChatFragment(chat.chatId))
+                                },
+                                    onSettingsClicked = {
 
+                                }, content =  {
+                                    AndroidViewBinding(ContentMainBinding::inflate)
                                 })
                         }
                     }
@@ -49,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         )
         mainViewModel.getChats()
         mainViewModel.chatsLiveData.safeSingleObserve(this) { chats ->
+            chatList.clear()
             chatList.addAll(chats)
         }
     }

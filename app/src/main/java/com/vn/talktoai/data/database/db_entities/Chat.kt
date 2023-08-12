@@ -9,4 +9,4 @@ import kotlinx.parcelize.Parcelize
 @Entity
 @Parcelize
 data class Chat(@PrimaryKey(autoGenerate = true) var chatId: Int = 0,
-               val name: String = String.EMPTY): Parcelable
+               var name: String = String.EMPTY): Parcelable

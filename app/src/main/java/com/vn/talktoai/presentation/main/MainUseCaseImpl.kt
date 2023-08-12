@@ -8,9 +8,11 @@ import javax.inject.Inject
 
 class MainUseCaseImpl @Inject constructor(private val chatRepository: ChatRepository) : MainUseCase {
 
-    override suspend fun insertChat(chat: Chat) {
-        chatRepository.insertChat(chat)
-    }
+    override suspend fun insertChat(chat: Chat) = chatRepository.insertChat(chat)
 
     override suspend fun getChats(): Flow<List<Chat>> = chatRepository.getChats()
+
+    override suspend fun updateChat(chat: Chat) = chatRepository.updateChat(chat)
+
+    override suspend fun deleteChat(chat: Chat) = chatRepository.deleteChat(chat)
 }

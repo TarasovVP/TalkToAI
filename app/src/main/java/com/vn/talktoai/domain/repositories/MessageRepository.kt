@@ -12,5 +12,5 @@ interface MessageRepository {
 
     suspend fun getMessagesFromChat(chatId: Int): Flow<List<Message>>
 
-    suspend fun getCompletions(apiRequest: ApiRequest): Flow<Result<ApiResponse>>
+    suspend fun sendRequest(apiRequest: ApiRequest): Flow<Result<ApiResponse>>
 }

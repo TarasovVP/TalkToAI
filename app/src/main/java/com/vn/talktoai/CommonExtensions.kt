@@ -34,4 +34,11 @@ object CommonExtensions {
 
     val String.Companion.EMPTY: String
         get() = ""
+
+    fun <T> MutableList<T>.moveElementToTop(element: T) {
+        if (contains(element)) {
+            remove(element)
+            add(0, element)
+        }
+    }
 }

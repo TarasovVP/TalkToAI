@@ -4,5 +4,5 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Message(val role: String?,
-                   val content: String?): Parcelable
+data class MessageApi(val role: String?,
+                      val content: String?): Parcelable

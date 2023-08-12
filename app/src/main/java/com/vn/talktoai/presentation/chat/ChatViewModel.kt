@@ -4,11 +4,12 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.vn.talktoai.data.database.db_entities.Message
+import com.vn.talktoai.data.network.Result
 import com.vn.talktoai.domain.ApiRequest
 import com.vn.talktoai.domain.ApiResponse
 import com.vn.talktoai.domain.usecases.ChatUseCase
 import com.vn.talktoai.presentation.base.BaseViewModel
-import com.vn.talktoai.data.network.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -17,22 +18,45 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(application: Application, private val chatUseCase: ChatUseCase) : BaseViewModel(application) {
 
-    val completionLiveData = MutableLiveData<ApiResponse>()
+    val messagesLiveData = MutableLiveData<List<Message>>()
+    val sendRequestLiveData = MutableLiveData<ApiResponse>()
 
-    fun getCompletions(apiRequest: ApiRequest) {
+    fun getMessagesFromChat(chatId: Int) {
         showProgress()
         viewModelScope.launch {
-            chatUseCase.getCompletions(apiRequest).catch {
+            chatUseCase.getMessagesFromChat(chatId).catch {
                 hideProgress()
-                Log.e("apiTAG", "ChatViewModel getCompletions catch localizedMessage ${it.localizedMessage}")
+                Log.e("apiTAG", "ChatViewModel getMessagesFromChat catch localizedMessage ${it.localizedMessage}")
             }.collect { result ->
-                when(result) {
-                    is Result.Success -> result.data?.let { completionLiveData.postValue(it) }
-                    is Result.Failure -> Log.e("apiTAG", "ChatViewModel getCompletions Result.Failure localizedMessage ${result.errorMessage}")
-                }
+                Log.e("apiTAG", "ChatViewModel getMessagesFromChat collect result $result")
+                messagesLiveData.postValue(result)
                 hideProgress()
-                Log.e("apiTAG", "ChatViewModel getCompletions result $result")
             }
+        }
+    }
+
+    fun sendRequest(apiRequest: ApiRequest) {
+        showProgress()
+        viewModelScope.launch {
+            chatUseCase.sendRequest(apiRequest).catch {
+                hideProgress()
+                Log.e("apiTAG", "ChatViewModel sendRequest catch localizedMessage ${it.localizedMessage}")
+            }.collect { result ->
+                hideProgress()
+                when(result) {
+                    is Result.Success -> result.data?.let { sendRequestLiveData.postValue(it) }
+                    is Result.Failure -> Log.e("apiTAG", "ChatViewModel sendRequest Result.Failure localizedMessage ${result.errorMessage}")
+                }
+                Log.e("apiTAG", "ChatViewModel sendRequest result $result")
+            }
+        }
+    }
+
+    fun insertMessage(message: Message) {
+        showProgress()
+        viewModelScope.launch {
+            chatUseCase.insertMessage(message)
+            hideProgress()
         }
     }
 }

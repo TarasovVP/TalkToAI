@@ -2,15 +2,19 @@ package com.vn.talktoai.presentation.uistates
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
-import com.vn.talktoai.domain.models.Choice
+import com.vn.talktoai.data.database.db_entities.Message
 
-data class ChatUiState(var choiceList: List<Choice>, var loading: Boolean) {
-    private val choiceStateList: MutableList<Choice> = choiceList.toMutableStateList()
-    val choices: List<Choice> = choiceStateList
+data class ChatUiState(var choiceList: List<Message>, var loading: Boolean) {
+    private val messagesStateList: MutableList<Message> = choiceList.toMutableStateList()
+    val messages: List<Message> = messagesStateList
 
     var isLoadingState = mutableStateOf(loading)
 
-    fun addChoices(choice: List<Choice>) {
-        choiceStateList.addAll(choice)
+    fun addMessage(message: Message) {
+        messagesStateList.add(message)
+    }
+
+    fun clearMessages() {
+        messagesStateList.clear()
     }
 }
