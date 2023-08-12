@@ -17,4 +17,8 @@
         android:id="@+id/startChatFragment"
         app:destination="@+id/chatFragment"/>
 
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.vn.talktoai.presentation.settings.SettingsFragment" />
+
 </navigation>

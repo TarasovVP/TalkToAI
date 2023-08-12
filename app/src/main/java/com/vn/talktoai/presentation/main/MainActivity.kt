@@ -3,7 +3,6 @@ package com.vn.talktoai.presentation.main
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.viewinterop.AndroidViewBinding
@@ -49,7 +48,7 @@ class MainActivity : AppCompatActivity() {
                                     findNavController().navigate(MainNavigationDirections.startChatFragment(chat.chatId))
                                 },
                                     onSettingsClicked = {
-
+                                        findNavController().navigate(R.id.settingsFragment)
                                 }, content =  {
                                     AndroidViewBinding(ContentMainBinding::inflate)
                                 })

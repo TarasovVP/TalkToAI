@@ -12,12 +12,16 @@ import com.vn.talktoai.data.network.ApiService
 import com.vn.talktoai.data.network.HeaderInterceptor
 import com.vn.talktoai.data.repositoryimpl.ChatRepositoryImpl
 import com.vn.talktoai.data.repositoryimpl.MessageRepositoryImpl
+import com.vn.talktoai.data.repositoryimpl.SettingsRepositoryImpl
 import com.vn.talktoai.domain.repositories.ChatRepository
 import com.vn.talktoai.domain.repositories.MessageRepository
+import com.vn.talktoai.domain.repositories.SettingsRepository
 import com.vn.talktoai.domain.usecases.ChatUseCase
 import com.vn.talktoai.domain.usecases.MainUseCase
+import com.vn.talktoai.domain.usecases.SettingsUseCase
 import com.vn.talktoai.presentation.chat.ChatUseCaseImpl
 import com.vn.talktoai.presentation.main.MainUseCaseImpl
+import com.vn.talktoai.presentation.settings.SettingsUseCaseImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -120,5 +124,17 @@ object AppModule {
     @Provides
     fun provideMainUseCase(chatRepository: ChatRepository): MainUseCase {
         return MainUseCaseImpl(chatRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSettingsRepository(): SettingsRepository {
+        return SettingsRepositoryImpl()
+    }
+
+    @Singleton
+    @Provides
+    fun provideSettingsUseCase(settingsRepository: SettingsRepository): SettingsUseCase {
+        return SettingsUseCaseImpl(settingsRepository)
     }
 }
