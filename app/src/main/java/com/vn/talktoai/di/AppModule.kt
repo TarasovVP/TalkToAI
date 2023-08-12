@@ -58,7 +58,9 @@ object AppModule {
             .readTimeout(SERVER_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(SERVER_TIMEOUT, TimeUnit.SECONDS)
             .addInterceptor(headerInterceptor)
-            .addInterceptor(HttpLoggingInterceptor())
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
             .build()
     }
 

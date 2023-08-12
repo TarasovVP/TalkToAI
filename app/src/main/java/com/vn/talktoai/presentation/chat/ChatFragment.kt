@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.fragment.app.viewModels
@@ -40,7 +39,7 @@ class ChatFragment : Fragment() {
                 if (inputValue.value.text.isEmpty()) {
                     Log.e("apiTAG", "ChatFragment onCreateView inputValue.value.text.isEmpty()")
                 } else {
-                    viewModel.sendRequest(ApiRequest(model = "gpt-3.5-turbo", temperature = 0.7f, messageApis = listOf(
+                    viewModel.sendRequest(ApiRequest(model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
                         MessageApi(role = "user", content = inputValue.value.text)
                     )))
                     viewModel.insertMessage(Message(chatId = args.chatId, author = "me", message = inputValue.value.text, createdAt = Date().time))
