@@ -2,35 +2,32 @@ package com.vn.talktoai.presentation.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import com.vn.talktoai.CommonExtensions.EMPTY
 import com.vn.talktoai.R
 import com.vn.talktoai.data.database.db_entities.Chat
-import com.vn.talktoai.presentation.base.PrimaryButton
-import com.vn.talktoai.presentation.base.SecondaryButton
+import com.vn.talktoai.presentation.base.ConfirmationDialog
+import com.vn.talktoai.presentation.base.DataEditDialog
 import com.vn.talktoai.ui.theme.*
 import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(chats: List<Chat>, onAddChatClicked: () -> Unit, onDeleteChatClicked: (Chat) -> Unit, onEditChatClicked: (Chat) -> Unit, onChatClicked: (Chat) -> Unit, onSettingsClicked: () -> Unit, content: @Composable (PaddingValues) -> Unit) {
     val scope = rememberCoroutineScope()
-    var showDialog by remember { mutableStateOf(false) }
     val scaffoldState = rememberScaffoldState()
+    var showEditDataDialog by remember { mutableStateOf(false) }
+    var showConfirmationDialog by remember { mutableStateOf(false) }
+    val inputValue = remember { mutableStateOf(TextFieldValue()) }
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -55,7 +52,7 @@ fun MainScreen(chats: List<Chat>, onAddChatClicked: () -> Unit, onDeleteChatClic
                 actions = {
                     IconButton(
                         onClick = {
-                            showDialog = true
+                            showEditDataDialog = true
                         }
                     ) {
                         Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_edit), contentDescription = "Edit title", tint = Primary100)
@@ -76,21 +73,41 @@ fun MainScreen(chats: List<Chat>, onAddChatClicked: () -> Unit, onDeleteChatClic
                         .weight(1f)
                 ) {
                     items(chats) { chat ->
-                        ChatItem(chat = chat, onChatClicked = onChatClicked, onDeleteChatClicked = onDeleteChatClicked)
+                        ChatItem(chat = chat, onChatClicked = {
+                            onChatClicked.invoke(it)
+                            scope.launch {
+                                scaffoldState.drawerState.close()
+                            }
+                        }, onDeleteChatClicked = {
+                            showConfirmationDialog = true
+                        })
                     }
                 }
-                SettingsItem(onSettingsClicked)
+                SettingsItem{
+                    onSettingsClicked.invoke()
+                    scope.launch {
+                        scaffoldState.drawerState.close()
+                    }
+                }
             }
         }, content = content
     )
-
-    EditChatNameDialog(chats.firstOrNull()?.name.orEmpty(), showDialog, onDismiss = {
-        showDialog = false
-    }, onChatNameChange = { newChatName ->
+    inputValue.value = TextFieldValue(chats.firstOrNull()?.name.orEmpty())
+    DataEditDialog("Edit chat name", "Chat name", inputValue, showEditDataDialog, onDismiss = {
+        showEditDataDialog = false
+    }, onConfirmationClick = { newChatName ->
         onEditChatClicked.invoke(chats.first().apply {
             name = newChatName
         })
-        showDialog = false
+        showEditDataDialog = false
+    })
+
+    ConfirmationDialog("Delete chat?", showConfirmationDialog, onDismiss = {
+        showConfirmationDialog = false
+    }, onConfirmationClick = {
+        //TODO improve implementation
+        onDeleteChatClicked.invoke(chats[1])
+        showConfirmationDialog = false
     })
 }
 
@@ -170,48 +187,5 @@ fun SettingsItem(onSettingsClicked: () -> Unit) {
                 .weight(1f)
                 .padding(top = 16.dp, bottom = 40.dp, end = 32.dp)
         )
-    }
-}
-
-@Composable
-fun EditChatNameDialog(chatName: String, showDialog: Boolean, onDismiss: () -> Unit, onChatNameChange: (String) -> Unit) {
-    var inputText by remember { mutableStateOf(String.EMPTY) }
-    inputText = chatName
-    Column {
-        if (showDialog) {
-            Dialog(
-                onDismissRequest = onDismiss,
-                content = {
-                    Column(modifier = Modifier
-                        .wrapContentSize()
-                        .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
-                        .background(color = Color.White, shape = RoundedCornerShape(16.dp)),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(text = "Edit chat name", modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp), textAlign = TextAlign.Center,)
-                        TextField(
-                            value = inputText,
-                            onValueChange = { inputText = it },
-                            placeholder = { Text(text = "Chat name") },
-                            colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp))
-                        Row(modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            SecondaryButton(text = "Cancel", Modifier.weight(1f), onClick = onDismiss)
-                            PrimaryButton(text = "OK", Modifier.weight(1f)) {
-                                onChatNameChange.invoke(inputText)
-                            }
-                        }
-                    }
-                }
-            )
-        }
     }
 }
