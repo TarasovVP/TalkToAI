@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:app/src/main/java/com/vnstudio/talktoai/presentation/theme/Theme.kt
 package com.vnstudio.talktoai.presentation.theme
+========
+package com.vnstudio.talktoai.ui.theme
+>>>>>>>> 467a644 (Add firebase to project):app/src/main/java/com/vnstudio/talktoai/ui/theme/Theme.kt
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
