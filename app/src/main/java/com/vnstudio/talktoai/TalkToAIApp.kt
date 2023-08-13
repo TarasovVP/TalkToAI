@@ -1,0 +1,22 @@
+package com.vnstudio.talktoai
+
+import android.app.Application
+import com.google.android.gms.ads.MobileAds
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.vnstudio.talktoai.CommonExtensions.registerForNetworkUpdates
+import dagger.hilt.android.HiltAndroidApp
+
+@HiltAndroidApp
+class TalkToAIApp : Application() {
+
+    var isNetworkAvailable: Boolean? = null
+
+    override fun onCreate() {
+        super.onCreate()
+        MobileAds.initialize(this)
+        FirebaseAnalytics.getInstance(this)
+        registerForNetworkUpdates { isAvailable ->
+            isNetworkAvailable = isAvailable
+        }
+    }
+}
