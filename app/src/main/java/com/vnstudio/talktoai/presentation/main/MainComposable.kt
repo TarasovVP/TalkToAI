@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai.presentation.main
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,16 +16,16 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vnstudio.talktoai.CommonExtensions.moveElementToTop
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.presentation.base.ConfirmationDialog
 import com.vnstudio.talktoai.presentation.base.DataEditDialog
 import com.vnstudio.talktoai.ui.theme.*
 import kotlinx.coroutines.launch
+import java.util.*
 
 @Composable
-fun MainScreen(viewModel: MainViewModel, onChatClicked: (Chat) -> Unit, onSettingsClicked: () -> Unit, content: @Composable (PaddingValues) -> Unit) {
+fun MainScreen(viewModel: MainViewModel, onChatClicked: (Int) -> Unit, onSettingsClicked: () -> Unit, content: @Composable (PaddingValues) -> Unit) {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     val chats = viewModel.chatsLiveData.observeAsState(listOf())
@@ -32,6 +33,12 @@ fun MainScreen(viewModel: MainViewModel, onChatClicked: (Chat) -> Unit, onSettin
     var showConfirmationDialog by remember { mutableStateOf(false) }
     val inputValue = remember { mutableStateOf(TextFieldValue()) }
     val deletedChat = remember { mutableStateOf(Chat()) }
+
+    Log.e(
+        "apiTAG",
+        "MainScreen chats ${chats.value} "
+    )
+
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -71,7 +78,7 @@ fun MainScreen(viewModel: MainViewModel, onChatClicked: (Chat) -> Unit, onSettin
                     .background(color = Primary900)
             ) {
                 AddChatItem {
-                    viewModel.insertChat(Chat(name = "New Chat"))
+                    viewModel.insertChat(Chat(name = "New Chat", updated = Date().time))
                 }
                 LazyColumn(
                     modifier = Modifier
@@ -79,11 +86,9 @@ fun MainScreen(viewModel: MainViewModel, onChatClicked: (Chat) -> Unit, onSettin
                         .weight(1f)
                 ) {
                     items(chats.value.orEmpty()) { chat ->
-                        ChatItem(chat = chat, onChatClicked = {
-                            viewModel.chatsLiveData.value = chats.value.toMutableList().apply {
-                                moveElementToTop(it)
-                            }
-                            onChatClicked.invoke(it)
+                        ChatItem(chat = chat, onChatClicked = { clickedChat ->
+                            onChatClicked.invoke(clickedChat.chatId)
+                            viewModel.updateChats(chats.value.onEach { if (it.chatId == chat.chatId) it.updated = Date().time })
                             scope.launch {
                                 scaffoldState.drawerState.close()
                             }

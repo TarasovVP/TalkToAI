@@ -11,7 +11,7 @@ import com.vnstudio.talktoai.data.database.db_entities.Message
 
 @Database(
     entities = [Chat::class, Message::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

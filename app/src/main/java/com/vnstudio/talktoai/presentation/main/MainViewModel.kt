@@ -30,10 +30,10 @@ class MainViewModel @Inject constructor(private val mainUseCase: MainUseCase, ap
             mainUseCase.getChats().catch {
                 hideProgress()
                 Log.e("apiTAG", "MainViewModel getChats catch localizedMessage ${it.localizedMessage}")
-            }.collect { result ->
-                chatsLiveData.postValue(result)
+            }.collect { chats ->
+                chatsLiveData.postValue(chats)
                 hideProgress()
-                Log.e("apiTAG", "MainViewModel getChats result $result")
+                Log.e("apiTAG", "MainViewModel getChats chats $chats")
             }
         }
     }
@@ -49,6 +49,13 @@ class MainViewModel @Inject constructor(private val mainUseCase: MainUseCase, ap
         showProgress()
         viewModelScope.launch {
             mainUseCase.deleteChat(chat)
+        }
+    }
+
+    fun updateChats(chats: List<Chat>) {
+        showProgress()
+        viewModelScope.launch {
+            mainUseCase.updateChats(chats)
         }
     }
 }
