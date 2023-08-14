@@ -15,4 +15,6 @@ class MainUseCaseImpl @Inject constructor(private val chatRepository: ChatReposi
     override suspend fun updateChat(chat: Chat) = chatRepository.updateChat(chat)
 
     override suspend fun deleteChat(chat: Chat) = chatRepository.deleteChat(chat)
+
+    override suspend fun updateChats(chats: List<Chat>) = chatRepository.updateChats(chats)
 }

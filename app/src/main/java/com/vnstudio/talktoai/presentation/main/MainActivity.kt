@@ -33,8 +33,8 @@ class MainActivity : AppCompatActivity() {
                     ProvideWindowInsets(consumeWindowInsets = false) {
                         TalkToAITheme {
                             MainScreen (mainViewModel,
-                                onChatClicked = { chat ->
-                                    findNavController().navigate(MainNavigationDirections.startChatFragment(chat.chatId))
+                                onChatClicked = { chatId ->
+                                    findNavController().navigate(MainNavigationDirections.startChatFragment(chatId))
                                 },
                                     onSettingsClicked = {
                                         findNavController().navigate(R.id.settingsFragment)

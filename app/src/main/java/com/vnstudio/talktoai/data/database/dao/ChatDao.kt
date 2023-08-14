@@ -9,7 +9,10 @@ interface ChatDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertChat(chat: Chat)
 
-    @Query("SELECT * FROM Chat")
+    @Update
+    fun updateChats(chats: List<Chat>)
+
+    @Query("SELECT * FROM Chat ORDER BY updated DESC")
     fun getChats(): Flow<List<Chat>>
 
     @Update
