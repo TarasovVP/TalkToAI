@@ -26,25 +26,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val chatList = mutableListOf<Chat>().toMutableStateList()
         WindowCompat.setDecorFitsSystemWindows(window, true)
         setContentView(
             ComposeView(this).apply {
                 setContent {
                     ProvideWindowInsets(consumeWindowInsets = false) {
                         TalkToAITheme {
-                            MainScreen (chatList,
-                                onAddChatClicked = {
-                                    mainViewModel.insertChat(Chat(name = "New Chat"))
-                                },
-                                onDeleteChatClicked = { chat ->
-                                    mainViewModel.deleteChat(chat)
-                                },
-                                onEditChatClicked = { chat ->
-                                    mainViewModel.updateChat(chat)
-                                },
+                            MainScreen (mainViewModel,
                                 onChatClicked = { chat ->
-                                    chatList.moveElementToTop(chat)
                                     findNavController().navigate(MainNavigationDirections.startChatFragment(chat.chatId))
                                 },
                                     onSettingsClicked = {
@@ -58,10 +47,6 @@ class MainActivity : AppCompatActivity() {
             }
         )
         mainViewModel.getChats()
-        mainViewModel.chatsLiveData.safeSingleObserve(this) { chats ->
-            chatList.clear()
-            chatList.addAll(chats)
-        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
