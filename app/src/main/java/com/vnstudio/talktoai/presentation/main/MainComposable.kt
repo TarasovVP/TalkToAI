@@ -8,12 +8,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vnstudio.talktoai.CommonExtensions.moveElementToTop
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.presentation.base.ConfirmationDialog
@@ -22,18 +24,20 @@ import com.vnstudio.talktoai.ui.theme.*
 import kotlinx.coroutines.launch
 
 @Composable
-fun MainScreen(chats: List<Chat>, onAddChatClicked: () -> Unit, onDeleteChatClicked: (Chat) -> Unit, onEditChatClicked: (Chat) -> Unit, onChatClicked: (Chat) -> Unit, onSettingsClicked: () -> Unit, content: @Composable (PaddingValues) -> Unit) {
+fun MainScreen(viewModel: MainViewModel, onChatClicked: (Chat) -> Unit, onSettingsClicked: () -> Unit, content: @Composable (PaddingValues) -> Unit) {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
+    val chats = viewModel.chatsLiveData.observeAsState(listOf())
     var showEditDataDialog by remember { mutableStateOf(false) }
     var showConfirmationDialog by remember { mutableStateOf(false) }
     val inputValue = remember { mutableStateOf(TextFieldValue()) }
+    val deletedChat = remember { mutableStateOf(Chat()) }
 
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
-                title = { Text(text = chats.firstOrNull()?.name.orEmpty()) },
+                title = { Text(text = chats.value.firstOrNull()?.name.orEmpty()) },
                 backgroundColor = Primary900,
                 contentColor = Neutral50,
                 navigationIcon = {
@@ -66,19 +70,25 @@ fun MainScreen(chats: List<Chat>, onAddChatClicked: () -> Unit, onDeleteChatClic
                     .fillMaxSize()
                     .background(color = Primary900)
             ) {
-                AddChatItem(onAddChatClicked)
+                AddChatItem {
+                    viewModel.insertChat(Chat(name = "New Chat"))
+                }
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
                 ) {
-                    items(chats) { chat ->
+                    items(chats.value.orEmpty()) { chat ->
                         ChatItem(chat = chat, onChatClicked = {
+                            viewModel.chatsLiveData.value = chats.value.toMutableList().apply {
+                                moveElementToTop(it)
+                            }
                             onChatClicked.invoke(it)
                             scope.launch {
                                 scaffoldState.drawerState.close()
                             }
                         }, onDeleteChatClicked = {
+                            deletedChat.value = it
                             showConfirmationDialog = true
                         })
                     }
@@ -92,11 +102,12 @@ fun MainScreen(chats: List<Chat>, onAddChatClicked: () -> Unit, onDeleteChatClic
             }
         }, content = content
     )
-    inputValue.value = TextFieldValue(chats.firstOrNull()?.name.orEmpty())
+    inputValue.value = TextFieldValue(chats.value.firstOrNull()?.name.orEmpty())
+
     DataEditDialog("Edit chat name", "Chat name", inputValue, showEditDataDialog, onDismiss = {
         showEditDataDialog = false
     }, onConfirmationClick = { newChatName ->
-        onEditChatClicked.invoke(chats.first().apply {
+        viewModel.updateChat(chats.value.orEmpty().first().apply {
             name = newChatName
         })
         showEditDataDialog = false
@@ -105,9 +116,9 @@ fun MainScreen(chats: List<Chat>, onAddChatClicked: () -> Unit, onDeleteChatClic
     ConfirmationDialog("Delete chat?", showConfirmationDialog, onDismiss = {
         showConfirmationDialog = false
     }, onConfirmationClick = {
-        //TODO improve implementation
-        onDeleteChatClicked.invoke(chats[1])
+        viewModel.deleteChat(deletedChat.value)
         showConfirmationDialog = false
+        deletedChat.value = Chat()
     })
 }
 

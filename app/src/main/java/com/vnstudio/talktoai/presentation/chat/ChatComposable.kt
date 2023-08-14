@@ -1,13 +1,13 @@
 package com.vnstudio.talktoai.presentation.chat
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,14 +15,19 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.presentation.uistates.ChatUiState
@@ -140,10 +145,14 @@ fun AIMessage(text: String) {
             .fillMaxWidth()
             .padding(bottom = 16.dp)
     ) {
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.avatar_ai),
-            contentDescription = "AI avatar"
-
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(R.drawable.avatar_ai)
+                .crossfade(true)
+                .build(),
+            contentDescription = "AI avatar",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.clip(CircleShape).size(32.dp)
         )
         Box(
             modifier = Modifier
