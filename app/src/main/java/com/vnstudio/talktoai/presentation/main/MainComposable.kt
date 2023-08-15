@@ -11,6 +11,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -29,10 +30,12 @@ fun MainScreen(viewModel: MainViewModel, onChatClicked: (Int) -> Unit, onSetting
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     val chats = viewModel.chatsLiveData.observeAsState(listOf())
+    var showCreateDataDialog by remember { mutableStateOf(false) }
     var showEditDataDialog by remember { mutableStateOf(false) }
     var showConfirmationDialog by remember { mutableStateOf(false) }
-    val inputValue = remember { mutableStateOf(TextFieldValue()) }
+    val inputValue = remember { mutableStateOf(TextFieldValue(chats.value.firstOrNull()?.name.orEmpty())) }
     val deletedChat = remember { mutableStateOf(Chat()) }
+    val focusRequester = remember { FocusRequester() }
 
     Log.e(
         "apiTAG",
@@ -64,6 +67,7 @@ fun MainScreen(viewModel: MainViewModel, onChatClicked: (Int) -> Unit, onSetting
                     IconButton(
                         onClick = {
                             showEditDataDialog = true
+                            focusRequester.captureFocus()
                         }
                     ) {
                         Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_edit), contentDescription = "Edit title", tint = Primary100)
@@ -71,14 +75,17 @@ fun MainScreen(viewModel: MainViewModel, onChatClicked: (Int) -> Unit, onSetting
                 }
             )
         },
+
         drawerContent = {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = Primary900)
+
             ) {
                 AddChatItem {
-                    viewModel.insertChat(Chat(name = "New Chat", updated = Date().time))
+                    showCreateDataDialog = true
+                    focusRequester.requestFocus()
                 }
                 LazyColumn(
                     modifier = Modifier
@@ -107,14 +114,25 @@ fun MainScreen(viewModel: MainViewModel, onChatClicked: (Int) -> Unit, onSetting
             }
         }, content = content
     )
-    inputValue.value = TextFieldValue(chats.value.firstOrNull()?.name.orEmpty())
+    inputValue.value = TextFieldValue( if (showCreateDataDialog) "Без названия" else chats.value.firstOrNull()?.name.orEmpty())
 
-    DataEditDialog("Edit chat name", "Chat name", inputValue, showEditDataDialog, onDismiss = {
+    DataEditDialog("Создать новый чат?", "Имя чата", inputValue, showCreateDataDialog, focusRequester, onDismiss = {
+        focusRequester.freeFocus()
+        showCreateDataDialog = false
+    }, onConfirmationClick = { newChatName ->
+        viewModel.insertChat(Chat(name = newChatName, updated = Date().time))
+        focusRequester.freeFocus()
+        showCreateDataDialog = false
+    })
+
+    DataEditDialog("Edit chat name", "Chat name", inputValue, showEditDataDialog, focusRequester, onDismiss = {
+        //focusRequester.freeFocus()
         showEditDataDialog = false
     }, onConfirmationClick = { newChatName ->
         viewModel.updateChat(chats.value.orEmpty().first().apply {
             name = newChatName
         })
+        //focusRequester.freeFocus()
         showEditDataDialog = false
     })
 

@@ -9,13 +9,10 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.navArgs
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
-import com.vnstudio.talktoai.CommonExtensions.safeSingleObserve
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.models.MessageApi
-import com.vnstudio.talktoai.presentation.uistates.ChatUiState
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
 
@@ -23,7 +20,6 @@ import java.util.Date
 class ChatFragment : Fragment() {
 
     private val viewModel: ChatViewModel by viewModels()
-    private val args: ChatFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,33 +29,9 @@ class ChatFragment : Fragment() {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
-        val chatUiState = ChatUiState(listOf(), false)
         setContent {
-            ChatContent(chatUiState)   { inputValue ->
-                if (inputValue.value.text.isEmpty()) {
-                    Log.e("apiTAG", "ChatFragment onCreateView inputValue.value.text.isEmpty()")
-                } else {
-                    viewModel.sendRequest(ApiRequest(model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
-                        MessageApi(role = "user", content = inputValue.value.text)
-                    )))
-                    viewModel.insertMessage(Message(chatId = args.chatId, author = "me", message = inputValue.value.text, createdAt = Date().time))
-                    inputValue.value = TextFieldValue(String.EMPTY)
-                }
-            }
+            ChatContent(viewModel)
         }
-        viewModel.getMessagesFromChat(args.chatId)
-        viewModel.messagesLiveData.safeSingleObserve(viewLifecycleOwner) { messages ->
-            chatUiState.clearMessages()
-            messages.forEach {
-                chatUiState.addMessage(it)
-            }
-        }
-        viewModel.sendRequestLiveData.safeSingleObserve(viewLifecycleOwner) { apiResponse ->
-            viewModel.insertMessage(Message(chatId = args.chatId, author = apiResponse.model.orEmpty(), message = apiResponse.choices?.firstOrNull()?.message?.content.orEmpty(), createdAt = apiResponse.created?.toLongOrNull() ?: 0))
-        }
-        viewModel.isProgressProcessLiveData.safeSingleObserve(viewLifecycleOwner) { isLoading ->
-            chatUiState.isLoadingState.value = isLoading
-            Log.e("apiTAG", "ChatFragment onCreateView isProgressProcessLiveData isLoading $isLoading isLoadingProgress ${chatUiState.isLoadingState.value}")
-        }
+        viewModel.getCurrentChat()
     }
 }

@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai.domain.usecases
 
+import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.ApiResponse
@@ -7,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 import com.vnstudio.talktoai.data.network.Result
 
 interface ChatUseCase {
+
+    suspend fun getCurrentChat(): Flow<Chat?>
 
     suspend fun insertMessage(message: Message)
 

@@ -7,6 +7,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -77,7 +79,7 @@ fun ConfirmationDialog(title: String, showDialog: Boolean, onDismiss: () -> Unit
 }
 
 @Composable
-fun DataEditDialog(title: String, placeHolder: String, inputValue: MutableState<TextFieldValue>, showDialog: Boolean, onDismiss: () -> Unit, onConfirmationClick: (String) -> Unit) {
+fun DataEditDialog(title: String, placeHolder: String, inputValue: MutableState<TextFieldValue>, showDialog: Boolean, focusRequester: FocusRequester, onDismiss: () -> Unit, onConfirmationClick: (String) -> Unit) {
     Column {
         if (showDialog) {
             Dialog(
@@ -99,7 +101,8 @@ fun DataEditDialog(title: String, placeHolder: String, inputValue: MutableState<
                             colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp))
+                                .padding(horizontal = 16.dp)
+                                .focusRequester(focusRequester))
                         Row(modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp),
