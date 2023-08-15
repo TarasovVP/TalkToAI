@@ -4,10 +4,10 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.data.network.Result
 import com.vnstudio.talktoai.domain.ApiRequest
-import com.vnstudio.talktoai.domain.ApiResponse
 import com.vnstudio.talktoai.domain.usecases.ChatUseCase
 import com.vnstudio.talktoai.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,45 +18,58 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(application: Application, private val chatUseCase: ChatUseCase) : BaseViewModel(application) {
 
+    val currentChatLiveData = MutableLiveData<Chat>()
     val messagesLiveData = MutableLiveData<List<Message>>()
-    val sendRequestLiveData = MutableLiveData<ApiResponse>()
 
-    fun getMessagesFromChat(chatId: Int) {
-        showProgress()
+    fun getCurrentChat() {
         viewModelScope.launch {
-            chatUseCase.getMessagesFromChat(chatId).catch {
+            chatUseCase.getCurrentChat().catch {
                 hideProgress()
-                Log.e("apiTAG", "ChatViewModel getMessagesFromChat catch localizedMessage ${it.localizedMessage}")
+                Log.e("apiTAG", "ChatViewModel getCurrentChat catch localizedMessage ${it.localizedMessage}")
             }.collect { result ->
-                Log.e("apiTAG", "ChatViewModel getMessagesFromChat collect result $result")
-                messagesLiveData.postValue(result)
-                hideProgress()
+                Log.e("apiTAG", "ChatViewModel getCurrentChat collect result $result isProgressProcessLiveData ${isProgressProcessLiveData.value}")
+                currentChatLiveData.value = result
+                result?.chatId?.let { getMessagesFromChat(it) }
             }
         }
     }
 
-    fun sendRequest(apiRequest: ApiRequest) {
+    private fun getMessagesFromChat(chatId: Int) {
+        viewModelScope.launch {
+            chatUseCase.getMessagesFromChat(chatId).catch {
+                hideProgress()
+                Log.e("apiTAG", "ChatViewModel getMessagesFromChat catch localizedMessage ${it.localizedMessage} isProgressProcessLiveData ${isProgressProcessLiveData.value}")
+            }.collect { result ->
+                Log.e("apiTAG", "ChatViewModel getMessagesFromChat collect result.size ${result.size} chatId $chatId isProgressProcessLiveData ${isProgressProcessLiveData.value}")
+                messagesLiveData.postValue(result)
+
+            }
+        }
+    }
+
+    fun sendRequest(chatId: Int, apiRequest: ApiRequest) {
         showProgress()
         viewModelScope.launch {
             chatUseCase.sendRequest(apiRequest).catch {
                 hideProgress()
-                Log.e("apiTAG", "ChatViewModel sendRequest catch localizedMessage ${it.localizedMessage}")
+                Log.e("apiTAG", "ChatViewModel sendRequest catch localizedMessage ${it.localizedMessage} isProgressProcessLiveData ${isProgressProcessLiveData.value}")
             }.collect { result ->
-                hideProgress()
                 when(result) {
-                    is Result.Success -> result.data?.let { sendRequestLiveData.postValue(it) }
-                    is Result.Failure -> Log.e("apiTAG", "ChatViewModel sendRequest Result.Failure localizedMessage ${result.errorMessage}")
+                    is Result.Success -> result.data?.let { apiResponse ->
+                        insertMessage(Message(chatId = chatId, author = apiResponse.model.orEmpty(), message = apiResponse.choices?.firstOrNull()?.message?.content.orEmpty(), createdAt = apiResponse.created?.toLongOrNull() ?: 0))
+                    }
+                    is Result.Failure -> Log.e("apiTAG", "ChatViewModel sendRequest Result.Failure localizedMessage ${result.errorMessage}  isProgressProcessLiveData ${isProgressProcessLiveData.value}")
                 }
-                Log.e("apiTAG", "ChatViewModel sendRequest result $result")
+                hideProgress()
+                Log.e("apiTAG", "ChatViewModel sendRequest result $result  isProgressProcessLiveData ${isProgressProcessLiveData.value}")
             }
         }
     }
 
     fun insertMessage(message: Message) {
-        showProgress()
         viewModelScope.launch {
             chatUseCase.insertMessage(message)
-            hideProgress()
+            Log.e("apiTAG", "ChatViewModel insertMessage message $message isProgressProcessLiveData ${isProgressProcessLiveData.value}")
         }
     }
 }

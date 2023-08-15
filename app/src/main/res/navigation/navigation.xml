@@ -6,12 +6,7 @@
 
     <fragment
         android:id="@+id/chatFragment"
-        android:name="com.vnstudio.talktoai.presentation.chat.ChatFragment">
-        <argument
-            android:name="chatId"
-            android:defaultValue="0"
-            app:argType="integer" />
-    </fragment>
+        android:name="com.vnstudio.talktoai.presentation.chat.ChatFragment" />
 
     <action
         android:id="@+id/startChatFragment"

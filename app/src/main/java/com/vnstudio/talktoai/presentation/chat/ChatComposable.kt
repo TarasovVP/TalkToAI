@@ -7,12 +7,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,31 +30,34 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.R
+import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
-import com.vnstudio.talktoai.presentation.uistates.ChatUiState
+import com.vnstudio.talktoai.domain.ApiRequest
+import com.vnstudio.talktoai.domain.models.MessageApi
 import com.vnstudio.talktoai.ui.theme.*
+import java.util.*
 
 @Composable
-fun ChatContent(
-    chatUiState: ChatUiState,
-    onSendClick: (MutableState<TextFieldValue>) -> Unit,
-) {
+fun ChatContent(viewModel: ChatViewModel) {
 
     val inputValue = remember { mutableStateOf(TextFieldValue()) }
+    val currentChat = viewModel.currentChatLiveData.observeAsState(Chat())
+    val messages = viewModel.messagesLiveData.observeAsState()
+    val loading = viewModel.isProgressProcessLiveData.observeAsState()
 
     Log.e(
         "apiTAG",
-        "ChatComposable fun ChatContent messages ${chatUiState.messages.toList()} isLoadingState.value ${chatUiState.isLoadingState.value} "
+        "ChatComposable fun ChatContent messages.size ${messages.value?.size} loading $loading"
     )
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-        ,
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Top
     ) {
-        if (chatUiState.messages.isEmpty()) {
+        if (messages.value.isNullOrEmpty()) {
             IntroMessage(
                 modifier = Modifier
                     .fillMaxSize()
@@ -60,18 +65,34 @@ fun ChatContent(
                     .weight(1f)
             )
         } else {
-            MessageList(chatUiState.messages, modifier = Modifier.weight(1f).padding(16.dp))
+            MessageList(messages.value.orEmpty(), modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp))
         }
-        ChatTextField(inputValue = inputValue, onSendClick)
+        ChatTextField(inputValue = inputValue) {
+            if (inputValue.value.text.isEmpty()) {
+                Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
+            } else {
+                viewModel.sendRequest(currentChat.value.chatId, ApiRequest(model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
+                    MessageApi(role = "user", content = inputValue.value.text)
+                ))
+                )
+                viewModel.insertMessage(Message(chatId = currentChat.value.chatId, author = "me", message = inputValue.value.text, createdAt = Date().time))
+                inputValue.value = TextFieldValue(String.EMPTY)
+            }
+        }
     }
-    if (chatUiState.isLoadingState.value) CircularProgressBar()
+
+    if (loading.value == true) CircularProgressBar()
 }
 
 @Composable
 fun MessageList(messages: List<Message>, modifier: Modifier = Modifier) {
+    val scrollState = rememberLazyListState()
     Box(modifier = modifier) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            state = scrollState
         ) {
             items(messages) { message ->
                 if (message.author == "me") {
@@ -81,6 +102,9 @@ fun MessageList(messages: List<Message>, modifier: Modifier = Modifier) {
                 }
             }
         }
+    }
+    LaunchedEffect(messages.size) {
+        scrollState.scrollToItem(messages.size - 1)
     }
 }
 
@@ -93,7 +117,8 @@ fun IntroMessage(modifier: Modifier = Modifier) {
         Text(
             text = "You haven't got messages. Start a conversation with AI.",
             fontSize = 16.sp,
-            modifier = Modifier.wrapContentSize()
+            modifier = Modifier
+                .wrapContentSize()
                 .border(1.dp, Primary300, shape = RoundedCornerShape(18.dp))
                 .padding(16.dp)
         )
@@ -152,7 +177,9 @@ fun AIMessage(text: String) {
                 .build(),
             contentDescription = "AI avatar",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.clip(CircleShape).size(32.dp)
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(32.dp)
         )
         Box(
             modifier = Modifier
@@ -185,9 +212,9 @@ fun AIMessage(text: String) {
 @Composable
 fun ChatTextField(inputValue: MutableState<TextFieldValue>, onSendClick: (MutableState<TextFieldValue>) -> Unit) {
     Box(modifier = Modifier
-            .fillMaxWidth()
-            .background(color = Primary900)
-            .height(IntrinsicSize.Min)) {
+        .fillMaxWidth()
+        .background(color = Primary900)
+        .height(IntrinsicSize.Min)) {
         TextField(value = inputValue.value,
             onValueChange = { newValue ->
             inputValue.value = newValue
@@ -204,13 +231,13 @@ fun ChatTextField(inputValue: MutableState<TextFieldValue>, onSendClick: (Mutabl
             ),
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
-            .background(
-                color = Color.White,
-                shape = RoundedCornerShape(16.dp)
-            ),
+                .fillMaxWidth()
+                .padding(16.dp)
+                .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
+                .background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(16.dp)
+                ),
             maxLines = 6,
             trailingIcon = {
             Box(
