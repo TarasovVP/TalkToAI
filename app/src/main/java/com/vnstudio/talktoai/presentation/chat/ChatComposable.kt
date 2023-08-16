@@ -10,8 +10,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -21,15 +19,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.airbnb.lottie.LottieDrawable
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
@@ -40,8 +42,9 @@ import com.vnstudio.talktoai.ui.theme.*
 import java.util.*
 
 @Composable
-fun ChatContent(viewModel: ChatViewModel) {
+fun ChatContent() {
 
+    val viewModel: ChatViewModel = viewModel()
     val inputValue = remember { mutableStateOf(TextFieldValue()) }
     val currentChat = viewModel.currentChatLiveData.observeAsState(Chat())
     val messages = viewModel.messagesLiveData.observeAsState()
@@ -78,12 +81,13 @@ fun ChatContent(viewModel: ChatViewModel) {
                 ))
                 )
                 viewModel.insertMessage(Message(chatId = currentChat.value.chatId, author = "me", message = inputValue.value.text, createdAt = Date().time))
+                viewModel.insertMessage(Message(chatId = currentChat.value.chatId, author = "gpt-3.5-turbo", message = String.EMPTY, createdAt = 0))
                 inputValue.value = TextFieldValue(String.EMPTY)
             }
         }
     }
 
-    if (loading.value == true) CircularProgressBar()
+    //if (loading.value == true) MessageTypingAnimation()
 }
 
 @Composable
@@ -196,21 +200,29 @@ fun AIMessage(text: String) {
                     )
                 )
         ) {
-            Text(
-                text = text,
-                fontSize = 16.sp,
-                color = Color.White,
-                modifier = Modifier
-                    .padding(10.dp)
-                    .wrapContentSize()
+            if (text.isEmpty()) {
+                MessageTypingAnimation()
+            } else {
+                Text(
+                    text = text,
+                    fontSize = 16.sp,
+                    color = Color.White,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .wrapContentSize()
 
-            )
+                )
+            }
         }
     }
 }
 
 @Composable
-fun ChatTextField(inputValue: MutableState<TextFieldValue>, onSendClick: (MutableState<TextFieldValue>) -> Unit) {
+fun ChatTextField(
+    inputValue: MutableState<TextFieldValue>,
+    onSendClick: (MutableState<TextFieldValue>) -> Unit
+) {
+    val focusManager = LocalFocusManager.current
     Box(modifier = Modifier
         .fillMaxWidth()
         .background(color = Primary900)
@@ -219,10 +231,6 @@ fun ChatTextField(inputValue: MutableState<TextFieldValue>, onSendClick: (Mutabl
             onValueChange = { newValue ->
             inputValue.value = newValue
         }, placeholder = { Text(text = "Enter request") },
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = {
-                onSendClick.invoke(inputValue)
-            }),
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.White,
                 focusedIndicatorColor = Color.Transparent,
@@ -244,6 +252,8 @@ fun ChatTextField(inputValue: MutableState<TextFieldValue>, onSendClick: (Mutabl
                 modifier = Modifier
                     .clickable {
                         onSendClick.invoke(inputValue)
+                        focusManager.clearFocus()
+
                     }
             ) {
                 Icon(
@@ -265,5 +275,18 @@ fun CircularProgressBar() {
                 .fillMaxSize(0.25f),
             color = Color.Green
         )
+    }
+}
+
+@Composable
+fun MessageTypingAnimation() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.message_typing))
+    Box(Modifier
+        .padding(vertical = 8.dp)) {
+        LottieAnimation(composition,
+            iterations = LottieConstants.IterateForever,
+            modifier = Modifier
+                .width(100.dp)
+                .height(30.dp))
     }
 }

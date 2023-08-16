@@ -15,6 +15,8 @@ class ChatUseCaseImpl @Inject constructor(private val chatRepository: ChatReposi
 
     override suspend fun insertMessage(message: Message) = messageRepository.insertMessage(message)
 
+    override suspend fun updateMessage(message: Message) = messageRepository.updateMessage(message)
+
     override suspend fun getMessagesFromChat(chatId: Int) = messageRepository.getMessagesFromChat(chatId)
 
     override suspend fun sendRequest(apiRequest: ApiRequest) = messageRepository.sendRequest(apiRequest)

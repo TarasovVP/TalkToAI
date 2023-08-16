@@ -11,12 +11,12 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.presentation.base.ConfirmationDialog
@@ -26,7 +26,8 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 @Composable
-fun MainScreen(viewModel: MainViewModel, onChatClicked: (Int) -> Unit, onSettingsClicked: () -> Unit, content: @Composable (PaddingValues) -> Unit) {
+fun MainScreen(onChatClicked: () -> Unit, onSettingsClicked: () -> Unit, content: @Composable (PaddingValues) -> Unit) {
+    val viewModel: MainViewModel = viewModel()
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     val chats = viewModel.chatsLiveData.observeAsState(listOf())
@@ -35,11 +36,10 @@ fun MainScreen(viewModel: MainViewModel, onChatClicked: (Int) -> Unit, onSetting
     var showConfirmationDialog by remember { mutableStateOf(false) }
     val inputValue = remember { mutableStateOf(TextFieldValue(chats.value.firstOrNull()?.name.orEmpty())) }
     val deletedChat = remember { mutableStateOf(Chat()) }
-    val focusRequester = remember { FocusRequester() }
 
     Log.e(
         "apiTAG",
-        "MainScreen chats ${chats.value} "
+        "MainScreen chats ${chats.value}"
     )
 
 
@@ -67,7 +67,6 @@ fun MainScreen(viewModel: MainViewModel, onChatClicked: (Int) -> Unit, onSetting
                     IconButton(
                         onClick = {
                             showEditDataDialog = true
-                            focusRequester.captureFocus()
                         }
                     ) {
                         Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_edit), contentDescription = "Edit title", tint = Primary100)
@@ -85,7 +84,6 @@ fun MainScreen(viewModel: MainViewModel, onChatClicked: (Int) -> Unit, onSetting
             ) {
                 AddChatItem {
                     showCreateDataDialog = true
-                    focusRequester.requestFocus()
                 }
                 LazyColumn(
                     modifier = Modifier
@@ -93,13 +91,13 @@ fun MainScreen(viewModel: MainViewModel, onChatClicked: (Int) -> Unit, onSetting
                         .weight(1f)
                 ) {
                     items(chats.value.orEmpty()) { chat ->
-                        ChatItem(chat = chat, onChatClicked = { clickedChat ->
-                            onChatClicked.invoke(clickedChat.chatId)
+                        ChatItem(chat = chat, chats.value.indexOf(chat) == 0, onChatClick = {
+                            onChatClicked.invoke()
                             viewModel.updateChats(chats.value.onEach { if (it.chatId == chat.chatId) it.updated = Date().time })
                             scope.launch {
                                 scaffoldState.drawerState.close()
                             }
-                        }, onDeleteChatClicked = {
+                        }, onDeleteIconClick = {
                             deletedChat.value = it
                             showConfirmationDialog = true
                         })
@@ -116,23 +114,22 @@ fun MainScreen(viewModel: MainViewModel, onChatClicked: (Int) -> Unit, onSetting
     )
     inputValue.value = TextFieldValue( if (showCreateDataDialog) "Без названия" else chats.value.firstOrNull()?.name.orEmpty())
 
-    DataEditDialog("Создать новый чат?", "Имя чата", inputValue, showCreateDataDialog, focusRequester, onDismiss = {
-        focusRequester.freeFocus()
+    DataEditDialog("Создать новый чат?", "Имя чата", inputValue, showCreateDataDialog, onDismiss = {
         showCreateDataDialog = false
     }, onConfirmationClick = { newChatName ->
         viewModel.insertChat(Chat(name = newChatName, updated = Date().time))
-        focusRequester.freeFocus()
         showCreateDataDialog = false
+        scope.launch {
+            scaffoldState.drawerState.close()
+        }
     })
 
-    DataEditDialog("Edit chat name", "Chat name", inputValue, showEditDataDialog, focusRequester, onDismiss = {
-        //focusRequester.freeFocus()
+    DataEditDialog("Edit chat name", "Chat name", inputValue, showEditDataDialog, onDismiss = {
         showEditDataDialog = false
     }, onConfirmationClick = { newChatName ->
         viewModel.updateChat(chats.value.orEmpty().first().apply {
             name = newChatName
         })
-        //focusRequester.freeFocus()
         showEditDataDialog = false
     })
 
@@ -168,12 +165,13 @@ fun AddChatItem(onAddChatClicked: () -> Unit) {
 }
 
 @Composable
-fun ChatItem(chat: Chat, onChatClicked: (Chat) -> Unit, onDeleteChatClicked: (Chat) -> Unit) {
+fun ChatItem(chat: Chat, isCurrent: Boolean, onChatClick: () -> Unit, onDeleteIconClick: (Chat) -> Unit) {
     Row(modifier = Modifier
         .fillMaxWidth()
         .padding(bottom = 16.dp, start = 32.dp, end = 32.dp)
+
         .clickable {
-            onChatClicked.invoke(chat)
+            onChatClick.invoke()
         }) {
         Image(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_chat),
@@ -193,7 +191,7 @@ fun ChatItem(chat: Chat, onChatClicked: (Chat) -> Unit, onDeleteChatClicked: (Ch
             modifier = Modifier
                 .padding(end = 8.dp)
                 .clickable {
-                    onDeleteChatClicked.invoke(chat)
+                    onDeleteIconClick.invoke(chat)
                 }
         )
     }

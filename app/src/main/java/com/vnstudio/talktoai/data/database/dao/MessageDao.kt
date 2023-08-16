@@ -9,6 +9,9 @@ interface MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMessage(message: Message)
 
+    @Update
+    fun updateMessage(message: Message)
+
     @Query("SELECT * FROM Message WHERE :chatId = chatId")
     fun getMessagesFromChat(chatId: Int): Flow<List<Message>>
 }
