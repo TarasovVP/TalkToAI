@@ -13,5 +13,7 @@ interface MainUseCase {
 
     suspend fun deleteChat(chat: Chat)
 
+    suspend fun deleteMessagesFromChat(chatId: Int)
+
     suspend fun updateChats(chats: List<Chat>)
 }

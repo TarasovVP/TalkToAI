@@ -2,11 +2,12 @@ package com.vnstudio.talktoai.presentation.main
 
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.domain.repositories.ChatRepository
+import com.vnstudio.talktoai.domain.repositories.MessageRepository
 import com.vnstudio.talktoai.domain.usecases.MainUseCase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class MainUseCaseImpl @Inject constructor(private val chatRepository: ChatRepository) : MainUseCase {
+class MainUseCaseImpl @Inject constructor(private val chatRepository: ChatRepository, private val messageRepository: MessageRepository) : MainUseCase {
 
     override suspend fun insertChat(chat: Chat) = chatRepository.insertChat(chat)
 
@@ -15,6 +16,8 @@ class MainUseCaseImpl @Inject constructor(private val chatRepository: ChatReposi
     override suspend fun updateChat(chat: Chat) = chatRepository.updateChat(chat)
 
     override suspend fun deleteChat(chat: Chat) = chatRepository.deleteChat(chat)
+
+    override suspend fun deleteMessagesFromChat(chatId: Int) = messageRepository.deleteMessagesFromChat(chatId)
 
     override suspend fun updateChats(chats: List<Chat>) = chatRepository.updateChats(chats)
 }

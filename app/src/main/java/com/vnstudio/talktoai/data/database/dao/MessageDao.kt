@@ -14,4 +14,7 @@ interface MessageDao {
 
     @Query("SELECT * FROM Message WHERE :chatId = chatId")
     fun getMessagesFromChat(chatId: Int): Flow<List<Message>>
+
+    @Query("DELETE FROM Message WHERE :chatId = chatId")
+    fun deleteMessagesFromChat(chatId: Int)
 }
