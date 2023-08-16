@@ -10,6 +10,8 @@ interface MessageRepository {
 
     suspend fun insertMessage(message: Message)
 
+    suspend fun updateMessage(message: Message)
+
     suspend fun getMessagesFromChat(chatId: Int): Flow<List<Message>>
 
     suspend fun sendRequest(apiRequest: ApiRequest): Flow<Result<ApiResponse>>

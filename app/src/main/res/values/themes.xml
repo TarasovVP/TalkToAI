@@ -3,5 +3,6 @@
 
     <style name="Theme.TalkToAI" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:statusBarColor">@color/primary_800</item>
+        <item name="android:windowBackground">@drawable/bg_splash</item>
     </style>
 </resources>

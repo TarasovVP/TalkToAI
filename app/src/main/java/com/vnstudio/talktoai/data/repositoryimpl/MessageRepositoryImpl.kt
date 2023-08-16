@@ -18,7 +18,12 @@ class MessageRepositoryImpl @Inject constructor(private val messageDao: MessageD
         messageDao.insertMessage(message)
     }
 
+    override suspend fun updateMessage(message: Message) {
+        messageDao.updateMessage(message)
+    }
+
     override suspend fun getMessagesFromChat(chatId: Int): Flow<List<Message>> = messageDao.getMessagesFromChat(chatId)
+
     override suspend fun sendRequest(apiRequest: ApiRequest) = flow {
         emit(apiService.sendRequest(apiRequest).apiCall())
     }.flowOn(Dispatchers.IO)
