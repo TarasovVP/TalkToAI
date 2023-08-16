@@ -49,6 +49,7 @@ class MainViewModel @Inject constructor(private val mainUseCase: MainUseCase, ap
         showProgress()
         viewModelScope.launch {
             mainUseCase.deleteChat(chat)
+            mainUseCase.deleteMessagesFromChat(chat.chatId)
         }
     }
 

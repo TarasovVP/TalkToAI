@@ -122,8 +122,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideMainUseCase(chatRepository: ChatRepository): MainUseCase {
-        return MainUseCaseImpl(chatRepository)
+    fun provideMainUseCase(chatRepository: ChatRepository, messageRepository: MessageRepository): MainUseCase {
+        return MainUseCaseImpl(chatRepository, messageRepository)
     }
 
     @Singleton

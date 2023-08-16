@@ -48,12 +48,13 @@ fun ChatContent() {
     val inputValue = remember { mutableStateOf(TextFieldValue()) }
     val currentChat = viewModel.currentChatLiveData.observeAsState(Chat())
     val messages = viewModel.messagesLiveData.observeAsState()
-    val loading = viewModel.isProgressProcessLiveData.observeAsState()
+    //val loading = viewModel.isProgressProcessLiveData.observeAsState()
 
     Log.e(
         "apiTAG",
-        "ChatComposable fun ChatContent messages.size ${messages.value?.size} loading $loading"
+        "ChatComposable fun ChatContent messages.size ${messages.value?.size} "
     )
+    Log.e("messagesTAG", "ChatComposable fun ChatContent messages ${messages.value?.map { it.message }}")
 
     Column(
         modifier = Modifier
@@ -72,17 +73,15 @@ fun ChatContent() {
                 .weight(1f)
                 .padding(horizontal = 16.dp))
         }
-        ChatTextField(inputValue = inputValue) {
-            if (inputValue.value.text.isEmpty()) {
+        ChatTextField(inputValue = inputValue) { messageText ->
+            if (messageText.isEmpty()) {
                 Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
             } else {
-                viewModel.sendRequest(currentChat.value.chatId, ApiRequest(model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
-                    MessageApi(role = "user", content = inputValue.value.text)
-                ))
-                )
-                viewModel.insertMessage(Message(chatId = currentChat.value.chatId, author = "me", message = inputValue.value.text, createdAt = Date().time))
+                viewModel.insertMessage(Message(chatId = currentChat.value.chatId, author = "me", message = messageText, createdAt = Date().time))
                 viewModel.insertMessage(Message(chatId = currentChat.value.chatId, author = "gpt-3.5-turbo", message = String.EMPTY, createdAt = 0))
-                inputValue.value = TextFieldValue(String.EMPTY)
+                viewModel.sendRequest(ApiRequest(model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
+                    MessageApi(role = "user", content = messageText)
+                )))
             }
         }
     }
@@ -220,7 +219,7 @@ fun AIMessage(text: String) {
 @Composable
 fun ChatTextField(
     inputValue: MutableState<TextFieldValue>,
-    onSendClick: (MutableState<TextFieldValue>) -> Unit
+    onSendClick: (String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     Box(modifier = Modifier
@@ -251,7 +250,8 @@ fun ChatTextField(
             Box(
                 modifier = Modifier
                     .clickable {
-                        onSendClick.invoke(inputValue)
+                        onSendClick.invoke(inputValue.value.text)
+                        inputValue.value = TextFieldValue(String.EMPTY)
                         focusManager.clearFocus()
 
                     }
@@ -282,11 +282,11 @@ fun CircularProgressBar() {
 fun MessageTypingAnimation() {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.message_typing))
     Box(Modifier
-        .padding(vertical = 8.dp)) {
+        .padding(16.dp)) {
         LottieAnimation(composition,
             iterations = LottieConstants.IterateForever,
             modifier = Modifier
-                .width(100.dp)
-                .height(30.dp))
+                .width(52.dp)
+                .height(12.dp))
     }
 }
