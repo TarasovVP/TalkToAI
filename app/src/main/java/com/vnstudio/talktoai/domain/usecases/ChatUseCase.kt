@@ -9,6 +9,8 @@ import com.vnstudio.talktoai.data.network.Result
 
 interface ChatUseCase {
 
+    suspend fun insertChat(chat: Chat)
+
     suspend fun getCurrentChat(): Flow<Chat?>
 
     suspend fun insertMessage(message: Message)

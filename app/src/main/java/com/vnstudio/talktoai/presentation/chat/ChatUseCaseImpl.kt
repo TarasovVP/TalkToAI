@@ -11,6 +11,8 @@ import javax.inject.Inject
 
 class ChatUseCaseImpl @Inject constructor(private val chatRepository: ChatRepository, private val messageRepository: MessageRepository) : ChatUseCase {
 
+    override suspend fun insertChat(chat: Chat) = chatRepository.insertChat(chat)
+
     override suspend fun getCurrentChat(): Flow<Chat?> = chatRepository.getCurrentChat()
 
     override suspend fun insertMessage(message: Message) = messageRepository.insertMessage(message)
