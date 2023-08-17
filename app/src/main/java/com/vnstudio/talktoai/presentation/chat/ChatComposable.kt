@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.airbnb.lottie.LottieDrawable
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -38,7 +37,10 @@ import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.models.MessageApi
+import com.vnstudio.talktoai.presentation.base.AddChatItem
+import com.vnstudio.talktoai.presentation.base.DataEditDialog
 import com.vnstudio.talktoai.ui.theme.*
+import kotlinx.coroutines.launch
 import java.util.*
 
 @Composable
@@ -46,8 +48,9 @@ fun ChatContent() {
 
     val viewModel: ChatViewModel = viewModel()
     val inputValue = remember { mutableStateOf(TextFieldValue()) }
-    val currentChat = viewModel.currentChatLiveData.observeAsState(Chat())
+    val currentChat = viewModel.currentChatLiveData.observeAsState()
     val messages = viewModel.messagesLiveData.observeAsState()
+    var showCreateDataDialog by remember { mutableStateOf(false) }
     //val loading = viewModel.isProgressProcessLiveData.observeAsState()
 
     Log.e(
@@ -62,31 +65,43 @@ fun ChatContent() {
         verticalArrangement = Arrangement.Top
     ) {
         if (messages.value.isNullOrEmpty()) {
-            IntroMessage(
+            IntroMessage(currentChat.value == null,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(45.dp)
-                    .weight(1f)
+                    .weight(1f),
             )
         } else {
             MessageList(messages.value.orEmpty(), modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 16.dp))
         }
-        ChatTextField(inputValue = inputValue) { messageText ->
-            if (messageText.isEmpty()) {
-                Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
-            } else {
-                viewModel.insertMessage(Message(chatId = currentChat.value.chatId, author = "me", message = messageText, createdAt = Date().time))
-                viewModel.insertMessage(Message(chatId = currentChat.value.chatId, author = "gpt-3.5-turbo", message = String.EMPTY, createdAt = 0))
-                viewModel.sendRequest(ApiRequest(model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
-                    MessageApi(role = "user", content = messageText)
-                )))
+        if (currentChat.value == null) {
+            AddChatItem(Modifier.padding(start = 45.dp, end = 45.dp, bottom = 45.dp)) {
+                showCreateDataDialog = true
+                Log.e("apiTAG", "ChatContent AddChatItem click")
+            }
+        } else {
+            ChatTextField(inputValue = inputValue) { messageText ->
+                if (messageText.isEmpty()) {
+                    Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
+                } else {
+                    viewModel.insertMessage(Message(chatId = currentChat.value?.chatId ?: 0, author = "me", message = messageText, createdAt = Date().time))
+                    viewModel.insertMessage(Message(chatId = currentChat.value?.chatId ?: 0, author = "gpt-3.5-turbo", message = String.EMPTY, createdAt = 0))
+                    viewModel.sendRequest(ApiRequest(model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
+                        MessageApi(role = "user", content = messageText)
+                    )))
+                }
             }
         }
     }
-
-    //if (loading.value == true) MessageTypingAnimation()
+    DataEditDialog("Создать новый чат?", "Имя чата", inputValue, showCreateDataDialog, onDismiss = {
+        showCreateDataDialog = false
+    }, onConfirmationClick = { newChatName ->
+        viewModel.insertChat(Chat(name = newChatName, updated = Date().time))
+        inputValue.value = TextFieldValue(String.EMPTY)
+        showCreateDataDialog = false
+    })
 }
 
 @Composable
@@ -112,13 +127,13 @@ fun MessageList(messages: List<Message>, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun IntroMessage(modifier: Modifier = Modifier) {
+fun IntroMessage(isChatsEmpty: Boolean, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = "You haven't got messages. Start a conversation with AI.",
+            text = if (isChatsEmpty) "Что бы начать работу с ИИ создайте чат" else "Введите свой вопрос или воспользуйтесь микрофоном....",
             fontSize = 16.sp,
             modifier = Modifier
                 .wrapContentSize()

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.vnstudio.talktoai.presentation.main
 
 import android.util.Log
@@ -7,18 +9,24 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.accompanist.insets.LocalWindowInsets
+import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
+import com.vnstudio.talktoai.presentation.base.AddChatItem
 import com.vnstudio.talktoai.presentation.base.ConfirmationDialog
 import com.vnstudio.talktoai.presentation.base.DataEditDialog
 import com.vnstudio.talktoai.ui.theme.*
@@ -34,7 +42,7 @@ fun MainScreen(onChatClicked: () -> Unit, onSettingsClicked: () -> Unit, content
     var showCreateDataDialog by remember { mutableStateOf(false) }
     var showEditDataDialog by remember { mutableStateOf(false) }
     var showConfirmationDialog by remember { mutableStateOf(false) }
-    val inputValue = remember { mutableStateOf(TextFieldValue(chats.value.firstOrNull()?.name.orEmpty())) }
+    val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }
     val deletedChat = remember { mutableStateOf(Chat()) }
 
     Log.e(
@@ -47,7 +55,7 @@ fun MainScreen(onChatClicked: () -> Unit, onSettingsClicked: () -> Unit, content
         scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
-                title = { Text(text = chats.value.firstOrNull()?.name.orEmpty()) },
+                title = { Text(text = chats.value.firstOrNull()?.name ?: "Talk to AI") },
                 backgroundColor = Primary900,
                 contentColor = Neutral50,
                 navigationIcon = {
@@ -64,12 +72,14 @@ fun MainScreen(onChatClicked: () -> Unit, onSettingsClicked: () -> Unit, content
                     }
                 },
                 actions = {
-                    IconButton(
-                        onClick = {
-                            showEditDataDialog = true
+                    if (chats.value.isNotEmpty()) {
+                        IconButton(
+                            onClick = {
+                                showEditDataDialog = true
+                            }
+                        ) {
+                            Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_edit), contentDescription = "Edit title", tint = Primary100)
                         }
-                    ) {
-                        Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_edit), contentDescription = "Edit title", tint = Primary100)
                     }
                 }
             )
@@ -82,7 +92,7 @@ fun MainScreen(onChatClicked: () -> Unit, onSettingsClicked: () -> Unit, content
                     .background(color = Primary900)
 
             ) {
-                AddChatItem {
+                AddChatItem(Modifier.padding(top = 40.dp, bottom = 24.dp, start = 16.dp, end = 16.dp)) {
                     showCreateDataDialog = true
                 }
                 LazyColumn(
@@ -143,53 +153,36 @@ fun MainScreen(onChatClicked: () -> Unit, onSettingsClicked: () -> Unit, content
 }
 
 @Composable
-fun AddChatItem(onAddChatClicked: () -> Unit) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(top = 40.dp, bottom = 32.dp, start = 32.dp, end = 32.dp)
-        .clickable {
-            onAddChatClicked.invoke()
-        }) {
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_chat_add),
-            contentDescription = "Add chat button",
-            modifier = Modifier
-                .padding(end = 8.dp)
-        )
-        Text(
-            text = "New chat",
-            fontSize = 16.sp,
-            color = Neutral50
-        )
-    }
-}
-
-@Composable
 fun ChatItem(chat: Chat, isCurrent: Boolean, onChatClick: () -> Unit, onDeleteIconClick: (Chat) -> Unit) {
     Row(modifier = Modifier
         .fillMaxWidth()
-        .padding(bottom = 16.dp, start = 32.dp, end = 32.dp)
-
-        .clickable {
-            onChatClick.invoke()
-        }) {
+        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+        .let { modifier ->
+            if (isCurrent) {
+            modifier.background(color = Primary800, shape = RoundedCornerShape(16.dp))
+        } else {
+            modifier.clickable {
+                onChatClick.invoke()
+            }
+        }
+    }) {
         Image(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_chat),
             contentDescription = "Chat item icon",
             modifier = Modifier
-                .padding(end = 8.dp)
+                .padding(8.dp)
         )
         Text(
             text = chat.name,
             fontSize = 16.sp,
             color = Neutral50,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f).padding(vertical = 8.dp)
         )
         Image(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_delete),
             contentDescription = "Delete chat button",
             modifier = Modifier
-                .padding(end = 8.dp)
+                .padding(8.dp)
                 .clickable {
                     onDeleteIconClick.invoke(chat)
                 }
