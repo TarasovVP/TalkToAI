@@ -1,9 +1,7 @@
 package com.vnstudio.talktoai.presentation.chat
 
 import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,6 +22,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -40,18 +39,21 @@ import com.vnstudio.talktoai.domain.models.MessageApi
 import com.vnstudio.talktoai.presentation.base.AddChatItem
 import com.vnstudio.talktoai.presentation.base.DataEditDialog
 import com.vnstudio.talktoai.ui.theme.*
-import kotlinx.coroutines.launch
 import java.util.*
 
 @Composable
-fun ChatContent() {
+fun ChatScreen() {
 
-    val viewModel: ChatViewModel = viewModel()
+    val viewModel: ChatViewModel = hiltViewModel()
     val inputValue = remember { mutableStateOf(TextFieldValue()) }
     val currentChat = viewModel.currentChatLiveData.observeAsState()
     val messages = viewModel.messagesLiveData.observeAsState()
     var showCreateDataDialog by remember { mutableStateOf(false) }
     //val loading = viewModel.isProgressProcessLiveData.observeAsState()
+
+    LaunchedEffect(viewModel){
+        viewModel.getCurrentChat()
+    }
 
     Log.e(
         "apiTAG",
@@ -116,7 +118,9 @@ fun MessageList(messages: List<Message>, modifier: Modifier = Modifier) {
                 if (message.author == "me") {
                     UserMessage(text = message.message)
                 } else {
-                    AIMessage(text = message.message)
+                    AIMessage(text = message.message) {
+
+                    }
                 }
             }
         }
@@ -150,7 +154,7 @@ fun UserMessage(text: String) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp)
+            .padding(vertical = 8.dp)
     ) {
         Box(
             modifier = Modifier
@@ -179,14 +183,19 @@ fun UserMessage(text: String) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AIMessage(text: String) {
+fun AIMessage(text: String, onLongClick: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.Bottom,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp)
+            .padding(vertical = 8.dp)
+            .combinedClickable(
+                onClick = {  },
+                onLongClick = onLongClick
+            )
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)

@@ -16,13 +16,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.accompanist.insets.LocalWindowInsets
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
@@ -35,7 +33,7 @@ import java.util.*
 
 @Composable
 fun MainScreen(onChatClicked: () -> Unit, onSettingsClicked: () -> Unit, content: @Composable (PaddingValues) -> Unit) {
-    val viewModel: MainViewModel = viewModel()
+    val viewModel: MainViewModel = hiltViewModel()
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     val chats = viewModel.chatsLiveData.observeAsState(listOf())
@@ -44,6 +42,10 @@ fun MainScreen(onChatClicked: () -> Unit, onSettingsClicked: () -> Unit, content
     var showConfirmationDialog by remember { mutableStateOf(false) }
     val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }
     val deletedChat = remember { mutableStateOf(Chat()) }
+
+    LaunchedEffect(viewModel){
+        viewModel.getChats()
+    }
 
     Log.e(
         "apiTAG",
