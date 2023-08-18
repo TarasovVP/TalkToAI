@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import com.vnstudio.talktoai.presentation.base.PrimaryButton
 
 @Composable
-fun SettingsContent(onClick: () -> Unit, ) {
+fun SettingsScreen(onClick: () -> Unit, ) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center
