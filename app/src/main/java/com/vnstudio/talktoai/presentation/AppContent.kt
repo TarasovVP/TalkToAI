@@ -12,28 +12,30 @@ import com.vnstudio.talktoai.presentation.settings.SettingsScreen
 @Composable
 fun AppContent() {
     val navController = rememberNavController()
-    MainScreen (
+    val showCreateDataDialog = mutableStateOf(false)
+    MainScreen (showCreateDataDialog,
         onChatClicked = {
             navController.navigate("destination_chat_screen")
         },
         onSettingsClicked = {
             navController.navigate("destination_settings_screen")
-        },
-        content =  {
-            MainNavGraph(navController)
-        })
+        }
+    ) {
+        MainNavGraph(showCreateDataDialog, navController)
+    }
 
 }
 
 @Composable
 fun MainNavGraph(
+    showCreateDataDialog: MutableState<Boolean>,
     navController: NavHostController
 ) {
     NavHost(navController, startDestination = "destination_chat_screen") {
         composable(
             route = "destination_chat_screen"
         ) {
-            ChatScreen()
+            ChatScreen(showCreateDataDialog)
         }
         composable(
             route = "destination_settings_screen"

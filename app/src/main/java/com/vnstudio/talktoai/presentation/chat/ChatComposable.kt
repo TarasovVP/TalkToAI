@@ -23,7 +23,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.airbnb.lottie.compose.LottieAnimation
@@ -42,13 +41,12 @@ import com.vnstudio.talktoai.ui.theme.*
 import java.util.*
 
 @Composable
-fun ChatScreen() {
+fun ChatScreen(showCreateDataDialog: MutableState<Boolean>) {
 
     val viewModel: ChatViewModel = hiltViewModel()
     val inputValue = remember { mutableStateOf(TextFieldValue()) }
     val currentChat = viewModel.currentChatLiveData.observeAsState()
     val messages = viewModel.messagesLiveData.observeAsState()
-    var showCreateDataDialog by remember { mutableStateOf(false) }
     //val loading = viewModel.isProgressProcessLiveData.observeAsState()
 
     LaunchedEffect(viewModel){
@@ -80,7 +78,7 @@ fun ChatScreen() {
         }
         if (currentChat.value == null) {
             AddChatItem(Modifier.padding(start = 45.dp, end = 45.dp, bottom = 45.dp)) {
-                showCreateDataDialog = true
+                showCreateDataDialog.value = true
                 Log.e("apiTAG", "ChatContent AddChatItem click")
             }
         } else {
@@ -98,12 +96,12 @@ fun ChatScreen() {
         }
     }
     DataEditDialog("Создать новый чат?", "Имя чата", inputValue, showCreateDataDialog, onDismiss = {
-        showCreateDataDialog = false
-    }, onConfirmationClick = { newChatName ->
+        showCreateDataDialog.value = false
+    }) { newChatName ->
         viewModel.insertChat(Chat(name = newChatName, updated = Date().time))
         inputValue.value = TextFieldValue(String.EMPTY)
-        showCreateDataDialog = false
-    })
+        showCreateDataDialog.value = false
+    }
 }
 
 @Composable

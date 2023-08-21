@@ -32,13 +32,17 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 @Composable
-fun MainScreen(onChatClicked: () -> Unit, onSettingsClicked: () -> Unit, content: @Composable (PaddingValues) -> Unit) {
+fun MainScreen(
+    showCreateDataDialog: MutableState<Boolean>,
+    onChatClicked: () -> Unit,
+    onSettingsClicked: () -> Unit,
+    content: @Composable (PaddingValues) -> Unit
+) {
     val viewModel: MainViewModel = hiltViewModel()
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     val chats = viewModel.chatsLiveData.observeAsState(listOf())
-    var showCreateDataDialog by remember { mutableStateOf(false) }
-    var showEditDataDialog by remember { mutableStateOf(false) }
+    var showEditDataDialog = mutableStateOf(false)
     var showConfirmationDialog by remember { mutableStateOf(false) }
     val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }
     val deletedChat = remember { mutableStateOf(Chat()) }
@@ -77,7 +81,7 @@ fun MainScreen(onChatClicked: () -> Unit, onSettingsClicked: () -> Unit, content
                     if (chats.value.isNotEmpty()) {
                         IconButton(
                             onClick = {
-                                showEditDataDialog = true
+                                showEditDataDialog.value = true
                             }
                         ) {
                             Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_edit), contentDescription = "Edit title", tint = Primary100)
@@ -95,7 +99,7 @@ fun MainScreen(onChatClicked: () -> Unit, onSettingsClicked: () -> Unit, content
 
             ) {
                 AddChatItem(Modifier.padding(top = 40.dp, bottom = 24.dp, start = 16.dp, end = 16.dp)) {
-                    showCreateDataDialog = true
+                    showCreateDataDialog.value = true
                 }
                 LazyColumn(
                     modifier = Modifier
@@ -124,26 +128,26 @@ fun MainScreen(onChatClicked: () -> Unit, onSettingsClicked: () -> Unit, content
             }
         }, content = content
     )
-    inputValue.value = TextFieldValue( if (showCreateDataDialog) "Без названия" else chats.value.firstOrNull()?.name.orEmpty())
+    inputValue.value = TextFieldValue( if (showCreateDataDialog.value) "Без названия" else chats.value.firstOrNull()?.name.orEmpty())
 
     DataEditDialog("Создать новый чат?", "Имя чата", inputValue, showCreateDataDialog, onDismiss = {
-        showCreateDataDialog = false
-    }, onConfirmationClick = { newChatName ->
+        showCreateDataDialog.value = false
+    }) { newChatName ->
         viewModel.insertChat(Chat(name = newChatName, updated = Date().time))
-        showCreateDataDialog = false
+        showCreateDataDialog.value = false
         scope.launch {
             scaffoldState.drawerState.close()
         }
-    })
+    }
 
     DataEditDialog("Edit chat name", "Chat name", inputValue, showEditDataDialog, onDismiss = {
-        showEditDataDialog = false
-    }, onConfirmationClick = { newChatName ->
+        showEditDataDialog.value = false
+    }) { newChatName ->
         viewModel.updateChat(chats.value.orEmpty().first().apply {
             name = newChatName
         })
-        showEditDataDialog = false
-    })
+        showEditDataDialog.value = false
+    }
 
     ConfirmationDialog("Delete chat?", showConfirmationDialog, onDismiss = {
         showConfirmationDialog = false
