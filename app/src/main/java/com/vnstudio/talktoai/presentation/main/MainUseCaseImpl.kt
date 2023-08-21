@@ -1,23 +1,23 @@
 package com.vnstudio.talktoai.presentation.main
 
-import com.vnstudio.talktoai.data.database.db_entities.Chat
-import com.vnstudio.talktoai.domain.repositories.ChatRepository
-import com.vnstudio.talktoai.domain.repositories.MessageRepository
+import com.vnstudio.talktoai.data.network.Result
+import com.vnstudio.talktoai.domain.models.CurrentUser
+import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
+import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnstudio.talktoai.domain.usecases.MainUseCase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class MainUseCaseImpl @Inject constructor(private val chatRepository: ChatRepository, private val messageRepository: MessageRepository) : MainUseCase {
+class MainUseCaseImpl @Inject constructor(private val dataStoreRepository: DataStoreRepository, private val realDataBaseRepository: RealDataBaseRepository) : MainUseCase {
 
-    override suspend fun insertChat(chat: Chat) = chatRepository.insertChat(chat)
+    override suspend fun getOnBoardingSeen(): Flow<Boolean?> {
+        return dataStoreRepository.onBoardingSeen()
+    }
 
-    override suspend fun getChats(): Flow<List<Chat>> = chatRepository.getChats()
 
-    override suspend fun updateChat(chat: Chat) = chatRepository.updateChat(chat)
+    override fun getCurrentUser(result: (Result<CurrentUser>) -> Unit) = realDataBaseRepository.getCurrentUser { operationResult ->
+        result.invoke(operationResult)
+    }
 
-    override suspend fun deleteChat(chat: Chat) = chatRepository.deleteChat(chat)
-
-    override suspend fun deleteMessagesFromChat(chatId: Int) = messageRepository.deleteMessagesFromChat(chatId)
-
-    override suspend fun updateChats(chats: List<Chat>) = chatRepository.updateChats(chats)
+    override suspend fun setReviewVoted(isReviewVoted: Boolean) = dataStoreRepository.setReviewVoted(isReviewVoted)
 }

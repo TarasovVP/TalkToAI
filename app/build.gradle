@@ -26,6 +26,7 @@ android {
         buildConfigField('String', 'OPENAI_API_KEY', OPENAI_API_KEY)
         buildConfigField('String', 'ORGANIZATION_ID', ORGANIZATION_ID)
         buildConfigField('String', 'BASE_URL', BASE_URL)
+        buildConfigField('String', 'REALTIME_DATABASE', REALTIME_DATABASE)
     }
 
     buildTypes {
@@ -118,4 +119,7 @@ dependencies {
 
     //Lottie
     implementation "com.airbnb.android:lottie-compose:4.0.0"
+
+    //DataStore
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 }

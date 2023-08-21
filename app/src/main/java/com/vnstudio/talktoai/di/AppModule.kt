@@ -1,6 +1,12 @@
 package com.vnstudio.talktoai.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.vnstudio.talktoai.BuildConfig
@@ -10,12 +16,8 @@ import com.vnstudio.talktoai.data.database.dao.MessageDao
 import com.vnstudio.talktoai.infrastructure.Constants.SERVER_TIMEOUT
 import com.vnstudio.talktoai.data.network.ApiService
 import com.vnstudio.talktoai.data.network.HeaderInterceptor
-import com.vnstudio.talktoai.data.repositoryimpl.ChatRepositoryImpl
-import com.vnstudio.talktoai.data.repositoryimpl.MessageRepositoryImpl
-import com.vnstudio.talktoai.data.repositoryimpl.SettingsRepositoryImpl
-import com.vnstudio.talktoai.domain.repositories.ChatRepository
-import com.vnstudio.talktoai.domain.repositories.MessageRepository
-import com.vnstudio.talktoai.domain.repositories.SettingsRepository
+import com.vnstudio.talktoai.data.repositoryimpl.*
+import com.vnstudio.talktoai.domain.repositories.*
 import com.vnstudio.talktoai.domain.usecases.ChatUseCase
 import com.vnstudio.talktoai.domain.usecases.MainUseCase
 import com.vnstudio.talktoai.domain.usecases.SettingsUseCase
@@ -37,6 +39,21 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Singleton
+    @Provides
+    fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(produceFile = {
+            context.preferencesDataStoreFile(context.packageName)
+        })
+    }
+
+    @Singleton
+    @Provides
+    fun provideDataStoreRepository(dataStore: DataStore<Preferences>): DataStoreRepository {
+        return DataStoreRepositoryImpl(dataStore)
+    }
+
 
     @Singleton
     @Provides
@@ -91,6 +108,27 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
+    }
+
+    @Singleton
+    @Provides
+    fun provideFirebaseDatabase(): FirebaseDatabase {
+        return FirebaseDatabase.getInstance(BuildConfig.REALTIME_DATABASE)
+    }
+
+    @Singleton
+    @Provides
+    fun provideRealDataBaseRepository(
+        firebaseDatabase: FirebaseDatabase,
+        firebaseAuth: FirebaseAuth,
+    ): RealDataBaseRepository {
+        return RealDataBaseRepositoryImpl(firebaseDatabase, firebaseAuth)
+    }
+
+    @Singleton
+    @Provides
     fun provideChatDao(db: AppDatabase) = db.chatDao()
 
     @Singleton
@@ -122,8 +160,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideMainUseCase(chatRepository: ChatRepository, messageRepository: MessageRepository): MainUseCase {
-        return MainUseCaseImpl(chatRepository, messageRepository)
+    fun provideMainUseCase(dataStoreRepository: DataStoreRepository, realDataBaseRepository: RealDataBaseRepository): MainUseCase {
+        return MainUseCaseImpl(dataStoreRepository, realDataBaseRepository)
     }
 
     @Singleton
