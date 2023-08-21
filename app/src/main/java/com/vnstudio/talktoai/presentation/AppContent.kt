@@ -7,12 +7,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.vnstudio.talktoai.presentation.chat.ChatScreen
 import com.vnstudio.talktoai.presentation.main.MainScreen
+import com.vnstudio.talktoai.presentation.onboarding.LoginScreen
+import com.vnstudio.talktoai.presentation.onboarding.OnboardingScreen
+import com.vnstudio.talktoai.presentation.onboarding.SignUpScreen
 import com.vnstudio.talktoai.presentation.settings.SettingsScreen
 
 @Composable
 fun AppContent() {
     val navController = rememberNavController()
     val showCreateDataDialog = mutableStateOf(false)
+    OnboardingNavGraph(navController = navController)
     MainScreen (showCreateDataDialog,
         onChatClicked = {
             navController.navigate("destination_chat_screen")
@@ -41,6 +45,35 @@ fun MainNavGraph(
             route = "destination_settings_screen"
         ) {
             SettingsScreen {
+
+            }
+        }
+    }
+}
+
+@Composable
+fun OnboardingNavGraph(
+    navController: NavHostController
+) {
+    NavHost(navController, startDestination = "login_screen") {
+        composable(
+            route = "onboarding"
+        ) {
+            OnboardingScreen {
+
+            }
+        }
+        composable(
+            route = "login_screen"
+        ) {
+            LoginScreen {
+
+            }
+        }
+        composable(
+            route = "sign_up_screen"
+        ) {
+            SignUpScreen {
 
             }
         }

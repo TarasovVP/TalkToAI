@@ -11,6 +11,16 @@ import javax.inject.Inject
 
 class ChatUseCaseImpl @Inject constructor(private val chatRepository: ChatRepository, private val messageRepository: MessageRepository) : ChatUseCase {
 
+    override suspend fun getChats(): Flow<List<Chat>> = chatRepository.getChats()
+
+    override suspend fun updateChat(chat: Chat) = chatRepository.updateChat(chat)
+
+    override suspend fun deleteChat(chat: Chat) = chatRepository.deleteChat(chat)
+
+    override suspend fun deleteMessagesFromChat(chatId: Int) = messageRepository.deleteMessagesFromChat(chatId)
+
+    override suspend fun updateChats(chats: List<Chat>) = chatRepository.updateChats(chats)
+
     override suspend fun insertChat(chat: Chat) = chatRepository.insertChat(chat)
 
     override suspend fun getCurrentChat(): Flow<Chat?> = chatRepository.getCurrentChat()

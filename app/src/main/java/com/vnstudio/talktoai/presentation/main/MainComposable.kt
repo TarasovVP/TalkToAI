@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
-
 package com.vnstudio.talktoai.presentation.main
 
 import android.util.Log
@@ -13,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -27,6 +24,7 @@ import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.presentation.base.AddChatItem
 import com.vnstudio.talktoai.presentation.base.ConfirmationDialog
 import com.vnstudio.talktoai.presentation.base.DataEditDialog
+import com.vnstudio.talktoai.presentation.chat.ChatViewModel
 import com.vnstudio.talktoai.ui.theme.*
 import kotlinx.coroutines.launch
 import java.util.*
@@ -38,11 +36,11 @@ fun MainScreen(
     onSettingsClicked: () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
-    val viewModel: MainViewModel = hiltViewModel()
+    val viewModel: ChatViewModel = hiltViewModel()
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     val chats = viewModel.chatsLiveData.observeAsState(listOf())
-    var showEditDataDialog = mutableStateOf(false)
+    val showEditDataDialog = mutableStateOf(false)
     var showConfirmationDialog by remember { mutableStateOf(false) }
     val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }
     val deletedChat = remember { mutableStateOf(Chat()) }

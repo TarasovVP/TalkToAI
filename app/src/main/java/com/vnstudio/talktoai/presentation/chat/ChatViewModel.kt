@@ -18,8 +18,45 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(application: Application, private val chatUseCase: ChatUseCase) : BaseViewModel(application) {
 
+    val chatsLiveData = MutableLiveData<List<Chat>>()
     val currentChatLiveData = MutableLiveData<Chat>()
     val messagesLiveData = MutableLiveData<List<Message>>()
+
+    fun getChats() {
+        showProgress()
+        viewModelScope.launch {
+            chatUseCase.getChats().catch {
+                hideProgress()
+                Log.e("apiTAG", "MainViewModel getChats catch localizedMessage ${it.localizedMessage}")
+            }.collect { chats ->
+                chatsLiveData.postValue(chats)
+                hideProgress()
+                Log.e("apiTAG", "MainViewModel getChats chats $chats")
+            }
+        }
+    }
+
+    fun updateChat(chat: Chat) {
+        showProgress()
+        viewModelScope.launch {
+            chatUseCase.updateChat(chat)
+        }
+    }
+
+    fun deleteChat(chat: Chat) {
+        showProgress()
+        viewModelScope.launch {
+            chatUseCase.deleteChat(chat)
+            chatUseCase.deleteMessagesFromChat(chat.chatId)
+        }
+    }
+
+    fun updateChats(chats: List<Chat>) {
+        showProgress()
+        viewModelScope.launch {
+            chatUseCase.updateChats(chats)
+        }
+    }
 
     fun insertChat(chat: Chat) {
         showProgress()
