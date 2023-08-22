@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai
 
+import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
@@ -78,5 +79,13 @@ object CommonExtensions {
         config.setLocale(locale)
         config.setLayoutDirection(locale)
         return createConfigurationContext(config)
+    }
+
+    fun Application.isNetworkAvailable(): Boolean {
+        return when(this) {
+            is TalkToAIApp -> isNetworkAvailable.isTrue()
+            //is HiltTestApplication -> true
+            else -> false
+        }
     }
 }

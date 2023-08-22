@@ -1,4 +1,4 @@
-package com.vnstudio.talktoai.presentation.onboarding
+package com.vnstudio.talktoai.presentation.onboarding.onboarding
 
 import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
 import com.vnstudio.talktoai.domain.usecases.OnBoardingUseCase

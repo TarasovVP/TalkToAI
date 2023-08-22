@@ -24,7 +24,7 @@ import com.vnstudio.talktoai.domain.usecases.OnBoardingUseCase
 import com.vnstudio.talktoai.domain.usecases.SettingsUseCase
 import com.vnstudio.talktoai.presentation.chat.ChatUseCaseImpl
 import com.vnstudio.talktoai.presentation.main.MainUseCaseImpl
-import com.vnstudio.talktoai.presentation.onboarding.OnBoardingUseCaseImpl
+import com.vnstudio.talktoai.presentation.onboarding.onboarding.OnBoardingUseCaseImpl
 import com.vnstudio.talktoai.presentation.settings.SettingsUseCaseImpl
 import dagger.Module
 import dagger.Provides

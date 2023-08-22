@@ -1,16 +1,14 @@
 package com.vnstudio.talktoai.presentation
 
 import androidx.compose.runtime.*
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.vnstudio.talktoai.presentation.chat.ChatScreen
-import com.vnstudio.talktoai.presentation.chat.ChatViewModel
 import com.vnstudio.talktoai.presentation.main.MainScreen
-import com.vnstudio.talktoai.presentation.onboarding.LoginScreen
-import com.vnstudio.talktoai.presentation.onboarding.OnboardingScreen
+import com.vnstudio.talktoai.presentation.onboarding.login.LoginScreen
+import com.vnstudio.talktoai.presentation.onboarding.onboarding.OnboardingScreen
 import com.vnstudio.talktoai.presentation.onboarding.SignUpScreen
 import com.vnstudio.talktoai.presentation.settings.SettingsScreen
 
