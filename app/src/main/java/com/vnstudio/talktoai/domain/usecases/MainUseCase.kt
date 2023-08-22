@@ -8,6 +8,8 @@ interface  MainUseCase {
 
     suspend fun getOnBoardingSeen(): Flow<Boolean?>
 
+    fun isLoggedInUser(): Boolean
+
     fun getCurrentUser(result: (Result<CurrentUser>) -> Unit)
 
     suspend fun setReviewVoted(isReviewVoted: Boolean)

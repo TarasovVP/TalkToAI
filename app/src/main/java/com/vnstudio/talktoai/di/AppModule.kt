@@ -20,12 +20,15 @@ import com.vnstudio.talktoai.data.repositoryimpl.*
 import com.vnstudio.talktoai.domain.repositories.*
 import com.vnstudio.talktoai.domain.usecases.ChatUseCase
 import com.vnstudio.talktoai.domain.usecases.MainUseCase
+import com.vnstudio.talktoai.domain.usecases.OnBoardingUseCase
 import com.vnstudio.talktoai.domain.usecases.SettingsUseCase
 import com.vnstudio.talktoai.presentation.chat.ChatUseCaseImpl
 import com.vnstudio.talktoai.presentation.main.MainUseCaseImpl
+import com.vnstudio.talktoai.presentation.onboarding.OnBoardingUseCaseImpl
 import com.vnstudio.talktoai.presentation.settings.SettingsUseCaseImpl
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
@@ -154,14 +157,20 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideOnBoardingUseCase(dataStoreRepository: DataStoreRepository): OnBoardingUseCase {
+        return OnBoardingUseCaseImpl(dataStoreRepository)
+    }
+
+    @Singleton
+    @Provides
     fun provideChatUseCase(chatRepository: ChatRepository, messageRepository: MessageRepository): ChatUseCase {
         return ChatUseCaseImpl(chatRepository, messageRepository)
     }
 
     @Singleton
     @Provides
-    fun provideMainUseCase(dataStoreRepository: DataStoreRepository, realDataBaseRepository: RealDataBaseRepository): MainUseCase {
-        return MainUseCaseImpl(dataStoreRepository, realDataBaseRepository)
+    fun provideMainUseCase(firebaseAuth: FirebaseAuth, dataStoreRepository: DataStoreRepository, realDataBaseRepository: RealDataBaseRepository): MainUseCase {
+        return MainUseCaseImpl(firebaseAuth, dataStoreRepository, realDataBaseRepository)
     }
 
     @Singleton
@@ -175,4 +184,9 @@ object AppModule {
     fun provideSettingsUseCase(settingsRepository: SettingsRepository): SettingsUseCase {
         return SettingsUseCaseImpl(settingsRepository)
     }
+}
+@EntryPoint
+@InstallIn(SingletonComponent::class)
+interface DataStoreEntryPoint {
+    val dataStoreRepository: DataStoreRepository
 }

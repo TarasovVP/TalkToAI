@@ -191,7 +191,7 @@ fun AIMessage(text: String, onLongClick: () -> Unit) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .combinedClickable(
-                onClick = {  },
+                onClick = { },
                 onLongClick = onLongClick
             )
     ) {

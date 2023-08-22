@@ -25,6 +25,10 @@ class MainViewModel @Inject constructor(private val mainUseCase: MainUseCase, ap
         }
     }
 
+    fun isLoggedInUser(): Boolean {
+        return mainUseCase.isLoggedInUser()
+    }
+
     fun getCurrentUser() {
         launch {
             mainUseCase.getCurrentUser { operationResult ->

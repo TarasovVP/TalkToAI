@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import retrofit2.Response
 import com.vnstudio.talktoai.data.network.Result
+import java.util.*
 
 object CommonExtensions {
 
@@ -69,4 +70,13 @@ object CommonExtensions {
     fun Boolean?.isTrue() = this == true
 
     fun Boolean?.isNotTrue() = this != true
+
+    fun Context.setAppLocale(language: String): Context {
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+        val config = resources.configuration
+        config.setLocale(locale)
+        config.setLayoutDirection(locale)
+        return createConfigurationContext(config)
+    }
 }
