@@ -9,7 +9,7 @@ import com.vnstudio.talktoai.presentation.chat.ChatScreen
 import com.vnstudio.talktoai.presentation.main.MainScreen
 import com.vnstudio.talktoai.presentation.onboarding.login.LoginScreen
 import com.vnstudio.talktoai.presentation.onboarding.onboarding.OnboardingScreen
-import com.vnstudio.talktoai.presentation.onboarding.SignUpScreen
+import com.vnstudio.talktoai.presentation.onboarding.signup.SignUpScreen
 import com.vnstudio.talktoai.presentation.settings.SettingsScreen
 
 @Composable
