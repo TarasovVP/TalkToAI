@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
@@ -18,13 +19,12 @@ import com.vnstudio.talktoai.data.network.ApiService
 import com.vnstudio.talktoai.data.network.HeaderInterceptor
 import com.vnstudio.talktoai.data.repositoryimpl.*
 import com.vnstudio.talktoai.domain.repositories.*
-import com.vnstudio.talktoai.domain.usecases.ChatUseCase
-import com.vnstudio.talktoai.domain.usecases.MainUseCase
-import com.vnstudio.talktoai.domain.usecases.OnBoardingUseCase
-import com.vnstudio.talktoai.domain.usecases.SettingsUseCase
+import com.vnstudio.talktoai.domain.usecases.*
 import com.vnstudio.talktoai.presentation.chat.ChatUseCaseImpl
 import com.vnstudio.talktoai.presentation.main.MainUseCaseImpl
+import com.vnstudio.talktoai.presentation.onboarding.login.LoginUseCaseImpl
 import com.vnstudio.talktoai.presentation.onboarding.onboarding.OnBoardingUseCaseImpl
+import com.vnstudio.talktoai.presentation.onboarding.signup.SignUpUseCaseImpl
 import com.vnstudio.talktoai.presentation.settings.SettingsUseCaseImpl
 import dagger.Module
 import dagger.Provides
@@ -159,6 +159,30 @@ object AppModule {
     @Provides
     fun provideOnBoardingUseCase(dataStoreRepository: DataStoreRepository): OnBoardingUseCase {
         return OnBoardingUseCaseImpl(dataStoreRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideAuthRepository(
+        firebaseAuth: FirebaseAuth,
+        googleSignInClient: GoogleSignInClient,
+    ): AuthRepository {
+        return AuthRepositoryImpl(firebaseAuth, googleSignInClient)
+    }
+
+    @Singleton
+    @Provides
+    fun provideLoginUseCase(authRepository: AuthRepository): LoginUseCase {
+        return LoginUseCaseImpl(authRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSignUpUseCase(
+        authRepository: AuthRepository,
+        realDataBaseRepository: RealDataBaseRepository,
+    ): SignUpUseCase {
+        return SignUpUseCaseImpl(authRepository, realDataBaseRepository)
     }
 
     @Singleton
