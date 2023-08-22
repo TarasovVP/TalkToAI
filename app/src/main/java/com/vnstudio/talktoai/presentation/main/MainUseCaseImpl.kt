@@ -1,5 +1,7 @@
 package com.vnstudio.talktoai.presentation.main
 
+import com.google.firebase.auth.FirebaseAuth
+import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.data.network.Result
 import com.vnstudio.talktoai.domain.models.CurrentUser
 import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
@@ -8,12 +10,15 @@ import com.vnstudio.talktoai.domain.usecases.MainUseCase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class MainUseCaseImpl @Inject constructor(private val dataStoreRepository: DataStoreRepository, private val realDataBaseRepository: RealDataBaseRepository) : MainUseCase {
+class MainUseCaseImpl @Inject constructor(private val firebaseAuth: FirebaseAuth, private val dataStoreRepository: DataStoreRepository, private val realDataBaseRepository: RealDataBaseRepository) : MainUseCase {
 
     override suspend fun getOnBoardingSeen(): Flow<Boolean?> {
         return dataStoreRepository.onBoardingSeen()
     }
 
+    override fun isLoggedInUser(): Boolean {
+        return firebaseAuth.currentUser.isNotNull()
+    }
 
     override fun getCurrentUser(result: (Result<CurrentUser>) -> Unit) = realDataBaseRepository.getCurrentUser { operationResult ->
         result.invoke(operationResult)
