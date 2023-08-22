@@ -1,4 +1,4 @@
-package com.vnstudio.talktoai.presentation.onboarding
+package com.vnstudio.talktoai.presentation.onboarding.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
