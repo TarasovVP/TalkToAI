@@ -2,6 +2,7 @@ package com.vnstudio.talktoai.presentation.onboarding.signup
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
 import com.vnstudio.talktoai.data.network.Result
 import com.vnstudio.talktoai.domain.models.CurrentUser
@@ -13,7 +14,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val application: Application,
-    private val signUpUseCase: SignUpUseCase
+    private val signUpUseCase: SignUpUseCase,
+    val googleSignInClient: GoogleSignInClient
 ) : BaseViewModel(application) {
 
     val accountExistLiveData = MutableLiveData<Unit>()
