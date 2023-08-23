@@ -26,6 +26,7 @@ android {
         buildConfigField('String', 'OPENAI_API_KEY', OPENAI_API_KEY)
         buildConfigField('String', 'ORGANIZATION_ID', ORGANIZATION_ID)
         buildConfigField('String', 'BASE_URL', BASE_URL)
+        buildConfigField('String', 'SERVER_CLIENT_ID', SERVER_CLIENT_ID)
         buildConfigField('String', 'REALTIME_DATABASE', REALTIME_DATABASE)
     }
 
