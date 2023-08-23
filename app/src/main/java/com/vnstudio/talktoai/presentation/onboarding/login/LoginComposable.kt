@@ -1,9 +1,12 @@
 package com.vnstudio.talktoai.presentation.onboarding.login
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -11,14 +14,64 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes
 import com.vnstudio.talktoai.presentation.base.OrDivider
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.ui.theme.Primary50
 
 @Composable
-fun LoginScreen(onClick: () -> Unit) {
-    val loginInputValue = remember { mutableStateOf(TextFieldValue()) }
+fun LoginScreen(onNextScreen: (String) -> Unit) {
+    val viewModel: LoginViewModel = hiltViewModel()
+    val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
+    val showForgotPasswordDialog = mutableStateOf(false)
+    val showAccountExistDialog = mutableStateOf(false)
+    val showUnauthorizedEnterDialog = mutableStateOf(false)
+
+    val accountExistState = viewModel.accountExistLiveData.observeAsState()
+    LaunchedEffect(accountExistState.value) {
+        accountExistState.value?.let {
+            showAccountExistDialog.value = true
+        }
+    }
+    val isEmailAccountExistState = viewModel.isEmailAccountExistLiveData.observeAsState()
+    LaunchedEffect(isEmailAccountExistState.value) {
+        isEmailAccountExistState.value?.let {
+            viewModel.signInWithEmailAndPassword(emailInputValue.value.text,
+                passwordInputValue.value.text)
+        }
+    }
+    val isGoogleAccountExistState = viewModel.isGoogleAccountExistLiveData.observeAsState()
+    LaunchedEffect(isGoogleAccountExistState.value) {
+        isGoogleAccountExistState.value?.let { idToken ->
+            viewModel.signInAuthWithGoogle(idToken)
+        }
+    }
+    val successPasswordResetState = viewModel.successPasswordResetLiveData.observeAsState()
+    LaunchedEffect(successPasswordResetState.value) {
+        successPasswordResetState.value?.let {
+            viewModel.exceptionLiveData.postValue("Пароль успешно сброшен")
+        }
+    }
+    val successSignInState = viewModel.successSignInLiveData.observeAsState()
+    LaunchedEffect(successSignInState.value) {
+        successSignInState.value?.let {
+            onNextScreen.invoke("destination_chat_screen")
+        }
+    }
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
+        } catch (e: ApiException) {
+            viewModel.exceptionLiveData.postValue(CommonStatusCodes.getStatusCodeString(e.statusCode))
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -34,29 +87,57 @@ fun LoginScreen(onClick: () -> Unit) {
         GoogleButton(modifier = Modifier
             .align(Alignment.CenterHorizontally)
             .padding(16.dp)) {
-            onClick.invoke()
+            launcher.launch(viewModel.googleSignInClient.signInIntent)
         }
         OrDivider(modifier = Modifier)
-        PrimaryTextField("Email", loginInputValue)
+        PrimaryTextField("Email", emailInputValue)
         PasswordTextField(passwordInputValue)
         Row {
             TextButton(onClick = {
-
-            }, modifier = Modifier.fillMaxWidth().weight(1f)) {
+                onNextScreen.invoke("destination_sign_up_screen")
+            }, modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)) {
                 Text(text = "Регистрация", color = Color.Blue)
             }
             TextButton(onClick = {
-
-            }, modifier = Modifier.fillMaxWidth().weight(1f)) {
+                showForgotPasswordDialog.value = true
+            }, modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)) {
                 Text(text = "Забыли пароль?", color = Color.Blue, textAlign = TextAlign.End)
             }
         }
-        PrimaryButton(text = "Войти", modifier = Modifier, onClick = onClick)
+        PrimaryButton(text = "Войти", modifier = Modifier) {
+            viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text)
+        }
         OrDivider(modifier = Modifier)
         SecondaryButton(text = "Без регистрации", modifier = Modifier) {
-
+            showUnauthorizedEnterDialog.value = true
         }
     }
+
+    DataEditDialog("Введите ваш Email и мы отправим  Ваш пароль", "Email", emailInputValue, showForgotPasswordDialog, onDismiss = {
+        showForgotPasswordDialog.value = false
+    }) { email ->
+        viewModel.sendPasswordResetEmail(email)
+        showForgotPasswordDialog.value = false
+    }
+
+    ConfirmationDialog("Пользователя с таким Email не существует. Сначала необходимо создать аккаунт. Перейти на экран регистрации?", showUnauthorizedEnterDialog.value, onDismiss = {
+        showAccountExistDialog.value = false
+    }, onConfirmationClick = {
+        viewModel.googleSignInClient.signOut()
+        showAccountExistDialog.value = false
+        onNextScreen.invoke("destination_sign_up_screen")
+    })
+
+    ConfirmationDialog("У неавторизованого пользователя недоступен ряд возмножностей. В том числе нет доступа к хранению данных в удаленном доступе", showAccountExistDialog.value, onDismiss = {
+        showUnauthorizedEnterDialog.value = false
+    }, onConfirmationClick = {
+        viewModel.signInAnonymously()
+        showUnauthorizedEnterDialog.value = false
+    })
 }
 
 @Preview(showBackground = false)
