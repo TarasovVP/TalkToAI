@@ -22,8 +22,8 @@ import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.presentation.base.AddChatItem
-import com.vnstudio.talktoai.presentation.base.ConfirmationDialog
-import com.vnstudio.talktoai.presentation.base.DataEditDialog
+import com.vnstudio.talktoai.presentation.components.ConfirmationDialog
+import com.vnstudio.talktoai.presentation.components.DataEditDialog
 import com.vnstudio.talktoai.presentation.chat.ChatViewModel
 import com.vnstudio.talktoai.ui.theme.*
 import kotlinx.coroutines.launch

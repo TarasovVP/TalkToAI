@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.vnstudio.talktoai.presentation.base.PrimaryButton
+import com.vnstudio.talktoai.presentation.components.PrimaryButton
 
 @Composable
 fun SettingsScreen(onClick: () -> Unit, ) {

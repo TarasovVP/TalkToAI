@@ -36,7 +36,8 @@ import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.models.MessageApi
 import com.vnstudio.talktoai.presentation.base.AddChatItem
-import com.vnstudio.talktoai.presentation.base.DataEditDialog
+import com.vnstudio.talktoai.presentation.components.ChatTextField
+import com.vnstudio.talktoai.presentation.components.DataEditDialog
 import com.vnstudio.talktoai.ui.theme.*
 import java.util.*
 
@@ -235,57 +236,6 @@ fun AIMessage(text: String, onLongClick: () -> Unit) {
                 )
             }
         }
-    }
-}
-
-@Composable
-fun ChatTextField(
-    inputValue: MutableState<TextFieldValue>,
-    onSendClick: (String) -> Unit
-) {
-    val focusManager = LocalFocusManager.current
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .background(color = Primary900)
-        .height(IntrinsicSize.Min)) {
-        TextField(value = inputValue.value,
-            onValueChange = { newValue ->
-            inputValue.value = newValue
-        }, placeholder = { Text(text = "Enter request") },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.White,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            ),
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
-                .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(16.dp)
-                ),
-            maxLines = 6,
-            trailingIcon = {
-            Box(
-                modifier = Modifier
-                    .clickable {
-                        onSendClick.invoke(inputValue.value.text)
-                        inputValue.value = TextFieldValue(String.EMPTY)
-                        focusManager.clearFocus()
-
-                    }
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(if (inputValue.value.text.isEmpty()) R.drawable.ic_voice_record else R.drawable.ic_message_send),
-                    contentDescription = "Send message button",
-                    tint = Primary900
-                )
-            }
-        }
-        )
     }
 }
 
