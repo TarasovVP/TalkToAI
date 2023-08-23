@@ -24,6 +24,7 @@ import com.vnstudio.talktoai.ui.theme.Primary50
 
 @Composable
 fun LoginScreen(onNextScreen: (String) -> Unit) {
+
     val viewModel: LoginViewModel = hiltViewModel()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }

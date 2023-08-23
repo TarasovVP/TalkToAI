@@ -1,18 +1,121 @@
 package com.vnstudio.talktoai.presentation.onboarding.signup
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.vnstudio.talktoai.presentation.components.PrimaryButton
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes
+import com.vnstudio.talktoai.presentation.base.OrDivider
+import com.vnstudio.talktoai.presentation.components.*
+import com.vnstudio.talktoai.presentation.onboarding.login.LoginScreen
+import com.vnstudio.talktoai.ui.theme.Primary50
 
 @Composable
-fun SignUpScreen(onClick: () -> Unit, ) {
+fun SignUpScreen(onNextScreen: (String) -> Unit) {
+
+    val viewModel: SignUpViewModel = hiltViewModel()
+    val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
+    val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
+    val showAccountExistDialog = mutableStateOf(false)
+
+    val accountExistState = viewModel.accountExistLiveData.observeAsState()
+    LaunchedEffect(accountExistState.value) {
+        accountExistState.value?.let {
+            showAccountExistDialog.value = true
+        }
+    }
+    val isEmailAccountExistState = viewModel.createEmailAccountLiveData.observeAsState()
+    LaunchedEffect(isEmailAccountExistState.value) {
+        isEmailAccountExistState.value?.let {
+            viewModel.createUserWithEmailAndPassword(emailInputValue.value.text,
+                passwordInputValue.value.text)
+        }
+    }
+    val isGoogleAccountExistState = viewModel.createGoogleAccountLiveData.observeAsState()
+    LaunchedEffect(isGoogleAccountExistState.value) {
+        isGoogleAccountExistState.value?.let { idToken ->
+            viewModel.createUserWithGoogle(idToken)
+        }
+    }
+    val successSignInState = viewModel.createCurrentUserLiveData.observeAsState()
+    LaunchedEffect(successSignInState.value) {
+        successSignInState.value?.let {
+            onNextScreen.invoke("destination_chat_screen")
+        }
+    }
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
+        } catch (e: ApiException) {
+            viewModel.exceptionLiveData.postValue(CommonStatusCodes.getStatusCodeString(e.statusCode))
+        }
+    }
+
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .background(Primary50),
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "SignUp Screen")
-        PrimaryButton(text = "Click", modifier = Modifier, onClick = onClick)
+        Text(
+            text = "Регистрация", modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp), textAlign = TextAlign.Center
+        )
+        Text(
+            text = "С помощью Google",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+        GoogleButton(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(16.dp)
+        ) {
+            launcher.launch(viewModel.googleSignInClient.signInIntent)
+        }
+        OrDivider(modifier = Modifier)
+        PrimaryTextField("Email", emailInputValue)
+        PasswordTextField(passwordInputValue)
+        Row {
+            Text(text = "Есть аккаунт?")
+            TextButton(
+                onClick = {
+                    onNextScreen.invoke("destination_sign_up_screen")
+                }, modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                Text(text = "Регистрация", color = Color.Blue)
+            }
+        }
+        PrimaryButton(text = "Войти", modifier = Modifier) {
+            viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text)
+        }
+    }
+}
+
+@Preview(showBackground = false)
+@Composable
+fun DefaultPreview() {
+    SignUpScreen {
+
     }
 }
