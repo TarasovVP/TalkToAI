@@ -46,15 +46,15 @@ fun AppNavGraph(
         composable(
             route = "destination_login_screen"
         ) {
-            LoginScreen {
-                navController.navigate("destination_chat_screen")
+            LoginScreen { destination ->
+                navController.navigate(destination)
             }
         }
         composable(
             route = "destination_sign_up_screen"
         ) {
-            SignUpScreen {
-
+            SignUpScreen { destination ->
+                navController.navigate(destination)
             }
         }
         composable(

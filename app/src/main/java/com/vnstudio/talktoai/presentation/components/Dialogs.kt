@@ -5,8 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
@@ -33,7 +31,7 @@ fun ConfirmationDialog(title: String, showDialog: Boolean, onDismiss: () -> Unit
                         Text(text = title, modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp), textAlign = TextAlign.Center,)
-                        SubmitButtons(onDismiss, onConfirmationClick)
+                        SubmitButtons(null, onDismiss, onConfirmationClick)
                     }
                 }
             )
@@ -58,7 +56,7 @@ fun DataEditDialog(title: String, placeHolder: String, inputValue: MutableState<
                             .fillMaxWidth()
                             .padding(16.dp), textAlign = TextAlign.Center,)
                         SecondaryTextField(inputValue, placeHolder)
-                        SubmitButtons(onDismiss) {
+                        SubmitButtons(inputValue, onDismiss) {
                             onConfirmationClick.invoke(inputValue.value.text)
                         }
                     }
