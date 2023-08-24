@@ -109,7 +109,7 @@ fun LoginScreen(onNextScreen: (String) -> Unit) {
                 Text(text = "Забыли пароль?", color = Color.Blue, textAlign = TextAlign.End)
             }
         }
-        PrimaryButton(text = "Войти", modifier = Modifier) {
+        PrimaryButton(text = "Войти", emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(), modifier = Modifier) {
             viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text)
         }
         OrDivider(modifier = Modifier)

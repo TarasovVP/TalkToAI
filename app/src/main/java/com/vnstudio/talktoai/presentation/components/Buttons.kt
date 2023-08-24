@@ -9,10 +9,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnstudio.talktoai.R
@@ -50,14 +52,18 @@ fun SecondaryButton(text: String, modifier: Modifier, onClick: () -> Unit) {
 }
 
 @Composable
-fun SubmitButtons(onDismiss: () -> Unit, onConfirmationClick: () -> Unit) {
+fun SubmitButtons(
+    inputValue: MutableState<TextFieldValue>? = null,
+    onDismiss: () -> Unit,
+    onConfirmationClick: () -> Unit
+) {
     Row(modifier = Modifier
         .fillMaxWidth()
         .padding(8.dp),
         horizontalArrangement = Arrangement.Center
     ) {
         SecondaryButton(text = "Cancel", Modifier.weight(1f), onClick = onDismiss)
-        PrimaryButton(text = "OK", true, Modifier.weight(1f)) {
+        PrimaryButton(text = "OK", inputValue?.value?.text.orEmpty().isNotEmpty(), Modifier.weight(1f)) {
             onConfirmationClick.invoke()
         }
     }

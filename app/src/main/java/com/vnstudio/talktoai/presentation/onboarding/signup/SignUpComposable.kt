@@ -20,7 +20,6 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.vnstudio.talktoai.presentation.base.OrDivider
 import com.vnstudio.talktoai.presentation.components.*
-import com.vnstudio.talktoai.presentation.onboarding.login.LoginScreen
 import com.vnstudio.talktoai.ui.theme.Primary50
 
 @Composable
@@ -98,15 +97,15 @@ fun SignUpScreen(onNextScreen: (String) -> Unit) {
             Text(text = "Есть аккаунт?")
             TextButton(
                 onClick = {
-                    onNextScreen.invoke("destination_sign_up_screen")
+                    onNextScreen.invoke("destination_login_screen")
                 }, modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                Text(text = "Регистрация", color = Color.Blue)
+                Text(text = "Вход", color = Color.Blue)
             }
         }
-        PrimaryButton(text = "Войти", modifier = Modifier) {
+        PrimaryButton(text = "Зарегистрироваться", emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(), modifier = Modifier) {
             viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text)
         }
     }
