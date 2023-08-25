@@ -37,47 +37,240 @@ import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.models.MessageApi
 import com.vnstudio.talktoai.presentation.base.AddChatItem
 import com.vnstudio.talktoai.presentation.components.ChatTextField
+import com.vnstudio.talktoai.presentation.components.ConfirmationDialog
 import com.vnstudio.talktoai.presentation.components.DataEditDialog
 import com.vnstudio.talktoai.ui.theme.*
+import kotlinx.coroutines.launch
 import java.util.*
 
 @Composable
-fun ChatScreen(showCreateDataDialog: MutableState<Boolean>) {
-
+fun ChatScreen(
+    onChatClicked: () -> Unit,
+    onSettingsClicked: () -> Unit
+) {
     val viewModel: ChatViewModel = hiltViewModel()
-    val inputValue = remember { mutableStateOf(TextFieldValue()) }
-    val currentChat = viewModel.currentChatLiveData.observeAsState()
-    val messages = viewModel.messagesLiveData.observeAsState()
-    //val loading = viewModel.isProgressProcessLiveData.observeAsState()
+    val scope = rememberCoroutineScope()
+    val scaffoldState = rememberScaffoldState()
+    val chats = viewModel.chatsLiveData.observeAsState(listOf())
+    val showCreateDataDialog = remember { mutableStateOf(false) }
+    val showEditDataDialog = remember { mutableStateOf(false) }
+    val showConfirmationDialog = remember { mutableStateOf(false) }
+    val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }
+    val deletedChat = remember { mutableStateOf(Chat()) }
 
     LaunchedEffect(viewModel){
+        viewModel.getChats()
+    }
+
+    Log.e(
+        "apiTAG",
+        "MainScreen chats ${chats.value}"
+    )
+
+
+    Scaffold(
+        scaffoldState = scaffoldState,
+        topBar = {
+            TopAppBar(
+                title = { Text(text = chats.value.firstOrNull()?.name ?: "Talk to AI") },
+                backgroundColor = Primary900,
+                contentColor = Neutral50,
+                navigationIcon = {
+                    IconButton(onClick = {
+                        scope.launch {
+                            if (scaffoldState.drawerState.isClosed) {
+                                scaffoldState.drawerState.open()
+                            } else {
+                                scaffoldState.drawerState.close()
+                            }
+                        }
+                    }) {
+                        Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_navigation), contentDescription = "Navigation icon", tint = Primary100)
+                    }
+                },
+                actions = {
+                    if (chats.value.isNotEmpty()) {
+                        IconButton(
+                            onClick = {
+                                showEditDataDialog.value = true
+                            }
+                        ) {
+                            Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_edit), contentDescription = "Edit title", tint = Primary100)
+                        }
+                    }
+                }
+            )
+        },
+
+        drawerContent = {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Primary900)
+
+            ) {
+                AddChatItem(Modifier.padding(top = 40.dp, bottom = 24.dp, start = 16.dp, end = 16.dp)) {
+                    showCreateDataDialog.value = true
+                }
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    items(chats.value.orEmpty()) { chat ->
+                        ChatItem(chat = chat, chats.value.indexOf(chat) == 0, onChatClick = {
+                            onChatClicked.invoke()
+                            viewModel.updateChats(chats.value.onEach { if (it.chatId == chat.chatId) it.updated = Date().time })
+                            scope.launch {
+                                scaffoldState.drawerState.close()
+                            }
+                        }, onDeleteIconClick = {
+                            deletedChat.value = it
+                            showConfirmationDialog.value = true
+                        })
+                    }
+                }
+                SettingsItem{
+                    onSettingsClicked.invoke()
+                    scope.launch {
+                        scaffoldState.drawerState.close()
+                    }
+                }
+            }
+        }, content = {
+            MessagesScreen(viewModel = viewModel, showCreateDataDialog = showCreateDataDialog)
+        }
+    )
+    inputValue.value = TextFieldValue( if (showCreateDataDialog.value) "Без названия" else chats.value.firstOrNull()?.name.orEmpty())
+
+    DataEditDialog("Создать новый чат?", "Имя чата", inputValue, showCreateDataDialog, onDismiss = {
+        showCreateDataDialog.value = false
+    }) { newChatName ->
+        viewModel.insertChat(Chat(name = newChatName, updated = Date().time))
+        showCreateDataDialog.value = false
+        scope.launch {
+            scaffoldState.drawerState.close()
+        }
+    }
+
+    DataEditDialog("Edit chat name", "Chat name", inputValue, showEditDataDialog, onDismiss = {
+        showEditDataDialog.value = false
+    }) { newChatName ->
+        viewModel.updateChat(chats.value.orEmpty().first().apply {
+            name = newChatName
+        })
+        showEditDataDialog.value = false
+    }
+
+    ConfirmationDialog("Delete chat?", showConfirmationDialog, onDismiss = {
+        showConfirmationDialog.value = false
+    }) {
+        viewModel.deleteChat(deletedChat.value)
+        showConfirmationDialog.value = false
+        deletedChat.value = Chat()
+    }
+}
+
+@Composable
+fun ChatItem(chat: Chat, isCurrent: Boolean, onChatClick: () -> Unit, onDeleteIconClick: (Chat) -> Unit) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+        .let { modifier ->
+            if (isCurrent) {
+                modifier.background(color = Primary800, shape = RoundedCornerShape(16.dp))
+            } else {
+                modifier.clickable {
+                    onChatClick.invoke()
+                }
+            }
+        }) {
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_chat),
+            contentDescription = "Chat item icon",
+            modifier = Modifier
+                .padding(8.dp)
+        )
+        Text(
+            text = chat.name,
+            fontSize = 16.sp,
+            color = Neutral50,
+            modifier = Modifier
+                .weight(1f)
+                .padding(vertical = 8.dp)
+        )
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_delete),
+            contentDescription = "Delete chat button",
+            modifier = Modifier
+                .padding(8.dp)
+                .clickable {
+                    onDeleteIconClick.invoke(chat)
+                }
+        )
+    }
+}
+
+@Composable
+fun SettingsItem(onSettingsClicked: () -> Unit) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .background(color = Primary700)
+        .clickable {
+            onSettingsClicked.invoke()
+        }) {
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_settings),
+            contentDescription = "Settings item icon",
+            modifier = Modifier
+                .padding(top = 16.dp, bottom = 40.dp, start = 32.dp, end = 8.dp)
+        )
+        Text(
+            text = "Settings",
+            fontSize = 16.sp,
+            color = Neutral50,
+            modifier = Modifier
+                .weight(1f)
+                .padding(top = 16.dp, bottom = 40.dp, end = 32.dp)
+        )
+    }
+}
+
+@Composable
+fun MessagesScreen(viewModel: ChatViewModel, showCreateDataDialog: MutableState<Boolean>) {
+
+    val inputValue = remember { mutableStateOf(TextFieldValue()) }
+    val currentChatState = viewModel.currentChatLiveData.observeAsState()
+    val messagesState = viewModel.messagesLiveData.observeAsState()
+
+    LaunchedEffect(Unit) {
         viewModel.getCurrentChat()
     }
 
     Log.e(
         "apiTAG",
-        "ChatComposable fun ChatContent messages.size ${messages.value?.size} "
+        "ChatComposable fun ChatContent messages.size ${messagesState.value?.size} "
     )
-    Log.e("messagesTAG", "ChatComposable fun ChatContent messages ${messages.value?.map { it.message }}")
+    Log.e("messagesTAG", "ChatComposable fun ChatContent messages ${messagesState.value?.map { it.message }}")
 
     Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Top
     ) {
-        if (messages.value.isNullOrEmpty()) {
-            IntroMessage(currentChat.value == null,
+        if (messagesState.value.isNullOrEmpty()) {
+            IntroMessage(currentChatState.value == null,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(45.dp)
                     .weight(1f),
             )
         } else {
-            MessageList(messages.value.orEmpty(), modifier = Modifier
+            MessageList(messagesState.value.orEmpty(), modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 16.dp))
         }
-        if (currentChat.value == null) {
+        if (currentChatState.value == null) {
             AddChatItem(Modifier.padding(start = 45.dp, end = 45.dp, bottom = 45.dp)) {
                 showCreateDataDialog.value = true
                 Log.e("apiTAG", "ChatContent AddChatItem click")
@@ -87,8 +280,8 @@ fun ChatScreen(showCreateDataDialog: MutableState<Boolean>) {
                 if (messageText.isEmpty()) {
                     Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
                 } else {
-                    viewModel.insertMessage(Message(chatId = currentChat.value?.chatId ?: 0, author = "me", message = messageText, createdAt = Date().time))
-                    viewModel.insertMessage(Message(chatId = currentChat.value?.chatId ?: 0, author = "gpt-3.5-turbo", message = String.EMPTY, createdAt = 0))
+                    viewModel.insertMessage(Message(chatId = currentChatState.value?.chatId ?: 0, author = "me", message = messageText, createdAt = Date().time))
+                    viewModel.insertMessage(Message(chatId = currentChatState.value?.chatId ?: 0, author = "gpt-3.5-turbo", message = String.EMPTY, createdAt = 0))
                     viewModel.sendRequest(ApiRequest(model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
                         MessageApi(role = "user", content = messageText)
                     )))
@@ -236,17 +429,6 @@ fun AIMessage(text: String, onLongClick: () -> Unit) {
                 )
             }
         }
-    }
-}
-
-@Composable
-fun CircularProgressBar() {
-    Box(contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(
-            modifier = Modifier
-                .fillMaxSize(0.25f),
-            color = Color.Green
-        )
     }
 }
 
