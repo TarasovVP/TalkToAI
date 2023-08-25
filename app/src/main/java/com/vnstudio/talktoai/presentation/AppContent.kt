@@ -59,8 +59,8 @@ fun AppContent(
         composable(
             route = "destination_settings_list_screen"
         ) {
-            SettingsListScreen {
-
+            SettingsListScreen { destination ->
+                navController.navigate(destination)
             }
         }
         composable(
