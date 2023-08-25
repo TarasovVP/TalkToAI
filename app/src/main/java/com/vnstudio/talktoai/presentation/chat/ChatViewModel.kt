@@ -24,7 +24,7 @@ class ChatViewModel @Inject constructor(application: Application, private val ch
 
     fun getChats() {
         showProgress()
-        viewModelScope.launch {
+        launch {
             chatUseCase.getChats().catch {
                 hideProgress()
                 Log.e("apiTAG", "MainViewModel getChats catch localizedMessage ${it.localizedMessage}")
@@ -38,14 +38,14 @@ class ChatViewModel @Inject constructor(application: Application, private val ch
 
     fun updateChat(chat: Chat) {
         showProgress()
-        viewModelScope.launch {
+        launch {
             chatUseCase.updateChat(chat)
         }
     }
 
     fun deleteChat(chat: Chat) {
         showProgress()
-        viewModelScope.launch {
+        launch {
             chatUseCase.deleteChat(chat)
             chatUseCase.deleteMessagesFromChat(chat.chatId)
         }
@@ -53,20 +53,20 @@ class ChatViewModel @Inject constructor(application: Application, private val ch
 
     fun updateChats(chats: List<Chat>) {
         showProgress()
-        viewModelScope.launch {
+        launch {
             chatUseCase.updateChats(chats)
         }
     }
 
     fun insertChat(chat: Chat) {
         showProgress()
-        viewModelScope.launch {
+        launch {
             chatUseCase.insertChat(chat)
         }
     }
 
     fun getCurrentChat() {
-        viewModelScope.launch {
+        launch {
             chatUseCase.getCurrentChat().catch {
                 hideProgress()
                 Log.e("apiTAG", "ChatViewModel getCurrentChat catch localizedMessage ${it.localizedMessage}")
@@ -80,7 +80,7 @@ class ChatViewModel @Inject constructor(application: Application, private val ch
 
     private fun getMessagesFromChat(chatId: Int) {
         Log.e("messagesTAG", "ChatViewModel getMessagesFromChat before messagesLiveData ${messagesLiveData.value?.map { it.message }}")
-        viewModelScope.launch {
+        launch {
             chatUseCase.getMessagesFromChat(chatId).catch {
                 hideProgress()
                 Log.e("apiTAG", "ChatViewModel getMessagesFromChat catch localizedMessage ${it.localizedMessage} isProgressProcessLiveData ${isProgressProcessLiveData.value}")
@@ -96,7 +96,7 @@ class ChatViewModel @Inject constructor(application: Application, private val ch
     fun sendRequest(apiRequest: ApiRequest) {
         Log.e("messagesTAG", "ChatViewModel sendRequest messagesLiveData ${messagesLiveData.value?.map { it.message }}")
         showProgress()
-        viewModelScope.launch {
+        launch {
             chatUseCase.sendRequest(apiRequest).catch {
                 hideProgress()
                 Log.e("apiTAG", "ChatViewModel sendRequest catch localizedMessage ${it.localizedMessage} isProgressProcessLiveData ${isProgressProcessLiveData.value}")
@@ -121,7 +121,7 @@ class ChatViewModel @Inject constructor(application: Application, private val ch
 
     fun insertMessage(message: Message) {
         Log.e("messagesTAG", "ChatViewModel insertMessage messagesLiveData ${messagesLiveData.value?.map { it.message }}")
-        viewModelScope.launch {
+        launch {
             chatUseCase.insertMessage(message)
             Log.e("apiTAG", "ChatViewModel insertMessage message $message isProgressProcessLiveData ${isProgressProcessLiveData.value}")
         }
@@ -129,7 +129,7 @@ class ChatViewModel @Inject constructor(application: Application, private val ch
 
     private fun updateMessage(message: Message) {
         Log.e("messagesTAG", "ChatViewModel updateMessage messagesLiveData ${messagesLiveData.value?.map { it.message }}")
-        viewModelScope.launch {
+            launch {
             chatUseCase.updateMessage(message)
             Log.e("apiTAG", "ChatViewModel updateMessage message $message isProgressProcessLiveData ${isProgressProcessLiveData.value}")
         }
