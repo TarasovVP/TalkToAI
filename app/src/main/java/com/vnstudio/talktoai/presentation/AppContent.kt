@@ -8,7 +8,13 @@ import com.vnstudio.talktoai.presentation.chat.ChatScreen
 import com.vnstudio.talktoai.presentation.onboarding.login.LoginScreen
 import com.vnstudio.talktoai.presentation.onboarding.onboarding.OnboardingScreen
 import com.vnstudio.talktoai.presentation.onboarding.signup.SignUpScreen
-import com.vnstudio.talktoai.presentation.settings.SettingsScreen
+import com.vnstudio.talktoai.presentation.settings.settings_account.SettingsAccountScreen
+import com.vnstudio.talktoai.presentation.settings.settings_chat.SettingsChatScreen
+import com.vnstudio.talktoai.presentation.settings.settings_language.SettingsLanguageScreen
+import com.vnstudio.talktoai.presentation.settings.settings_list.SettingsListScreen
+import com.vnstudio.talktoai.presentation.settings.settings_privacy_policy.SettingsPrivacyPolicyScreen
+import com.vnstudio.talktoai.presentation.settings.settings_sign_up.SettingsSignUpScreen
+import com.vnstudio.talktoai.presentation.settings.settings_theme.SettingsThemeScreen
 
 @Composable
 fun AppContent(
@@ -45,15 +51,57 @@ fun AppContent(
                     navController.navigate("destination_chat_screen")
                 },
                 onSettingsClicked = {
-                    navController.navigate("destination_settings_screen")
+                    navController.navigate("destination_settings_list_screen")
                 }
             )
 
         }
         composable(
-            route = "destination_settings_screen"
+            route = "destination_settings_list_screen"
         ) {
-            SettingsScreen {
+            SettingsListScreen {
+
+            }
+        }
+        composable(
+            route = "destination_settings_chat_screen"
+        ) {
+            SettingsChatScreen {
+
+            }
+        }
+        composable(
+            route = "destination_settings_account_screen"
+        ) {
+            SettingsAccountScreen {
+
+            }
+        }
+        composable(
+            route = "destination_settings_sign_up_screen"
+        ) {
+            SettingsSignUpScreen {
+
+            }
+        }
+        composable(
+            route = "destination_settings_language_screen"
+        ) {
+            SettingsLanguageScreen {
+
+            }
+        }
+        composable(
+            route = "destination_settings_theme_screen"
+        ) {
+            SettingsThemeScreen {
+
+            }
+        }
+        composable(
+            route = "destination_settings_privacy_policy_screen"
+        ) {
+            SettingsPrivacyPolicyScreen {
 
             }
         }
