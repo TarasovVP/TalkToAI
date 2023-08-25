@@ -5,7 +5,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.vnstudio.talktoai.presentation.chat.ChatScreen
-import com.vnstudio.talktoai.presentation.main.MainScreen
 import com.vnstudio.talktoai.presentation.onboarding.login.LoginScreen
 import com.vnstudio.talktoai.presentation.onboarding.onboarding.OnboardingScreen
 import com.vnstudio.talktoai.presentation.onboarding.signup.SignUpScreen
@@ -41,17 +40,14 @@ fun AppContent(
         composable(
             route = "destination_chat_screen"
         ) {
-            val showCreateDataDialog = mutableStateOf(false)
-            MainScreen(showCreateDataDialog,
+            ChatScreen(
                 onChatClicked = {
                     navController.navigate("destination_chat_screen")
                 },
                 onSettingsClicked = {
                     navController.navigate("destination_settings_screen")
                 }
-            ) {
-                ChatScreen(showCreateDataDialog)
-            }
+            )
 
         }
         composable(
