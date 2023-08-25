@@ -41,7 +41,7 @@ fun MainScreen(
     val scaffoldState = rememberScaffoldState()
     val chats = viewModel.chatsLiveData.observeAsState(listOf())
     val showEditDataDialog = mutableStateOf(false)
-    var showConfirmationDialog by remember { mutableStateOf(false) }
+    var showConfirmationDialog = remember { mutableStateOf(false) }
     val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }
     val deletedChat = remember { mutableStateOf(Chat()) }
 
@@ -113,7 +113,7 @@ fun MainScreen(
                             }
                         }, onDeleteIconClick = {
                             deletedChat.value = it
-                            showConfirmationDialog = true
+                            showConfirmationDialog.value = true
                         })
                     }
                 }
@@ -148,12 +148,12 @@ fun MainScreen(
     }
 
     ConfirmationDialog("Delete chat?", showConfirmationDialog, onDismiss = {
-        showConfirmationDialog = false
-    }, onConfirmationClick = {
+        showConfirmationDialog.value = false
+    }) {
         viewModel.deleteChat(deletedChat.value)
-        showConfirmationDialog = false
+        showConfirmationDialog.value = false
         deletedChat.value = Chat()
-    })
+    }
 }
 
 @Composable

@@ -3,9 +3,14 @@ package com.vnstudio.talktoai.presentation.main
 import android.content.Context
 import android.content.ContextWrapper
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.modifier.ModifierLocal
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.WindowCompat
 import com.google.accompanist.insets.ProvideWindowInsets
@@ -13,6 +18,9 @@ import com.vnstudio.talktoai.CommonExtensions.safeSingleObserve
 import com.vnstudio.talktoai.CommonExtensions.setAppLocale
 import com.vnstudio.talktoai.di.DataStoreEntryPoint
 import com.vnstudio.talktoai.presentation.AppContent
+import com.vnstudio.talktoai.presentation.base.BaseViewModel
+import com.vnstudio.talktoai.ui.theme.Primary300
+import com.vnstudio.talktoai.ui.theme.Primary50
 import com.vnstudio.talktoai.ui.theme.TalkToAITheme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
@@ -40,7 +48,9 @@ class MainActivity : AppCompatActivity() {
                     setContent {
                         ProvideWindowInsets(consumeWindowInsets = false) {
                             TalkToAITheme {
-                                AppContent(startDestination)
+                                Box(modifier = Modifier.background(Primary50)) {
+                                    AppContent(startDestination)
+                                }
                             }
                         }
                     }

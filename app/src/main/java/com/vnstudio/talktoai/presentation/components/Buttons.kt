@@ -53,7 +53,7 @@ fun SecondaryButton(text: String, modifier: Modifier, onClick: () -> Unit) {
 
 @Composable
 fun SubmitButtons(
-    inputValue: MutableState<TextFieldValue>? = null,
+    isEnabled: Boolean = true,
     onDismiss: () -> Unit,
     onConfirmationClick: () -> Unit
 ) {
@@ -63,7 +63,7 @@ fun SubmitButtons(
         horizontalArrangement = Arrangement.Center
     ) {
         SecondaryButton(text = "Cancel", Modifier.weight(1f), onClick = onDismiss)
-        PrimaryButton(text = "OK", inputValue?.value?.text.orEmpty().isNotEmpty(), Modifier.weight(1f)) {
+        PrimaryButton(text = "OK", isEnabled, Modifier.weight(1f)) {
             onConfirmationClick.invoke()
         }
     }

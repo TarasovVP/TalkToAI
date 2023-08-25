@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai.presentation.onboarding.login
 
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -10,6 +11,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +33,14 @@ fun LoginScreen(onNextScreen: (String) -> Unit) {
     val showForgotPasswordDialog = mutableStateOf(false)
     val showAccountExistDialog = mutableStateOf(false)
     val showUnauthorizedEnterDialog = mutableStateOf(false)
+
+    val exceptionState = viewModel.exceptionLiveData.observeAsState()
+    val context = LocalContext.current
+    LaunchedEffect(exceptionState.value) {
+        exceptionState.value?.let { message ->
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        }
+    }
 
     val accountExistState = viewModel.accountExistLiveData.observeAsState()
     LaunchedEffect(accountExistState.value) {
@@ -125,20 +135,20 @@ fun LoginScreen(onNextScreen: (String) -> Unit) {
         showForgotPasswordDialog.value = false
     }
 
-    ConfirmationDialog("Пользователя с таким Email не существует. Сначала необходимо создать аккаунт. Перейти на экран регистрации?", showUnauthorizedEnterDialog.value, onDismiss = {
+    ConfirmationDialog("Пользователя с таким Email не существует. Сначала необходимо создать аккаунт. Перейти на экран регистрации?", showAccountExistDialog, onDismiss = {
         showAccountExistDialog.value = false
-    }, onConfirmationClick = {
+    }) {
         viewModel.googleSignInClient.signOut()
         showAccountExistDialog.value = false
         onNextScreen.invoke("destination_sign_up_screen")
-    })
+    }
 
-    ConfirmationDialog("У неавторизованого пользователя недоступен ряд возмножностей. В том числе нет доступа к хранению данных в удаленном доступе", showAccountExistDialog.value, onDismiss = {
+    ConfirmationDialog("У неавторизованого пользователя недоступен ряд возмножностей. В том числе нет доступа к хранению данных в удаленном доступе", showUnauthorizedEnterDialog, onDismiss = {
         showUnauthorizedEnterDialog.value = false
-    }, onConfirmationClick = {
+    }) {
         viewModel.signInAnonymously()
         showUnauthorizedEnterDialog.value = false
-    })
+    }
 }
 
 @Preview(showBackground = false)

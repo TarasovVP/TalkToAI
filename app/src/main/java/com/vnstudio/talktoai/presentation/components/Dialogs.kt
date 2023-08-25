@@ -16,9 +16,9 @@ import androidx.compose.ui.window.Dialog
 import com.vnstudio.talktoai.ui.theme.Primary500
 
 @Composable
-fun ConfirmationDialog(title: String, showDialog: Boolean, onDismiss: () -> Unit, onConfirmationClick: () -> Unit) {
+fun ConfirmationDialog(title: String, showDialog: MutableState<Boolean>, onDismiss: () -> Unit, onConfirmationClick: () -> Unit) {
     Column {
-        if (showDialog) {
+        if (showDialog.value) {
             Dialog(
                 onDismissRequest = onDismiss,
                 content = {
@@ -31,7 +31,7 @@ fun ConfirmationDialog(title: String, showDialog: Boolean, onDismiss: () -> Unit
                         Text(text = title, modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp), textAlign = TextAlign.Center,)
-                        SubmitButtons(null, onDismiss, onConfirmationClick)
+                        SubmitButtons(true, onDismiss, onConfirmationClick)
                     }
                 }
             )
@@ -56,7 +56,7 @@ fun DataEditDialog(title: String, placeHolder: String, inputValue: MutableState<
                             .fillMaxWidth()
                             .padding(16.dp), textAlign = TextAlign.Center,)
                         SecondaryTextField(inputValue, placeHolder)
-                        SubmitButtons(inputValue, onDismiss) {
+                        SubmitButtons(inputValue.value.text.isNotEmpty(), onDismiss) {
                             onConfirmationClick.invoke(inputValue.value.text)
                         }
                     }
