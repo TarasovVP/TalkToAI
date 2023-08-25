@@ -27,7 +27,13 @@ import com.vnstudio.talktoai.presentation.main.MainUseCaseImpl
 import com.vnstudio.talktoai.presentation.onboarding.login.LoginUseCaseImpl
 import com.vnstudio.talktoai.presentation.onboarding.onboarding.OnBoardingUseCaseImpl
 import com.vnstudio.talktoai.presentation.onboarding.signup.SignUpUseCaseImpl
-import com.vnstudio.talktoai.presentation.settings.SettingsUseCaseImpl
+import com.vnstudio.talktoai.presentation.settings.settings_account.SettingsAccountUseCaseImpl
+import com.vnstudio.talktoai.presentation.settings.settings_chat.SettingsChatUseCaseImpl
+import com.vnstudio.talktoai.presentation.settings.settings_language.SettingsLanguageUseCaseImpl
+import com.vnstudio.talktoai.presentation.settings.settings_list.SettingsListUseCaseImpl
+import com.vnstudio.talktoai.presentation.settings.settings_privacy_policy.SettingsPrivacyPolicyUseCaseImpl
+import com.vnstudio.talktoai.presentation.settings.settings_sign_up.SettingsSignUpUseCaseImpl
+import com.vnstudio.talktoai.presentation.settings.settings_theme.SettingsThemeUseCaseImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.EntryPoint
@@ -211,14 +217,66 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideSettingsRepository(): SettingsRepository {
-        return SettingsRepositoryImpl()
+    fun provideSettingsListUseCase(
+        dataStoreRepository: DataStoreRepository,
+        realDataBaseRepository: RealDataBaseRepository,
+    ): SettingsListUseCase {
+        return SettingsListUseCaseImpl(dataStoreRepository, realDataBaseRepository)
     }
 
     @Singleton
     @Provides
-    fun provideSettingsUseCase(settingsRepository: SettingsRepository): SettingsUseCase {
-        return SettingsUseCaseImpl(settingsRepository)
+    fun provideSettingsChatUseCase(
+        realDataBaseRepository: RealDataBaseRepository,
+        dataStoreRepository: DataStoreRepository,
+        firebaseAuth: FirebaseAuth,
+    ): SettingsBlockerUseCase {
+        return SettingsChatUseCaseImpl(realDataBaseRepository, dataStoreRepository, firebaseAuth)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSettingsAccountUseCase(
+        authRepository: AuthRepository,
+        realDataBaseRepository: RealDataBaseRepository,
+        dataStoreRepository: DataStoreRepository
+    ): SettingsAccountUseCase {
+        return SettingsAccountUseCaseImpl(authRepository, realDataBaseRepository, dataStoreRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSettingsSignUpUseCase(
+        dataStoreRepository: DataStoreRepository,
+        authRepository: AuthRepository,
+        realDataBaseRepository: RealDataBaseRepository,
+    ): SettingsSignUpUseCase {
+        return SettingsSignUpUseCaseImpl(
+            dataStoreRepository,
+            authRepository,
+            realDataBaseRepository
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideSettingsLanguageUseCase(dataStoreRepository: DataStoreRepository): SettingsLanguageUseCase {
+        return SettingsLanguageUseCaseImpl(dataStoreRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSettingsThemeUseCase(dataStoreRepository: DataStoreRepository): SettingsThemeUseCase {
+        return SettingsThemeUseCaseImpl(dataStoreRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSettingsPrivacyPolicyUseCase(
+        dataStoreRepository: DataStoreRepository,
+        realDataBaseRepository: RealDataBaseRepository,
+    ): SettingsPrivacyPolicyUseCase {
+        return SettingsPrivacyPolicyUseCaseImpl(dataStoreRepository, realDataBaseRepository)
     }
 }
 @EntryPoint
