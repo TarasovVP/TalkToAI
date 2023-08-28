@@ -17,6 +17,7 @@ import com.google.accompanist.insets.ProvideWindowInsets
 import com.vnstudio.talktoai.CommonExtensions.safeSingleObserve
 import com.vnstudio.talktoai.CommonExtensions.setAppLocale
 import com.vnstudio.talktoai.di.DataStoreEntryPoint
+import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.AppContent
 import com.vnstudio.talktoai.presentation.base.BaseViewModel
 import com.vnstudio.talktoai.ui.theme.Primary300
@@ -39,9 +40,9 @@ class MainActivity : AppCompatActivity() {
         viewModel.getOnBoardingSeen()
         viewModel.onBoardingSeenLiveData.safeSingleObserve(this) { isOnboardingSeen ->
             val startDestination = when {
-                isOnboardingSeen.not() -> "destination_onboarding_screen"
-                viewModel.isLoggedInUser().not() -> "destination_login_screen"
-                else -> "destination_chat_screen"
+                isOnboardingSeen.not() -> NavigationScreen.OnboardingScreen().route
+                viewModel.isLoggedInUser().not() -> NavigationScreen.LoginScreen().route
+                else -> NavigationScreen.ChatScreen().route
             }
             setContentView(
                 ComposeView(this).apply {
