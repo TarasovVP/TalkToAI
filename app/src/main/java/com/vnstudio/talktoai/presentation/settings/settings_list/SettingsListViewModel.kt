@@ -2,6 +2,7 @@ package com.vnstudio.talktoai.presentation.settings.settings_list
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.FirebaseAuth
 import com.vnstudio.talktoai.data.network.Result
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
 import com.vnstudio.talktoai.R
@@ -15,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsListViewModel @Inject constructor(
     private val application: Application,
-    private val settingsListUseCase: SettingsListUseCase
+    private val settingsListUseCase: SettingsListUseCase,
+    val firebaseAuth: FirebaseAuth
 ) : BaseViewModel(application) {
 
     val appLanguageLiveData = MutableLiveData<String>()
