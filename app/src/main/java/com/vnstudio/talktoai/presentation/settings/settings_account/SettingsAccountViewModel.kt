@@ -1,11 +1,13 @@
 package com.vnstudio.talktoai.presentation.settings.settings_account
 
 import android.app.Application
+import androidx.compose.ui.platform.LocalContext
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.AuthCredential
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
 import com.vnstudio.talktoai.R
+import com.vnstudio.talktoai.data.database.AppDatabase
 import com.vnstudio.talktoai.domain.usecases.SettingsAccountUseCase
 import com.vnstudio.talktoai.presentation.base.BaseViewModel
 import com.vnstudio.talktoai.domain.sealed_classes.Result
@@ -21,6 +23,22 @@ class SettingsAccountViewModel @Inject constructor(
     val reAuthenticateLiveData = MutableLiveData<Unit>()
     val successLiveData = MutableLiveData<Unit>()
     val successChangePasswordLiveData = MutableLiveData<Unit>()
+
+    fun isLoggedInUser(): Boolean {
+        return settingsAccountUseCase.isLoggedInUser()
+    }
+
+    fun isAuthorisedUser(): Boolean {
+        return settingsAccountUseCase.isAuthorisedUser()
+    }
+
+    fun isGoogleAuthUser(): Boolean {
+        return settingsAccountUseCase.isGoogleAuthUser()
+    }
+
+    fun currentUserEmail(): String {
+        return settingsAccountUseCase.currentUserEmail()
+    }
 
     fun signOut() {
         if (application.isNetworkAvailable()) {
@@ -86,5 +104,9 @@ class SettingsAccountViewModel @Inject constructor(
         launch {
             settingsAccountUseCase.clearDataByKeys(keys)
         }
+    }
+
+    fun clearDataBase() {
+        AppDatabase.getDatabase(application).clearAllTables()
     }
 }

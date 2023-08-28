@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.Feedback
+import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.components.PrimaryButton
 import com.vnstudio.talktoai.ui.theme.Primary500
 import java.util.*
@@ -40,25 +41,25 @@ fun SettingsListScreen(onNextScreen: (String) -> Unit) {
             "Hастройки чата",
             R.drawable.ic_settings_chat
         ) {
-            onNextScreen.invoke("destination_settings_chat_screen")
+            onNextScreen.invoke(NavigationScreen.SettingsChatScreen().route)
         }
         SettingsItem(
             "Ваш аккаунт",
             R.drawable.ic_settings_account
         ) {
-            onNextScreen.invoke("destination_settings_account_screen")
+            onNextScreen.invoke(NavigationScreen.SettingsAccountScreen().route)
         }
         SettingsItem(
             "Язык",
             R.drawable.ic_settings_language
         ) {
-            onNextScreen.invoke("destination_settings_language_screen")
+            onNextScreen.invoke(NavigationScreen.SettingsLanguageScreen().route)
         }
         SettingsItem(
             "Выбор темы",
             R.drawable.ic_settings_theme
         ) {
-            onNextScreen.invoke("destination_settings_theme_screen")
+            onNextScreen.invoke(NavigationScreen.SettingsThemeScreen().route)
         }
         SettingsItem(
             "Написать разработчику",
@@ -70,7 +71,7 @@ fun SettingsListScreen(onNextScreen: (String) -> Unit) {
             "Политика конфиденциальности",
             R.drawable.ic_settings_privacy
         ) {
-            onNextScreen.invoke("destination_settings_privacy_policy_screen")
+            onNextScreen.invoke(NavigationScreen.SettingsPrivacyPolicyScreen().route)
         }
     }
 

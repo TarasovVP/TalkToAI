@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
+import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.base.OrDivider
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.ui.theme.Primary50
@@ -70,7 +71,7 @@ fun LoginScreen(onNextScreen: (String) -> Unit) {
     val successSignInState = viewModel.successSignInLiveData.observeAsState()
     LaunchedEffect(successSignInState.value) {
         successSignInState.value?.let {
-            onNextScreen.invoke("destination_chat_screen")
+            onNextScreen.invoke(NavigationScreen.ChatScreen().route)
         }
     }
 
@@ -104,12 +105,10 @@ fun LoginScreen(onNextScreen: (String) -> Unit) {
         PrimaryTextField("Email", emailInputValue)
         PasswordTextField(passwordInputValue)
         Row {
-            TextButton(onClick = {
-                onNextScreen.invoke("destination_sign_up_screen")
-            }, modifier = Modifier
+            LinkButton(text = "Регистрация", modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)) {
-                Text(text = "Регистрация", color = Color.Blue)
+                onNextScreen.invoke(NavigationScreen.SignUpScreen().route)
             }
             TextButton(onClick = {
                 showForgotPasswordDialog.value = true
@@ -140,7 +139,7 @@ fun LoginScreen(onNextScreen: (String) -> Unit) {
     }) {
         viewModel.googleSignInClient.signOut()
         showAccountExistDialog.value = false
-        onNextScreen.invoke("destination_sign_up_screen")
+        onNextScreen.invoke(NavigationScreen.SignUpScreen().route)
     }
 
     ConfirmationDialog("У неавторизованого пользователя недоступен ряд возмножностей. В том числе нет доступа к хранению данных в удаленном доступе", showUnauthorizedEnterDialog, onDismiss = {

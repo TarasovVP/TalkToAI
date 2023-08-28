@@ -1,16 +1,39 @@
 package com.vnstudio.talktoai.data.repositoryimpl
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.*
+import com.vnstudio.talktoai.CommonExtensions.EMPTY
+import com.vnstudio.talktoai.CommonExtensions.isNotNull
+import com.vnstudio.talktoai.CommonExtensions.isNotTrue
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.repositories.AuthRepository
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseAuth, private val googleSignInClient: GoogleSignInClient) :
     AuthRepository {
+
+    override fun isLoggedInUser(): Boolean {
+        return firebaseAuth.currentUser.isNotNull()
+    }
+
+    override fun isAuthorisedUser(): Boolean {
+        return firebaseAuth.currentUser.isNotNull() && firebaseAuth.currentUser?.isAnonymous.isNotTrue()
+    }
+
+    override fun isGoogleAuthUser(): Boolean {
+        firebaseAuth.currentUser?.providerData?.forEach {
+            if (it.providerId == GoogleAuthProvider.PROVIDER_ID) return true
+        }
+        return false
+    }
+
+    override fun currentUserEmail(): String {
+        return try {
+            firebaseAuth.currentUser?.email ?: String.EMPTY
+        } catch (e: AbstractMethodError) {
+            String.EMPTY
+        }
+    }
 
     override fun sendPasswordResetEmail(email: String, result: (Result<Unit>) -> Unit) {
         firebaseAuth.sendPasswordResetEmail(email)

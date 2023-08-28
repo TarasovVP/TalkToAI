@@ -5,6 +5,14 @@ import com.vnstudio.talktoai.domain.sealed_classes.Result
 
 interface AuthRepository {
 
+    fun isLoggedInUser(): Boolean
+
+    fun isAuthorisedUser(): Boolean
+
+    fun isGoogleAuthUser(): Boolean
+
+    fun currentUserEmail(): String
+
     fun sendPasswordResetEmail(email: String, result: (Result<Unit>) -> Unit)
 
     fun fetchSignInMethodsForEmail(email: String, result: (Result<List<String>>) -> Unit)

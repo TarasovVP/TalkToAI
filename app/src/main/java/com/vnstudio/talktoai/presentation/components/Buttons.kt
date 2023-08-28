@@ -6,15 +6,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnstudio.talktoai.R
@@ -27,7 +26,10 @@ fun PrimaryButton(text: String, isEnabled: Boolean = true, modifier: Modifier, o
         modifier = modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .fillMaxWidth()
-            .background(color = if (isEnabled) Primary500 else Neutral400, shape = RoundedCornerShape(16.dp)),
+            .background(
+                color = if (isEnabled) Primary500 else Neutral400,
+                shape = RoundedCornerShape(16.dp)
+            ),
         onClick = {
             onClick.invoke()
         }
@@ -91,3 +93,28 @@ fun GoogleButton(modifier: Modifier, onClick: () -> Unit) {
         )
     }
 }
+
+@Composable
+fun LinkButton(text: String, modifier: Modifier, onClick: () -> Unit) {
+    TextButton(
+        onClick = onClick, modifier = modifier
+    ) {
+        Text(text = text, color = Color.Blue)
+    }
+}
+
+@Composable
+fun CardButton(text: String, modifier: Modifier, onClick: () -> Unit) {
+    TextButton(modifier = modifier
+        .padding(horizontal = 16.dp, vertical = 8.dp)
+        .fillMaxWidth()
+        .background(color = Color.White, shape = RoundedCornerShape(16.dp)),
+        elevation = ButtonDefaults.elevation(1.dp, 0.5.dp),
+        onClick = {
+            onClick.invoke()
+        }
+    ) {
+        Text(text = text, color = Neutral700)
+    }
+}
+

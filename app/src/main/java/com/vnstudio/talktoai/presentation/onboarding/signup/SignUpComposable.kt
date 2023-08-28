@@ -9,15 +9,14 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
+import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.base.OrDivider
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.ui.theme.Primary50
@@ -52,7 +51,7 @@ fun SignUpScreen(onNextScreen: (String) -> Unit) {
     val successSignInState = viewModel.createCurrentUserLiveData.observeAsState()
     LaunchedEffect(successSignInState.value) {
         successSignInState.value?.let {
-            onNextScreen.invoke("destination_chat_screen")
+            onNextScreen.invoke(NavigationScreen.ChatScreen().route)
         }
     }
 
@@ -95,26 +94,14 @@ fun SignUpScreen(onNextScreen: (String) -> Unit) {
         PasswordTextField(passwordInputValue)
         Row {
             Text(text = "Есть аккаунт?")
-            TextButton(
-                onClick = {
-                    onNextScreen.invoke("destination_login_screen")
-                }, modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                Text(text = "Вход", color = Color.Blue)
+            LinkButton(text = "Вход", modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)) {
+                onNextScreen.invoke(NavigationScreen.LoginScreen().route)
             }
         }
         PrimaryButton(text = "Зарегистрироваться", emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(), modifier = Modifier) {
             viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text)
         }
-    }
-}
-
-@Preview(showBackground = false)
-@Composable
-fun DefaultPreview() {
-    SignUpScreen {
-
     }
 }

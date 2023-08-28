@@ -211,8 +211,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideMainUseCase(firebaseAuth: FirebaseAuth, dataStoreRepository: DataStoreRepository, realDataBaseRepository: RealDataBaseRepository): MainUseCase {
-        return MainUseCaseImpl(firebaseAuth, dataStoreRepository, realDataBaseRepository)
+    fun provideMainUseCase(authRepository: AuthRepository, dataStoreRepository: DataStoreRepository, realDataBaseRepository: RealDataBaseRepository): MainUseCase {
+        return MainUseCaseImpl(authRepository, dataStoreRepository, realDataBaseRepository)
     }
 
     @Singleton

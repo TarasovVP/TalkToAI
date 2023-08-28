@@ -15,6 +15,14 @@ class SettingsAccountUseCaseImpl @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ): SettingsAccountUseCase {
 
+    override fun isLoggedInUser() = authRepository.isLoggedInUser()
+
+    override fun isAuthorisedUser() = authRepository.isAuthorisedUser()
+
+    override fun isGoogleAuthUser() = authRepository.isGoogleAuthUser()
+
+    override fun currentUserEmail() = authRepository.currentUserEmail()
+
     override fun signOut(result: (Result<Unit>) -> Unit) = authRepository.signOut { authResult ->
         result.invoke(authResult)
     }

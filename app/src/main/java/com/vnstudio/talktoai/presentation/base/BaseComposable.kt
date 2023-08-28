@@ -4,16 +4,26 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.vnstudio.talktoai.R
+import com.vnstudio.talktoai.presentation.components.PrimaryButton
 import com.vnstudio.talktoai.ui.theme.*
 
 
@@ -65,5 +75,45 @@ fun OrDivider(modifier: Modifier) {
                 .background(Primary300)
                 .align(Alignment.CenterVertically)
         )
+    }
+}
+
+@Composable
+fun ShapeableImage(modifier: Modifier, drawableResId: Int, contentDescription: String) {
+    ContextCompat.getDrawable(LocalContext.current, drawableResId)?.toBitmap()?.asImageBitmap()?.let { painterResource(id = drawableResId) }?.let {
+        Image(
+            painter = it,
+            contentDescription = contentDescription,
+            modifier = modifier
+                .fillMaxSize()
+                .aspectRatio(1f)
+                .clip(CircleShape)
+                .background(Primary700),
+            contentScale = ContentScale.Inside
+        )
+    }
+}
+
+@Composable
+fun EmptyState(text: String, modifier: Modifier) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 32.dp)
+                .background(color = Primary500, shape = RoundedCornerShape(16.dp))
+        ) {
+            Text(text = text, textAlign = TextAlign.Center, color = Neutral50, modifier = Modifier
+                .fillMaxWidth().padding(16.dp))
+        }
+        Image(painter = painterResource(id = R.drawable.empty_state), contentDescription = "Empty state", modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
+            .padding(top = 16.dp))
     }
 }

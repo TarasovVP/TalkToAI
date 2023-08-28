@@ -105,15 +105,15 @@ fun AppContent(
                 composable(
                     route = NavigationScreen.LoginScreen().route
                 ) {
-                    LoginScreen { destination ->
-                        navController.navigate(destination)
+                    LoginScreen { route ->
+                        navController.navigate(route)
                     }
                 }
                 composable(
                     route = NavigationScreen.SignUpScreen().route
                 ) {
-                    SignUpScreen { destination ->
-                        navController.navigate(destination)
+                    SignUpScreen { route ->
+                        navController.navigate(route)
                     }
                 }
                 composable(
@@ -130,8 +130,8 @@ fun AppContent(
                 composable(
                     route = NavigationScreen.SettingsListScreen().route
                 ) {
-                    SettingsListScreen { destination ->
-                        navController.navigate(destination)
+                    SettingsListScreen { route ->
+                        navController.navigate(route)
                     }
                 }
                 composable(
@@ -144,8 +144,8 @@ fun AppContent(
                 composable(
                     route = NavigationScreen.SettingsAccountScreen().route
                 ) {
-                    SettingsAccountScreen {
-
+                    SettingsAccountScreen { route ->
+                        navController.navigate(route)
                     }
                 }
                 composable(
