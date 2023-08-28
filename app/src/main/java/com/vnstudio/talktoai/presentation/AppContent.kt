@@ -71,6 +71,7 @@ fun AppContent(
         }, drawerContent = {
             if (NavigationScreen.isDrawerNeeded(currentRouteState)) {
                 AppDrawer(
+                    isChatScreen = currentRouteState == NavigationScreen.ChatScreen().route,
                     chats = chatsState,
                     onCreateChatClick = {
                         showCreateDataDialog.value = true
