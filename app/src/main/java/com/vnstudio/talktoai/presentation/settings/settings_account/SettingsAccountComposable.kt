@@ -12,17 +12,14 @@ import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.base.EmptyState
 import com.vnstudio.talktoai.presentation.base.ShapeableImage
-import com.vnstudio.talktoai.presentation.components.CardButton
-import com.vnstudio.talktoai.presentation.components.ConfirmationDialog
-import com.vnstudio.talktoai.presentation.components.LinkButton
-import com.vnstudio.talktoai.presentation.components.PrimaryButton
+import com.vnstudio.talktoai.presentation.components.*
 
 @Composable
 fun SettingsAccountScreen(onNextScreen: (String) -> Unit) {
 
     val viewModel: SettingsAccountViewModel = hiltViewModel()
-    val showLogOutDialog = mutableStateOf(false)
-    val showDeleteAccountDialog = mutableStateOf(false)
+    val showLogOutDialog = remember { mutableStateOf(false) }
+    val showDeleteAccountDialog = remember { mutableStateOf(false) }
 
     val successState = viewModel.successLiveData.observeAsState()
     LaunchedEffect(successState.value) {
@@ -43,13 +40,18 @@ fun SettingsAccountScreen(onNextScreen: (String) -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
         AccountCard(accountAvatar, accountName) {
             showLogOutDialog.value = true
         }
+        if (viewModel.isAuthorisedUser() && viewModel.isGoogleAuthUser().not()) {
+            PrimaryButton(text = "Сменить пароль", modifier = Modifier) {
+
+            }
+        }
         if (viewModel.isAuthorisedUser()) {
-            CardButton(text = "Удалить аккаунт", modifier = Modifier) {
+            SecondaryButton(text = "Удалить аккаунт", true, modifier = Modifier) {
 
             }
         } else {
@@ -60,11 +62,6 @@ fun SettingsAccountScreen(onNextScreen: (String) -> Unit) {
                 text = "Ваши данные хранятся локально в рамках одной сессии и будут потеряны при выходе из этого аккаунта, очистке кеша или переустановке приложения. Для подключения удаленного хранения данных и доступа к нему с любого устройства, зарегистрируйтесь.",
                 modifier = Modifier
             )
-        }
-        if (viewModel.isAuthorisedUser() && viewModel.isGoogleAuthUser().not()) {
-            CardButton(text = "Сменить пароль", modifier = Modifier) {
-
-            }
         }
     }
 

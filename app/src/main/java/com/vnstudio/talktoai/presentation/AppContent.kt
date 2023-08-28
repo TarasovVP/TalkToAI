@@ -1,12 +1,20 @@
 package com.vnstudio.talktoai.presentation
 
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.chat.ChatScreen
@@ -23,6 +31,7 @@ import com.vnstudio.talktoai.presentation.settings.settings_list.SettingsListScr
 import com.vnstudio.talktoai.presentation.settings.settings_privacy_policy.SettingsPrivacyPolicyScreen
 import com.vnstudio.talktoai.presentation.settings.settings_sign_up.SettingsSignUpScreen
 import com.vnstudio.talktoai.presentation.settings.settings_theme.SettingsThemeScreen
+import com.vnstudio.talktoai.ui.theme.Primary700
 import kotlinx.coroutines.launch
 
 @Composable
@@ -39,6 +48,16 @@ fun AppContent(
     val showEditDataDialog = remember { mutableStateOf(false) }
     val openedChatState = remember { mutableStateOf<Chat?>(null) }
     val deletedChatState = remember { mutableStateOf<Chat?>(null) }
+    val messageState = remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(messageState.value) {
+        messageState.value?.let { message ->
+            scope.launch {
+                scaffoldState.snackbarHostState.showSnackbar(message = message, actionLabel = "error", duration = SnackbarDuration.Short)
+                messageState.value = null
+            }
+        }
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -68,7 +87,22 @@ fun AppContent(
                 }
 
             }
-        }, drawerContent = {
+        }, snackbarHost = { snackBarHostState ->
+            SnackbarHost(
+                hostState = snackBarHostState,
+                snackbar = { data ->
+                    Box {
+                        Snackbar(
+                            modifier = Modifier.padding(8.dp).background(if (data.actionLabel.isNotNull()) Color.Red else Primary700)
+                        ) {
+                            Text(data.message)
+                        }
+                        Spacer(modifier = Modifier.fillMaxSize())
+                    }
+                }
+            )
+        },
+        drawerContent = {
             if (NavigationScreen.isDrawerNeeded(currentRouteState)) {
                 AppDrawer(
                     isChatScreen = currentRouteState == NavigationScreen.ChatScreen().route,
@@ -105,7 +139,7 @@ fun AppContent(
                 composable(
                     route = NavigationScreen.LoginScreen().route
                 ) {
-                    LoginScreen { route ->
+                    LoginScreen(messageState) { route ->
                         navController.navigate(route)
                     }
                 }

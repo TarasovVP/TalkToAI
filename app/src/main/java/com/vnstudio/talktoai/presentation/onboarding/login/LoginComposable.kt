@@ -1,6 +1,5 @@
 package com.vnstudio.talktoai.presentation.onboarding.login
 
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -11,10 +10,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -26,21 +23,18 @@ import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.ui.theme.Primary50
 
 @Composable
-fun LoginScreen(onNextScreen: (String) -> Unit) {
+fun LoginScreen(messageState: MutableState<String?>, onNextScreen: (String) -> Unit) {
 
     val viewModel: LoginViewModel = hiltViewModel()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
-    val showForgotPasswordDialog = mutableStateOf(false)
-    val showAccountExistDialog = mutableStateOf(false)
-    val showUnauthorizedEnterDialog = mutableStateOf(false)
+    val showForgotPasswordDialog =  remember { mutableStateOf(false) }
+    val showAccountExistDialog =  remember { mutableStateOf(false) }
+    val showUnauthorizedEnterDialog =  remember { mutableStateOf(false) }
 
     val exceptionState = viewModel.exceptionLiveData.observeAsState()
-    val context = LocalContext.current
     LaunchedEffect(exceptionState.value) {
-        exceptionState.value?.let { message ->
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-        }
+        messageState.value = exceptionState.value
     }
 
     val accountExistState = viewModel.accountExistLiveData.observeAsState()
@@ -52,7 +46,7 @@ fun LoginScreen(onNextScreen: (String) -> Unit) {
     val isEmailAccountExistState = viewModel.isEmailAccountExistLiveData.observeAsState()
     LaunchedEffect(isEmailAccountExistState.value) {
         isEmailAccountExistState.value?.let {
-            viewModel.signInWithEmailAndPassword(emailInputValue.value.text,
+            viewModel.signInWithEmailAndPassword(emailInputValue.value.text.trim(),
                 passwordInputValue.value.text)
         }
     }
@@ -119,10 +113,10 @@ fun LoginScreen(onNextScreen: (String) -> Unit) {
             }
         }
         PrimaryButton(text = "Войти", emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(), modifier = Modifier) {
-            viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text)
+            viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
         }
         OrDivider(modifier = Modifier)
-        SecondaryButton(text = "Без регистрации", modifier = Modifier) {
+        SecondaryButton(text = "Без регистрации", false, modifier = Modifier) {
             showUnauthorizedEnterDialog.value = true
         }
     }
@@ -147,13 +141,5 @@ fun LoginScreen(onNextScreen: (String) -> Unit) {
     }) {
         viewModel.signInAnonymously()
         showUnauthorizedEnterDialog.value = false
-    }
-}
-
-@Preview(showBackground = false)
-@Composable
-fun DefaultPreview() {
-    LoginScreen {
-
     }
 }

@@ -27,7 +27,7 @@ fun SignUpScreen(onNextScreen: (String) -> Unit) {
     val viewModel: SignUpViewModel = hiltViewModel()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
-    val showAccountExistDialog = mutableStateOf(false)
+    val showAccountExistDialog = remember { mutableStateOf(false) }
 
     val accountExistState = viewModel.accountExistLiveData.observeAsState()
     LaunchedEffect(accountExistState.value) {
@@ -38,7 +38,7 @@ fun SignUpScreen(onNextScreen: (String) -> Unit) {
     val isEmailAccountExistState = viewModel.createEmailAccountLiveData.observeAsState()
     LaunchedEffect(isEmailAccountExistState.value) {
         isEmailAccountExistState.value?.let {
-            viewModel.createUserWithEmailAndPassword(emailInputValue.value.text,
+            viewModel.createUserWithEmailAndPassword(emailInputValue.value.text.trim(),
                 passwordInputValue.value.text)
         }
     }
@@ -92,16 +92,15 @@ fun SignUpScreen(onNextScreen: (String) -> Unit) {
         OrDivider(modifier = Modifier)
         PrimaryTextField("Email", emailInputValue)
         PasswordTextField(passwordInputValue)
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = "Есть аккаунт?")
             LinkButton(text = "Вход", modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)) {
+                .wrapContentSize()) {
                 onNextScreen.invoke(NavigationScreen.LoginScreen().route)
             }
         }
         PrimaryButton(text = "Зарегистрироваться", emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(), modifier = Modifier) {
-            viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text)
+            viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
         }
     }
 }
