@@ -48,7 +48,7 @@ class LoginViewModel @Inject constructor(
                         idToken.isNullOrEmpty() -> isEmailAccountExistLiveData.postValue(Unit)
                         else -> idToken.let { isGoogleAccountExistLiveData.postValue(it) }
                     }
-                    is Result.Failure -> authResult.errorMessage?.let { isGoogleAccountExistLiveData.postValue(it) }
+                    is Result.Failure -> authResult.errorMessage?.let { exceptionLiveData.postValue(it) }
                 }
                 hideProgress()
             }

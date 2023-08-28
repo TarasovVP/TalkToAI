@@ -16,21 +16,31 @@ import androidx.compose.ui.window.Dialog
 import com.vnstudio.talktoai.ui.theme.Primary500
 
 @Composable
-fun ConfirmationDialog(title: String, showDialog: MutableState<Boolean>, onDismiss: () -> Unit, onConfirmationClick: () -> Unit) {
-    Column {
-        if (showDialog.value) {
+fun ConfirmationDialog(
+    title: String,
+    showDialog: MutableState<Boolean>,
+    onDismiss: () -> Unit,
+    onConfirmationClick: () -> Unit,
+) {
+    if (showDialog.value) {
+        Column {
             Dialog(
                 onDismissRequest = onDismiss,
                 content = {
-                    Column(modifier = Modifier
-                        .wrapContentSize()
-                        .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
-                        .background(color = Color.White, shape = RoundedCornerShape(16.dp)),
+                    Column(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
+                            .background(color = Color.White, shape = RoundedCornerShape(16.dp)),
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text(text = title, modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp), textAlign = TextAlign.Center,)
+                        Text(
+                            text = title,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            textAlign = TextAlign.Center,
+                        )
                         SubmitButtons(true, onDismiss, onConfirmationClick)
                     }
                 }
@@ -40,21 +50,72 @@ fun ConfirmationDialog(title: String, showDialog: MutableState<Boolean>, onDismi
 }
 
 @Composable
-fun DataEditDialog(title: String, placeHolder: String, inputValue: MutableState<TextFieldValue>, showDialog: MutableState<Boolean>, onDismiss: () -> Unit, onConfirmationClick: (String) -> Unit) {
+fun DataEditDialog(
+    title: String,
+    placeHolder: String,
+    inputValue: MutableState<TextFieldValue>,
+    showDialog: MutableState<Boolean>,
+    onDismiss: () -> Unit,
+    onConfirmationClick: (String) -> Unit,
+) {
     if (showDialog.value) {
         Column {
             Dialog(
                 onDismissRequest = onDismiss,
                 content = {
-                    Column(modifier = Modifier
-                        .wrapContentSize()
-                        .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
-                        .background(color = Color.White, shape = RoundedCornerShape(16.dp)),
+                    Column(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
+                            .background(color = Color.White, shape = RoundedCornerShape(16.dp)),
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text(text = title, modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp), textAlign = TextAlign.Center,)
+                        Text(
+                            text = title,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            textAlign = TextAlign.Center,
+                        )
+                        SecondaryTextField(inputValue, placeHolder)
+                        SubmitButtons(inputValue.value.text.isNotEmpty(), onDismiss) {
+                            onConfirmationClick.invoke(inputValue.value.text)
+                        }
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun PasswordDialog(
+    title: String,
+    placeHolder: String,
+    inputValue: MutableState<TextFieldValue>,
+    showDialog: MutableState<Boolean>,
+    onDismiss: () -> Unit,
+    onConfirmationClick: (String) -> Unit,
+) {
+    if (showDialog.value) {
+        Column {
+            Dialog(
+                onDismissRequest = onDismiss,
+                content = {
+                    Column(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
+                            .background(color = Color.White, shape = RoundedCornerShape(16.dp)),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = title,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            textAlign = TextAlign.Center,
+                        )
                         SecondaryTextField(inputValue, placeHolder)
                         SubmitButtons(inputValue.value.text.isNotEmpty(), onDismiss) {
                             onConfirmationClick.invoke(inputValue.value.text)

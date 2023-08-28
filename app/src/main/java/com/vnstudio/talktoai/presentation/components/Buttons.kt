@@ -6,7 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -39,17 +38,17 @@ fun PrimaryButton(text: String, isEnabled: Boolean = true, modifier: Modifier, o
 }
 
 @Composable
-fun SecondaryButton(text: String, modifier: Modifier, onClick: () -> Unit) {
+fun SecondaryButton(text: String, isDestructive: Boolean, modifier: Modifier, onClick: () -> Unit) {
     TextButton(modifier = modifier
         .padding(horizontal = 16.dp, vertical = 8.dp)
         .fillMaxWidth()
-        .border(1.dp, Primary400, shape = RoundedCornerShape(16.dp))
+        .border(1.dp, if (isDestructive) Color.Red else Primary400, shape = RoundedCornerShape(16.dp))
         .background(color = Color.Transparent, shape = RoundedCornerShape(16.dp)),
         onClick = {
             onClick.invoke()
         }
     ) {
-        Text(text = text, color = Neutral700)
+        Text(text = text, color = if (isDestructive) Color.Red else Neutral700)
     }
 }
 
@@ -64,7 +63,7 @@ fun SubmitButtons(
         .padding(8.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        SecondaryButton(text = "Cancel", Modifier.weight(1f), onClick = onDismiss)
+        SecondaryButton(text = "Cancel", false, Modifier.weight(1f), onClick = onDismiss)
         PrimaryButton(text = "OK", isEnabled, Modifier.weight(1f)) {
             onConfirmationClick.invoke()
         }
@@ -100,21 +99,6 @@ fun LinkButton(text: String, modifier: Modifier, onClick: () -> Unit) {
         onClick = onClick, modifier = modifier
     ) {
         Text(text = text, color = Color.Blue)
-    }
-}
-
-@Composable
-fun CardButton(text: String, modifier: Modifier, onClick: () -> Unit) {
-    TextButton(modifier = modifier
-        .padding(horizontal = 16.dp, vertical = 8.dp)
-        .fillMaxWidth()
-        .background(color = Color.White, shape = RoundedCornerShape(16.dp)),
-        elevation = ButtonDefaults.elevation(1.dp, 0.5.dp),
-        onClick = {
-            onClick.invoke()
-        }
-    ) {
-        Text(text = text, color = Neutral700)
     }
 }
 
