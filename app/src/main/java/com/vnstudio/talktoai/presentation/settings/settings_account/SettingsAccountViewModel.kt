@@ -8,7 +8,7 @@ import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.usecases.SettingsAccountUseCase
 import com.vnstudio.talktoai.presentation.base.BaseViewModel
-import com.vnstudio.talktoai.data.network.Result
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

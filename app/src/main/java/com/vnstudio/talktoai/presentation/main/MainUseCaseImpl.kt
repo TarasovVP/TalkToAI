@@ -2,7 +2,7 @@ package com.vnstudio.talktoai.presentation.main
 
 import com.google.firebase.auth.FirebaseAuth
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
-import com.vnstudio.talktoai.data.network.Result
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.models.CurrentUser
 import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
 import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository

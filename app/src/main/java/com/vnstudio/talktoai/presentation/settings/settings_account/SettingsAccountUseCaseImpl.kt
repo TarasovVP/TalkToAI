@@ -2,7 +2,7 @@ package com.vnstudio.talktoai.presentation.settings.settings_account
 
 import androidx.datastore.preferences.core.Preferences
 import com.google.firebase.auth.AuthCredential
-import com.vnstudio.talktoai.data.network.Result
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.repositories.AuthRepository
 import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
 import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository

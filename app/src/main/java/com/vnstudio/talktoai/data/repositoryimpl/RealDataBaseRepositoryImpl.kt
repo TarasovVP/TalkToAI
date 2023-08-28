@@ -8,7 +8,7 @@ import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.models.CurrentUser
 import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
-import com.vnstudio.talktoai.data.network.Result
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.infrastructure.Constants.CHATS
 import com.vnstudio.talktoai.infrastructure.Constants.MESSAGES
 import com.vnstudio.talktoai.infrastructure.Constants.REVIEW_VOTE

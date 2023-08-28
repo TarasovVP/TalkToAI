@@ -3,7 +3,7 @@ package com.vnstudio.talktoai.presentation.settings.settings_privacy_policy
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.vnstudio.talktoai.R
-import com.vnstudio.talktoai.data.network.Result
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsPrivacyPolicyUseCase
 import com.vnstudio.talktoai.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

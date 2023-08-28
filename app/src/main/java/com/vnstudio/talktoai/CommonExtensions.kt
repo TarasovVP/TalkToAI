@@ -9,10 +9,8 @@ import android.net.NetworkRequest
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import retrofit2.Response
-import com.vnstudio.talktoai.data.network.Result
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 import java.util.*
 
 object CommonExtensions {

@@ -22,6 +22,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.airbnb.lottie.compose.LottieAnimation
@@ -44,18 +45,33 @@ import java.util.*
 
 @Composable
 fun ChatScreen(
-    viewModel: ChatViewModel,
+    chatsState: MutableState<List<Chat>>,
+    openedChatState: MutableState<Chat?>,
     showCreateDataDialog: MutableState<Boolean>,
     showEditDataDialog: MutableState<Boolean>,
-    deleteChat: MutableState<Chat?>
+    deleteChatState: MutableState<Chat?>
 ) {
 
+    val viewModel: ChatViewModel = hiltViewModel()
     val chats = viewModel.chatsLiveData.observeAsState(listOf())
-    val showConfirmationDialog = remember { mutableStateOf(deleteChat.value.isNotNull()) }
+    val showConfirmationDialog = remember { mutableStateOf(deleteChatState.value.isNotNull()) }
     val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }
 
     LaunchedEffect(viewModel){
         viewModel.getChats()
+    }
+    LaunchedEffect(chats.value){
+        chats.value?.let { chats ->
+            chatsState.value = chats
+        }
+    }
+    LaunchedEffect(openedChatState.value){
+        openedChatState.value?.let { chat ->
+            viewModel.updateChats(viewModel.chatsLiveData.value.orEmpty().onEach { if (it.chatId == chat.chatId) it.updated = Date().time })
+        }
+    }
+    LaunchedEffect(deleteChatState.value){
+        showConfirmationDialog.value = deleteChatState.value.isNotNull()
     }
 
     Log.e(
@@ -76,7 +92,6 @@ fun ChatScreen(
             scaffoldState.drawerState.close()
         }*/
     }
-
     DataEditDialog("Edit chat name", "Chat name", inputValue, showEditDataDialog, onDismiss = {
         showEditDataDialog.value = false
     }) { newChatName ->
@@ -89,9 +104,9 @@ fun ChatScreen(
     ConfirmationDialog("Delete chat?", showConfirmationDialog, onDismiss = {
         showConfirmationDialog.value = false
     }) {
-        deleteChat.value?.let { viewModel.deleteChat(it) }
+        deleteChatState.value?.let { viewModel.deleteChat(it) }
         showConfirmationDialog.value = false
-        deleteChat.value = null
+        deleteChatState.value = null
     }
 }
 
@@ -212,13 +227,6 @@ fun MessagesScreen(viewModel: ChatViewModel, showCreateDataDialog: MutableState<
                 }
             }
         }
-    }
-    DataEditDialog("Создать новый чат?", "Имя чата", inputValue, showCreateDataDialog, onDismiss = {
-        showCreateDataDialog.value = false
-    }) { newChatName ->
-        viewModel.insertChat(Chat(name = newChatName, updated = Date().time))
-        inputValue.value = TextFieldValue(String.EMPTY)
-        showCreateDataDialog.value = false
     }
 }
 

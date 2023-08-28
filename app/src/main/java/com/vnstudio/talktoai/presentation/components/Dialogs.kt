@@ -41,8 +41,8 @@ fun ConfirmationDialog(title: String, showDialog: MutableState<Boolean>, onDismi
 
 @Composable
 fun DataEditDialog(title: String, placeHolder: String, inputValue: MutableState<TextFieldValue>, showDialog: MutableState<Boolean>, onDismiss: () -> Unit, onConfirmationClick: (String) -> Unit) {
-    Column {
-        if (showDialog.value) {
+    if (showDialog.value) {
+        Column {
             Dialog(
                 onDismissRequest = onDismiss,
                 content = {

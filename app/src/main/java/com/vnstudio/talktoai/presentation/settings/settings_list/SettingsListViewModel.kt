@@ -3,7 +3,7 @@ package com.vnstudio.talktoai.presentation.settings.settings_list
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
-import com.vnstudio.talktoai.data.network.Result
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.Feedback

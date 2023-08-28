@@ -7,7 +7,7 @@ import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.domain.usecases.MainUseCase
 import com.vnstudio.talktoai.presentation.base.BaseViewModel
-import com.vnstudio.talktoai.data.network.Result
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.models.CurrentUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

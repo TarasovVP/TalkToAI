@@ -3,14 +3,13 @@ package com.vnstudio.talktoai.presentation
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.vnstudio.talktoai.data.database.db_entities.Chat
+import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.chat.ChatScreen
-import com.vnstudio.talktoai.presentation.chat.ChatViewModel
 import com.vnstudio.talktoai.presentation.components.AppDrawer
 import com.vnstudio.talktoai.presentation.components.PrimaryTopBar
 import com.vnstudio.talktoai.presentation.components.SecondaryTopBar
@@ -25,7 +24,6 @@ import com.vnstudio.talktoai.presentation.settings.settings_privacy_policy.Setti
 import com.vnstudio.talktoai.presentation.settings.settings_sign_up.SettingsSignUpScreen
 import com.vnstudio.talktoai.presentation.settings.settings_theme.SettingsThemeScreen
 import kotlinx.coroutines.launch
-import java.util.*
 
 @Composable
 fun AppContent(
@@ -36,130 +34,142 @@ fun AppContent(
     val scaffoldState = rememberScaffoldState()
     val currentRouteState = navController.currentBackStackEntryAsState().value?.destination?.route
 
-    val viewModel: ChatViewModel = hiltViewModel()
+    val chatsState = remember { mutableStateOf<List<Chat>>(listOf()) }
     val showCreateDataDialog = remember { mutableStateOf(false) }
     val showEditDataDialog = remember { mutableStateOf(false) }
-    val deletedChat = remember { mutableStateOf<Chat?>(null) }
+    val openedChatState = remember { mutableStateOf<Chat?>(null) }
+    val deletedChatState = remember { mutableStateOf<Chat?>(null) }
 
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            if (currentRouteState == "destination_chat_screen" || currentRouteState == "destination_settings_list_screen") {
-                PrimaryTopBar(
-                    title = getTopAppBarTitle(currentRouteState),
-                    onNavigationIconClick = {
-                        scope.launch {
-                            if (scaffoldState.drawerState.isClosed) {
-                                scaffoldState.drawerState.open()
-                            } else {
-                                scaffoldState.drawerState.close()
+            if (NavigationScreen.isTopBarNeeded(currentRouteState)) {
+                if (currentRouteState == NavigationScreen.ChatScreen().route || currentRouteState == NavigationScreen.SettingsListScreen().route) {
+                    PrimaryTopBar(
+                        title = if (currentRouteState == NavigationScreen.ChatScreen().route) chatsState.value.firstOrNull()?.name
+                            ?: "Talk to AI" else getTopAppBarTitle(currentRouteState),
+                        onNavigationIconClick = {
+                            scope.launch {
+                                if (scaffoldState.drawerState.isClosed) {
+                                    scaffoldState.drawerState.open()
+                                } else {
+                                    scaffoldState.drawerState.close()
+                                }
                             }
-                        }
-                    },
-                    isActionVisible = currentRouteState == "destination_chat_screen"
-                ) {
-                    showEditDataDialog.value = true
+                        },
+                        isActionVisible = currentRouteState == NavigationScreen.ChatScreen().route && chatsState.value.isNotEmpty()
+                    ) {
+                        showEditDataDialog.value = true
+                    }
+                } else {
+                    SecondaryTopBar(getTopAppBarTitle(currentRouteState)) {
+                        navController.navigateUp()
+                    }
                 }
-            } else if (currentRouteState == "destination_settings_chat_screen" || currentRouteState == "destination_settings_account_screen") {
-                SecondaryTopBar(getTopAppBarTitle(currentRouteState)) {
-                    navController.navigateUp()
-                }
+
             }
         }, drawerContent = {
-            AppDrawer(
-                chats = listOf(),
-                onCreateChatClick = {
-                    showCreateDataDialog.value = true
-                },
-                onChatClick = { chat ->
-                    navController.navigate("destination_chat_screen")
-                    viewModel.updateChats(viewModel.chatsLiveData.value.orEmpty().onEach { if (it.chatId == chat.chatId) it.updated = Date().time })
-                    scope.launch {
-                        scaffoldState.drawerState.close()
+            if (NavigationScreen.isDrawerNeeded(currentRouteState)) {
+                AppDrawer(
+                    chats = chatsState,
+                    onCreateChatClick = {
+                        showCreateDataDialog.value = true
+                    },
+                    onChatClick = { chat ->
+                        openedChatState.value = chat
+                        navController.navigate(NavigationScreen.ChatScreen().route)
+                        scope.launch {
+                            scaffoldState.drawerState.close()
+                        }
+                    },
+                    onDeleteChatClick = { chat ->
+                        deletedChatState.value = chat
                     }
-                },
-                onDeleteChatClick = { chat ->
-                    deletedChat.value = chat
-                },
-                onSettingsClick = {
-                    navController.navigate("destination_settings_list_screen")
+                ) {
+                    navController.navigate(NavigationScreen.SettingsListScreen().route)
                     scope.launch {
                         scaffoldState.drawerState.close()
                     }
                 }
-            )
+            }
         }, content = {
             NavHost(navController, startDestination = startDestination) {
                 composable(
-                    route = "destination_onboarding_screen"
+                    route = NavigationScreen.OnboardingScreen().route
                 ) {
                     OnboardingScreen {
-                        navController.navigate("destination_login_screen")
+                        navController.navigate(NavigationScreen.LoginScreen().route)
                     }
                 }
                 composable(
-                    route = "destination_login_screen"
+                    route = NavigationScreen.LoginScreen().route
                 ) {
                     LoginScreen { destination ->
                         navController.navigate(destination)
                     }
                 }
                 composable(
-                    route = "destination_sign_up_screen"
+                    route = NavigationScreen.SignUpScreen().route
                 ) {
                     SignUpScreen { destination ->
                         navController.navigate(destination)
                     }
                 }
                 composable(
-                    route = "destination_chat_screen"
+                    route = NavigationScreen.ChatScreen().route
                 ) {
-                    ChatScreen(viewModel, showCreateDataDialog, showEditDataDialog, deletedChat)
+                    ChatScreen(
+                        chatsState,
+                        openedChatState,
+                        showCreateDataDialog,
+                        showEditDataDialog,
+                        deletedChatState
+                    )
                 }
                 composable(
-                    route = "destination_settings_list_screen"
+                    route = NavigationScreen.SettingsListScreen().route
                 ) {
                     SettingsListScreen { destination ->
                         navController.navigate(destination)
                     }
                 }
                 composable(
-                    route = "destination_settings_chat_screen"
+                    route = NavigationScreen.SettingsChatScreen().route
                 ) {
                     SettingsChatScreen {
 
                     }
                 }
                 composable(
-                    route = "destination_settings_account_screen"
+                    route = NavigationScreen.SettingsAccountScreen().route
                 ) {
                     SettingsAccountScreen {
 
                     }
                 }
                 composable(
-                    route = "destination_settings_sign_up_screen"
+                    route = NavigationScreen.SettingsSignUpScreen().route
                 ) {
                     SettingsSignUpScreen {
 
                     }
                 }
                 composable(
-                    route = "destination_settings_language_screen"
+                    route = NavigationScreen.SettingsLanguageScreen().route
                 ) {
                     SettingsLanguageScreen {
 
                     }
                 }
                 composable(
-                    route = "destination_settings_theme_screen"
+                    route = NavigationScreen.SettingsThemeScreen().route
                 ) {
                     SettingsThemeScreen {
 
                     }
                 }
                 composable(
-                    route = "destination_settings_privacy_policy_screen"
+                    route = NavigationScreen.SettingsPrivacyPolicyScreen().route
                 ) {
                     SettingsPrivacyPolicyScreen {
 
@@ -171,9 +181,8 @@ fun AppContent(
 
 fun getTopAppBarTitle(route: String?): String {
     return when (route) {
-        "destination_chat_screen" -> "Chat"
         "destination_settings_list_screen" -> "Settings"
         // Add more cases for other screens
-        else -> "My App"
+        else -> "Talk to AI"
     }
 }
