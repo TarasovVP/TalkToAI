@@ -5,13 +5,12 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.vnstudio.talktoai.domain.usecases.SettingsPrivacyPolicyUseCase
 import com.vnstudio.talktoai.presentation.components.PrimaryButton
 
 @Composable
 fun SettingsPrivacyPolicyScreen(onClick: () -> Unit, ) {
 
-    val viewModel: SettingsPrivacyPolicyUseCase = hiltViewModel()
+    val viewModel: SettingsPrivacyPolicyViewModel = hiltViewModel()
 
     Column(
         modifier = Modifier.fillMaxSize(),

@@ -18,7 +18,7 @@ import com.vnstudio.talktoai.ui.theme.Neutral50
 import com.vnstudio.talktoai.ui.theme.Primary500
 
 @Composable
-fun OnboardingScreen(onNextScreen: () -> Unit, ) {
+fun OnboardingScreen(onNextScreen: () -> Unit) {
     val viewModel: OnBoardingViewModel = hiltViewModel()
     val pageState = remember {
         mutableStateOf(0)
@@ -39,7 +39,7 @@ fun OnboardingScreen(onNextScreen: () -> Unit, ) {
 }
 
 @Composable
-fun OnboardingPage(page: Int, onClick: () -> Unit, ) {
+fun OnboardingPage(page: Int, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -49,6 +49,7 @@ fun OnboardingPage(page: Int, onClick: () -> Unit, ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(top = 32.dp)
                 .background(color = Primary500, shape = RoundedCornerShape(16.dp))
         ) {
             Text(text = "Привет, Я - Искусственный Интеллект. Page $page", textAlign = TextAlign.Center, color = Neutral50, modifier = Modifier
@@ -56,6 +57,7 @@ fun OnboardingPage(page: Int, onClick: () -> Unit, ) {
         }
         Image(painter = painterResource(id = R.drawable.onboarding_intro), contentDescription = "Onboarding icon", modifier = Modifier
             .fillMaxWidth()
+            .weight(1f)
             .padding(top = 16.dp))
         Image(painter = painterResource(id = when(page) {
             1 -> R.drawable.ic_tab_two
@@ -63,10 +65,9 @@ fun OnboardingPage(page: Int, onClick: () -> Unit, ) {
             3 -> R.drawable.ic_tab_four
             else -> R.drawable.ic_tab_one
         }), contentDescription = "Onboarding tab $page", modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp))
+            .fillMaxWidth())
         PrimaryButton(text = if (page == 3) "Войти" else "Дальше", modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp), onClick = onClick)
+            .padding(vertical = 40.dp), onClick = onClick)
     }
 }
