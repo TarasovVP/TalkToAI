@@ -1,6 +1,6 @@
 package com.vnstudio.talktoai.presentation.settings.settings_list
 
-import com.vnstudio.talktoai.data.network.Result
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.models.Feedback
 import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
 import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository

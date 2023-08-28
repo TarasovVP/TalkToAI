@@ -2,7 +2,7 @@ package com.vnstudio.talktoai.presentation.settings.settings_sign_up
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import com.vnstudio.talktoai.data.network.Result
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.CurrentUser

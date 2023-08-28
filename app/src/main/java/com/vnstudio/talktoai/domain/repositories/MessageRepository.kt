@@ -4,7 +4,7 @@ import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.ApiResponse
 import kotlinx.coroutines.flow.Flow
-import com.vnstudio.talktoai.data.network.Result
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 
 interface MessageRepository {
 

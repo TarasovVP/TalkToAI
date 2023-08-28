@@ -1,6 +1,6 @@
 package com.vnstudio.talktoai.presentation.onboarding.login
 
-import com.vnstudio.talktoai.data.network.Result
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.repositories.AuthRepository
 import com.vnstudio.talktoai.domain.usecases.LoginUseCase
 

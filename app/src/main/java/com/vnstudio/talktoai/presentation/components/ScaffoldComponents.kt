@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -61,7 +62,7 @@ fun SecondaryTopBar(title: String, onNavigationIconClick: () -> Unit) {
 
 @Composable
 fun AppDrawer(
-    chats: List<Chat>,
+    chats: MutableState<List<Chat>>,
     onCreateChatClick: () -> Unit,
     onChatClick: (Chat) -> Unit,
     onDeleteChatClick: (Chat) -> Unit,
@@ -79,8 +80,8 @@ fun AppDrawer(
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            items(chats) { chat ->
-                ChatItem(chat = chat, chats.indexOf(chat) == 0, onChatClick = {
+            items(chats.value) { chat ->
+                ChatItem(chat = chat, chats.value.indexOf(chat) == 0, onChatClick = {
                     onChatClick.invoke(chat)
                 }, onDeleteIconClick = onDeleteChatClick)
             }

@@ -1,6 +1,6 @@
 package com.vnstudio.talktoai.presentation.onboarding.signup
 
-import com.vnstudio.talktoai.data.network.Result
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.models.CurrentUser
 import com.vnstudio.talktoai.domain.repositories.AuthRepository
 import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
