@@ -62,6 +62,7 @@ fun SecondaryTopBar(title: String, onNavigationIconClick: () -> Unit) {
 
 @Composable
 fun AppDrawer(
+    isChatScreen: Boolean,
     chats: MutableState<List<Chat>>,
     onCreateChatClick: () -> Unit,
     onChatClick: (Chat) -> Unit,
@@ -81,7 +82,7 @@ fun AppDrawer(
                 .weight(1f)
         ) {
             items(chats.value) { chat ->
-                ChatItem(chat = chat, chats.value.indexOf(chat) == 0, onChatClick = {
+                ChatItem(chat = chat, chats.value.indexOf(chat) == 0 && isChatScreen, onChatClick = {
                     onChatClick.invoke(chat)
                 }, onDeleteIconClick = onDeleteChatClick)
             }
