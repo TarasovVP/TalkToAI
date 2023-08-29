@@ -4,7 +4,7 @@
     <string name="privacy_policy">Privacy policy</string>
     <string name="app_network_unavailable_repeat">Network is unavailable</string>
     <!--Settings language-->
-    <string name="settings_language_russian">Russian</string>
-    <string name="settings_language_ukrainian">Ukrainian</string>
-    <string name="settings_language_english">English</string>
+    <string name="settings_language_russian">Російська</string>
+    <string name="settings_language_ukrainian">Українська</string>
+    <string name="settings_language_english">Англійська</string>
 </resources>

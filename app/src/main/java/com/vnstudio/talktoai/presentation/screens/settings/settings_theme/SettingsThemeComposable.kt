@@ -37,12 +37,15 @@ fun SettingsThemeScreen(infoMessageState: MutableState<InfoMessage?>) {
     ) {
         SettingsThemeItem("Светлая", AppCompatDelegate.MODE_NIGHT_NO == appThemeState.value) {
             viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_NO)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
         SettingsThemeItem("Темная", AppCompatDelegate.MODE_NIGHT_YES == appThemeState.value) {
             viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_YES)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
         SettingsThemeItem("Согласно настроек телефона", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM == appThemeState.value) {
             viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
     }
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
