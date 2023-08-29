@@ -16,6 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
+import com.vnstudio.talktoai.domain.models.CurrentUser
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.base.ExceptionMessageHandler
@@ -50,6 +51,17 @@ fun SettingsSignUpScreen(infoMessageState: MutableState<InfoMessage?>, onNextScr
     LaunchedEffect(isGoogleAccountExistState.value) {
         isGoogleAccountExistState.value?.let { idToken ->
             viewModel.createUserWithGoogle(idToken, false)
+        }
+    }
+    //TODO CurrentUser
+    val successAuthorisationState = viewModel.successAuthorisationLiveData.observeAsState()
+    LaunchedEffect(successAuthorisationState.value) {
+        successAuthorisationState.value?.let {  isExistUser ->
+            if (isExistUser) {
+                viewModel.updateCurrentUser( if (transferDataState.value) CurrentUser() else CurrentUser())
+            } else {
+                viewModel.createCurrentUser( if (transferDataState.value) CurrentUser() else CurrentUser())
+            }
         }
     }
     val successSignInState = viewModel.createCurrentUserLiveData.observeAsState()
@@ -96,6 +108,16 @@ fun SettingsSignUpScreen(infoMessageState: MutableState<InfoMessage?>, onNextScr
         }
         TransferDataCard(transferDataState)
     }
+    ConfirmationDialog("Пользователь с таким Email уже существует. Вы можете перейти в этот аккаунт. При включенном выборе переноса данных - они будут перенесены в аккаунт, при выключенном - удалены безвозвартно. Перейти?", showAccountExistDialog, onDismiss = {
+        viewModel.googleSignInClient.signOut()
+        showAccountExistDialog.value = false
+    }) {
+        viewModel.accountExistLiveData.value.takeIf { it.isNullOrEmpty().not() }?.let { idToken ->
+            viewModel.createUserWithGoogle(idToken, true)
+        } ?: viewModel.signInWithEmailAndPassword(emailInputValue.value.text, passwordInputValue.value.text)
+        showAccountExistDialog.value = false
+    }
+
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 }
 
