@@ -72,7 +72,7 @@ fun SignUpScreen(messageState: MutableState<InfoMessage?>, onNextScreen: (String
             .fillMaxSize()
             .padding(16.dp)
             .background(Primary50),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
         Text(
             text = "Регистрация", modifier = Modifier
