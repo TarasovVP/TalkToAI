@@ -1,25 +1,126 @@
 package com.vnstudio.talktoai.presentation.settings.settings_sign_up
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes
 import com.vnstudio.talktoai.domain.models.InfoMessage
+import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.base.ExceptionMessageHandler
-import com.vnstudio.talktoai.presentation.components.PrimaryButton
+import com.vnstudio.talktoai.presentation.base.OrDivider
+import com.vnstudio.talktoai.presentation.components.*
+import com.vnstudio.talktoai.ui.theme.Primary300
+import com.vnstudio.talktoai.ui.theme.Primary50
 
 @Composable
-fun SettingsSignUpScreen(infoMessageState: MutableState<InfoMessage?>, onClick: () -> Unit, ) {
+fun SettingsSignUpScreen(infoMessageState: MutableState<InfoMessage?>, onNextScreen: (String) -> Unit) {
 
     val viewModel: SettingSignUpViewModel = hiltViewModel()
+    val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
+    val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
+    val showAccountExistDialog = remember { mutableStateOf(false) }
+    val transferDataState = remember { mutableStateOf(true) }
+
+    val accountExistState = viewModel.accountExistLiveData.observeAsState()
+    LaunchedEffect(accountExistState.value) {
+        accountExistState.value?.let {
+            showAccountExistDialog.value = true
+        }
+    }
+    val isEmailAccountExistState = viewModel.createEmailAccountLiveData.observeAsState()
+    LaunchedEffect(isEmailAccountExistState.value) {
+        isEmailAccountExistState.value?.let {
+            viewModel.createUserWithEmailAndPassword(emailInputValue.value.text.trim(),
+                passwordInputValue.value.text)
+        }
+    }
+    val isGoogleAccountExistState = viewModel.createGoogleAccountLiveData.observeAsState()
+    LaunchedEffect(isGoogleAccountExistState.value) {
+        isGoogleAccountExistState.value?.let { idToken ->
+            viewModel.createUserWithGoogle(idToken, false)
+        }
+    }
+    val successSignInState = viewModel.createCurrentUserLiveData.observeAsState()
+    LaunchedEffect(successSignInState.value) {
+        successSignInState.value?.let {
+            onNextScreen.invoke(NavigationScreen.ChatScreen().route)
+        }
+    }
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
+        } catch (e: ApiException) {
+            viewModel.exceptionLiveData.postValue(CommonStatusCodes.getStatusCodeString(e.statusCode))
+        }
+    }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .background(Primary50),
+        verticalArrangement = Arrangement.Top
     ) {
-        Text(text = "SettingsSignUpScreen")
-        PrimaryButton(text = "Click", modifier = Modifier, onClick = onClick)
+        Text(
+            text = "С помощью Google",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+        GoogleButton(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(16.dp)
+        ) {
+            launcher.launch(viewModel.googleSignInClient.signInIntent)
+        }
+        OrDivider(modifier = Modifier)
+        PrimaryTextField("Email", emailInputValue)
+        PasswordTextField(passwordInputValue)
+        PrimaryButton(text = "Зарегистрироваться", emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(), modifier = Modifier) {
+            viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
+        }
+        TransferDataCard(transferDataState)
     }
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 }
+
+@Composable
+fun TransferDataCard(transferDataState: MutableState<Boolean>) {
+    Card(modifier = Modifier.padding(top = 16.dp)) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "Перенести данные?", modifier = Modifier.weight(1f).padding(start = 8.dp))
+                Switch(checked = transferDataState.value, onCheckedChange = { isChecked ->
+                    transferDataState.value = isChecked
+                })
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Primary300)
+            )
+            Text(text = if (transferDataState.value) "Cозданные данные будут перенесены в ваш аккаунт." else "Cозданные данные будут удалены.",
+                modifier = Modifier.fillMaxWidth().padding(8.dp))
+        }
+    }
+}
+

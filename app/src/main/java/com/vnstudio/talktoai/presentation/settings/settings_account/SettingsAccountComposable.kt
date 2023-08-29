@@ -61,7 +61,7 @@ fun SettingsAccountScreen(
             }
         } else {
             PrimaryButton(text = "Создать аккаунт", modifier = Modifier) {
-                onNextScreen.invoke(NavigationScreen.SignUpScreen().route)
+                onNextScreen.invoke(NavigationScreen.SettingsSignUpScreen().route)
             }
             EmptyState(
                 text = "Ваши данные хранятся локально в рамках одной сессии и будут потеряны при выходе из этого аккаунта, очистке кеша или переустановке приложения. Для подключения удаленного хранения данных и доступа к нему с любого устройства, зарегистрируйтесь.",
