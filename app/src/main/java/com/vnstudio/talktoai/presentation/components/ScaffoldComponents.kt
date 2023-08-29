@@ -16,10 +16,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
-import com.vnstudio.talktoai.presentation.base.AddChatItem
-import com.vnstudio.talktoai.presentation.chat.ChatItem
-import com.vnstudio.talktoai.presentation.chat.SettingsItem
-import com.vnstudio.talktoai.ui.theme.*
+import com.vnstudio.talktoai.presentation.screens.base.AddChatItem
+import com.vnstudio.talktoai.presentation.screens.chat.ChatItem
+import com.vnstudio.talktoai.presentation.screens.chat.SettingsItem
+import com.vnstudio.talktoai.presentation.theme.Neutral50
+import com.vnstudio.talktoai.presentation.theme.Primary100
+import com.vnstudio.talktoai.presentation.theme.Primary900
 
 
 @Composable
