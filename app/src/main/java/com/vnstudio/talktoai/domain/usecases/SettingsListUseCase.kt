@@ -8,5 +8,7 @@ interface SettingsListUseCase {
 
     suspend fun getAppLanguage(): Flow<String?>
 
+    fun currentUserEmail(): String
+
     fun insertFeedback(feedback: Feedback, result: (Result<Unit>) -> Unit)
 }

@@ -29,7 +29,7 @@ class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseA
 
     override fun currentUserEmail(): String {
         return try {
-            firebaseAuth.currentUser?.email ?: String.EMPTY
+            firebaseAuth.currentUser?.email.takeIf { it.isNullOrEmpty().not() } ?: firebaseAuth.currentUser?.uid.orEmpty()
         } catch (e: AbstractMethodError) {
             String.EMPTY
         }

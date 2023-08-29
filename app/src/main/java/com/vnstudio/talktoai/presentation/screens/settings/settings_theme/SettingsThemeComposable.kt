@@ -8,8 +8,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.presentation.screens.base.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.theme.Neutral500
@@ -35,15 +37,15 @@ fun SettingsThemeScreen(infoMessageState: MutableState<InfoMessage?>) {
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        SettingsThemeItem("Светлая", AppCompatDelegate.MODE_NIGHT_NO == appThemeState.value) {
+        SettingsThemeItem(stringResource(id = R.string.settings_theme_day), AppCompatDelegate.MODE_NIGHT_NO == appThemeState.value) {
             viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_NO)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
-        SettingsThemeItem("Темная", AppCompatDelegate.MODE_NIGHT_YES == appThemeState.value) {
+        SettingsThemeItem(stringResource(id = R.string.settings_theme_night), AppCompatDelegate.MODE_NIGHT_YES == appThemeState.value) {
             viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_YES)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
-        SettingsThemeItem("Согласно настроек телефона", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM == appThemeState.value) {
+        SettingsThemeItem(stringResource(id = R.string.settings_theme_auto), AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM == appThemeState.value) {
             viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
@@ -54,7 +56,9 @@ fun SettingsThemeScreen(infoMessageState: MutableState<InfoMessage?>) {
 @Composable
 fun SettingsThemeItem(name: String, isChecked: Boolean, onThemeModeCheck: () -> Unit) {
 
-    Card(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
+    Card(modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 16.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
