@@ -23,10 +23,6 @@ class SettingsAccountViewModel @Inject constructor(
     val successLiveData = MutableLiveData<Unit>()
     val successChangePasswordLiveData = MutableLiveData<Unit>()
 
-    fun isLoggedInUser(): Boolean {
-        return settingsAccountUseCase.isLoggedInUser()
-    }
-
     fun isAuthorisedUser(): Boolean {
         return settingsAccountUseCase.isAuthorisedUser()
     }

@@ -16,12 +16,11 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsListViewModel @Inject constructor(
     private val application: Application,
-    private val settingsListUseCase: SettingsListUseCase,
-    val firebaseAuth: FirebaseAuth
+    private val settingsListUseCase: SettingsListUseCase
 ) : BaseViewModel(application) {
 
     val appLanguageLiveData = MutableLiveData<String>()
-    val successFeedbackLiveData = MutableLiveData<String>()
+    val successFeedbackLiveData = MutableLiveData<Unit>()
 
     fun getAppLanguage() {
         launch {
@@ -31,12 +30,16 @@ class SettingsListViewModel @Inject constructor(
         }
     }
 
+    fun currentUserEmail(): String {
+        return settingsListUseCase.currentUserEmail()
+    }
+
     fun insertFeedback(feedback: Feedback) {
         if (application.isNetworkAvailable()) {
             showProgress()
             settingsListUseCase.insertFeedback(feedback) { result ->
                 when (result) {
-                    is Result.Success -> successFeedbackLiveData.postValue(feedback.message)
+                    is Result.Success -> successFeedbackLiveData.postValue(Unit)
                     is Result.Failure -> exceptionLiveData.postValue(result.errorMessage.orEmpty())
                 }
             }

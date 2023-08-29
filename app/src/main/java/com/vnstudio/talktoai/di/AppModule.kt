@@ -220,8 +220,9 @@ object AppModule {
     fun provideSettingsListUseCase(
         dataStoreRepository: DataStoreRepository,
         realDataBaseRepository: RealDataBaseRepository,
+        authRepository: AuthRepository
     ): SettingsListUseCase {
-        return SettingsListUseCaseImpl(dataStoreRepository, realDataBaseRepository)
+        return SettingsListUseCaseImpl(dataStoreRepository, realDataBaseRepository, authRepository)
     }
 
     @Singleton
