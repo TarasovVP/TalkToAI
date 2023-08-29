@@ -1,0 +1,66 @@
+package com.vnstudio.talktoai.presentation.screens.settings.settings_theme
+
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.vnstudio.talktoai.domain.models.InfoMessage
+import com.vnstudio.talktoai.presentation.screens.base.ExceptionMessageHandler
+import com.vnstudio.talktoai.presentation.theme.Neutral500
+import com.vnstudio.talktoai.presentation.theme.Primary700
+
+@Composable
+fun SettingsThemeScreen(infoMessageState: MutableState<InfoMessage?>) {
+
+    val viewModel: SettingsThemeViewModel = hiltViewModel()
+    val appThemeState = remember { mutableStateOf<Int?>(null) }
+
+    LaunchedEffect(Unit) {
+        viewModel.getAppTheme()
+    }
+    val appTheme = viewModel.appThemeLiveData.observeAsState()
+    LaunchedEffect(appTheme.value) {
+        appThemeState.value = appTheme.value
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .selectableGroup()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top
+    ) {
+        SettingsThemeItem("Светлая", AppCompatDelegate.MODE_NIGHT_NO == appThemeState.value) {
+            viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+        SettingsThemeItem("Темная", AppCompatDelegate.MODE_NIGHT_YES == appThemeState.value) {
+            viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_YES)
+        }
+        SettingsThemeItem("Согласно настроек телефона", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM == appThemeState.value) {
+            viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
+    }
+    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
+}
+
+@Composable
+fun SettingsThemeItem(name: String, isChecked: Boolean, onThemeModeCheck: () -> Unit) {
+
+    Card(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButton(selected = isChecked, onClick = onThemeModeCheck, colors = RadioButtonDefaults.colors(
+                selectedColor = Primary700,
+                unselectedColor = Neutral500
+            ))
+            Text(text = name)
+        }
+    }
+}

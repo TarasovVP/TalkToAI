@@ -16,7 +16,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnstudio.talktoai.R
-import com.vnstudio.talktoai.ui.theme.*
+import com.vnstudio.talktoai.presentation.theme.*
 
 
 @Composable

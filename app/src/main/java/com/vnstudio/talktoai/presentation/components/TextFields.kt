@@ -21,8 +21,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.R
-import com.vnstudio.talktoai.ui.theme.Primary500
-import com.vnstudio.talktoai.ui.theme.Primary900
+import com.vnstudio.talktoai.presentation.theme.Primary500
+import com.vnstudio.talktoai.presentation.theme.Primary900
 
 @Composable
 fun PrimaryTextField(

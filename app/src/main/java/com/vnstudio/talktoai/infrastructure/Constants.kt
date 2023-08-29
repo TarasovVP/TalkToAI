@@ -13,6 +13,11 @@ object Constants {
     const val APP_THEME = "appTheme"
     const val REVIEW_VOTE = "reviewVote"
 
+    //App languages
+    const val APP_LANG_EN = "en"
+    const val APP_LANG_UK = "uk"
+    const val APP_LANG_RU = "ru"
+
     //Data base
     const val USERS = "users"
     const val CHATS = "chats"
