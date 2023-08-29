@@ -9,13 +9,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.vnstudio.talktoai.R
+import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.base.EmptyState
+import com.vnstudio.talktoai.presentation.base.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.base.ShapeableImage
 import com.vnstudio.talktoai.presentation.components.*
 
 @Composable
-fun SettingsAccountScreen(onNextScreen: (String) -> Unit) {
+fun SettingsAccountScreen(
+    infoMessageState: MutableState<InfoMessage?>,
+    onNextScreen: (String) -> Unit
+) {
 
     val viewModel: SettingsAccountViewModel = hiltViewModel()
     val showLogOutDialog = remember { mutableStateOf(false) }
@@ -80,6 +85,7 @@ fun SettingsAccountScreen(onNextScreen: (String) -> Unit) {
     }) {
         showDeleteAccountDialog.value = false
     }
+    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 }
 
 @Composable

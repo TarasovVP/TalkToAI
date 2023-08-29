@@ -35,8 +35,10 @@ import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
+import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.MessageApi
 import com.vnstudio.talktoai.presentation.base.AddChatItem
+import com.vnstudio.talktoai.presentation.base.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.components.ChatTextField
 import com.vnstudio.talktoai.presentation.components.ConfirmationDialog
 import com.vnstudio.talktoai.presentation.components.DataEditDialog
@@ -49,7 +51,8 @@ fun ChatScreen(
     openedChatState: MutableState<Chat?>,
     showCreateDataDialog: MutableState<Boolean>,
     showEditDataDialog: MutableState<Boolean>,
-    deleteChatState: MutableState<Chat?>
+    deleteChatState: MutableState<Chat?>,
+    infoMessageState: MutableState<InfoMessage?>
 ) {
 
     val viewModel: ChatViewModel = hiltViewModel()
@@ -108,6 +111,8 @@ fun ChatScreen(
         showConfirmationDialog.value = false
         deleteChatState.value = null
     }
+
+    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 }
 
 @Composable
