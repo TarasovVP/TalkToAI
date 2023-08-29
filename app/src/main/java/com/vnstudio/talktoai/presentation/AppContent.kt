@@ -207,9 +207,7 @@ fun AppContent(
                 composable(
                     route = NavigationScreen.SettingsPrivacyPolicyScreen().route
                 ) {
-                    SettingsPrivacyPolicyScreen {
-
-                    }
+                    SettingsPrivacyPolicyScreen()
                 }
             }
         })
