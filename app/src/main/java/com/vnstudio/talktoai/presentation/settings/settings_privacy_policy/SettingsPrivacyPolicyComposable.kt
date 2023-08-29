@@ -1,22 +1,49 @@
 package com.vnstudio.talktoai.presentation.settings.settings_privacy_policy
 
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.vnstudio.talktoai.presentation.components.PrimaryButton
+import com.vnstudio.talktoai.CommonExtensions.EMPTY
 
 @Composable
-fun SettingsPrivacyPolicyScreen(onClick: () -> Unit, ) {
+fun SettingsPrivacyPolicyScreen() {
 
     val viewModel: SettingsPrivacyPolicyViewModel = hiltViewModel()
+    val privacyPolicyUrlState = remember { mutableStateOf(String.EMPTY) }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(text = "SettingsPrivacyPolicyScreen")
-        PrimaryButton(text = "Click", modifier = Modifier, onClick = onClick)
+    LaunchedEffect(Unit) {
+        viewModel.getAppLanguage()
     }
+    val appLanguageState = viewModel.appLanguageLiveData.observeAsState()
+    LaunchedEffect(appLanguageState.value) {
+        appLanguageState.value?.let { lang ->
+            viewModel.getPrivacyPolicy(lang)
+        }
+    }
+    val privacyPolicyState = viewModel.privacyPolicyLiveData.observeAsState()
+    LaunchedEffect(privacyPolicyState.value) {
+        privacyPolicyState.value?.let { url ->
+            privacyPolicyUrlState.value = url
+        }
+    }
+
+    WebView(privacyPolicyUrlState.value)
+}
+
+@Composable
+fun WebView(url: String) {
+    AndroidView(
+        modifier = Modifier.fillMaxSize(),
+        factory = { context ->
+            WebView(context).apply {
+                webViewClient = WebViewClient()
+                loadUrl(url)
+            }
+        }
+    )
 }
