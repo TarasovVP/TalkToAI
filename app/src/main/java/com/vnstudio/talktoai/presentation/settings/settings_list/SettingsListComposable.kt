@@ -20,13 +20,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.Feedback
+import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
+import com.vnstudio.talktoai.presentation.base.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.components.PrimaryButton
 import com.vnstudio.talktoai.ui.theme.Primary500
 import java.util.*
 
 @Composable
-fun SettingsListScreen(onNextScreen: (String) -> Unit) {
+fun SettingsListScreen(infoMessageState: MutableState<InfoMessage?>, onNextScreen: (String) -> Unit) {
 
     val viewModel: SettingsListViewModel = hiltViewModel()
     val showFeedbackDialog = remember { mutableStateOf(false) }
@@ -86,6 +88,7 @@ fun SettingsListScreen(onNextScreen: (String) -> Unit) {
             viewModel.insertFeedback(Feedback(viewModel.firebaseAuth.currentUser?.email.orEmpty(), feedback, Date().time))
         }
     )
+    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 }
 
 @Composable

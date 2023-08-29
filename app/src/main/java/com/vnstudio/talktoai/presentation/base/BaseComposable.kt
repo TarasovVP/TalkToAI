@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,10 +23,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.MutableLiveData
 import com.vnstudio.talktoai.R
-import com.vnstudio.talktoai.presentation.components.PrimaryButton
+import com.vnstudio.talktoai.domain.models.InfoMessage
+import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.ui.theme.*
 
+
+@Composable
+fun ExceptionMessageHandler(messageState: MutableState<InfoMessage?>, exceptionLiveData: MutableLiveData<String>) {
+    val exceptionState = exceptionLiveData.observeAsState()
+    LaunchedEffect(exceptionState.value) {
+        exceptionState.value.takeIf { exceptionState.value.isNullOrEmpty().not() }?.let {
+            messageState.value = InfoMessage(
+                exceptionState.value.orEmpty(),
+                Constants.ERROR_MESSAGE
+            )
+            exceptionLiveData.value = null
+        }
+    }
+}
 
 @Composable
 fun AddChatItem(modifier: Modifier, onAddChatClicked: () -> Unit) {

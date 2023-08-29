@@ -5,10 +5,12 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.vnstudio.talktoai.domain.models.InfoMessage
+import com.vnstudio.talktoai.presentation.base.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.components.PrimaryButton
 
 @Composable
-fun SettingsSignUpScreen(onClick: () -> Unit, ) {
+fun SettingsSignUpScreen(infoMessageState: MutableState<InfoMessage?>, onClick: () -> Unit, ) {
 
     val viewModel: SettingSignUpViewModel = hiltViewModel()
 
@@ -19,4 +21,5 @@ fun SettingsSignUpScreen(onClick: () -> Unit, ) {
         Text(text = "SettingsSignUpScreen")
         PrimaryButton(text = "Click", modifier = Modifier, onClick = onClick)
     }
+    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 }

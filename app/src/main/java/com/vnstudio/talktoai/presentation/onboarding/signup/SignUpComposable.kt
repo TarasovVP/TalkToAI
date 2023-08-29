@@ -16,13 +16,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
+import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
+import com.vnstudio.talktoai.presentation.base.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.base.OrDivider
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.ui.theme.Primary50
 
 @Composable
-fun SignUpScreen(onNextScreen: (String) -> Unit) {
+fun SignUpScreen(messageState: MutableState<InfoMessage?>, onNextScreen: (String) -> Unit) {
 
     val viewModel: SignUpViewModel = hiltViewModel()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
@@ -103,4 +105,5 @@ fun SignUpScreen(onNextScreen: (String) -> Unit) {
             viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
         }
     }
+    ExceptionMessageHandler(messageState, viewModel.exceptionLiveData)
 }

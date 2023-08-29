@@ -17,13 +17,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
+import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
+import com.vnstudio.talktoai.presentation.base.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.base.OrDivider
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.ui.theme.Primary50
 
 @Composable
-fun LoginScreen(messageState: MutableState<String?>, onNextScreen: (String) -> Unit) {
+fun LoginScreen(messageState: MutableState<InfoMessage?>, onNextScreen: (String) -> Unit) {
 
     val viewModel: LoginViewModel = hiltViewModel()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
@@ -31,11 +33,6 @@ fun LoginScreen(messageState: MutableState<String?>, onNextScreen: (String) -> U
     val showForgotPasswordDialog =  remember { mutableStateOf(false) }
     val showAccountExistDialog =  remember { mutableStateOf(false) }
     val showUnauthorizedEnterDialog =  remember { mutableStateOf(false) }
-
-    val exceptionState = viewModel.exceptionLiveData.observeAsState()
-    LaunchedEffect(exceptionState.value) {
-        messageState.value = exceptionState.value
-    }
 
     val accountExistState = viewModel.accountExistLiveData.observeAsState()
     LaunchedEffect(accountExistState.value) {
@@ -142,4 +139,6 @@ fun LoginScreen(messageState: MutableState<String?>, onNextScreen: (String) -> U
         viewModel.signInAnonymously()
         showUnauthorizedEnterDialog.value = false
     }
+
+    ExceptionMessageHandler(messageState, viewModel.exceptionLiveData)
 }

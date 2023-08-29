@@ -1,6 +1,5 @@
 package com.vnstudio.talktoai.presentation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,9 +13,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.data.database.db_entities.Chat
+import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
+import com.vnstudio.talktoai.infrastructure.Constants.ERROR_MESSAGE
 import com.vnstudio.talktoai.presentation.chat.ChatScreen
 import com.vnstudio.talktoai.presentation.components.AppDrawer
 import com.vnstudio.talktoai.presentation.components.PrimaryTopBar
@@ -48,13 +48,12 @@ fun AppContent(
     val showEditDataDialog = remember { mutableStateOf(false) }
     val openedChatState = remember { mutableStateOf<Chat?>(null) }
     val deletedChatState = remember { mutableStateOf<Chat?>(null) }
-    val messageState = remember { mutableStateOf<String?>(null) }
+    val infoMessageState = remember { mutableStateOf<InfoMessage?>(null) }
 
-    LaunchedEffect(messageState.value) {
-        messageState.value?.let { message ->
+    LaunchedEffect(infoMessageState.value) {
+        infoMessageState.value?.let { infoMessage ->
             scope.launch {
-                scaffoldState.snackbarHostState.showSnackbar(message = message, actionLabel = "error", duration = SnackbarDuration.Short)
-                messageState.value = null
+                scaffoldState.snackbarHostState.showSnackbar(message = infoMessage.message, actionLabel = infoMessage.type, duration = SnackbarDuration.Short)
             }
         }
     }
@@ -93,7 +92,8 @@ fun AppContent(
                 snackbar = { data ->
                     Box {
                         Snackbar(
-                            modifier = Modifier.padding(8.dp).background(if (data.actionLabel.isNotNull()) Color.Red else Primary700)
+                            modifier = Modifier.padding(8.dp),
+                            backgroundColor = if (data.actionLabel == ERROR_MESSAGE) Color.Red else Primary700
                         ) {
                             Text(data.message)
                         }
@@ -139,14 +139,14 @@ fun AppContent(
                 composable(
                     route = NavigationScreen.LoginScreen().route
                 ) {
-                    LoginScreen(messageState) { route ->
+                    LoginScreen(infoMessageState) { route ->
                         navController.navigate(route)
                     }
                 }
                 composable(
                     route = NavigationScreen.SignUpScreen().route
                 ) {
-                    SignUpScreen { route ->
+                    SignUpScreen(infoMessageState) { route ->
                         navController.navigate(route)
                     }
                 }
@@ -158,48 +158,49 @@ fun AppContent(
                         openedChatState,
                         showCreateDataDialog,
                         showEditDataDialog,
-                        deletedChatState
+                        deletedChatState,
+                        infoMessageState
                     )
                 }
                 composable(
                     route = NavigationScreen.SettingsListScreen().route
                 ) {
-                    SettingsListScreen { route ->
+                    SettingsListScreen(infoMessageState) { route ->
                         navController.navigate(route)
                     }
                 }
                 composable(
                     route = NavigationScreen.SettingsChatScreen().route
                 ) {
-                    SettingsChatScreen {
+                    SettingsChatScreen(infoMessageState) {
 
                     }
                 }
                 composable(
                     route = NavigationScreen.SettingsAccountScreen().route
                 ) {
-                    SettingsAccountScreen { route ->
+                    SettingsAccountScreen(infoMessageState) { route ->
                         navController.navigate(route)
                     }
                 }
                 composable(
                     route = NavigationScreen.SettingsSignUpScreen().route
                 ) {
-                    SettingsSignUpScreen {
+                    SettingsSignUpScreen(infoMessageState) {
 
                     }
                 }
                 composable(
                     route = NavigationScreen.SettingsLanguageScreen().route
                 ) {
-                    SettingsLanguageScreen {
+                    SettingsLanguageScreen(infoMessageState) {
 
                     }
                 }
                 composable(
                     route = NavigationScreen.SettingsThemeScreen().route
                 ) {
-                    SettingsThemeScreen {
+                    SettingsThemeScreen(infoMessageState) {
 
                     }
                 }
