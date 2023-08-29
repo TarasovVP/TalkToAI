@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai.presentation.screens.settings.settings_language
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectableGroup
@@ -9,8 +10,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.InfoMessage
@@ -41,14 +44,17 @@ fun SettingsLanguageScreen(infoMessageState: MutableState<InfoMessage?>) {
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        SettingsLanguageItem("Английский", APP_LANG_EN == appLanguageState.value, R.drawable.ic_flag_en) {
+        SettingsLanguageItem(stringResource(id = R.string.settings_language_english), APP_LANG_EN == appLanguageState.value, R.drawable.ic_flag_en) {
             viewModel.setAppLanguage(APP_LANG_EN)
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(APP_LANG_EN))
         }
-        SettingsLanguageItem("Украинский", APP_LANG_UK == appLanguageState.value, R.drawable.ic_flag_ua) {
+        SettingsLanguageItem(stringResource(id = R.string.settings_language_ukrainian), APP_LANG_UK == appLanguageState.value, R.drawable.ic_flag_ua) {
             viewModel.setAppLanguage(APP_LANG_UK)
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(APP_LANG_UK))
         }
-        SettingsLanguageItem("Русский", APP_LANG_RU == appLanguageState.value, R.drawable.ic_flag_ru) {
+        SettingsLanguageItem(stringResource(id = R.string.settings_language_russian), APP_LANG_RU == appLanguageState.value, R.drawable.ic_flag_ru) {
             viewModel.setAppLanguage(APP_LANG_RU)
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(APP_LANG_RU))
         }
     }
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
@@ -56,7 +62,9 @@ fun SettingsLanguageScreen(infoMessageState: MutableState<InfoMessage?>) {
 
 @Composable
 fun SettingsLanguageItem(name: String, isChecked: Boolean, icon: Int, onLanguageCheck: () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
+    Card(modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 16.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
