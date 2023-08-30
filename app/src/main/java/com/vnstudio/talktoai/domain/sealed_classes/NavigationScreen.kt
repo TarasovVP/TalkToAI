@@ -5,7 +5,6 @@ sealed class NavigationScreen {
     data class LoginScreen(val route: String = "destination_login_screen"): NavigationScreen()
     data class SignUpScreen(val route: String = "destination_sign_up_screen"): NavigationScreen()
     data class ChatScreen(val route: String = "destination_chat_screen"): NavigationScreen()
-    data class SettingsListScreen(val route: String = "destination_settings_list_screen"): NavigationScreen()
     data class SettingsChatScreen(val route: String = "destination_settings_chat_screen"): NavigationScreen()
     data class SettingsAccountScreen(val route: String = "destination_settings_account_screen"): NavigationScreen()
     data class SettingsSignUpScreen(val route: String = "destination_settings_sign_up_screen"): NavigationScreen()
@@ -20,13 +19,6 @@ sealed class NavigationScreen {
                 LoginScreen().route,
                 SignUpScreen().route -> false
                 else -> true
-            }
-        }
-        fun isDrawerNeeded(destination: String?): Boolean {
-            return when (destination) {
-                ChatScreen().route,
-                SettingsListScreen().route -> true
-                else -> false
             }
         }
     }

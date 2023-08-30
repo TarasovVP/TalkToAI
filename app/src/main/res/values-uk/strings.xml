@@ -41,11 +41,11 @@
     <string name="authorization_unauthorized_enter">У неавторизованого користувача дані зберігаються локально у межах однієї сесії. Все одно увійти?</string>
     <string name="authorization_unauthorized_enter_button">Увійти</string>
     <string name="authorization_network_unavailable">Інтернет з\'єднання відсутнє.\nДля продовження, підключіть інтернет і здійсніть повторний вхід.</string>
-       <!--Empty state-->
+    <!--Empty state-->
     <string name="empty_state_blockers">Список блокувальників порожній</string>
     <!--Settings screens-->
     <string name="settings">Налаштування</string>
-    <string name="settings_chat">Налаштування блокувальника</string>
+    <string name="settings_chat">Налаштування чату</string>
     <string name="settings_account">Ваш обліковий запис</string>
     <string name="settings_language">Мова</string>
     <string name="settings_theme">Вибір теми</string>
