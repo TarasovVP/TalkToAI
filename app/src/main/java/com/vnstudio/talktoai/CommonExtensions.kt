@@ -1,16 +1,26 @@
 package com.vnstudio.talktoai
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import retrofit2.Response
 import com.vnstudio.talktoai.domain.sealed_classes.Result
+import com.vnstudio.talktoai.infrastructure.Constants.DARK_MODE_TEXT
+import com.vnstudio.talktoai.infrastructure.Constants.ENCODING
+import com.vnstudio.talktoai.infrastructure.Constants.MIME_TYPE
+import com.vnstudio.talktoai.infrastructure.Constants.WHITE_MODE_TEXT
 import java.util.*
 
 object CommonExtensions {
@@ -87,5 +97,32 @@ object CommonExtensions {
             //is HiltTestApplication -> true
             else -> false
         }
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    fun WebView.initWebView(webUrl: String, onPageFinished: () -> Unit) {
+        setBackgroundColor(Color.TRANSPARENT)
+        settings.javaScriptEnabled = true
+        webViewClient = object : WebViewClient() {
+            override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
+            }
+
+            override fun onPageFinished(view: WebView, url: String) {
+                loadUrl(
+                    if (context.isDarkMode()
+                            .isTrue()
+                    ) DARK_MODE_TEXT else WHITE_MODE_TEXT
+                )
+                onPageFinished.invoke()
+            }
+        }
+        loadData(webUrl, MIME_TYPE, ENCODING)
+    }
+}
+
+fun Context.isDarkMode(): Boolean {
+    return when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+        Configuration.UI_MODE_NIGHT_YES -> true
+        else -> false
     }
 }
