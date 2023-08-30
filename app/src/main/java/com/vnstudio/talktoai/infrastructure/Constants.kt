@@ -24,4 +24,10 @@ object Constants {
     const val MESSAGES = "messages"
     const val FEEDBACK = "feedback"
     const val PRIVACY_POLICY = "privacyPolicy"
+
+    //WebView
+    const val MIME_TYPE = "text/html; charset=utf-8"
+    const val ENCODING = "UTF-8"
+    const val DARK_MODE_TEXT = "javascript:document.body.style.setProperty(\"color\", \"white\");"
+    const val WHITE_MODE_TEXT = "javascript:document.body.style.setProperty(\"color\", \"black\");"
 }
