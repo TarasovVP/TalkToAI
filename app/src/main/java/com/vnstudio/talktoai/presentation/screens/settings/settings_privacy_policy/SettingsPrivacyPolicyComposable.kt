@@ -11,6 +11,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.initWebView
+import com.vnstudio.talktoai.presentation.screens.base.CircularProgress
 
 @Composable
 fun SettingsPrivacyPolicyScreen() {
@@ -35,7 +36,7 @@ fun SettingsPrivacyPolicyScreen() {
     }
     privacyPolicyState.value.takeIf { it.isNullOrEmpty().not()}?.let { url ->
         AppWebView(url)
-    }
+    } ?: CircularProgress()
 }
 
 @Composable

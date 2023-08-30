@@ -22,10 +22,18 @@ import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG_RU
 import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG_UK
 import com.vnstudio.talktoai.presentation.components.FeedbackDialog
 import com.vnstudio.talktoai.presentation.screens.base.ExceptionMessageHandler
+import com.vnstudio.talktoai.presentation.theme.Neutral50
+import com.vnstudio.talktoai.presentation.theme.Primary800
+import com.vnstudio.talktoai.presentation.theme.Primary900
 import java.util.*
 
 @Composable
-fun SettingsListScreen(infoMessageState: MutableState<InfoMessage?>, onNextScreen: (String) -> Unit) {
+fun SettingsList(
+    currentRouteState: String?,
+    modifier: Modifier,
+    infoMessageState: MutableState<InfoMessage?>,
+    onNextScreen: (String) -> Unit
+) {
 
     val viewModel: SettingsListViewModel = hiltViewModel()
     val showFeedbackDialog = remember { mutableStateOf(false) }
@@ -44,44 +52,50 @@ fun SettingsListScreen(infoMessageState: MutableState<InfoMessage?>, onNextScree
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp, vertical = 24.dp)
     ) {
         SettingsItem(
             stringResource(id = R.string.settings_chat),
-            R.drawable.ic_settings_chat
+            R.drawable.ic_settings_chat,
+            currentRouteState == NavigationScreen.SettingsChatScreen().route
         ) {
             onNextScreen.invoke(NavigationScreen.SettingsChatScreen().route)
         }
         SettingsItem(
             stringResource(id = R.string.settings_account),
-            R.drawable.ic_settings_account
+            R.drawable.ic_settings_account,
+            currentRouteState == NavigationScreen.SettingsAccountScreen().route
         ) {
             onNextScreen.invoke(NavigationScreen.SettingsAccountScreen().route)
         }
         SettingsItem(
             stringResource(id = R.string.settings_language),
             R.drawable.ic_settings_language,
+            currentRouteState == NavigationScreen.SettingsLanguageScreen().route,
             flagDrawable(appLanguageState.value)
         ) {
             onNextScreen.invoke(NavigationScreen.SettingsLanguageScreen().route)
         }
         SettingsItem(
             stringResource(id = R.string.settings_theme),
-            R.drawable.ic_settings_theme
+            R.drawable.ic_settings_theme,
+            currentRouteState == NavigationScreen.SettingsThemeScreen().route
         ) {
             onNextScreen.invoke(NavigationScreen.SettingsThemeScreen().route)
         }
         SettingsItem(
             stringResource(id = R.string.settings_feedback),
-            R.drawable.ic_settings_feedback
+            R.drawable.ic_settings_feedback,
+            currentRouteState == NavigationScreen.SettingsPrivacyPolicyScreen().route
         ) {
             showFeedbackDialog.value = true
         }
         SettingsItem(
             stringResource(id = R.string.settings_privacy_policy),
-            R.drawable.ic_settings_privacy
+            R.drawable.ic_settings_privacy,
+            currentRouteState == NavigationScreen.SettingsPrivacyPolicyScreen().route
         ) {
             onNextScreen.invoke(NavigationScreen.SettingsPrivacyPolicyScreen().route)
         }
@@ -102,26 +116,33 @@ fun SettingsListScreen(infoMessageState: MutableState<InfoMessage?>, onNextScree
 }
 
 @Composable
-fun SettingsItem(title: String, mainIcon: Int, secondaryIcon: Int? = null, onClick: () -> Unit) {
+fun SettingsItem(title: String, mainIcon: Int, isCurrent: Boolean, secondaryIcon: Int? = null, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 8.dp)
-            .clickable {
-                onClick.invoke()
+            .let { modifier ->
+                if (isCurrent.not()) {
+                    modifier.clickable {
+                        onClick.invoke()
+                    }
+                } else {
+                    modifier
+                }
             },
+        backgroundColor = if (isCurrent) Primary800 else Primary900,
         elevation = 1.dp
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
         ) {
             Image(imageVector = ImageVector.vectorResource(id = mainIcon), contentDescription = title,
                 modifier = Modifier
-                .padding(end = 8.dp))
-            Text(text = title, modifier = Modifier.weight(1f))
-            secondaryIcon?.let { Image(imageVector = ImageVector.vectorResource(id = it), contentDescription = title) }
+                .padding(8.dp))
+            Text(text = title, color = Neutral50, modifier = Modifier.weight(1f).padding(vertical = 8.dp))
+            secondaryIcon?.let { Image(imageVector = ImageVector.vectorResource(id = it), contentDescription = title, modifier = Modifier
+                .padding(8.dp)) }
         }
     }
 }

@@ -117,66 +117,50 @@ fun ChatScreen(
 
 @Composable
 fun ChatItem(chat: Chat, isCurrent: Boolean, onChatClick: () -> Unit, onDeleteIconClick: (Chat) -> Unit) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
-        .let { modifier ->
-            if (isCurrent) {
-                modifier.background(color = Primary800, shape = RoundedCornerShape(16.dp))
-            } else {
-                modifier.clickable {
-                    onChatClick.invoke()
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)
+            .let { modifier ->
+                if (isCurrent.not()) {
+                    modifier.clickable {
+                        onChatClick.invoke()
+                    }
+                } else {
+                    modifier
                 }
-            }
-        }) {
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_chat),
-            contentDescription = "Chat item icon",
+            },
+        backgroundColor = if (isCurrent) Primary800 else Primary900,
+        elevation = 1.dp
+    ) {
+        Row(
             modifier = Modifier
-                .padding(8.dp)
-        )
-        Text(
-            text = chat.name,
-            fontSize = 16.sp,
-            color = Neutral50,
-            modifier = Modifier
-                .weight(1f)
-                .padding(vertical = 8.dp)
-        )
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_delete),
-            contentDescription = "Delete chat button",
-            modifier = Modifier
-                .padding(8.dp)
-                .clickable {
-                    onDeleteIconClick.invoke(chat)
-                }
-        )
-    }
-}
-
-@Composable
-fun SettingsItem(onSettingsClicked: () -> Unit) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .background(color = Primary700)
-        .clickable {
-            onSettingsClicked.invoke()
-        }) {
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_settings),
-            contentDescription = "Settings item icon",
-            modifier = Modifier
-                .padding(top = 16.dp, bottom = 40.dp, start = 32.dp, end = 8.dp)
-        )
-        Text(
-            text = "Settings",
-            fontSize = 16.sp,
-            color = Neutral50,
-            modifier = Modifier
-                .weight(1f)
-                .padding(top = 16.dp, bottom = 40.dp, end = 32.dp)
-        )
+                .fillMaxWidth()
+        ) {
+            Image(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_chat),
+                contentDescription = "Chat item icon",
+                modifier = Modifier
+                    .padding(8.dp)
+            )
+            Text(
+                text = chat.name,
+                fontSize = 16.sp,
+                color = Neutral50,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 8.dp)
+            )
+            Image(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_delete),
+                contentDescription = "Delete chat button",
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clickable {
+                        onDeleteIconClick.invoke(chat)
+                    }
+            )
+        }
     }
 }
 

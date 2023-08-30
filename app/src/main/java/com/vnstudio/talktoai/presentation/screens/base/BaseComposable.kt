@@ -62,10 +62,12 @@ fun AddChatItem(modifier: Modifier, onAddChatClicked: () -> Unit) {
                 .padding(8.dp)
         )
         Text(
-            text = "New chat",
+            text = "Новый чат",
             fontSize = 16.sp,
             color = Neutral50,
-            modifier = Modifier.weight(1f).padding(vertical = 8.dp)
+            modifier = Modifier
+                .weight(1f)
+                .padding(vertical = 8.dp)
         )
     }
 }
@@ -85,7 +87,10 @@ fun OrDivider(modifier: Modifier) {
         Text(
             text = "Или",
             fontSize = 16.sp,
-            modifier = Modifier.weight(1f).padding(vertical = 8.dp).wrapContentSize()
+            modifier = Modifier
+                .weight(1f)
+                .padding(vertical = 8.dp)
+                .wrapContentSize()
         )
         Box(
             modifier = Modifier
@@ -117,7 +122,7 @@ fun ShapeableImage(modifier: Modifier, drawableResId: Int, contentDescription: S
 @Composable
 fun EmptyState(text: String, modifier: Modifier) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center
@@ -129,11 +134,23 @@ fun EmptyState(text: String, modifier: Modifier) {
                 .background(color = Primary500, shape = RoundedCornerShape(16.dp))
         ) {
             Text(text = text, textAlign = TextAlign.Center, color = Neutral50, modifier = Modifier
-                .fillMaxWidth().padding(16.dp))
+                .fillMaxWidth()
+                .padding(16.dp))
         }
         Image(painter = painterResource(id = R.drawable.empty_state), contentDescription = "Empty state", modifier = Modifier
             .fillMaxWidth()
             .weight(1f)
             .padding(top = 16.dp))
+    }
+}
+
+@Composable
+fun CircularProgress() {
+    Box(modifier = Modifier.fillMaxSize(), Alignment.Center) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(100.dp),
+            color = Primary700,
+            strokeWidth = 5.dp
+        )
     }
 }
