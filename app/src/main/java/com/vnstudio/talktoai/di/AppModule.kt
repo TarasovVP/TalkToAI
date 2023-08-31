@@ -16,21 +16,21 @@ import com.vnstudio.talktoai.BuildConfig
 import com.vnstudio.talktoai.data.database.AppDatabase
 import com.vnstudio.talktoai.data.database.dao.ChatDao
 import com.vnstudio.talktoai.data.database.dao.MessageDao
-import com.vnstudio.talktoai.infrastructure.Constants.SERVER_TIMEOUT
 import com.vnstudio.talktoai.data.network.ApiService
 import com.vnstudio.talktoai.data.network.HeaderInterceptor
 import com.vnstudio.talktoai.data.repositoryimpl.*
 import com.vnstudio.talktoai.domain.repositories.*
 import com.vnstudio.talktoai.domain.usecases.*
-import com.vnstudio.talktoai.presentation.screens.main.MainUseCaseImpl
+import com.vnstudio.talktoai.infrastructure.Constants.SERVER_TIMEOUT
 import com.vnstudio.talktoai.presentation.screens.chat.ChatUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.main.MainUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.onboarding.login.LoginUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.onboarding.onboarding.OnBoardingUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.onboarding.signup.SignUpUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_account.SettingsAccountUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_chat.SettingsChatUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.settings.settings_feedback.SettingsFeedbackUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_language.SettingsLanguageUseCaseImpl
-import com.vnstudio.talktoai.presentation.screens.settings.settings_list.SettingsListUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_theme.SettingsThemeUseCaseImpl
@@ -159,7 +159,7 @@ object AppModule {
     @Singleton
     @Provides
     fun provideChatRepository(
-        chatDao: ChatDao
+        chatDao: ChatDao,
     ): ChatRepository {
         return ChatRepositoryImpl(chatDao)
     }
@@ -168,7 +168,7 @@ object AppModule {
     @Provides
     fun provideMessageRepository(
         messageDao: MessageDao,
-        apiService: ApiService
+        apiService: ApiService,
     ): MessageRepository {
         return MessageRepositoryImpl(messageDao, apiService)
     }
@@ -205,23 +205,38 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideChatUseCase(chatRepository: ChatRepository, messageRepository: MessageRepository): ChatUseCase {
+    fun provideChatUseCase(
+        chatRepository: ChatRepository,
+        messageRepository: MessageRepository,
+    ): ChatUseCase {
         return ChatUseCaseImpl(chatRepository, messageRepository)
     }
 
     @Singleton
     @Provides
-    fun provideMainUseCase(authRepository: AuthRepository, dataStoreRepository: DataStoreRepository, realDataBaseRepository: RealDataBaseRepository): MainUseCase {
-        return MainUseCaseImpl(authRepository, dataStoreRepository, realDataBaseRepository)
+    fun provideMainUseCase(
+        authRepository: AuthRepository,
+        dataStoreRepository: DataStoreRepository,
+        realDataBaseRepository: RealDataBaseRepository,
+        chatRepository: ChatRepository,
+        messageRepository: MessageRepository,
+    ): MainUseCase {
+        return MainUseCaseImpl(
+            authRepository,
+            dataStoreRepository,
+            realDataBaseRepository,
+            chatRepository,
+            messageRepository
+        )
     }
 
     @Singleton
     @Provides
     fun provideSettingsListUseCase(
         realDataBaseRepository: RealDataBaseRepository,
-        authRepository: AuthRepository
+        authRepository: AuthRepository,
     ): SettingsListUseCase {
-        return SettingsListUseCaseImpl(realDataBaseRepository, authRepository)
+        return SettingsFeedbackUseCaseImpl(realDataBaseRepository, authRepository)
     }
 
     @Singleton
@@ -239,9 +254,13 @@ object AppModule {
     fun provideSettingsAccountUseCase(
         authRepository: AuthRepository,
         realDataBaseRepository: RealDataBaseRepository,
-        dataStoreRepository: DataStoreRepository
+        dataStoreRepository: DataStoreRepository,
     ): SettingsAccountUseCase {
-        return SettingsAccountUseCaseImpl(authRepository, realDataBaseRepository, dataStoreRepository)
+        return SettingsAccountUseCaseImpl(
+            authRepository,
+            realDataBaseRepository,
+            dataStoreRepository
+        )
     }
 
     @Singleton
@@ -279,6 +298,7 @@ object AppModule {
         return SettingsPrivacyPolicyUseCaseImpl(dataStoreRepository, realDataBaseRepository)
     }
 }
+
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface DataStoreEntryPoint {

@@ -1,21 +1,28 @@
 package com.vnstudio.talktoai.presentation.screens.main
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
+import com.vnstudio.talktoai.data.database.db_entities.Chat
+import com.vnstudio.talktoai.domain.models.CurrentUser
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.MainUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
-import com.vnstudio.talktoai.domain.sealed_classes.Result
-import com.vnstudio.talktoai.domain.models.CurrentUser
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val mainUseCase: MainUseCase, application: Application) : BaseViewModel(application) {
+class MainViewModel @Inject constructor(
+    private val mainUseCase: MainUseCase,
+    application: Application,
+) : BaseViewModel(application) {
 
     val onBoardingSeenLiveData = MutableLiveData<Boolean>()
+    val chatsLiveData = MutableLiveData<List<Chat>>()
 
     fun getOnBoardingSeen() {
         launch {
@@ -32,9 +39,15 @@ class MainViewModel @Inject constructor(private val mainUseCase: MainUseCase, ap
     fun getCurrentUser() {
         launch {
             mainUseCase.getCurrentUser { operationResult ->
-                when(operationResult) {
-                    is Result.Success -> operationResult.data.takeIf { it.isNotNull() }?.let { setCurrentUserData(it) } ?: exceptionLiveData.postValue(String.EMPTY)
-                    is Result.Failure -> operationResult.errorMessage?.let { exceptionLiveData.postValue(it) }
+                when (operationResult) {
+                    is Result.Success -> operationResult.data.takeIf { it.isNotNull() }
+                        ?.let { setCurrentUserData(it) }
+                        ?: exceptionLiveData.postValue(String.EMPTY)
+                    is Result.Failure -> operationResult.errorMessage?.let {
+                        exceptionLiveData.postValue(
+                            it
+                        )
+                    }
                 }
             }
         }
@@ -43,4 +56,50 @@ class MainViewModel @Inject constructor(private val mainUseCase: MainUseCase, ap
     private fun setCurrentUserData(currentUser: CurrentUser) {
 
     }
+
+    fun getChats() {
+        showProgress()
+        launch {
+            mainUseCase.getChats().catch {
+                hideProgress()
+                Log.e(
+                    "apiTAG",
+                    "MainViewModel getChats catch localizedMessage ${it.localizedMessage}"
+                )
+            }.collect { chats ->
+                chatsLiveData.postValue(chats)
+                hideProgress()
+                Log.e("apiTAG", "MainViewModel getChats chats $chats")
+            }
+        }
+    }
+
+    fun updateChats(chats: List<Chat>) {
+        showProgress()
+        launch {
+            mainUseCase.updateChats(chats)
+        }
+    }
+
+    fun insertChat(chat: Chat) {
+        showProgress()
+        launch {
+            mainUseCase.insertChat(chat)
+        }
+    }
+
+    fun updateChat(chat: Chat) {
+        showProgress()
+        launch {
+            mainUseCase.updateChat(chat)
+        }
+    }
+
+    fun deleteChat(chat: Chat) {
+        showProgress()
+        launch {
+            mainUseCase.deleteChat(chat)
+        }
+    }
+
 }

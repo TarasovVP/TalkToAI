@@ -10,7 +10,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OnBoardingViewModel @Inject constructor(
     application: Application,
-    private val onBoardingUseCase: OnBoardingUseCase
+    private val onBoardingUseCase: OnBoardingUseCase,
 ) : BaseViewModel(application) {
 
     val onBoardingSeenLiveData = MutableLiveData<Unit>()

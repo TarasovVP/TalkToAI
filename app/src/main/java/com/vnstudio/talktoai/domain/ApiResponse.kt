@@ -7,9 +7,11 @@ import com.vnstudio.talktoai.domain.models.Usage
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class ApiResponse(val id: String?,
-                       @SerializedName("object") val chatObject: String?,
-                       val created: String?,
-                       val model: String?,
-                       val usage: Usage?,
-                       val choices: List<Choice>?): Parcelable
+data class ApiResponse(
+    val id: String?,
+    @SerializedName("object") val chatObject: String?,
+    val created: String?,
+    val model: String?,
+    val usage: Usage?,
+    val choices: List<Choice>?,
+) : Parcelable

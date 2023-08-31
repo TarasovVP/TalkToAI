@@ -19,10 +19,15 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun messageDao(): MessageDao
 
     companion object {
-        @Volatile private var instance: AppDatabase? = null
+        @Volatile
+        private var instance: AppDatabase? = null
 
         fun getDatabase(context: Context): AppDatabase =
-            instance ?: synchronized(this) { instance ?: buildDatabase(context).also { instance = it } }
+            instance ?: synchronized(this) {
+                instance ?: buildDatabase(context).also {
+                    instance = it
+                }
+            }
 
         private fun buildDatabase(appContext: Context) =
             Room.databaseBuilder(appContext, AppDatabase::class.java, appContext.packageName)

@@ -9,7 +9,11 @@ interface SettingsSignUpUseCase {
 
     fun createUserWithGoogle(idToken: String, result: (Result<Unit>) -> Unit)
 
-    fun createUserWithEmailAndPassword(email: String, password: String, result: (Result<String>) -> Unit)
+    fun createUserWithEmailAndPassword(
+        email: String,
+        password: String,
+        result: (Result<String>) -> Unit,
+    )
 
     fun signInWithEmailAndPassword(email: String, password: String, result: (Result<Unit>) -> Unit)
 

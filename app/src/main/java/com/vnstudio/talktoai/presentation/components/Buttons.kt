@@ -21,7 +21,12 @@ import com.vnstudio.talktoai.presentation.theme.*
 
 
 @Composable
-fun PrimaryButton(text: String, isEnabled: Boolean = true, modifier: Modifier, onClick: () -> Unit) {
+fun PrimaryButton(
+    text: String,
+    isEnabled: Boolean = true,
+    modifier: Modifier,
+    onClick: () -> Unit,
+) {
     TextButton(enabled = isEnabled,
         modifier = modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -61,11 +66,12 @@ fun SecondaryButton(text: String, isDestructive: Boolean, modifier: Modifier, on
 fun SubmitButtons(
     isEnabled: Boolean = true,
     onDismiss: () -> Unit,
-    onConfirmationClick: () -> Unit
+    onConfirmationClick: () -> Unit,
 ) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(8.dp),
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
         horizontalArrangement = Arrangement.Center
     ) {
         SecondaryButton(text = "Cancel", false, Modifier.weight(1f), onClick = onDismiss)
@@ -110,9 +116,11 @@ fun LinkButton(text: String, modifier: Modifier, onClick: () -> Unit) {
 @Composable
 fun TextIconButton(text: String, icon: Int, modifier: Modifier, onClick: () -> Unit) {
     IconButton(onClick = onClick) {
-        Row(modifier = modifier
-            .fillMaxWidth()
-            .background(color = Primary700, shape = RoundedCornerShape(16.dp))) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .background(color = Primary700, shape = RoundedCornerShape(16.dp))
+        ) {
             Image(
                 imageVector = ImageVector.vectorResource(id = icon),
                 contentDescription = "Add chat button",

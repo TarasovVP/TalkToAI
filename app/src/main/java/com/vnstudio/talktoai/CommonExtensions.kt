@@ -16,13 +16,13 @@ import android.webkit.WebViewClient
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import retrofit2.Response
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.infrastructure.Constants.DARK_MODE_TEXT
 import com.vnstudio.talktoai.infrastructure.Constants.ENCODING
 import com.vnstudio.talktoai.infrastructure.Constants.MIME_TYPE
 import com.vnstudio.talktoai.infrastructure.Constants.WHITE_MODE_TEXT
+import retrofit2.Response
 import java.util.*
 
 object CommonExtensions {
@@ -49,7 +49,7 @@ object CommonExtensions {
         connectivityManager.requestNetwork(networkRequest, networkCallback)
     }
 
-    fun <T>  Response<T>.apiCall(): Result<T> {
+    fun <T> Response<T>.apiCall(): Result<T> {
         try {
             if (isSuccessful) {
                 body()?.let { body ->
@@ -94,7 +94,7 @@ object CommonExtensions {
     }
 
     fun Application.isNetworkAvailable(): Boolean {
-        return when(this) {
+        return when (this) {
             is TalkToAIApp -> isNetworkAvailable.isTrue()
             //is HiltTestApplication -> true
             else -> false

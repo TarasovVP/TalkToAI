@@ -10,7 +10,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsChatViewModel @Inject constructor(
     private val application: Application,
-    private val settingsBlockerUseCase: SettingsBlockerUseCase
+    private val settingsBlockerUseCase: SettingsBlockerUseCase,
 ) : BaseViewModel(application) {
 
     val blockerTurnOnLiveData = MutableLiveData<Boolean>()

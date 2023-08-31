@@ -12,7 +12,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
-class MessageRepositoryImpl @Inject constructor(private val messageDao: MessageDao, private val apiService: ApiService) : MessageRepository {
+class MessageRepositoryImpl @Inject constructor(
+    private val messageDao: MessageDao,
+    private val apiService: ApiService,
+) : MessageRepository {
 
     override suspend fun insertMessage(message: Message) {
         messageDao.insertMessage(message)
@@ -22,9 +25,11 @@ class MessageRepositoryImpl @Inject constructor(private val messageDao: MessageD
         messageDao.updateMessage(message)
     }
 
-    override suspend fun getMessagesFromChat(chatId: Int): Flow<List<Message>> = messageDao.getMessagesFromChat(chatId)
+    override suspend fun getMessagesFromChat(chatId: Int): Flow<List<Message>> =
+        messageDao.getMessagesFromChat(chatId)
 
-    override suspend fun deleteMessagesFromChat(chatId: Int) = messageDao.deleteMessagesFromChat(chatId)
+    override suspend fun deleteMessagesFromChat(chatId: Int) =
+        messageDao.deleteMessagesFromChat(chatId)
 
     override suspend fun sendRequest(apiRequest: ApiRequest) = flow {
         emit(apiService.sendRequest(apiRequest).apiCall())

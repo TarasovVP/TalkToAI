@@ -9,5 +9,5 @@ import kotlinx.parcelize.Parcelize
 data class CurrentUser(
     var chatList: ArrayList<Chat> = arrayListOf(),
     var messageList: ArrayList<Message> = arrayListOf(),
-    var isReviewVoted: Boolean = false
+    var isReviewVoted: Boolean = false,
 ) : Parcelable

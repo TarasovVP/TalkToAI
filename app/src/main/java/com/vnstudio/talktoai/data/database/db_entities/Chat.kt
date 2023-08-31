@@ -8,5 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @Entity
 @Parcelize
-data class Chat(@PrimaryKey(autoGenerate = true) var chatId: Int = 0,
-               var name: String = String.EMPTY, var updated: Long = 0): Parcelable
+data class Chat(
+    @PrimaryKey(autoGenerate = true) var chatId: Int = 0,
+    var name: String = String.EMPTY, var updated: Long = 0,
+) : Parcelable

@@ -11,7 +11,12 @@ import com.vnstudio.talktoai.R
 // Set of Material typography styles to start with
 val Typography = Typography(
     body1 = TextStyle(
-        fontFamily = FontFamily(listOf(Font(R.font.robotomono_regular), Font(R.font.robotomono_italic))),
+        fontFamily = FontFamily(
+            listOf(
+                Font(R.font.robotomono_regular),
+                Font(R.font.robotomono_italic)
+            )
+        ),
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     )
