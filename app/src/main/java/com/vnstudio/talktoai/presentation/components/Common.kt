@@ -1,8 +1,7 @@
-package com.vnstudio.talktoai.presentation.screens.base
+package com.vnstudio.talktoai.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,11 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,31 +41,6 @@ fun ExceptionMessageHandler(messageState: MutableState<InfoMessage?>, exceptionL
             )
             exceptionLiveData.value = null
         }
-    }
-}
-
-@Composable
-fun AddChatItem(modifier: Modifier, onAddChatClicked: () -> Unit) {
-    Row(modifier = modifier
-        .fillMaxWidth()
-        .background(color = Primary700, shape = RoundedCornerShape(16.dp))
-        .clickable {
-            onAddChatClicked.invoke()
-        }) {
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_chat_add),
-            contentDescription = "Add chat button",
-            modifier = Modifier
-                .padding(8.dp)
-        )
-        Text(
-            text = "Новый чат",
-            fontSize = 16.sp,
-            color = Neutral50,
-            modifier = Modifier
-                .weight(1f)
-                .padding(vertical = 8.dp)
-        )
     }
 }
 

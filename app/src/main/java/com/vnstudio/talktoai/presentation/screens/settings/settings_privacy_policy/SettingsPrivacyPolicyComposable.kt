@@ -11,7 +11,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.initWebView
-import com.vnstudio.talktoai.presentation.screens.base.CircularProgress
+import com.vnstudio.talktoai.presentation.components.CircularProgress
 
 @Composable
 fun SettingsPrivacyPolicyScreen() {

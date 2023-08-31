@@ -20,7 +20,7 @@ import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG_EN
 import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG_RU
 import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG_UK
-import com.vnstudio.talktoai.presentation.screens.base.ExceptionMessageHandler
+import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.theme.Neutral500
 import com.vnstudio.talktoai.presentation.theme.Primary700
 
