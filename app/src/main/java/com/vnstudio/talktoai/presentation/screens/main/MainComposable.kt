@@ -97,7 +97,7 @@ fun AppContent() {
                 }
                 isSettingsScreen(currentRouteState) || currentRouteState == NavigationScreen.ChatScreen().route -> PrimaryTopBar(
                     title = if (currentRouteState == NavigationScreen.ChatScreen().route) chatsState.value?.firstOrNull()?.name
-                        ?: "Talk to AI" else stringResource(
+                        ?: stringResource(id = com.vnstudio.talktoai.R.string.app_name) else stringResource(
                         id = settingsScreenNameByRoute(
                             currentRouteState
                         )
@@ -134,12 +134,12 @@ fun AppContent() {
                     viewModel.updateChats(
                         viewModel.chatsLiveData.value.orEmpty()
                             .onEach { if (it.chatId == chat.chatId) it.updated = Date().time })
-                    navController.navigate(NavigationScreen.ChatScreen().route)
                     scope.launch {
                         scaffoldState.drawerState.close()
                     }
                 },
                 onDeleteChatClick = { chat ->
+                    showDeleteChatDialog.value = true
                     deleteChatState.value = chat
                 },
             ) { route ->
@@ -157,7 +157,7 @@ fun AppContent() {
 
             DataEditDialog(
                 "Создать новый чат?",
-                "Имя чата",
+                "Название чата",
                 mutableStateOf(TextFieldValue()),
                 showCreateChatDialog,
                 onDismiss = {
@@ -170,36 +170,23 @@ fun AppContent() {
                 }
             }
 
+            val currentChat = chatsState.value?.firstOrNull()
             DataEditDialog(
-                "Edit chat name",
-                "Chat name",
-                mutableStateOf(TextFieldValue()),
+                "Изменить название чата?",
+                "Название чата",
+                mutableStateOf(TextFieldValue(currentChat?.name.orEmpty())),
                 showEditChatDialog,
                 onDismiss = {
                     showEditChatDialog.value = false
                 }) { newChatName ->
-                viewModel.updateChat(chatsState.value.orEmpty().first().apply {
+                viewModel.chatsLiveData.value = listOf()
+                currentChat?.apply {
                     name = newChatName
-                })
+                }?.let { viewModel.updateChat(it) }
                 showEditChatDialog.value = false
             }
 
-            DataEditDialog(
-                "Создать новый чат?",
-                "Имя чата",
-                mutableStateOf(TextFieldValue()),
-                showCreateChatDialog,
-                onDismiss = {
-                    showCreateChatDialog.value = false
-                }) { newChatName ->
-                viewModel.insertChat(Chat(name = newChatName, updated = Date().time))
-                showCreateChatDialog.value = false
-                scope.launch {
-                    scaffoldState.drawerState.close()
-                }
-            }
-
-            ConfirmationDialog("Delete chat?", showDeleteChatDialog, onDismiss = {
+            ConfirmationDialog("Удалить чат?", showDeleteChatDialog, onDismiss = {
                 showDeleteChatDialog.value = false
             }) {
                 deleteChatState.value?.let { viewModel.deleteChat(it) }

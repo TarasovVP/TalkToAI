@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface ChatUseCase {
 
+    suspend fun insertChat(chat: Chat)
+
     suspend fun getCurrentChat(): Flow<Chat?>
 
     suspend fun insertMessage(message: Message)
