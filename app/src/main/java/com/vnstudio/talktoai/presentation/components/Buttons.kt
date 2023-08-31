@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -42,7 +43,11 @@ fun SecondaryButton(text: String, isDestructive: Boolean, modifier: Modifier, on
     TextButton(modifier = modifier
         .padding(horizontal = 16.dp, vertical = 8.dp)
         .fillMaxWidth()
-        .border(1.dp, if (isDestructive) Color.Red else Primary400, shape = RoundedCornerShape(16.dp))
+        .border(
+            1.dp,
+            if (isDestructive) Color.Red else Primary400,
+            shape = RoundedCornerShape(16.dp)
+        )
         .background(color = Color.Transparent, shape = RoundedCornerShape(16.dp)),
         onClick = {
             onClick.invoke()
@@ -99,6 +104,30 @@ fun LinkButton(text: String, modifier: Modifier, onClick: () -> Unit) {
         onClick = onClick, modifier = modifier
     ) {
         Text(text = text, color = Color.Blue)
+    }
+}
+
+@Composable
+fun TextIconButton(text: String, icon: Int, modifier: Modifier, onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        Row(modifier = modifier
+            .fillMaxWidth()
+            .background(color = Primary700, shape = RoundedCornerShape(16.dp))) {
+            Image(
+                imageVector = ImageVector.vectorResource(id = icon),
+                contentDescription = "Add chat button",
+                modifier = Modifier
+                    .padding(8.dp)
+            )
+            Text(
+                text = text,
+                fontSize = 16.sp,
+                color = Neutral50,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 8.dp)
+            )
+        }
     }
 }
 

@@ -12,19 +12,18 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vnstudio.talktoai.CommonExtensions.isNotNull
-import com.vnstudio.talktoai.CommonExtensions.isNotTrue
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
-import com.vnstudio.talktoai.presentation.screens.base.AddChatItem
-import com.vnstudio.talktoai.presentation.screens.settings.settings_list.SettingsList
+import com.vnstudio.talktoai.flagDrawable
+import com.vnstudio.talktoai.presentation.screens.sealed_classes.SettingsScreen
 import com.vnstudio.talktoai.presentation.theme.*
 
 @Composable
@@ -108,15 +107,33 @@ fun AppDrawer(
             .background(Primary900),
         Arrangement.Top
     ) {
-        DrawerHeader(isSettingsDrawerMode.value.isTrue() || NavigationScreen.isSettingsScreen(currentRouteState)) { settingsDrawerMode ->
+        DrawerHeader(
+            isSettingsDrawerMode.value.isTrue() || NavigationScreen.isSettingsScreen(
+                currentRouteState
+            )
+        ) { settingsDrawerMode ->
             isSettingsDrawerMode.value = settingsDrawerMode
         }
-        if (isSettingsDrawerMode.value.isTrue() || NavigationScreen.isSettingsScreen(currentRouteState)) {
-            SettingsList(
-                currentRouteState,
-                Modifier
-                    .weight(1f), infoMessageState, onNextScreen
+        if (isSettingsDrawerMode.value.isTrue() || NavigationScreen.isSettingsScreen(
+                currentRouteState
             )
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 16.dp, vertical = 24.dp)
+            ) {
+                SettingsScreen.allSettingsScreens.forEach { settingsScreen ->
+                    DrawerItem(
+                        name = stringResource(id = settingsScreen.name),
+                        mainIcon = settingsScreen.icon,
+                        isCurrent = currentRouteState == settingsScreen.route,
+                        secondaryIcon = if (settingsScreen.route == NavigationScreen.SettingsLanguageScreen().route) LocalConfiguration.current.locales.flagDrawable() else null
+                    ) {
+                        onNextScreen.invoke(settingsScreen.route)
+                    }
+                }
+            }
         } else {
             LazyColumn(
                 modifier = Modifier
@@ -126,17 +143,19 @@ fun AppDrawer(
                 items(chats.value) { chat ->
                     DrawerItem(
                         name = chat.name,
-                        R.drawable.ic_chat,
-                        chats.value.indexOf(chat) == 0,
-                        R.drawable.ic_delete,
-                        true,
+                        mainIcon = R.drawable.ic_chat,
+                        isCurrent = chats.value.indexOf(chat) == 0,
+                        secondaryIcon = R.drawable.ic_delete,
+                        isIconClick = true,
                         onIconClick = {
                             onDeleteChatClick.invoke(chat)
                         },
                         onItemClick = { onChatClick.invoke(chat) })
                 }
             }
-            AddChatItem(
+            TextIconButton(
+                "Новый чат",
+                R.drawable.ic_chat_add,
                 Modifier.padding(bottom = 40.dp, start = 16.dp, end = 16.dp),
                 onCreateChatClick
             )

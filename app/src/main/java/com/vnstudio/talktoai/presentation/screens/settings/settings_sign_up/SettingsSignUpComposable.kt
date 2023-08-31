@@ -19,8 +19,6 @@ import com.google.android.gms.common.api.CommonStatusCodes
 import com.vnstudio.talktoai.domain.models.CurrentUser
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
-import com.vnstudio.talktoai.presentation.screens.base.ExceptionMessageHandler
-import com.vnstudio.talktoai.presentation.screens.base.OrDivider
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.theme.Primary300
 import com.vnstudio.talktoai.presentation.theme.Primary50

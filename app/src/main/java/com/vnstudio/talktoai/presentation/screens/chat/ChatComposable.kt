@@ -35,11 +35,7 @@ import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.MessageApi
-import com.vnstudio.talktoai.presentation.screens.base.AddChatItem
-import com.vnstudio.talktoai.presentation.screens.base.ExceptionMessageHandler
-import com.vnstudio.talktoai.presentation.components.ChatTextField
-import com.vnstudio.talktoai.presentation.components.ConfirmationDialog
-import com.vnstudio.talktoai.presentation.components.DataEditDialog
+import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.theme.*
 import java.util.*
 
@@ -148,7 +144,7 @@ fun MessagesScreen(viewModel: ChatViewModel, showCreateDataDialog: MutableState<
                 .padding(horizontal = 16.dp))
         }
         if (currentChatState.value == null) {
-            AddChatItem(Modifier.padding(start = 45.dp, end = 45.dp, bottom = 45.dp)) {
+            TextIconButton("Новый чат", R.drawable.ic_chat_add, Modifier.padding(start = 45.dp, end = 45.dp, bottom = 45.dp)) {
                 showCreateDataDialog.value = true
                 Log.e("apiTAG", "ChatContent AddChatItem click")
             }
