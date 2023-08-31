@@ -29,31 +29,22 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.R
+import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.MessageApi
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.theme.*
+import kotlinx.coroutines.launch
 import java.util.*
 
 @Composable
 fun ChatScreen(
     infoMessageState: MutableState<InfoMessage?>,
 ) {
-
-    val showCreateChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
-
-
     val viewModel: ChatViewModel = hiltViewModel()
-
-    MessagesScreen(viewModel = viewModel, showCreateDataDialog = showCreateChatDialog)
-    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
-}
-
-@Composable
-fun MessagesScreen(viewModel: ChatViewModel, showCreateDataDialog: MutableState<Boolean>) {
-
+    val showCreateChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
     val inputValue = remember { mutableStateOf(TextFieldValue()) }
     val currentChatState = viewModel.currentChatLiveData.observeAsState()
     val messagesState = viewModel.messagesLiveData.observeAsState()
@@ -61,16 +52,6 @@ fun MessagesScreen(viewModel: ChatViewModel, showCreateDataDialog: MutableState<
     LaunchedEffect(Unit) {
         viewModel.getCurrentChat()
     }
-
-    Log.e(
-        "apiTAG",
-        "ChatComposable fun ChatContent messages.size ${messagesState.value?.size} "
-    )
-    Log.e(
-        "messagesTAG",
-        "ChatComposable fun ChatContent messages ${messagesState.value?.map { it.message }}"
-    )
-
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -97,8 +78,7 @@ fun MessagesScreen(viewModel: ChatViewModel, showCreateDataDialog: MutableState<
                 R.drawable.ic_chat_add,
                 Modifier.padding(start = 45.dp, end = 45.dp, bottom = 45.dp)
             ) {
-                showCreateDataDialog.value = true
-                Log.e("apiTAG", "ChatContent AddChatItem click")
+                showCreateChatDialog.value = true
             }
         } else {
             ChatTextField(inputValue = inputValue) { messageText ->
@@ -132,6 +112,20 @@ fun MessagesScreen(viewModel: ChatViewModel, showCreateDataDialog: MutableState<
             }
         }
     }
+
+    DataEditDialog(
+        "Создать новый чат?",
+        "Название чата",
+        mutableStateOf(TextFieldValue()),
+        showCreateChatDialog,
+        onDismiss = {
+            showCreateChatDialog.value = false
+        }) { newChatName ->
+        viewModel.insertChat(Chat(name = newChatName, updated = Date().time))
+        showCreateChatDialog.value = false
+    }
+
+    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 }
 
 @Composable

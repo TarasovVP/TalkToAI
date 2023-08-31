@@ -22,6 +22,13 @@ class ChatViewModel @Inject constructor(
     val currentChatLiveData = MutableLiveData<Chat>()
     val messagesLiveData = MutableLiveData<List<Message>>()
 
+    fun insertChat(chat: Chat) {
+        showProgress()
+        launch {
+            chatUseCase.insertChat(chat)
+        }
+    }
+
     fun getCurrentChat() {
         launch {
             chatUseCase.getCurrentChat().catch {
