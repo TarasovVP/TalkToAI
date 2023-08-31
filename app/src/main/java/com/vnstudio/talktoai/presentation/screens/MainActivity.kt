@@ -12,10 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.WindowCompat
 import com.google.accompanist.insets.ProvideWindowInsets
-import com.vnstudio.talktoai.CommonExtensions.safeSingleObserve
 import com.vnstudio.talktoai.CommonExtensions.setAppLocale
 import com.vnstudio.talktoai.di.DataStoreEntryPoint
-import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
+import com.vnstudio.talktoai.presentation.screens.main.AppContent
+import com.vnstudio.talktoai.presentation.screens.main.MainViewModel
 import com.vnstudio.talktoai.presentation.theme.Primary50
 import com.vnstudio.talktoai.presentation.theme.TalkToAITheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,27 +32,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, true)
-        viewModel.getOnBoardingSeen()
-        viewModel.onBoardingSeenLiveData.safeSingleObserve(this) { isOnboardingSeen ->
-            val startDestination = when {
-                isOnboardingSeen.not() -> NavigationScreen.OnboardingScreen().route
-                viewModel.isLoggedInUser().not() -> NavigationScreen.LoginScreen().route
-                else -> NavigationScreen.ChatScreen().route
-            }
-            setContentView(
-                ComposeView(this).apply {
-                    setContent {
-                        ProvideWindowInsets(consumeWindowInsets = false) {
-                            TalkToAITheme {
-                                Box(modifier = Modifier.background(Primary50)) {
-                                    AppContent(startDestination)
-                                }
+        setContentView(
+            ComposeView(this).apply {
+                setContent {
+                    ProvideWindowInsets(consumeWindowInsets = false) {
+                        TalkToAITheme {
+                            Box(modifier = Modifier.background(Primary50)) {
+                                AppContent()
                             }
                         }
                     }
                 }
-            )
-        }
+            }
+        )
     }
 
     override fun attachBaseContext(newBase: Context) {

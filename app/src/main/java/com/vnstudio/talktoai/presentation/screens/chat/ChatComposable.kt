@@ -15,10 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.*
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -113,55 +111,6 @@ fun ChatScreen(
     }
 
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
-}
-
-@Composable
-fun ChatItem(chat: Chat, isCurrent: Boolean, onChatClick: () -> Unit, onDeleteIconClick: (Chat) -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp)
-            .let { modifier ->
-                if (isCurrent.not()) {
-                    modifier.clickable {
-                        onChatClick.invoke()
-                    }
-                } else {
-                    modifier
-                }
-            },
-        backgroundColor = if (isCurrent) Primary800 else Primary900,
-        elevation = 1.dp
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Image(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_chat),
-                contentDescription = "Chat item icon",
-                modifier = Modifier
-                    .padding(8.dp)
-            )
-            Text(
-                text = chat.name,
-                fontSize = 16.sp,
-                color = Neutral50,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = 8.dp)
-            )
-            Image(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_delete),
-                contentDescription = "Delete chat button",
-                modifier = Modifier
-                    .padding(8.dp)
-                    .clickable {
-                        onDeleteIconClick.invoke(chat)
-                    }
-            )
-        }
-    }
 }
 
 @Composable

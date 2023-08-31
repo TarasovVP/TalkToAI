@@ -1,4 +1,4 @@
-package com.vnstudio.talktoai.presentation.screens
+package com.vnstudio.talktoai.presentation.screens.main
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData

@@ -21,5 +21,15 @@ sealed class NavigationScreen {
                 else -> true
             }
         }
+
+        fun isSettingsScreen(destination: String?): Boolean {
+            return when (destination) {
+                SettingsChatScreen().route,
+                SettingsLanguageScreen().route,
+                SettingsThemeScreen().route,
+                SettingsPrivacyPolicyScreen().route -> true
+                else -> false
+            }
+        }
     }
 }

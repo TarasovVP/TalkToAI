@@ -1,4 +1,4 @@
-package com.vnstudio.talktoai.presentation.screens
+package com.vnstudio.talktoai.presentation.screens.main
 
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.models.CurrentUser

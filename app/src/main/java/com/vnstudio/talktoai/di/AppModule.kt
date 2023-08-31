@@ -22,7 +22,7 @@ import com.vnstudio.talktoai.data.network.HeaderInterceptor
 import com.vnstudio.talktoai.data.repositoryimpl.*
 import com.vnstudio.talktoai.domain.repositories.*
 import com.vnstudio.talktoai.domain.usecases.*
-import com.vnstudio.talktoai.presentation.screens.MainUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.main.MainUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.chat.ChatUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.onboarding.login.LoginUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.onboarding.onboarding.OnBoardingUseCaseImpl
@@ -218,11 +218,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideSettingsListUseCase(
-        dataStoreRepository: DataStoreRepository,
         realDataBaseRepository: RealDataBaseRepository,
         authRepository: AuthRepository
     ): SettingsListUseCase {
-        return SettingsListUseCaseImpl(dataStoreRepository, realDataBaseRepository, authRepository)
+        return SettingsListUseCaseImpl(realDataBaseRepository, authRepository)
     }
 
     @Singleton

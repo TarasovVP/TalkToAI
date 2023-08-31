@@ -10,6 +10,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.os.LocaleList
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.LifecycleOwner
@@ -17,6 +18,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import retrofit2.Response
 import com.vnstudio.talktoai.domain.sealed_classes.Result
+import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.infrastructure.Constants.DARK_MODE_TEXT
 import com.vnstudio.talktoai.infrastructure.Constants.ENCODING
 import com.vnstudio.talktoai.infrastructure.Constants.MIME_TYPE
@@ -124,5 +126,13 @@ fun Context.isDarkMode(): Boolean {
     return when (resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
         Configuration.UI_MODE_NIGHT_YES -> true
         else -> false
+    }
+}
+
+fun LocaleList.flagDrawable(): Int {
+    return when (if (isEmpty) Locale.getDefault().language else get(0).language) {
+        Constants.APP_LANG_UK -> R.drawable.ic_flag_ua
+        Constants.APP_LANG_RU -> R.drawable.ic_flag_ru
+        else -> R.drawable.ic_flag_en
     }
 }

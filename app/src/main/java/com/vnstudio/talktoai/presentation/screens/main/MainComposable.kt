@@ -1,6 +1,5 @@
-package com.vnstudio.talktoai.presentation.screens
+package com.vnstudio.talktoai.presentation.screens.main
 
-import android.util.Log
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -9,17 +8,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.vnstudio.talktoai.R
+import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
@@ -39,24 +37,50 @@ import com.vnstudio.talktoai.presentation.theme.Primary700
 import kotlinx.coroutines.launch
 
 @Composable
-fun AppContent(
-    startDestination: String,
-) {
+fun AppContent() {
+    val viewModel: MainViewModel = hiltViewModel()
     val navController = rememberNavController()
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     val currentRouteState = navController.currentBackStackEntryAsState().value?.destination?.route
 
+    val startDestinationState = remember { mutableStateOf<String?>(null) }
+    val isSettingsDrawerMode = remember { mutableStateOf<Boolean?>(null) }
     val chatsState = remember { mutableStateOf<List<Chat>>(listOf()) }
     val showCreateDataDialog = remember { mutableStateOf(false) }
     val showEditDataDialog = remember { mutableStateOf(false) }
     val openedChatState = remember { mutableStateOf<Chat?>(null) }
     val deletedChatState = remember { mutableStateOf<Chat?>(null) }
+
+    LaunchedEffect(Unit) {
+        viewModel.getOnBoardingSeen()
+    }
+
+    val onBoardingSeenState = viewModel.onBoardingSeenLiveData.observeAsState()
+    LaunchedEffect(onBoardingSeenState.value) {
+        onBoardingSeenState.value?.let { isOnboardingSeen ->
+            startDestinationState.value = when {
+                isOnboardingSeen.not() -> NavigationScreen.OnboardingScreen().route
+                viewModel.isLoggedInUser().not() -> NavigationScreen.LoginScreen().route
+                isSettingsDrawerMode.value.isTrue() -> NavigationScreen.SettingsChatScreen().route
+                else -> NavigationScreen.ChatScreen().route
+            }
+        }
+    }
+
+    LaunchedEffect(isSettingsDrawerMode.value) {
+        isSettingsDrawerMode.value?.let { isSettingsDrawerMode ->
+            startDestinationState.value = if (isSettingsDrawerMode) NavigationScreen.SettingsChatScreen().route else NavigationScreen.ChatScreen().route
+            if (isSettingsDrawerMode) {
+                navController.navigate(NavigationScreen.SettingsChatScreen().route)
+            } else {
+                if (navController.popBackStack(NavigationScreen.ChatScreen().route, false).not()) navController.navigate(NavigationScreen.ChatScreen().route)
+            }
+
+        }
+    }
+
     val infoMessageState = remember { mutableStateOf<InfoMessage?>(null) }
-    val isChatDrawerMode = remember { mutableStateOf(true) }
-
-    Log.e("localeTAG", "AppContent LocalConfiguration.locale ${LocalConfiguration.current.locale}")
-
     LaunchedEffect(infoMessageState.value) {
         infoMessageState.value?.let { infoMessage ->
             scope.launch {
@@ -116,7 +140,7 @@ fun AppContent(
         drawerGesturesEnabled = NavigationScreen.isTopBarNeeded(currentRouteState),
         drawerContent = {
             AppDrawer(
-                isChatDrawerMode,
+                isSettingsDrawerMode,
                 currentRouteState,
                 chats = chatsState,
                 onCreateChatClick = {
@@ -141,127 +165,83 @@ fun AppContent(
             }
         },
         content = {
-            if (isChatDrawerMode.value) {
-                MainNavHost(navController,
-                    startDestination,
-                    infoMessageState,
-                    chatsState,
-                    openedChatState,
-                    showCreateDataDialog,
-                    showEditDataDialog,
-                    deletedChatState)
-            } else {
-                SettingsNavHost(navController, infoMessageState)
+            startDestinationState.value?.let { startDestination ->
+                NavHost(navController, startDestination = startDestination,
+                    enterTransition = {
+                        EnterTransition.None
+                    }, exitTransition = {
+                        ExitTransition.None
+                    }) {
+                    composable(
+                        route = NavigationScreen.OnboardingScreen().route
+                    ) {
+                        OnboardingScreen {
+                            navController.navigate(NavigationScreen.LoginScreen().route)
+                        }
+                    }
+                    composable(
+                        route = NavigationScreen.LoginScreen().route
+                    ) {
+                        LoginScreen(infoMessageState) { route ->
+                            navController.navigate(route)
+                        }
+                    }
+                    composable(
+                        route = NavigationScreen.SignUpScreen().route
+                    ) {
+                        SignUpScreen(infoMessageState) { route ->
+                            navController.navigate(route)
+                        }
+                    }
+                    composable(
+                        route = NavigationScreen.ChatScreen().route
+                    ) {
+                        ChatScreen(
+                            chatsState,
+                            openedChatState,
+                            showCreateDataDialog,
+                            showEditDataDialog,
+                            deletedChatState,
+                            infoMessageState
+                        )
+                    }
+                    composable(
+                        route = NavigationScreen.SettingsChatScreen().route
+                    ) {
+                        SettingsChatScreen(infoMessageState) {
+
+                        }
+                    }
+                    composable(
+                        route = NavigationScreen.SettingsAccountScreen().route
+                    ) {
+                        SettingsAccountScreen(infoMessageState) { route ->
+                            navController.navigate(route)
+                        }
+                    }
+                    composable(
+                        route = NavigationScreen.SettingsSignUpScreen().route
+                    ) {
+                        SettingsSignUpScreen(infoMessageState) {
+
+                        }
+                    }
+                    composable(
+                        route = NavigationScreen.SettingsLanguageScreen().route
+                    ) {
+                        SettingsLanguageScreen(infoMessageState)
+                    }
+                    composable(
+                        route = NavigationScreen.SettingsThemeScreen().route
+                    ) {
+                        SettingsThemeScreen(infoMessageState)
+                    }
+                    composable(
+                        route = NavigationScreen.SettingsPrivacyPolicyScreen().route
+                    ) {
+                        SettingsPrivacyPolicyScreen()
+                    }
+                }
             }
         })
-}
-
-@Composable
-fun MainNavHost(navController: NavHostController,
-                startDestination: String,
-                infoMessageState: MutableState<InfoMessage?>,
-                chatsState: MutableState<List<Chat>>,
-                openedChatState: MutableState<Chat?>,
-                showCreateDataDialog: MutableState<Boolean>,
-                showEditDataDialog: MutableState<Boolean>,
-                deletedChatState: MutableState<Chat?>) {
-    NavHost(navController, startDestination = startDestination,
-        enterTransition = {
-            EnterTransition.None
-        }, exitTransition = {
-            ExitTransition.None
-        }) {
-        composable(
-            route = NavigationScreen.OnboardingScreen().route
-        ) {
-            OnboardingScreen {
-                navController.navigate(NavigationScreen.LoginScreen().route)
-            }
-        }
-        composable(
-            route = NavigationScreen.LoginScreen().route
-        ) {
-            LoginScreen(infoMessageState) { route ->
-                navController.navigate(route)
-            }
-        }
-        composable(
-            route = NavigationScreen.SignUpScreen().route
-        ) {
-            SignUpScreen(infoMessageState) { route ->
-                navController.navigate(route)
-            }
-        }
-        composable(
-            route = NavigationScreen.ChatScreen().route
-        ) {
-            ChatScreen(
-                chatsState,
-                openedChatState,
-                showCreateDataDialog,
-                showEditDataDialog,
-                deletedChatState,
-                infoMessageState
-            )
-        }
-    }
-}
-
-@Composable
-fun SettingsNavHost(navController: NavHostController, infoMessageState: MutableState<InfoMessage?>) {
-    NavHost(navController, startDestination = NavigationScreen.SettingsChatScreen().route,
-        enterTransition = {
-            EnterTransition.None
-        }, exitTransition = {
-            ExitTransition.None
-        }) {
-        composable(
-            route = NavigationScreen.SettingsChatScreen().route
-        ) {
-            SettingsChatScreen(infoMessageState) {
-
-            }
-        }
-        composable(
-            route = NavigationScreen.SettingsAccountScreen().route
-        ) {
-            SettingsAccountScreen(infoMessageState) { route ->
-                navController.navigate(route)
-            }
-        }
-        composable(
-            route = NavigationScreen.SettingsSignUpScreen().route
-        ) {
-            SettingsSignUpScreen(infoMessageState) {
-
-            }
-        }
-        composable(
-            route = NavigationScreen.SettingsLanguageScreen().route
-        ) {
-            SettingsLanguageScreen(infoMessageState)
-        }
-        composable(
-            route = NavigationScreen.SettingsThemeScreen().route
-        ) {
-            SettingsThemeScreen(infoMessageState)
-        }
-        composable(
-            route = NavigationScreen.SettingsPrivacyPolicyScreen().route
-        ) {
-            SettingsPrivacyPolicyScreen()
-        }
-    }
-}
-
-@Composable
-fun TopAppBarTitle(route: String?): String {
-    return when (route) {
-        NavigationScreen.SettingsChatScreen().route -> stringResource(id = R.string.settings_chat)
-        NavigationScreen.SettingsAccountScreen().route -> stringResource(id = R.string.settings_account)
-        NavigationScreen.SettingsLanguageScreen().route -> stringResource(id = R.string.settings_language)
-        NavigationScreen.SettingsThemeScreen().route -> stringResource(id = R.string.settings_theme)
-        NavigationScreen.SettingsPrivacyPolicyScreen().route -> stringResource(id = R.string.settings_privacy_policy)
-        else -> stringResource(id = R.string.app_name)
-    }
 }
