@@ -4,7 +4,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -22,7 +22,7 @@ import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.theme.Primary50
 
 @Composable
-fun SignUpScreen(messageState: MutableState<InfoMessage?>, onNextScreen: (String) -> Unit) {
+fun SignUpScreen(infoMessageState: MutableState<InfoMessage?>, onNextScreen: (String) -> Unit) {
 
     val viewModel: SignUpViewModel = hiltViewModel()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
@@ -38,8 +38,10 @@ fun SignUpScreen(messageState: MutableState<InfoMessage?>, onNextScreen: (String
     val isEmailAccountExistState = viewModel.createEmailAccountLiveData.observeAsState()
     LaunchedEffect(isEmailAccountExistState.value) {
         isEmailAccountExistState.value?.let {
-            viewModel.createUserWithEmailAndPassword(emailInputValue.value.text.trim(),
-                passwordInputValue.value.text)
+            viewModel.createUserWithEmailAndPassword(
+                emailInputValue.value.text.trim(),
+                passwordInputValue.value.text
+            )
         }
     }
     val isGoogleAccountExistState = viewModel.createGoogleAccountLiveData.observeAsState()
@@ -55,15 +57,16 @@ fun SignUpScreen(messageState: MutableState<InfoMessage?>, onNextScreen: (String
         }
     }
 
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        try {
-            val account = task.getResult(ApiException::class.java)
-            account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
-        } catch (e: ApiException) {
-            viewModel.exceptionLiveData.postValue(CommonStatusCodes.getStatusCodeString(e.statusCode))
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
+            } catch (e: ApiException) {
+                viewModel.exceptionLiveData.postValue(CommonStatusCodes.getStatusCodeString(e.statusCode))
+            }
         }
-    }
 
     Column(
         modifier = Modifier
@@ -94,14 +97,20 @@ fun SignUpScreen(messageState: MutableState<InfoMessage?>, onNextScreen: (String
         PasswordTextField(passwordInputValue)
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = "Есть аккаунт?")
-            LinkButton(text = "Вход", modifier = Modifier
-                .wrapContentSize()) {
+            LinkButton(
+                text = "Вход", modifier = Modifier
+                    .wrapContentSize()
+            ) {
                 onNextScreen.invoke(NavigationScreen.LoginScreen().route)
             }
         }
-        PrimaryButton(text = "Зарегистрироваться", emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(), modifier = Modifier) {
+        PrimaryButton(
+            text = "Зарегистрироваться",
+            emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
+            modifier = Modifier
+        ) {
             viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
         }
     }
-    ExceptionMessageHandler(messageState, viewModel.exceptionLiveData)
+    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 }

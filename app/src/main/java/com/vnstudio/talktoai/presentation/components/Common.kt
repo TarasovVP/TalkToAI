@@ -5,8 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,9 +32,11 @@ import com.vnstudio.talktoai.presentation.theme.Primary300
 import com.vnstudio.talktoai.presentation.theme.Primary500
 import com.vnstudio.talktoai.presentation.theme.Primary700
 
-
 @Composable
-fun ExceptionMessageHandler(messageState: MutableState<InfoMessage?>, exceptionLiveData: MutableLiveData<String>) {
+fun ExceptionMessageHandler(
+    messageState: MutableState<InfoMessage?>,
+    exceptionLiveData: MutableLiveData<String>,
+) {
     val exceptionState = exceptionLiveData.observeAsState()
     LaunchedEffect(exceptionState.value) {
         exceptionState.value.takeIf { exceptionState.value.isNullOrEmpty().not() }?.let {
@@ -46,8 +51,10 @@ fun ExceptionMessageHandler(messageState: MutableState<InfoMessage?>, exceptionL
 
 @Composable
 fun OrDivider(modifier: Modifier) {
-    Row(modifier = modifier
-        .fillMaxWidth()) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -77,7 +84,8 @@ fun OrDivider(modifier: Modifier) {
 
 @Composable
 fun ShapeableImage(modifier: Modifier, drawableResId: Int, contentDescription: String) {
-    ContextCompat.getDrawable(LocalContext.current, drawableResId)?.toBitmap()?.asImageBitmap()?.let { painterResource(id = drawableResId) }?.let {
+    ContextCompat.getDrawable(LocalContext.current, drawableResId)?.toBitmap()?.asImageBitmap()
+        ?.let { painterResource(id = drawableResId) }?.let {
         Image(
             painter = it,
             contentDescription = contentDescription,
@@ -105,14 +113,20 @@ fun EmptyState(text: String, modifier: Modifier) {
                 .padding(top = 32.dp)
                 .background(color = Primary500, shape = RoundedCornerShape(16.dp))
         ) {
-            Text(text = text, textAlign = TextAlign.Center, color = Neutral50, modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp))
+            Text(
+                text = text, textAlign = TextAlign.Center, color = Neutral50, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
         }
-        Image(painter = painterResource(id = R.drawable.empty_state), contentDescription = "Empty state", modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f)
-            .padding(top = 16.dp))
+        Image(
+            painter = painterResource(id = R.drawable.empty_state),
+            contentDescription = "Empty state",
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(top = 16.dp)
+        )
     }
 }
 

@@ -28,9 +28,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
-import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.R
-import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.models.InfoMessage
@@ -41,71 +39,15 @@ import java.util.*
 
 @Composable
 fun ChatScreen(
-    chatsState: MutableState<List<Chat>>,
-    openedChatState: MutableState<Chat?>,
-    showCreateDataDialog: MutableState<Boolean>,
-    showEditDataDialog: MutableState<Boolean>,
-    deleteChatState: MutableState<Chat?>,
-    infoMessageState: MutableState<InfoMessage?>
+    infoMessageState: MutableState<InfoMessage?>,
 ) {
 
+    val showCreateChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
+
+
     val viewModel: ChatViewModel = hiltViewModel()
-    val chats = viewModel.chatsLiveData.observeAsState(listOf())
-    val showConfirmationDialog = remember { mutableStateOf(deleteChatState.value.isNotNull()) }
-    val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }
 
-    LaunchedEffect(viewModel){
-        viewModel.getChats()
-    }
-    LaunchedEffect(chats.value){
-        chats.value?.let { chats ->
-            chatsState.value = chats
-        }
-    }
-    LaunchedEffect(openedChatState.value){
-        openedChatState.value?.let { chat ->
-            viewModel.updateChats(viewModel.chatsLiveData.value.orEmpty().onEach { if (it.chatId == chat.chatId) it.updated = Date().time })
-        }
-    }
-    LaunchedEffect(deleteChatState.value){
-        showConfirmationDialog.value = deleteChatState.value.isNotNull()
-    }
-
-    Log.e(
-        "apiTAG",
-        "MainScreen chats ${chats.value}"
-    )
-
-    MessagesScreen(viewModel = viewModel, showCreateDataDialog = showCreateDataDialog)
-
-    inputValue.value = TextFieldValue( if (showCreateDataDialog.value) "Без названия" else chats.value.firstOrNull()?.name.orEmpty())
-
-    DataEditDialog("Создать новый чат?", "Имя чата", inputValue, showCreateDataDialog, onDismiss = {
-        showCreateDataDialog.value = false
-    }) { newChatName ->
-        viewModel.insertChat(Chat(name = newChatName, updated = Date().time))
-        showCreateDataDialog.value = false
-        /*scope.launch {
-            scaffoldState.drawerState.close()
-        }*/
-    }
-    DataEditDialog("Edit chat name", "Chat name", inputValue, showEditDataDialog, onDismiss = {
-        showEditDataDialog.value = false
-    }) { newChatName ->
-        viewModel.updateChat(chats.value.orEmpty().first().apply {
-            name = newChatName
-        })
-        showEditDataDialog.value = false
-    }
-
-    ConfirmationDialog("Delete chat?", showConfirmationDialog, onDismiss = {
-        showConfirmationDialog.value = false
-    }) {
-        deleteChatState.value?.let { viewModel.deleteChat(it) }
-        showConfirmationDialog.value = false
-        deleteChatState.value = null
-    }
-
+    MessagesScreen(viewModel = viewModel, showCreateDataDialog = showCreateChatDialog)
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 }
 
@@ -124,7 +66,10 @@ fun MessagesScreen(viewModel: ChatViewModel, showCreateDataDialog: MutableState<
         "apiTAG",
         "ChatComposable fun ChatContent messages.size ${messagesState.value?.size} "
     )
-    Log.e("messagesTAG", "ChatComposable fun ChatContent messages ${messagesState.value?.map { it.message }}")
+    Log.e(
+        "messagesTAG",
+        "ChatComposable fun ChatContent messages ${messagesState.value?.map { it.message }}"
+    )
 
     Column(
         modifier = Modifier
@@ -132,19 +77,26 @@ fun MessagesScreen(viewModel: ChatViewModel, showCreateDataDialog: MutableState<
         verticalArrangement = Arrangement.Top
     ) {
         if (messagesState.value.isNullOrEmpty()) {
-            IntroMessage(currentChatState.value == null,
+            IntroMessage(
+                currentChatState.value == null,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(45.dp)
                     .weight(1f),
             )
         } else {
-            MessageList(messagesState.value.orEmpty(), modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 16.dp))
+            MessageList(
+                messagesState.value.orEmpty(), modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 16.dp)
+            )
         }
         if (currentChatState.value == null) {
-            TextIconButton("Новый чат", R.drawable.ic_chat_add, Modifier.padding(start = 45.dp, end = 45.dp, bottom = 45.dp)) {
+            TextIconButton(
+                "Новый чат",
+                R.drawable.ic_chat_add,
+                Modifier.padding(start = 45.dp, end = 45.dp, bottom = 45.dp)
+            ) {
                 showCreateDataDialog.value = true
                 Log.e("apiTAG", "ChatContent AddChatItem click")
             }
@@ -153,11 +105,29 @@ fun MessagesScreen(viewModel: ChatViewModel, showCreateDataDialog: MutableState<
                 if (messageText.isEmpty()) {
                     Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
                 } else {
-                    viewModel.insertMessage(Message(chatId = currentChatState.value?.chatId ?: 0, author = "me", message = messageText, createdAt = Date().time))
-                    viewModel.insertMessage(Message(chatId = currentChatState.value?.chatId ?: 0, author = "gpt-3.5-turbo", message = String.EMPTY, createdAt = 0))
-                    viewModel.sendRequest(ApiRequest(model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
-                        MessageApi(role = "user", content = messageText)
-                    )))
+                    viewModel.insertMessage(
+                        Message(
+                            chatId = currentChatState.value?.chatId ?: 0,
+                            author = "me",
+                            message = messageText,
+                            createdAt = Date().time
+                        )
+                    )
+                    viewModel.insertMessage(
+                        Message(
+                            chatId = currentChatState.value?.chatId ?: 0,
+                            author = "gpt-3.5-turbo",
+                            message = String.EMPTY,
+                            createdAt = 0
+                        )
+                    )
+                    viewModel.sendRequest(
+                        ApiRequest(
+                            model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
+                                MessageApi(role = "user", content = messageText)
+                            )
+                        )
+                    )
                 }
             }
         }
@@ -301,12 +271,16 @@ fun AIMessage(text: String, onLongClick: () -> Unit) {
 @Composable
 fun MessageTypingAnimation() {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.message_typing))
-    Box(Modifier
-        .padding(16.dp)) {
-        LottieAnimation(composition,
+    Box(
+        Modifier
+            .padding(16.dp)
+    ) {
+        LottieAnimation(
+            composition,
             iterations = LottieConstants.IterateForever,
             modifier = Modifier
                 .width(52.dp)
-                .height(12.dp))
+                .height(12.dp)
+        )
     }
 }

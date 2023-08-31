@@ -11,7 +11,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsThemeViewModel @Inject constructor(
     application: Application,
-    private val settingsThemeUseCase: SettingsThemeUseCase
+    private val settingsThemeUseCase: SettingsThemeUseCase,
 ) : BaseViewModel(application) {
 
     val appThemeLiveData = MutableLiveData<Int>()

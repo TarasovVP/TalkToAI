@@ -6,11 +6,11 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SettingsThemeUseCaseImpl @Inject constructor(
-    private val dataStoreRepository: DataStoreRepository
-): SettingsThemeUseCase {
+    private val dataStoreRepository: DataStoreRepository,
+) : SettingsThemeUseCase {
 
     override suspend fun getAppTheme(): Flow<Int?> {
-       return dataStoreRepository.getAppTheme()
+        return dataStoreRepository.getAppTheme()
     }
 
     override suspend fun setAppTheme(appTheme: Int) {

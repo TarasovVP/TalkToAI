@@ -27,7 +27,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary900
 @Composable
 fun PrimaryTextField(
     placeHolder: String,
-    inputValue: MutableState<TextFieldValue>
+    inputValue: MutableState<TextFieldValue>,
 ) {
     TextField(value = inputValue.value,
         onValueChange = { newValue ->
@@ -56,7 +56,7 @@ fun PrimaryTextField(
 fun SecondaryTextField(
     inputValue: MutableState<TextFieldValue>,
     placeHolder: String,
-    ) {
+) {
     TextField(
         value = inputValue.value,
         onValueChange = { inputValue.value = it },
@@ -75,7 +75,8 @@ fun PasswordTextField(inputValue: MutableState<TextFieldValue>) {
     TextField(
         value = inputValue.value,
         onValueChange = { newValue ->
-            inputValue.value = newValue },
+            inputValue.value = newValue
+        },
         placeholder = { Text(text = "Password") },
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = Color.White,

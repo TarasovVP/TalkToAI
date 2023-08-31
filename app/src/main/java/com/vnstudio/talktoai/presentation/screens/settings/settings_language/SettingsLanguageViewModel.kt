@@ -5,13 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import com.vnstudio.talktoai.domain.usecases.SettingsLanguageUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Locale
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsLanguageViewModel @Inject constructor(
     application: Application,
-    private val settingsLanguageUseCase: SettingsLanguageUseCase
+    private val settingsLanguageUseCase: SettingsLanguageUseCase,
 ) : BaseViewModel(application) {
 
     val appLanguageLiveData = MutableLiveData<String>()

@@ -1,11 +1,14 @@
 package com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_policy
 
 import android.webkit.WebView
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,7 +37,7 @@ fun SettingsPrivacyPolicyScreen() {
             privacyPolicyUrlState.value = url
         }
     }
-    privacyPolicyState.value.takeIf { it.isNullOrEmpty().not()}?.let { url ->
+    privacyPolicyState.value.takeIf { it.isNullOrEmpty().not() }?.let { url ->
         AppWebView(url)
     } ?: CircularProgress()
 }
@@ -43,7 +46,8 @@ fun SettingsPrivacyPolicyScreen() {
 fun AppWebView(webUrl: String) {
     AndroidView(
         modifier = Modifier
-            .fillMaxSize().verticalScroll(rememberScrollState()),
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         factory = { context ->
             WebView(context).apply {
                 initWebView(webUrl) {

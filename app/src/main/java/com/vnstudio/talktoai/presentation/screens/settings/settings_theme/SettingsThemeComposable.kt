@@ -3,7 +3,10 @@ package com.vnstudio.talktoai.presentation.screens.settings.settings_theme
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.RadioButton
+import androidx.compose.material.RadioButtonDefaults
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -37,15 +40,24 @@ fun SettingsThemeScreen(infoMessageState: MutableState<InfoMessage?>) {
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        SettingsThemeItem(stringResource(id = R.string.settings_theme_day), AppCompatDelegate.MODE_NIGHT_NO == appThemeState.value) {
+        SettingsThemeItem(
+            stringResource(id = R.string.settings_theme_day),
+            AppCompatDelegate.MODE_NIGHT_NO == appThemeState.value
+        ) {
             viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_NO)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
-        SettingsThemeItem(stringResource(id = R.string.settings_theme_night), AppCompatDelegate.MODE_NIGHT_YES == appThemeState.value) {
+        SettingsThemeItem(
+            stringResource(id = R.string.settings_theme_night),
+            AppCompatDelegate.MODE_NIGHT_YES == appThemeState.value
+        ) {
             viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_YES)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
-        SettingsThemeItem(stringResource(id = R.string.settings_theme_auto), AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM == appThemeState.value) {
+        SettingsThemeItem(
+            stringResource(id = R.string.settings_theme_auto),
+            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM == appThemeState.value
+        ) {
             viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
@@ -56,17 +68,23 @@ fun SettingsThemeScreen(infoMessageState: MutableState<InfoMessage?>) {
 @Composable
 fun SettingsThemeItem(name: String, isChecked: Boolean, onThemeModeCheck: () -> Unit) {
 
-    Card(modifier = Modifier
-        .fillMaxWidth()
-        .padding(top = 16.dp)) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp)
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            RadioButton(selected = isChecked, onClick = onThemeModeCheck, colors = RadioButtonDefaults.colors(
-                selectedColor = Primary700,
-                unselectedColor = Neutral500
-            ))
+            RadioButton(
+                selected = isChecked,
+                onClick = onThemeModeCheck,
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = Primary700,
+                    unselectedColor = Neutral500
+                )
+            )
             Text(text = name)
         }
     }

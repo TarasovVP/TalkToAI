@@ -48,7 +48,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun attachBaseContext(newBase: Context) {
-        val dataStoreRepository = EntryPointAccessors.fromApplication( newBase, DataStoreEntryPoint::class.java ).dataStoreRepository
+        val dataStoreRepository = EntryPointAccessors.fromApplication(
+            newBase,
+            DataStoreEntryPoint::class.java
+        ).dataStoreRepository
         val appTheme = runBlocking {
             dataStoreRepository.getAppTheme().first()
         } ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM

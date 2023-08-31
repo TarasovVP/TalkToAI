@@ -1,15 +1,21 @@
 package com.vnstudio.talktoai.data.repositoryimpl
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.firebase.auth.*
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.CommonExtensions.isNotTrue
-import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.repositories.AuthRepository
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 import javax.inject.Inject
 
-class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseAuth, private val googleSignInClient: GoogleSignInClient) :
+class AuthRepositoryImpl @Inject constructor(
+    private val firebaseAuth: FirebaseAuth,
+    private val googleSignInClient: GoogleSignInClient,
+) :
     AuthRepository {
 
     override fun isLoggedInUser(): Boolean {
@@ -29,7 +35,8 @@ class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseA
 
     override fun currentUserEmail(): String {
         return try {
-            firebaseAuth.currentUser?.email.takeIf { it.isNullOrEmpty().not() } ?: firebaseAuth.currentUser?.uid.orEmpty()
+            firebaseAuth.currentUser?.email.takeIf { it.isNullOrEmpty().not() }
+                ?: firebaseAuth.currentUser?.uid.orEmpty()
         } catch (e: AbstractMethodError) {
             String.EMPTY
         }
@@ -55,7 +62,11 @@ class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseA
             }
     }
 
-    override fun signInWithEmailAndPassword(email: String, password: String, result: (Result<Unit>) -> Unit) {
+    override fun signInWithEmailAndPassword(
+        email: String,
+        password: String,
+        result: (Result<Unit>) -> Unit,
+    ) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 result.invoke(Result.Success())
@@ -83,7 +94,11 @@ class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseA
             }
     }
 
-    override fun createUserWithEmailAndPassword(email: String, password: String, result: (Result<String>) -> Unit) {
+    override fun createUserWithEmailAndPassword(
+        email: String,
+        password: String,
+        result: (Result<String>) -> Unit,
+    ) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) result.invoke(Result.Success(task.result.user?.uid.orEmpty()))
@@ -92,7 +107,11 @@ class AuthRepositoryImpl @Inject constructor(private val firebaseAuth: FirebaseA
             }
     }
 
-    override fun changePassword(currentPassword: String, newPassword: String, result: (Result<Unit>) -> Unit) {
+    override fun changePassword(
+        currentPassword: String,
+        newPassword: String,
+        result: (Result<Unit>) -> Unit,
+    ) {
         val user = firebaseAuth.currentUser
         val credential = EmailAuthProvider.getCredential(user?.email.orEmpty(), currentPassword)
         user?.reauthenticateAndRetrieveData(credential)

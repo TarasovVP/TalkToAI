@@ -4,7 +4,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.Switch
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -24,7 +26,10 @@ import com.vnstudio.talktoai.presentation.theme.Primary300
 import com.vnstudio.talktoai.presentation.theme.Primary50
 
 @Composable
-fun SettingsSignUpScreen(infoMessageState: MutableState<InfoMessage?>, onNextScreen: (String) -> Unit) {
+fun SettingsSignUpScreen(
+    infoMessageState: MutableState<InfoMessage?>,
+    onNextScreen: (String) -> Unit,
+) {
 
     val viewModel: SettingSignUpViewModel = hiltViewModel()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
@@ -41,8 +46,10 @@ fun SettingsSignUpScreen(infoMessageState: MutableState<InfoMessage?>, onNextScr
     val isEmailAccountExistState = viewModel.createEmailAccountLiveData.observeAsState()
     LaunchedEffect(isEmailAccountExistState.value) {
         isEmailAccountExistState.value?.let {
-            viewModel.createUserWithEmailAndPassword(emailInputValue.value.text.trim(),
-                passwordInputValue.value.text)
+            viewModel.createUserWithEmailAndPassword(
+                emailInputValue.value.text.trim(),
+                passwordInputValue.value.text
+            )
         }
     }
     val isGoogleAccountExistState = viewModel.createGoogleAccountLiveData.observeAsState()
@@ -54,11 +61,11 @@ fun SettingsSignUpScreen(infoMessageState: MutableState<InfoMessage?>, onNextScr
     //TODO CurrentUser
     val successAuthorisationState = viewModel.successAuthorisationLiveData.observeAsState()
     LaunchedEffect(successAuthorisationState.value) {
-        successAuthorisationState.value?.let {  isExistUser ->
+        successAuthorisationState.value?.let { isExistUser ->
             if (isExistUser) {
-                viewModel.updateCurrentUser( if (transferDataState.value) CurrentUser() else CurrentUser())
+                viewModel.updateCurrentUser(if (transferDataState.value) CurrentUser() else CurrentUser())
             } else {
-                viewModel.createCurrentUser( if (transferDataState.value) CurrentUser() else CurrentUser())
+                viewModel.createCurrentUser(if (transferDataState.value) CurrentUser() else CurrentUser())
             }
         }
     }
@@ -69,15 +76,16 @@ fun SettingsSignUpScreen(infoMessageState: MutableState<InfoMessage?>, onNextScr
         }
     }
 
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        try {
-            val account = task.getResult(ApiException::class.java)
-            account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
-        } catch (e: ApiException) {
-            viewModel.exceptionLiveData.postValue(CommonStatusCodes.getStatusCodeString(e.statusCode))
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
+            } catch (e: ApiException) {
+                viewModel.exceptionLiveData.postValue(CommonStatusCodes.getStatusCodeString(e.statusCode))
+            }
         }
-    }
 
     Column(
         modifier = Modifier
@@ -101,21 +109,30 @@ fun SettingsSignUpScreen(infoMessageState: MutableState<InfoMessage?>, onNextScr
         OrDivider(modifier = Modifier)
         PrimaryTextField("Email", emailInputValue)
         PasswordTextField(passwordInputValue)
-        PrimaryButton(text = "Зарегистрироваться", emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(), modifier = Modifier) {
+        PrimaryButton(
+            text = "Зарегистрироваться",
+            emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
+            modifier = Modifier
+        ) {
             viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
         }
         TransferDataCard(transferDataState)
     }
-    ConfirmationDialog("Пользователь с таким Email уже существует. Вы можете перейти в этот аккаунт. При включенном выборе переноса данных - они будут перенесены в аккаунт, при выключенном - удалены безвозвартно. Перейти?", showAccountExistDialog, onDismiss = {
-        viewModel.googleSignInClient.signOut()
-        showAccountExistDialog.value = false
-    }) {
+    ConfirmationDialog(
+        "Пользователь с таким Email уже существует. Вы можете перейти в этот аккаунт. При включенном выборе переноса данных - они будут перенесены в аккаунт, при выключенном - удалены безвозвартно. Перейти?",
+        showAccountExistDialog,
+        onDismiss = {
+            viewModel.googleSignInClient.signOut()
+            showAccountExistDialog.value = false
+        }) {
         viewModel.accountExistLiveData.value.takeIf { it.isNullOrEmpty().not() }?.let { idToken ->
             viewModel.createUserWithGoogle(idToken, true)
-        } ?: viewModel.signInWithEmailAndPassword(emailInputValue.value.text, passwordInputValue.value.text)
+        } ?: viewModel.signInWithEmailAndPassword(
+            emailInputValue.value.text,
+            passwordInputValue.value.text
+        )
         showAccountExistDialog.value = false
     }
-
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 }
 
@@ -123,11 +140,18 @@ fun SettingsSignUpScreen(infoMessageState: MutableState<InfoMessage?>, onNextScr
 fun TransferDataCard(transferDataState: MutableState<Boolean>) {
     Card(modifier = Modifier.padding(top = 16.dp)) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
             verticalArrangement = Arrangement.Center
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "Перенести данные?", modifier = Modifier.weight(1f).padding(start = 8.dp))
+                Text(
+                    text = "Перенести данные?",
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 8.dp)
+                )
                 Switch(checked = transferDataState.value, onCheckedChange = { isChecked ->
                     transferDataState.value = isChecked
                 })
@@ -138,8 +162,12 @@ fun TransferDataCard(transferDataState: MutableState<Boolean>) {
                     .height(1.dp)
                     .background(Primary300)
             )
-            Text(text = if (transferDataState.value) "Cозданные данные будут перенесены в ваш аккаунт." else "Cозданные данные будут удалены.",
-                modifier = Modifier.fillMaxWidth().padding(8.dp))
+            Text(
+                text = if (transferDataState.value) "Cозданные данные будут перенесены в ваш аккаунт." else "Cозданные данные будут удалены.",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            )
         }
     }
 }

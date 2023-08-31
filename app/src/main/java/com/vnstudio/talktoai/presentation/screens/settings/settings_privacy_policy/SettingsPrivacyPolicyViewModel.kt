@@ -13,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsPrivacyPolicyViewModel @Inject constructor(
     private val application: Application,
-    private val settingsPrivacyPolicyUseCase: SettingsPrivacyPolicyUseCase
+    private val settingsPrivacyPolicyUseCase: SettingsPrivacyPolicyUseCase,
 ) : BaseViewModel(application) {
 
     val appLanguageLiveData = MutableLiveData<String>()
@@ -31,9 +31,12 @@ class SettingsPrivacyPolicyViewModel @Inject constructor(
         showProgress()
         launch {
             settingsPrivacyPolicyUseCase.getPrivacyPolicy(appLang) { operationResult ->
-                when(operationResult) {
-                    is Result.Success -> privacyPolicyLiveData.postValue(operationResult.data  ?: application.getString(
-                        R.string.privacy_policy))
+                when (operationResult) {
+                    is Result.Success -> privacyPolicyLiveData.postValue(
+                        operationResult.data ?: application.getString(
+                            R.string.privacy_policy
+                        )
+                    )
                     is Result.Failure -> exceptionLiveData.postValue(operationResult.errorMessage.orEmpty())
                 }
             }

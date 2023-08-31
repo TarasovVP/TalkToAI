@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SettingsLanguageUseCaseImpl @Inject constructor(
-    private val dataStoreRepository: DataStoreRepository
-): SettingsLanguageUseCase {
+    private val dataStoreRepository: DataStoreRepository,
+) : SettingsLanguageUseCase {
 
     override suspend fun getAppLanguage(): Flow<String?> {
         return dataStoreRepository.getAppLang()

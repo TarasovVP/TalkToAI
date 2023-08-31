@@ -23,7 +23,11 @@ interface AuthRepository {
 
     fun signInAnonymously(result: (Result<Unit>) -> Unit)
 
-    fun createUserWithEmailAndPassword(email: String, password: String, result: (Result<String>) -> Unit)
+    fun createUserWithEmailAndPassword(
+        email: String,
+        password: String,
+        result: (Result<String>) -> Unit,
+    )
 
     fun changePassword(currentPassword: String, newPassword: String, result: (Result<Unit>) -> Unit)
 

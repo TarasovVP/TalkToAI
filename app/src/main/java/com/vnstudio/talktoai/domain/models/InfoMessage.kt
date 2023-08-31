@@ -8,5 +8,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class InfoMessage(
     var message: String = String.EMPTY,
-    var type: String = SUCCESS_MESSAGE
+    var type: String = SUCCESS_MESSAGE,
 ) : Parcelable

@@ -1,5 +1,7 @@
 package com.vnstudio.talktoai.presentation.components
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,21 +11,39 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.flagDrawable
+import com.vnstudio.talktoai.infrastructure.Constants
+import com.vnstudio.talktoai.presentation.screens.chat.ChatScreen
+import com.vnstudio.talktoai.presentation.screens.onboarding.login.LoginScreen
+import com.vnstudio.talktoai.presentation.screens.onboarding.onboarding.OnboardingScreen
+import com.vnstudio.talktoai.presentation.screens.onboarding.signup.SignUpScreen
 import com.vnstudio.talktoai.presentation.screens.sealed_classes.SettingsScreen
+import com.vnstudio.talktoai.presentation.screens.sealed_classes.SettingsScreen.Companion.isSettingsScreen
+import com.vnstudio.talktoai.presentation.screens.settings.settings_account.SettingsAccountScreen
+import com.vnstudio.talktoai.presentation.screens.settings.settings_chat.SettingsChatScreen
+import com.vnstudio.talktoai.presentation.screens.settings.settings_feedback.SettingsFeedbackScreen
+import com.vnstudio.talktoai.presentation.screens.settings.settings_language.SettingsLanguageScreen
+import com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyScreen
+import com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpScreen
+import com.vnstudio.talktoai.presentation.screens.settings.settings_theme.SettingsThemeScreen
 import com.vnstudio.talktoai.presentation.theme.*
 
 @Composable
@@ -79,26 +99,13 @@ fun SecondaryTopBar(title: String, onNavigationIconClick: () -> Unit) {
 }
 
 @Composable
-fun TopAppBarTitle(route: String?): String {
-    return when (route) {
-        NavigationScreen.SettingsChatScreen().route -> stringResource(id = R.string.settings_chat)
-        NavigationScreen.SettingsAccountScreen().route -> stringResource(id = R.string.settings_account)
-        NavigationScreen.SettingsLanguageScreen().route -> stringResource(id = R.string.settings_language)
-        NavigationScreen.SettingsThemeScreen().route -> stringResource(id = R.string.settings_theme)
-        NavigationScreen.SettingsPrivacyPolicyScreen().route -> stringResource(id = R.string.settings_privacy_policy)
-        else -> stringResource(id = R.string.app_name)
-    }
-}
-
-@Composable
 fun AppDrawer(
     isSettingsDrawerMode: MutableState<Boolean?>,
     currentRouteState: String?,
-    chats: MutableState<List<Chat>>,
+    chats: State<List<Chat>?>,
     onCreateChatClick: () -> Unit,
     onChatClick: (Chat) -> Unit,
     onDeleteChatClick: (Chat) -> Unit,
-    infoMessageState: MutableState<InfoMessage?>,
     onNextScreen: (String) -> Unit,
 ) {
     Column(
@@ -108,16 +115,11 @@ fun AppDrawer(
         Arrangement.Top
     ) {
         DrawerHeader(
-            isSettingsDrawerMode.value.isTrue() || NavigationScreen.isSettingsScreen(
-                currentRouteState
-            )
+            isSettingsDrawerMode.value.isTrue() || isSettingsScreen(currentRouteState)
         ) { settingsDrawerMode ->
             isSettingsDrawerMode.value = settingsDrawerMode
         }
-        if (isSettingsDrawerMode.value.isTrue() || NavigationScreen.isSettingsScreen(
-                currentRouteState
-            )
-        ) {
+        if (isSettingsDrawerMode.value.isTrue() || isSettingsScreen(currentRouteState)) {
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -140,11 +142,11 @@ fun AppDrawer(
                     .weight(1f)
                     .padding(horizontal = 16.dp, vertical = 24.dp)
             ) {
-                items(chats.value) { chat ->
+                items(chats.value.orEmpty()) { chat ->
                     DrawerItem(
                         name = chat.name,
                         mainIcon = R.drawable.ic_chat,
-                        isCurrent = chats.value.indexOf(chat) == 0,
+                        isCurrent = chats.value.orEmpty().indexOf(chat) == 0,
                         secondaryIcon = R.drawable.ic_delete,
                         isIconClick = true,
                         onIconClick = {
@@ -257,6 +259,106 @@ fun DrawerItem(
                             }
                         })
             }
+        }
+    }
+}
+
+@Composable
+fun AppSnackBar(snackBarHostState: SnackbarHostState) {
+    SnackbarHost(
+        hostState = snackBarHostState,
+        snackbar = { data ->
+            Box {
+                Snackbar(
+                    modifier = Modifier.padding(8.dp),
+                    backgroundColor = if (data.actionLabel == Constants.ERROR_MESSAGE) Color.Red else Primary700
+                ) {
+                    Text(data.message)
+                }
+                Spacer(modifier = Modifier.fillMaxSize())
+            }
+        }
+    )
+}
+
+@Composable
+fun AppNavHost(
+    navController: NavHostController,
+    startDestination: String,
+    infoMessageState: MutableState<InfoMessage?>,
+) {
+    NavHost(navController, startDestination = startDestination,
+        enterTransition = {
+            EnterTransition.None
+        }, exitTransition = {
+            ExitTransition.None
+        }) {
+        composable(
+            route = NavigationScreen.OnboardingScreen().route
+        ) {
+            OnboardingScreen {
+                navController.navigate(NavigationScreen.LoginScreen().route)
+            }
+        }
+        composable(
+            route = NavigationScreen.LoginScreen().route
+        ) {
+            LoginScreen(infoMessageState) { route ->
+                navController.navigate(route)
+            }
+        }
+        composable(
+            route = NavigationScreen.SignUpScreen().route
+        ) {
+            SignUpScreen(infoMessageState) { route ->
+                navController.navigate(route)
+            }
+        }
+        composable(
+            route = NavigationScreen.ChatScreen().route
+        ) {
+            ChatScreen(infoMessageState)
+        }
+        composable(
+            route = NavigationScreen.SettingsChatScreen().route
+        ) {
+            SettingsChatScreen(infoMessageState) {
+
+            }
+        }
+        composable(
+            route = NavigationScreen.SettingsAccountScreen().route
+        ) {
+            SettingsAccountScreen(infoMessageState) { route ->
+                navController.navigate(route)
+            }
+        }
+        composable(
+            route = NavigationScreen.SettingsSignUpScreen().route
+        ) {
+            SettingsSignUpScreen(infoMessageState) { route ->
+                navController.navigate(route)
+            }
+        }
+        composable(
+            route = NavigationScreen.SettingsLanguageScreen().route
+        ) {
+            SettingsLanguageScreen(infoMessageState)
+        }
+        composable(
+            route = NavigationScreen.SettingsThemeScreen().route
+        ) {
+            SettingsThemeScreen(infoMessageState)
+        }
+        composable(
+            route = NavigationScreen.SettingsFeedbackScreen().route
+        ) {
+            SettingsFeedbackScreen(infoMessageState)
+        }
+        composable(
+            route = NavigationScreen.SettingsPrivacyPolicyScreen().route
+        ) {
+            SettingsPrivacyPolicyScreen()
         }
     }
 }

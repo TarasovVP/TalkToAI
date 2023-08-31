@@ -14,7 +14,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val application: Application,
     private val loginUseCase: LoginUseCase,
-    val googleSignInClient: GoogleSignInClient
+    val googleSignInClient: GoogleSignInClient,
 ) : BaseViewModel(application) {
 
     val accountExistLiveData = MutableLiveData<Unit>()
@@ -27,9 +27,13 @@ class LoginViewModel @Inject constructor(
         if (application.isNetworkAvailable()) {
             showProgress()
             loginUseCase.sendPasswordResetEmail(email) { authResult ->
-                when(authResult) {
+                when (authResult) {
                     is Result.Success -> successPasswordResetLiveData.postValue(true)
-                    is Result.Failure -> authResult.errorMessage?.let { exceptionLiveData.postValue(it) }
+                    is Result.Failure -> authResult.errorMessage?.let {
+                        exceptionLiveData.postValue(
+                            it
+                        )
+                    }
                 }
                 hideProgress()
             }
@@ -42,13 +46,17 @@ class LoginViewModel @Inject constructor(
         if (application.isNetworkAvailable()) {
             showProgress()
             loginUseCase.fetchSignInMethodsForEmail(email) { authResult ->
-                when(authResult) {
+                when (authResult) {
                     is Result.Success -> when {
                         authResult.data.isNullOrEmpty() -> accountExistLiveData.postValue(Unit)
                         idToken.isNullOrEmpty() -> isEmailAccountExistLiveData.postValue(Unit)
                         else -> idToken.let { isGoogleAccountExistLiveData.postValue(it) }
                     }
-                    is Result.Failure -> authResult.errorMessage?.let { exceptionLiveData.postValue(it) }
+                    is Result.Failure -> authResult.errorMessage?.let {
+                        exceptionLiveData.postValue(
+                            it
+                        )
+                    }
                 }
                 hideProgress()
             }
@@ -61,9 +69,13 @@ class LoginViewModel @Inject constructor(
         if (application.isNetworkAvailable()) {
             showProgress()
             loginUseCase.signInWithEmailAndPassword(email, password) { authResult ->
-                when(authResult) {
+                when (authResult) {
                     is Result.Success -> successSignInLiveData.postValue(Unit)
-                    is Result.Failure -> authResult.errorMessage?.let { exceptionLiveData.postValue(it) }
+                    is Result.Failure -> authResult.errorMessage?.let {
+                        exceptionLiveData.postValue(
+                            it
+                        )
+                    }
                 }
                 hideProgress()
             }
@@ -76,9 +88,13 @@ class LoginViewModel @Inject constructor(
         if (application.isNetworkAvailable()) {
             showProgress()
             loginUseCase.signInAuthWithGoogle(idToken) { operationResult ->
-                when(operationResult) {
+                when (operationResult) {
                     is Result.Success -> successSignInLiveData.postValue(Unit)
-                    is Result.Failure -> operationResult.errorMessage?.let { exceptionLiveData.postValue(it) }
+                    is Result.Failure -> operationResult.errorMessage?.let {
+                        exceptionLiveData.postValue(
+                            it
+                        )
+                    }
                 }
                 hideProgress()
             }
@@ -91,9 +107,13 @@ class LoginViewModel @Inject constructor(
         if (application.isNetworkAvailable()) {
             showProgress()
             loginUseCase.signInAnonymously { authResult ->
-                when(authResult) {
+                when (authResult) {
                     is Result.Success -> successSignInLiveData.postValue(Unit)
-                    is Result.Failure -> authResult.errorMessage?.let { exceptionLiveData.postValue(it) }
+                    is Result.Failure -> authResult.errorMessage?.let {
+                        exceptionLiveData.postValue(
+                            it
+                        )
+                    }
                 }
                 hideProgress()
             }

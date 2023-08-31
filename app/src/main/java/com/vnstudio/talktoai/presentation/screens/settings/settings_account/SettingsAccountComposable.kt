@@ -1,7 +1,8 @@
 package com.vnstudio.talktoai.presentation.screens.settings.settings_account
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -16,7 +17,7 @@ import com.vnstudio.talktoai.presentation.components.*
 @Composable
 fun SettingsAccountScreen(
     infoMessageState: MutableState<InfoMessage?>,
-    onNextScreen: (String) -> Unit
+    onNextScreen: (String) -> Unit,
 ) {
 
     val viewModel: SettingsAccountViewModel = hiltViewModel()
@@ -37,7 +38,8 @@ fun SettingsAccountScreen(
         viewModel.isAuthorisedUser() -> R.drawable.ic_avatar_email
         else -> R.drawable.ic_avatar_anonymous
     }
-    val accountName = if (viewModel.isAuthorisedUser()) viewModel.currentUserEmail() else "Неавторизованный"
+    val accountName =
+        if (viewModel.isAuthorisedUser()) viewModel.currentUserEmail() else "Неавторизованный"
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -77,9 +79,12 @@ fun SettingsAccountScreen(
         showLogOutDialog.value = false
     }
 
-    ConfirmationDialog("Пользователя с таким Email не существует. Сначала необходимо создать аккаунт. Перейти на экран регистрации?", showDeleteAccountDialog, onDismiss = {
-        showDeleteAccountDialog.value = false
-    }) {
+    ConfirmationDialog(
+        "Пользователя с таким Email не существует. Сначала необходимо создать аккаунт. Перейти на экран регистрации?",
+        showDeleteAccountDialog,
+        onDismiss = {
+            showDeleteAccountDialog.value = false
+        }) {
         showDeleteAccountDialog.value = false
     }
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
@@ -89,19 +94,29 @@ fun SettingsAccountScreen(
 fun AccountCard(accountAvatar: Int, accountName: String, onClick: () -> Unit) {
 
     Card(modifier = Modifier.fillMaxWidth(), elevation = 1.dp) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp), verticalAlignment = Alignment.CenterVertically ) {
-            ShapeableImage(modifier = Modifier.size(50.dp), drawableResId = accountAvatar, contentDescription = "Account avatar")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp), verticalAlignment = Alignment.CenterVertically
+        ) {
+            ShapeableImage(
+                modifier = Modifier.size(50.dp),
+                drawableResId = accountAvatar,
+                contentDescription = "Account avatar"
+            )
             Column(
                 modifier = Modifier.wrapContentSize(),
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(text = accountName, modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 8.dp, top = 8.dp))
-                LinkButton(text = "Выйти", modifier = Modifier
-                    .wrapContentSize(), onClick = onClick)
+                Text(
+                    text = accountName, modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp, top = 8.dp)
+                )
+                LinkButton(
+                    text = "Выйти", modifier = Modifier
+                        .wrapContentSize(), onClick = onClick
+                )
             }
         }
     }

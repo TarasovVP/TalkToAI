@@ -7,16 +7,16 @@ import com.google.firebase.auth.AuthCredential
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.AppDatabase
+import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsAccountUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
-import com.vnstudio.talktoai.domain.sealed_classes.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsAccountViewModel @Inject constructor(
     private val application: Application,
-    private val settingsAccountUseCase: SettingsAccountUseCase
+    private val settingsAccountUseCase: SettingsAccountUseCase,
 ) : BaseViewModel(application) {
 
     val reAuthenticateLiveData = MutableLiveData<Unit>()

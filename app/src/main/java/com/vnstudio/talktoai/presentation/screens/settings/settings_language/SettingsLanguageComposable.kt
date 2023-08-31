@@ -4,7 +4,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.RadioButton
+import androidx.compose.material.RadioButtonDefaults
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -44,15 +47,27 @@ fun SettingsLanguageScreen(infoMessageState: MutableState<InfoMessage?>) {
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        SettingsLanguageItem(stringResource(id = R.string.settings_language_english), APP_LANG_EN == appLanguageState.value, R.drawable.ic_flag_en) {
+        SettingsLanguageItem(
+            stringResource(id = R.string.settings_language_english),
+            APP_LANG_EN == appLanguageState.value,
+            R.drawable.ic_flag_en
+        ) {
             viewModel.setAppLanguage(APP_LANG_EN)
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(APP_LANG_EN))
         }
-        SettingsLanguageItem(stringResource(id = R.string.settings_language_ukrainian), APP_LANG_UK == appLanguageState.value, R.drawable.ic_flag_ua) {
+        SettingsLanguageItem(
+            stringResource(id = R.string.settings_language_ukrainian),
+            APP_LANG_UK == appLanguageState.value,
+            R.drawable.ic_flag_ua
+        ) {
             viewModel.setAppLanguage(APP_LANG_UK)
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(APP_LANG_UK))
         }
-        SettingsLanguageItem(stringResource(id = R.string.settings_language_russian), APP_LANG_RU == appLanguageState.value, R.drawable.ic_flag_ru) {
+        SettingsLanguageItem(
+            stringResource(id = R.string.settings_language_russian),
+            APP_LANG_RU == appLanguageState.value,
+            R.drawable.ic_flag_ru
+        ) {
             viewModel.setAppLanguage(APP_LANG_RU)
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(APP_LANG_RU))
         }
@@ -62,19 +77,28 @@ fun SettingsLanguageScreen(infoMessageState: MutableState<InfoMessage?>) {
 
 @Composable
 fun SettingsLanguageItem(name: String, isChecked: Boolean, icon: Int, onLanguageCheck: () -> Unit) {
-    Card(modifier = Modifier
-        .fillMaxWidth()
-        .padding(top = 16.dp)) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp)
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            RadioButton(selected = isChecked, onClick = onLanguageCheck, colors = RadioButtonDefaults.colors(
-                selectedColor = Primary700,
-                unselectedColor = Neutral500
-            ))
+            RadioButton(
+                selected = isChecked,
+                onClick = onLanguageCheck,
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = Primary700,
+                    unselectedColor = Neutral500
+                )
+            )
             Text(text = name, modifier = Modifier.weight(1f))
-            Image(imageVector = ImageVector.vectorResource(id = icon), contentDescription = "App language $name")
+            Image(
+                imageVector = ImageVector.vectorResource(id = icon),
+                contentDescription = "App language $name"
+            )
         }
     }
 }
