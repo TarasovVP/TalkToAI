@@ -1,4 +1,4 @@
-package com.vnstudio.talktoai.presentation.screens.onboarding.onboarding
+package com.vnstudio.talktoai.presentation.screens.authorization.onboarding
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData

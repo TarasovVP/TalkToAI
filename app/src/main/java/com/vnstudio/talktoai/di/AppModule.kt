@@ -24,9 +24,9 @@ import com.vnstudio.talktoai.domain.usecases.*
 import com.vnstudio.talktoai.infrastructure.Constants.SERVER_TIMEOUT
 import com.vnstudio.talktoai.presentation.screens.chat.ChatUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.main.MainUseCaseImpl
-import com.vnstudio.talktoai.presentation.screens.onboarding.login.LoginUseCaseImpl
-import com.vnstudio.talktoai.presentation.screens.onboarding.onboarding.OnBoardingUseCaseImpl
-import com.vnstudio.talktoai.presentation.screens.onboarding.signup.SignUpUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.authorization.login.LoginUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.authorization.onboarding.OnBoardingUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_account.SettingsAccountUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_chat.SettingsChatUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_feedback.SettingsFeedbackUseCaseImpl
