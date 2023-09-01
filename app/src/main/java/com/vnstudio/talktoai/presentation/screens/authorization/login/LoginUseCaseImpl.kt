@@ -1,4 +1,4 @@
-package com.vnstudio.talktoai.presentation.screens.onboarding.login
+package com.vnstudio.talktoai.presentation.screens.authorization.login
 
 import com.vnstudio.talktoai.domain.repositories.AuthRepository
 import com.vnstudio.talktoai.domain.sealed_classes.Result

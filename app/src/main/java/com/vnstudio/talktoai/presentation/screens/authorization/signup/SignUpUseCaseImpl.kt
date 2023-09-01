@@ -1,4 +1,4 @@
-package com.vnstudio.talktoai.presentation.screens.onboarding.signup
+package com.vnstudio.talktoai.presentation.screens.authorization.signup
 
 import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.repositories.AuthRepository

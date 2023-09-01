@@ -69,7 +69,7 @@ fun SecondaryTextField(
 }
 
 @Composable
-fun PasswordTextField(inputValue: MutableState<TextFieldValue>) {
+fun PasswordTextField(inputValue: MutableState<TextFieldValue>, placeHolder: String) {
     val passwordVisible = remember { mutableStateOf(false) }
 
     TextField(
@@ -77,7 +77,7 @@ fun PasswordTextField(inputValue: MutableState<TextFieldValue>) {
         onValueChange = { newValue ->
             inputValue.value = newValue
         },
-        placeholder = { Text(text = "Password") },
+        placeholder = { Text(text = placeHolder) },
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = Color.White,
             focusedIndicatorColor = Color.Transparent,

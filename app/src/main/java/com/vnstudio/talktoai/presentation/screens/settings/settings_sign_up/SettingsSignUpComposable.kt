@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -18,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
+import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
@@ -120,7 +122,7 @@ fun SettingsSignUpScreen(
         }
         OrDivider(modifier = Modifier)
         PrimaryTextField("Email", emailInputValue)
-        PasswordTextField(passwordInputValue)
+        PasswordTextField(passwordInputValue, stringResource(id = R.string.authorization_password))
         PrimaryButton(
             text = "Зарегистрироваться",
             emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
