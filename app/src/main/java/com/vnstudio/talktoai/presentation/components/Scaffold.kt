@@ -285,6 +285,7 @@ fun AppSnackBar(snackBarHostState: SnackbarHostState) {
 fun AppNavHost(
     navController: NavHostController,
     startDestination: String,
+    isSettingsDrawerMode: MutableState<Boolean?>,
     infoMessageState: MutableState<InfoMessage?>,
 ) {
     NavHost(navController, startDestination = startDestination,
@@ -330,6 +331,7 @@ fun AppNavHost(
             route = NavigationScreen.SettingsAccountScreen().route
         ) {
             SettingsAccountScreen(infoMessageState) { route ->
+                isSettingsDrawerMode.value = null
                 navController.navigate(route)
             }
         }
@@ -337,6 +339,7 @@ fun AppNavHost(
             route = NavigationScreen.SettingsSignUpScreen().route
         ) {
             SettingsSignUpScreen(infoMessageState) { route ->
+                isSettingsDrawerMode.value = null
                 navController.navigate(route)
             }
         }

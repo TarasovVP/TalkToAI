@@ -151,7 +151,7 @@ fun AppContent() {
         },
         content = {
             startDestinationState.value?.let { startDestination ->
-                AppNavHost(navController, startDestination, infoMessageState)
+                AppNavHost(navController, startDestination, isSettingsDrawerMode, infoMessageState)
             }
             ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 
