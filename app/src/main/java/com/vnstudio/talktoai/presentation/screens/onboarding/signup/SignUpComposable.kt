@@ -17,6 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.vnstudio.talktoai.domain.models.InfoMessage
+import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.theme.Primary50
@@ -48,6 +49,12 @@ fun SignUpScreen(infoMessageState: MutableState<InfoMessage?>, onNextScreen: (St
     LaunchedEffect(isGoogleAccountExistState.value) {
         isGoogleAccountExistState.value?.let { idToken ->
             viewModel.createUserWithGoogle(idToken)
+        }
+    }
+    val successSignUpState = viewModel.successSignUpLiveData.observeAsState()
+    LaunchedEffect(successSignUpState.value) {
+        successSignUpState.value?.let {
+            viewModel.insertRemoteUser(RemoteUser())
         }
     }
     val successSignInState = viewModel.createCurrentUserLiveData.observeAsState()

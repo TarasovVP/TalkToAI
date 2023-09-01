@@ -1,5 +1,7 @@
 package com.vnstudio.talktoai.presentation.screens.settings.settings_account
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
 import androidx.compose.material.Text
@@ -7,8 +9,15 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.GoogleAuthProvider
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
@@ -22,7 +31,15 @@ fun SettingsAccountScreen(
 
     val viewModel: SettingsAccountViewModel = hiltViewModel()
     val showLogOutDialog = remember { mutableStateOf(false) }
-    val showDeleteAccountDialog = remember { mutableStateOf(false) }
+    val showDeleteGoogleAccountDialog = remember { mutableStateOf(false) }
+    val showDeleteEmailAccountDialog = remember { mutableStateOf(false) }
+
+    val reAuthenticateState = viewModel.reAuthenticateLiveData.observeAsState()
+    LaunchedEffect(reAuthenticateState.value) {
+        reAuthenticateState.value?.let {
+            viewModel.deleteUser()
+        }
+    }
 
     val successState = viewModel.successLiveData.observeAsState()
     LaunchedEffect(successState.value) {
@@ -33,6 +50,20 @@ fun SettingsAccountScreen(
         }
     }
 
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                account.idToken?.let { idToken ->
+                    val authCredential = GoogleAuthProvider.getCredential(idToken, null)
+                    viewModel.reAuthenticate(authCredential)
+                }
+            } catch (e: ApiException) {
+                viewModel.exceptionLiveData.postValue(CommonStatusCodes.getStatusCodeString(e.statusCode))
+            }
+        }
+
     val accountAvatar = when {
         viewModel.isGoogleAuthUser() -> R.drawable.ic_avatar_google
         viewModel.isAuthorisedUser() -> R.drawable.ic_avatar_email
@@ -40,6 +71,7 @@ fun SettingsAccountScreen(
     }
     val accountName =
         if (viewModel.isAuthorisedUser()) viewModel.currentUserEmail() else "Неавторизованный"
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -56,7 +88,11 @@ fun SettingsAccountScreen(
         }
         if (viewModel.isAuthorisedUser()) {
             SecondaryButton(text = "Удалить аккаунт", true, modifier = Modifier) {
-
+                if (viewModel.isGoogleAuthUser()) {
+                    showDeleteGoogleAccountDialog.value = true
+                } else {
+                    showDeleteEmailAccountDialog.value = true
+                }
             }
         } else {
             PrimaryButton(text = "Создать аккаунт", modifier = Modifier) {
@@ -80,13 +116,28 @@ fun SettingsAccountScreen(
     }
 
     ConfirmationDialog(
-        "Пользователя с таким Email не существует. Сначала необходимо создать аккаунт. Перейти на экран регистрации?",
-        showDeleteAccountDialog,
+        stringResource(id = R.string.settings_account_google_delete),
+        showDeleteGoogleAccountDialog,
         onDismiss = {
-            showDeleteAccountDialog.value = false
+            showDeleteGoogleAccountDialog.value = false
         }) {
-        showDeleteAccountDialog.value = false
+        launcher.launch(viewModel.googleSignInClient.signInIntent)
+        showDeleteGoogleAccountDialog.value = false
     }
+
+    DataEditDialog(
+        stringResource(id = R.string.settings_account_email_delete),
+        placeHolder = stringResource(id = R.string.settings_account_enter_current_password),
+        mutableStateOf(TextFieldValue()),
+        showDeleteEmailAccountDialog,
+        onDismiss = {
+            showDeleteEmailAccountDialog.value = false
+        }) { password ->
+        val authCredential = EmailAuthProvider.getCredential(viewModel.currentUserEmail(), password)
+        viewModel.reAuthenticate(authCredential)
+        showDeleteEmailAccountDialog.value = false
+    }
+
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 }
 
