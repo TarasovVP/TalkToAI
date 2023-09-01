@@ -266,12 +266,14 @@ object AppModule {
     @Singleton
     @Provides
     fun provideSettingsSignUpUseCase(
-        dataStoreRepository: DataStoreRepository,
+        chatRepository: ChatRepository,
+        messageRepository: MessageRepository,
         authRepository: AuthRepository,
         realDataBaseRepository: RealDataBaseRepository,
     ): SettingsSignUpUseCase {
         return SettingsSignUpUseCaseImpl(
-            dataStoreRepository,
+            chatRepository,
+            messageRepository,
             authRepository,
             realDataBaseRepository
         )

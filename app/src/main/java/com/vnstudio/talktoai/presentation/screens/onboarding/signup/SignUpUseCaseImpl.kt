@@ -1,6 +1,6 @@
 package com.vnstudio.talktoai.presentation.screens.onboarding.signup
 
-import com.vnstudio.talktoai.domain.models.CurrentUser
+import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.repositories.AuthRepository
 import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnstudio.talktoai.domain.sealed_classes.Result
@@ -30,8 +30,8 @@ class SignUpUseCaseImpl @Inject constructor(
         result.invoke(authResult)
     }
 
-    override fun createCurrentUser(currentUser: CurrentUser, result: (Result<Unit>) -> Unit) =
-        realDataBaseRepository.createCurrentUser(currentUser) { authResult ->
+    override fun createCurrentUser(remoteUser: RemoteUser, result: (Result<Unit>) -> Unit) =
+        realDataBaseRepository.insertRemoteUser(remoteUser) { authResult ->
             result.invoke(authResult)
         }
 }

@@ -1,7 +1,7 @@
 package com.vnstudio.talktoai.presentation.screens.main
 
 import com.vnstudio.talktoai.data.database.db_entities.Chat
-import com.vnstudio.talktoai.domain.models.CurrentUser
+import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.repositories.*
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.MainUseCase
@@ -24,8 +24,8 @@ class MainUseCaseImpl @Inject constructor(
         return authRepository.isLoggedInUser()
     }
 
-    override fun getCurrentUser(result: (Result<CurrentUser>) -> Unit) =
-        realDataBaseRepository.getCurrentUser { operationResult ->
+    override fun getCurrentUser(result: (Result<RemoteUser>) -> Unit) =
+        realDataBaseRepository.getRemoteUser { operationResult ->
             result.invoke(operationResult)
         }
 
@@ -42,6 +42,6 @@ class MainUseCaseImpl @Inject constructor(
 
     override suspend fun deleteChat(chat: Chat) {
         chatRepository.deleteChat(chat)
-        messageRepository.deleteMessagesFromChat(chat.chatId)
+        messageRepository.deleteMessagesFromChat(chat.id)
     }
 }

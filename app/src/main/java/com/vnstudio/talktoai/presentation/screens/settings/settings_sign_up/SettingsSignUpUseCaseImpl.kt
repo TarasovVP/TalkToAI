@@ -1,15 +1,14 @@
 package com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up
 
-import com.vnstudio.talktoai.domain.models.CurrentUser
-import com.vnstudio.talktoai.domain.repositories.AuthRepository
-import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
-import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
+import com.vnstudio.talktoai.domain.models.RemoteUser
+import com.vnstudio.talktoai.domain.repositories.*
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsSignUpUseCase
 import javax.inject.Inject
 
 class SettingsSignUpUseCaseImpl @Inject constructor(
-    private val dataStoreRepository: DataStoreRepository,
+    private val chatRepository: ChatRepository,
+    private val messageRepository: MessageRepository,
     private val authRepository: AuthRepository,
     private val realDataBaseRepository: RealDataBaseRepository,
 ) : SettingsSignUpUseCase {
@@ -40,13 +39,17 @@ class SettingsSignUpUseCaseImpl @Inject constructor(
         result.invoke(authResult)
     }
 
-    override fun createCurrentUser(currentUser: CurrentUser, result: (Result<Unit>) -> Unit) =
-        realDataBaseRepository.createCurrentUser(currentUser) { authResult ->
+    override suspend fun getChats() = chatRepository.getChats()
+
+    override suspend fun getMessages() = messageRepository.getMessages()
+
+    override fun insertRemoteCurrentUser(remoteUser: RemoteUser, result: (Result<Unit>) -> Unit) =
+        realDataBaseRepository.insertRemoteUser(remoteUser) { authResult ->
             result.invoke(authResult)
         }
 
-    override fun updateCurrentUser(currentUser: CurrentUser, result: (Result<Unit>) -> Unit) =
-        realDataBaseRepository.updateCurrentUser(currentUser) { authResult ->
+    override fun updateRemoteCurrentUser(remoteUser: RemoteUser, result: (Result<Unit>) -> Unit) =
+        realDataBaseRepository.updateRemoteUser(remoteUser) { authResult ->
             result.invoke(authResult)
         }
 }

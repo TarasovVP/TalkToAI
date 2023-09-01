@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -137,22 +138,33 @@ fun AppDrawer(
                 }
             }
         } else {
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 16.dp, vertical = 24.dp)
-            ) {
-                items(chats.value.orEmpty()) { chat ->
-                    DrawerItem(
-                        name = chat.name,
-                        mainIcon = R.drawable.ic_chat,
-                        isCurrent = chats.value.orEmpty().indexOf(chat) == 0,
-                        secondaryIcon = R.drawable.ic_delete,
-                        isIconClick = true,
-                        onIconClick = {
-                            onDeleteChatClick.invoke(chat)
-                        },
-                        onItemClick = { onChatClick.invoke(chat) })
+            if (chats.value.isNullOrEmpty()) {
+                Image(
+                    painter = painterResource(id = R.drawable.empty_state),
+                    contentDescription = "Empty state",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(top = 16.dp)
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 16.dp, vertical = 24.dp)
+                ) {
+                    items(chats.value.orEmpty()) { chat ->
+                        DrawerItem(
+                            name = chat.name,
+                            mainIcon = R.drawable.ic_chat,
+                            isCurrent = chats.value.orEmpty().indexOf(chat) == 0,
+                            secondaryIcon = R.drawable.ic_delete,
+                            isIconClick = true,
+                            onIconClick = {
+                                onDeleteChatClick.invoke(chat)
+                            },
+                            onItemClick = { onChatClick.invoke(chat) })
+                    }
                 }
             }
             TextIconButton(

@@ -1,7 +1,9 @@
 package com.vnstudio.talktoai.domain.usecases
 
-import com.vnstudio.talktoai.domain.models.CurrentUser
+import com.vnstudio.talktoai.data.database.db_entities.Chat
+import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.sealed_classes.Result
+import kotlinx.coroutines.flow.Flow
 
 interface SettingsSignUpUseCase {
 
@@ -17,7 +19,11 @@ interface SettingsSignUpUseCase {
 
     fun signInWithEmailAndPassword(email: String, password: String, result: (Result<Unit>) -> Unit)
 
-    fun createCurrentUser(currentUser: CurrentUser, result: (Result<Unit>) -> Unit)
+    suspend fun getChats(): Flow<List<Chat>>
 
-    fun updateCurrentUser(currentUser: CurrentUser, result: (Result<Unit>) -> Unit)
+    suspend fun getMessages(): Flow<List<Message>>
+
+    fun insertRemoteCurrentUser(remoteUser: com.vnstudio.talktoai.domain.models.RemoteUser, result: (Result<Unit>) -> Unit)
+
+    fun updateRemoteCurrentUser(remoteUser: com.vnstudio.talktoai.domain.models.RemoteUser, result: (Result<Unit>) -> Unit)
 }

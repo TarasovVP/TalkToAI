@@ -28,6 +28,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
+import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
@@ -36,7 +37,6 @@ import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.MessageApi
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.theme.*
-import kotlinx.coroutines.launch
 import java.util.*
 
 @Composable
@@ -58,12 +58,12 @@ fun ChatScreen(
         verticalArrangement = Arrangement.Top
     ) {
         if (messagesState.value.isNullOrEmpty()) {
-            IntroMessage(
-                currentChatState.value == null,
+            EmptyState(
+                text = if (currentChatState.value.isNull()) "Что бы начать работу с ИИ создайте чат" else "Введите свой вопрос или воспользуйтесь микрофоном....",
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(45.dp)
-                    .weight(1f),
+                    .weight(1f)
             )
         } else {
             MessageList(
@@ -87,7 +87,7 @@ fun ChatScreen(
                 } else {
                     viewModel.insertMessage(
                         Message(
-                            chatId = currentChatState.value?.chatId ?: 0,
+                            chatId = currentChatState.value?.id ?: 0,
                             author = "me",
                             message = messageText,
                             createdAt = Date().time
@@ -95,7 +95,7 @@ fun ChatScreen(
                     )
                     viewModel.insertMessage(
                         Message(
-                            chatId = currentChatState.value?.chatId ?: 0,
+                            chatId = currentChatState.value?.id ?: 0,
                             author = "gpt-3.5-turbo",
                             message = String.EMPTY,
                             createdAt = 0

@@ -6,7 +6,7 @@ import com.vnstudio.talktoai.data.database.db_entities.Message
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class CurrentUser(
+data class RemoteUser(
     var chatList: ArrayList<Chat> = arrayListOf(),
     var messageList: ArrayList<Message> = arrayListOf(),
     var isReviewVoted: Boolean = false,

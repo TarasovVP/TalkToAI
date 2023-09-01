@@ -1,6 +1,5 @@
 package com.vnstudio.talktoai.data.repositoryimpl
 
-import android.util.Log
 import com.vnstudio.talktoai.data.database.dao.ChatDao
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.domain.repositories.ChatRepository
@@ -18,11 +17,5 @@ class ChatRepositoryImpl @Inject constructor(private val chatDao: ChatDao) : Cha
 
     override suspend fun deleteChat(chat: Chat) = chatDao.deleteChat(chat)
 
-    override suspend fun updateChats(chats: List<Chat>) {
-        chatDao.updateChats(chats)
-        Log.e(
-            "apiTAG",
-            "ChatRepositoryImpl updateChats $chats "
-        )
-    }
+    override suspend fun updateChats(chats: List<Chat>) = chatDao.updateChats(chats)
 }

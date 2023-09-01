@@ -133,7 +133,7 @@ fun AppContent() {
                 onChatClick = { chat ->
                     viewModel.updateChats(
                         viewModel.chatsLiveData.value.orEmpty()
-                            .onEach { if (it.chatId == chat.chatId) it.updated = Date().time })
+                            .onEach { if (it.id == chat.id) it.updated = Date().time })
                     scope.launch {
                         scaffoldState.drawerState.close()
                     }
