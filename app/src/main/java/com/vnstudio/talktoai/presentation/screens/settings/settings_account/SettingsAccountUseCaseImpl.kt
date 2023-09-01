@@ -41,7 +41,7 @@ class SettingsAccountUseCaseImpl @Inject constructor(
         }
 
     override fun deleteUser(result: (Result<Unit>) -> Unit) =
-        realDataBaseRepository.deleteCurrentUser {
+        realDataBaseRepository.deleteRemoteUser {
             authRepository.deleteUser(result)
         }
 

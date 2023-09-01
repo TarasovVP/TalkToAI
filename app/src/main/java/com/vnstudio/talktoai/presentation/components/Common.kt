@@ -2,6 +2,7 @@ package com.vnstudio.talktoai.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -107,18 +108,12 @@ fun EmptyState(text: String, modifier: Modifier) {
             .padding(16.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        Box(
-            modifier = Modifier
+        Text(
+            text = text, textAlign = TextAlign.Center, modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 32.dp)
-                .background(color = Primary500, shape = RoundedCornerShape(16.dp))
-        ) {
-            Text(
-                text = text, textAlign = TextAlign.Center, color = Neutral50, modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            )
-        }
+                .border(1.dp, Primary300, shape = RoundedCornerShape(18.dp))
+                .padding(16.dp)
+        )
         Image(
             painter = painterResource(id = R.drawable.empty_state),
             contentDescription = "Empty state",

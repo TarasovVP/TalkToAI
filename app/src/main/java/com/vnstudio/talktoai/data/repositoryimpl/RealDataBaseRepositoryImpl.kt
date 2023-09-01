@@ -5,7 +5,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
-import com.vnstudio.talktoai.domain.models.CurrentUser
+import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.models.Feedback
 import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnstudio.talktoai.domain.sealed_classes.Result
@@ -23,16 +23,16 @@ class RealDataBaseRepositoryImpl @Inject constructor(
 ) :
     RealDataBaseRepository {
 
-    override fun createCurrentUser(currentUser: CurrentUser, result: (Result<Unit>) -> Unit) {
+    override fun insertRemoteUser(remoteUser: RemoteUser, result: (Result<Unit>) -> Unit) {
         val currentUserMap = hashMapOf<String, Any>()
-        currentUser.chatList.forEach { chat ->
-            currentUserMap["$CHATS/${chat.chatId}"] = chat
+        remoteUser.chatList.forEach { chat ->
+            currentUserMap["$CHATS/${chat.id}"] = chat
         }
-        currentUser.messageList.forEach { message ->
+        remoteUser.messageList.forEach { message ->
             currentUserMap["$MESSAGES/${message.messageId}"] = message
         }
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
-            .setValue(currentUser)
+            .setValue(remoteUser)
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
@@ -40,12 +40,12 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             }
     }
 
-    override fun updateCurrentUser(currentUser: CurrentUser, result: (Result<Unit>) -> Unit) {
+    override fun updateRemoteUser(remoteUser: RemoteUser, result: (Result<Unit>) -> Unit) {
         val updatesMap = hashMapOf<String, Any>()
-        currentUser.chatList.forEach { chat ->
-            updatesMap["$CHATS/${chat.chatId}"] = chat
+        remoteUser.chatList.forEach { chat ->
+            updatesMap["$CHATS/${chat.id}"] = chat
         }
-        currentUser.messageList.forEach { message ->
+        remoteUser.messageList.forEach { message ->
             updatesMap["$MESSAGES/${message.messageId}"] = message
         }
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
@@ -57,7 +57,7 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             }
     }
 
-    override fun getCurrentUser(result: (Result<CurrentUser>) -> Unit) {
+    override fun getRemoteUser(result: (Result<RemoteUser>) -> Unit) {
         var currentUserDatabase =
             firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
         if (currentUserDatabase.key != firebaseAuth.currentUser?.uid.orEmpty()) currentUserDatabase =
@@ -65,29 +65,29 @@ class RealDataBaseRepositoryImpl @Inject constructor(
         currentUserDatabase.get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val currentUser = CurrentUser()
+                    val remoteUser = RemoteUser()
                     task.result.children.forEach { snapshot ->
                         when (snapshot.key) {
                             CHATS -> snapshot.children.forEach { child ->
                                 child.getValue(Chat::class.java)
-                                    ?.let { currentUser.chatList.add(it) }
+                                    ?.let { remoteUser.chatList.add(it) }
                             }
                             MESSAGES -> snapshot.children.forEach { child ->
                                 child.getValue(Message::class.java)
-                                    ?.let { currentUser.messageList.add(it) }
+                                    ?.let { remoteUser.messageList.add(it) }
                             }
-                            REVIEW_VOTE -> currentUser.isReviewVoted =
+                            REVIEW_VOTE -> remoteUser.isReviewVoted =
                                 snapshot.getValue(Boolean::class.java).isTrue()
                         }
                     }
-                    result.invoke(Result.Success(currentUser))
+                    result.invoke(Result.Success(remoteUser))
                 }
             }.addOnFailureListener { exception ->
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
 
-    override fun deleteCurrentUser(result: (Result<Unit>) -> Unit) {
+    override fun deleteRemoteUser(result: (Result<Unit>) -> Unit) {
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .removeValue()
             .addOnSuccessListener {
@@ -101,7 +101,7 @@ class RealDataBaseRepositoryImpl @Inject constructor(
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .child(
                 CHATS
-            ).child(chat.chatId.toString()).setValue(chat)
+            ).child(chat.id.toString()).setValue(chat)
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
@@ -121,7 +121,7 @@ class RealDataBaseRepositoryImpl @Inject constructor(
 
     override fun deleteChat(chat: Chat, result: (Result<Unit>) -> Unit) {
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
-            .child(CHATS).child(chat.chatId.toString()).removeValue()
+            .child(CHATS).child(chat.id.toString()).removeValue()
             .addOnCompleteListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->

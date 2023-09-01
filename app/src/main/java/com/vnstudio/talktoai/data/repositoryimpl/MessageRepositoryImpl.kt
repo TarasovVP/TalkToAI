@@ -25,6 +25,9 @@ class MessageRepositoryImpl @Inject constructor(
         messageDao.updateMessage(message)
     }
 
+    override suspend fun getMessages(): Flow<List<Message>> =
+        messageDao.getMessages()
+
     override suspend fun getMessagesFromChat(chatId: Int): Flow<List<Message>> =
         messageDao.getMessagesFromChat(chatId)
 

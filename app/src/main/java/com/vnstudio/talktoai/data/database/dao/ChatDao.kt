@@ -12,10 +12,10 @@ interface ChatDao {
     @Update
     fun updateChats(chats: List<Chat>)
 
-    @Query("SELECT * FROM Chat ORDER BY updated DESC")
+    @Query("SELECT * FROM chats ORDER BY updated DESC")
     fun getChats(): Flow<List<Chat>>
 
-    @Query("SELECT * FROM Chat ORDER BY updated DESC LIMIT 1")
+    @Query("SELECT * FROM chats ORDER BY updated DESC LIMIT 1")
     fun getCurrentChat(): Flow<Chat?>
 
     @Update

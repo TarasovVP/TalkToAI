@@ -12,9 +12,12 @@ interface MessageDao {
     @Update
     fun updateMessage(message: Message)
 
-    @Query("SELECT * FROM Message WHERE :chatId = chatId")
+    @Query("SELECT * FROM messages")
+    fun getMessages(): Flow<List<Message>>
+
+    @Query("SELECT * FROM messages WHERE :chatId = chatId")
     fun getMessagesFromChat(chatId: Int): Flow<List<Message>>
 
-    @Query("DELETE FROM Message WHERE :chatId = chatId")
+    @Query("DELETE FROM messages WHERE :chatId = chatId")
     fun deleteMessagesFromChat(chatId: Int)
 }

@@ -1,7 +1,7 @@
 package com.vnstudio.talktoai.domain.usecases
 
 import com.vnstudio.talktoai.data.database.db_entities.Chat
-import com.vnstudio.talktoai.domain.models.CurrentUser
+import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import kotlinx.coroutines.flow.Flow
 
@@ -11,7 +11,7 @@ interface MainUseCase {
 
     fun isLoggedInUser(): Boolean
 
-    fun getCurrentUser(result: (Result<CurrentUser>) -> Unit)
+    fun getCurrentUser(result: (Result<RemoteUser>) -> Unit)
 
     suspend fun setReviewVoted(isReviewVoted: Boolean)
 

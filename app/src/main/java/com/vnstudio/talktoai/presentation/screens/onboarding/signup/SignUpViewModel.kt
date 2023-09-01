@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
-import com.vnstudio.talktoai.domain.models.CurrentUser
+import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SignUpUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
@@ -86,10 +86,10 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    fun createCurrentUser(currentUser: CurrentUser) {
+    fun createCurrentUser(remoteUser: RemoteUser) {
         if (application.isNetworkAvailable()) {
             showProgress()
-            signUpUseCase.createCurrentUser(currentUser) { operationResult ->
+            signUpUseCase.createCurrentUser(remoteUser) { operationResult ->
                 when (operationResult) {
                     is Result.Success -> createCurrentUserLiveData.postValue(Unit)
                     is Result.Failure -> operationResult.errorMessage?.let {

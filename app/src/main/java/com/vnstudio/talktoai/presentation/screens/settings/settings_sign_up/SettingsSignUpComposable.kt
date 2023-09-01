@@ -18,7 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
-import com.vnstudio.talktoai.domain.models.CurrentUser
+import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.components.*
@@ -58,20 +58,32 @@ fun SettingsSignUpScreen(
             viewModel.createUserWithGoogle(idToken, false)
         }
     }
-    //TODO CurrentUser
+
     val successAuthorisationState = viewModel.successAuthorisationLiveData.observeAsState()
     LaunchedEffect(successAuthorisationState.value) {
         successAuthorisationState.value?.let { isExistUser ->
-            if (isExistUser) {
-                viewModel.updateCurrentUser(if (transferDataState.value) CurrentUser() else CurrentUser())
+            if (transferDataState.value) {
+                viewModel.createRemoteUser(isExistUser)
             } else {
-                viewModel.createCurrentUser(if (transferDataState.value) CurrentUser() else CurrentUser())
+                viewModel.remoteUserLiveData.postValue(Pair(isExistUser, RemoteUser()))
             }
         }
     }
-    val successSignInState = viewModel.createCurrentUserLiveData.observeAsState()
-    LaunchedEffect(successSignInState.value) {
-        successSignInState.value?.let {
+
+    val localUserState = viewModel.remoteUserLiveData.observeAsState()
+    LaunchedEffect(localUserState.value) {
+        localUserState.value?.let {
+            if (it.first) {
+                viewModel.updateRemoteCurrentUser(it.second)
+            } else {
+                viewModel.insertRemoteCurrentUser(it.second)
+            }
+        }
+    }
+
+    val successRemoteUserState = viewModel.successRemoteUserLiveData.observeAsState()
+    LaunchedEffect(successRemoteUserState.value) {
+        successRemoteUserState.value?.let {
             onNextScreen.invoke(NavigationScreen.ChatScreen().route)
         }
     }

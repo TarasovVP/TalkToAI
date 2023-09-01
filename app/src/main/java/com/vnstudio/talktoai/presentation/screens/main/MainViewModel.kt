@@ -7,7 +7,7 @@ import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
-import com.vnstudio.talktoai.domain.models.CurrentUser
+import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.MainUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
@@ -53,7 +53,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun setCurrentUserData(currentUser: CurrentUser) {
+    private fun setCurrentUserData(remoteUser: RemoteUser) {
 
     }
 

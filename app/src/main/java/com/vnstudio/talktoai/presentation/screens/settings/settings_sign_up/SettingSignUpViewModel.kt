@@ -5,11 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
 import com.vnstudio.talktoai.R
-import com.vnstudio.talktoai.domain.models.CurrentUser
+import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsSignUpUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,7 +24,8 @@ class SettingSignUpViewModel @Inject constructor(
     val createEmailAccountLiveData = MutableLiveData<Unit>()
     val createGoogleAccountLiveData = MutableLiveData<String>()
     val successAuthorisationLiveData = MutableLiveData<Boolean>()
-    val createCurrentUserLiveData = MutableLiveData<Unit>()
+    val remoteUserLiveData = MutableLiveData<Pair<Boolean, RemoteUser>>()
+    val successRemoteUserLiveData = MutableLiveData<Unit>()
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
         if (application.isNetworkAvailable()) {
@@ -110,12 +112,26 @@ class SettingSignUpViewModel @Inject constructor(
         }
     }
 
-    fun createCurrentUser(currentUser: CurrentUser) {
+    fun createRemoteUser(isExistUser: Boolean) {
+        showProgress()
+        launch {
+            val chats = settingsSignUpUseCase.getChats().first()
+            val messages = settingsSignUpUseCase.getMessages().first()
+            val remoteUser = RemoteUser().apply {
+                chatList.addAll(chats)
+                messageList.addAll(messages)
+            }
+            remoteUserLiveData.postValue(Pair(isExistUser, remoteUser))
+            hideProgress()
+        }
+    }
+
+    fun insertRemoteCurrentUser(remoteUser: RemoteUser) {
         if (application.isNetworkAvailable()) {
             showProgress()
-            settingsSignUpUseCase.createCurrentUser(currentUser) { operationResult ->
+            settingsSignUpUseCase.insertRemoteCurrentUser(remoteUser) { operationResult ->
                 when (operationResult) {
-                    is Result.Success -> createCurrentUserLiveData.postValue(Unit)
+                    is Result.Success -> successRemoteUserLiveData.postValue(Unit)
                     is Result.Failure -> operationResult.errorMessage?.let {
                         exceptionLiveData.postValue(
                             it
@@ -129,12 +145,12 @@ class SettingSignUpViewModel @Inject constructor(
         }
     }
 
-    fun updateCurrentUser(currentUser: CurrentUser) {
+    fun updateRemoteCurrentUser(remoteUser: RemoteUser) {
         if (application.isNetworkAvailable()) {
             showProgress()
-            settingsSignUpUseCase.updateCurrentUser(currentUser) { operationResult ->
+            settingsSignUpUseCase.updateRemoteCurrentUser(remoteUser) { operationResult ->
                 when (operationResult) {
-                    is Result.Success -> createCurrentUserLiveData.postValue(Unit)
+                    is Result.Success -> successRemoteUserLiveData.postValue(Unit)
                     is Result.Failure -> operationResult.errorMessage?.let {
                         exceptionLiveData.postValue(
                             it

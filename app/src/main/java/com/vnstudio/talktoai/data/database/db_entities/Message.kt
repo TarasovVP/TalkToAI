@@ -4,9 +4,11 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
+import com.vnstudio.talktoai.infrastructure.Constants
+import com.vnstudio.talktoai.infrastructure.Constants.MESSAGES
 import kotlinx.parcelize.Parcelize
 
-@Entity
+@Entity(tableName = MESSAGES)
 @Parcelize
 data class Message(
     @PrimaryKey(autoGenerate = true) var messageId: Int = 0,

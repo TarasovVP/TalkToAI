@@ -19,7 +19,7 @@ class ChatViewModel @Inject constructor(
     private val chatUseCase: ChatUseCase,
 ) : BaseViewModel(application) {
 
-    val currentChatLiveData = MutableLiveData<Chat>()
+    val currentChatLiveData = MutableLiveData<Chat?>()
     val messagesLiveData = MutableLiveData<List<Message>>()
 
     fun insertChat(chat: Chat) {
@@ -43,7 +43,7 @@ class ChatViewModel @Inject constructor(
                     "ChatViewModel getCurrentChat collect result $result isProgressProcessLiveData ${isProgressProcessLiveData.value}"
                 )
                 currentChatLiveData.postValue(result)
-                result?.chatId?.let { getMessagesFromChat(it) }
+                result?.id?.let { getMessagesFromChat(it) }
             }
         }
     }
