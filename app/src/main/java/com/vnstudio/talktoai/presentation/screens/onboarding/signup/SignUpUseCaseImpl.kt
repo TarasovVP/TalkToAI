@@ -30,7 +30,7 @@ class SignUpUseCaseImpl @Inject constructor(
         result.invoke(authResult)
     }
 
-    override fun createCurrentUser(remoteUser: RemoteUser, result: (Result<Unit>) -> Unit) =
+    override fun insertRemoteUser(remoteUser: RemoteUser, result: (Result<Unit>) -> Unit) =
         realDataBaseRepository.insertRemoteUser(remoteUser) { authResult ->
             result.invoke(authResult)
         }

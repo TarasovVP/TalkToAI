@@ -86,10 +86,10 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    fun createCurrentUser(remoteUser: RemoteUser) {
+    fun insertRemoteUser(remoteUser: RemoteUser) {
         if (application.isNetworkAvailable()) {
             showProgress()
-            signUpUseCase.createCurrentUser(remoteUser) { operationResult ->
+            signUpUseCase.insertRemoteUser(remoteUser) { operationResult ->
                 when (operationResult) {
                     is Result.Success -> createCurrentUserLiveData.postValue(Unit)
                     is Result.Failure -> operationResult.errorMessage?.let {

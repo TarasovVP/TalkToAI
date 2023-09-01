@@ -15,5 +15,5 @@ interface SignUpUseCase {
         result: (Result<String>) -> Unit,
     )
 
-    fun createCurrentUser(remoteUser: RemoteUser, result: (Result<Unit>) -> Unit)
+    fun insertRemoteUser(remoteUser: RemoteUser, result: (Result<Unit>) -> Unit)
 }

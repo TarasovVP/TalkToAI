@@ -3,6 +3,7 @@ package com.vnstudio.talktoai.presentation.screens.settings.settings_account
 import android.app.Application
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.AuthCredential
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
 import com.vnstudio.talktoai.R
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class SettingsAccountViewModel @Inject constructor(
     private val application: Application,
     private val settingsAccountUseCase: SettingsAccountUseCase,
+    val googleSignInClient: GoogleSignInClient
 ) : BaseViewModel(application) {
 
     val reAuthenticateLiveData = MutableLiveData<Unit>()
