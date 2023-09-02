@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Talk to AI"
-include ':app'
+include(":app")
