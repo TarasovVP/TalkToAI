@@ -29,7 +29,7 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             currentUserMap["$CHATS/${chat.id}"] = chat
         }
         remoteUser.messages.forEach { message ->
-            currentUserMap["$MESSAGES/${message.messageId}"] = message
+            currentUserMap["$MESSAGES/${message.id}"] = message
         }
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .setValue(remoteUser)
@@ -46,7 +46,7 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             updatesMap["$CHATS/${chat.id}"] = chat
         }
         remoteUser.messages.forEach { message ->
-            updatesMap["$MESSAGES/${message.messageId}"] = message
+            updatesMap["$MESSAGES/${message.id}"] = message
         }
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .updateChildren(updatesMap)
@@ -131,7 +131,7 @@ class RealDataBaseRepositoryImpl @Inject constructor(
 
     override fun insertMessage(message: Message, result: (Result<Unit>) -> Unit) {
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
-            .child(MESSAGES).child(message.messageId.toString()).setValue(message)
+            .child(MESSAGES).child(message.id.toString()).setValue(message)
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->

@@ -3,6 +3,8 @@ package com.vnstudio.talktoai.presentation.screens.chat
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
+import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
@@ -15,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    application: Application,
+    private val application: Application,
     private val chatUseCase: ChatUseCase,
 ) : BaseViewModel(application) {
 
@@ -93,13 +95,12 @@ class ChatViewModel @Inject constructor(
                 when (result) {
                     is Result.Success -> result.data?.let { apiResponse ->
                         val updatedMessage = Message(
-                            messageId = messagesLiveData.value?.lastOrNull()?.messageId ?: 0,
                             chatId = messagesLiveData.value?.lastOrNull()?.chatId ?: 0,
                             author = apiResponse.model.orEmpty(),
                             message = apiResponse.choices?.firstOrNull()?.message?.content.orEmpty(),
-                            createdAt = apiResponse.created?.toLongOrNull() ?: 0
+                            updatedAt = apiResponse.created?.toLongOrNull() ?: 0
                         )
-                        updateMessage(updatedMessage)
+                        insertMessage(updatedMessage)
                     }
                     is Result.Failure -> Log.e(
                         "apiTAG",
@@ -107,25 +108,34 @@ class ChatViewModel @Inject constructor(
                     )
                 }
                 hideProgress()
-                Log.e(
-                    "apiTAG",
-                    "ChatViewModel sendRequest result $result  isProgressProcessLiveData ${isProgressProcessLiveData.value}"
-                )
             }
         }
     }
 
     fun insertMessage(message: Message) {
-        Log.e(
-            "messagesTAG",
-            "ChatViewModel insertMessage messagesLiveData ${messagesLiveData.value?.map { it.message }}"
-        )
-        launch {
-            chatUseCase.insertMessage(message)
-            Log.e(
-                "apiTAG",
-                "ChatViewModel insertMessage message $message isProgressProcessLiveData ${isProgressProcessLiveData.value}"
-            )
+        if (chatUseCase.isAuthorisedUser()) {
+            if (application.isNetworkAvailable()) {
+                showProgress()
+                chatUseCase.insertRemoteMessage(message) { authResult ->
+                    when (authResult) {
+                        is Result.Success -> {
+                            launch {
+                                chatUseCase.insertMessage(message)
+                            }
+                        }
+                        is Result.Failure -> authResult.errorMessage?.let {
+                            exceptionLiveData.postValue(it)
+                        }
+                    }
+                    hideProgress()
+                }
+            } else {
+                exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
+            }
+        } else {
+            launch {
+                chatUseCase.insertMessage(message)
+            }
         }
     }
 

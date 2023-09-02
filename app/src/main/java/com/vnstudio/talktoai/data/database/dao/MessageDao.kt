@@ -19,7 +19,7 @@ interface MessageDao {
     @Query("SELECT * FROM messages")
     fun getMessages(): Flow<List<Message>>
 
-    @Query("SELECT * FROM messages WHERE :chatId = chatId")
+    @Query("SELECT * FROM messages WHERE :chatId = chatId ORDER BY updatedAt DESC")
     fun getMessagesFromChat(chatId: Int): Flow<List<Message>>
 
     @Query("DELETE FROM messages WHERE :chatId = chatId")

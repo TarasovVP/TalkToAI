@@ -208,8 +208,10 @@ object AppModule {
     fun provideChatUseCase(
         chatRepository: ChatRepository,
         messageRepository: MessageRepository,
+        authRepository: AuthRepository,
+        realDataBaseRepository: RealDataBaseRepository
     ): ChatUseCase {
-        return ChatUseCaseImpl(chatRepository, messageRepository)
+        return ChatUseCaseImpl(chatRepository, messageRepository, authRepository, realDataBaseRepository)
     }
 
     @Singleton
