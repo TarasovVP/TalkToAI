@@ -118,8 +118,8 @@ class SettingSignUpViewModel @Inject constructor(
             val chats = settingsSignUpUseCase.getChats().first()
             val messages = settingsSignUpUseCase.getMessages().first()
             val remoteUser = RemoteUser().apply {
-                chatList.addAll(chats)
-                messageList.addAll(messages)
+                this.chats.addAll(chats)
+                this.messages.addAll(messages)
             }
             remoteUserLiveData.postValue(Pair(isExistUser, remoteUser))
             hideProgress()

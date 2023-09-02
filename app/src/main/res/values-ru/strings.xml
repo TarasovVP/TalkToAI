@@ -70,6 +70,7 @@
     <string name="settings_account_transfer_data_turn_on">Cозданные данные будут перенесены в ваш аккаунт.</string>
     <string name="settings_account_transfer_data_turn_off">Cозданные данные будут удалены.</string>
     <string name="settings_account_exist">Пользователь с таким Email уже существует. Вы можете перейти в этот аккаунт. При включенном выборе переноса данных - они будут перенесены в аккаунт, при выключенном - удалены безвозвартно. Перейти?</string>
+    <string name="empty_state_account">Ваши данные хранятся локально в рамках одной сессии и будут потеряны при выходе из этого аккаунта, очистке кеша или переустановке приложения. Для подключения удаленного хранения данных и доступа к нему с любого устройства, зарегистрируйтесь.</string>
     <!--Settings language-->
     <string name="settings_language_russian">Русский</string>
     <string name="settings_language_ukrainian">Украинский</string>

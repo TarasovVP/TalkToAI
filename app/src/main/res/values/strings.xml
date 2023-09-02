@@ -71,6 +71,7 @@
     <string name="settings_account_transfer_data_turn_on">The created data will be transferred to your account.</string>
     <string name="settings_account_transfer_data_turn_off">The created data will be deleted.</string>
     <string name="settings_account_exist">A user with this email already exists. You can go to this account. If the choice of data transfer is enabled, they will be transferred to the account, if it is disabled, they will be permanently deleted. Go?</string>
+    <string name="empty_state_account">Your data is stored locally within a single session and will be lost if you log out of this account, clear the cache, or reinstall the application. To connect remote data storage and access it from any device, register.</string>
     <!--Settings language-->
     <string name="settings_language_russian">Russian</string>
     <string name="settings_language_ukrainian">Ukrainian</string>

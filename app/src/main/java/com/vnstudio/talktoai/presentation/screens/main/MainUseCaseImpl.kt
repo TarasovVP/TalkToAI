@@ -1,6 +1,7 @@
 package com.vnstudio.talktoai.presentation.screens.main
 
 import com.vnstudio.talktoai.data.database.db_entities.Chat
+import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.repositories.*
 import com.vnstudio.talktoai.domain.sealed_classes.Result
@@ -24,13 +25,17 @@ class MainUseCaseImpl @Inject constructor(
         return authRepository.isLoggedInUser()
     }
 
-    override fun getCurrentUser(result: (Result<RemoteUser>) -> Unit) =
+    override fun getRemoteUser(result: (Result<RemoteUser>) -> Unit) =
         realDataBaseRepository.getRemoteUser { operationResult ->
             result.invoke(operationResult)
         }
 
     override suspend fun setReviewVoted(isReviewVoted: Boolean) =
         dataStoreRepository.setReviewVoted(isReviewVoted)
+
+    override suspend fun insertChats(chats: List<Chat>) = chatRepository.insertChats(chats)
+
+    override suspend fun insertMessages(messages: List<Message>) = messageRepository.insertMessages(messages)
 
     override suspend fun getChats(): Flow<List<Chat>> = chatRepository.getChats()
 

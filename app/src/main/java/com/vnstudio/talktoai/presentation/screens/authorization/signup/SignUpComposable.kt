@@ -85,12 +85,12 @@ fun SignUpScreen(infoMessageState: MutableState<InfoMessage?>, onNextScreen: (St
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            text = "Регистрация", modifier = Modifier
+            text = stringResource(id = R.string.authorization_sign_up), modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp), textAlign = TextAlign.Center
         )
         Text(
-            text = "С помощью Google",
+            text = stringResource(id = R.string.authorization_with_google_account),
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
@@ -102,19 +102,20 @@ fun SignUpScreen(infoMessageState: MutableState<InfoMessage?>, onNextScreen: (St
             launcher.launch(viewModel.googleSignInClient.signInIntent)
         }
         OrDivider(modifier = Modifier)
-        PrimaryTextField("Email", emailInputValue)
+        PrimaryTextField(
+            stringResource(id = R.string.authorization_enter), emailInputValue)
         PasswordTextField(passwordInputValue, stringResource(id = R.string.authorization_password))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Есть аккаунт?")
+            Text(text = stringResource(id = R.string.authorization_entrance_title))
             LinkButton(
-                text = "Вход", modifier = Modifier
+                text = stringResource(id = R.string.authorization_enter), modifier = Modifier
                     .wrapContentSize()
             ) {
                 onNextScreen.invoke(NavigationScreen.LoginScreen().route)
             }
         }
         PrimaryButton(
-            text = "Зарегистрироваться",
+            text = stringResource(id = R.string.authorization_signing_up),
             emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
             modifier = Modifier
         ) {

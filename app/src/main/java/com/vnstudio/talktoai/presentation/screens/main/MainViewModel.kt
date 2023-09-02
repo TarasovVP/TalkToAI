@@ -36,9 +36,9 @@ class MainViewModel @Inject constructor(
         return mainUseCase.isLoggedInUser()
     }
 
-    fun getCurrentUser() {
+    fun getRemoteUser() {
         launch {
-            mainUseCase.getCurrentUser { operationResult ->
+            mainUseCase.getRemoteUser { operationResult ->
                 when (operationResult) {
                     is Result.Success -> operationResult.data.takeIf { it.isNotNull() }
                         ?.let { setCurrentUserData(it) }
@@ -54,7 +54,10 @@ class MainViewModel @Inject constructor(
     }
 
     private fun setCurrentUserData(remoteUser: RemoteUser) {
-
+        launch {
+            mainUseCase.insertChats(remoteUser.chats)
+            mainUseCase.insertMessages(remoteUser.messages)
+        }
     }
 
     fun getChats() {

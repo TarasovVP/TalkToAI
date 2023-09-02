@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -84,7 +85,9 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
                 .fillMaxWidth()
         )
         PrimaryButton(
-            text = if (page == 3) "Войти" else "Дальше", modifier = Modifier
+            text = if (page == 3) stringResource(id = R.string.authorization_enter) else stringResource(
+                id = R.string.button_next
+            ), modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 40.dp), onClick = onClick
         )

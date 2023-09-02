@@ -25,10 +25,10 @@ class RealDataBaseRepositoryImpl @Inject constructor(
 
     override fun insertRemoteUser(remoteUser: RemoteUser, result: (Result<Unit>) -> Unit) {
         val currentUserMap = hashMapOf<String, Any>()
-        remoteUser.chatList.forEach { chat ->
+        remoteUser.chats.forEach { chat ->
             currentUserMap["$CHATS/${chat.id}"] = chat
         }
-        remoteUser.messageList.forEach { message ->
+        remoteUser.messages.forEach { message ->
             currentUserMap["$MESSAGES/${message.messageId}"] = message
         }
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
@@ -42,10 +42,10 @@ class RealDataBaseRepositoryImpl @Inject constructor(
 
     override fun updateRemoteUser(remoteUser: RemoteUser, result: (Result<Unit>) -> Unit) {
         val updatesMap = hashMapOf<String, Any>()
-        remoteUser.chatList.forEach { chat ->
+        remoteUser.chats.forEach { chat ->
             updatesMap["$CHATS/${chat.id}"] = chat
         }
-        remoteUser.messageList.forEach { message ->
+        remoteUser.messages.forEach { message ->
             updatesMap["$MESSAGES/${message.messageId}"] = message
         }
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
@@ -70,11 +70,11 @@ class RealDataBaseRepositoryImpl @Inject constructor(
                         when (snapshot.key) {
                             CHATS -> snapshot.children.forEach { child ->
                                 child.getValue(Chat::class.java)
-                                    ?.let { remoteUser.chatList.add(it) }
+                                    ?.let { remoteUser.chats.add(it) }
                             }
                             MESSAGES -> snapshot.children.forEach { child ->
                                 child.getValue(Message::class.java)
-                                    ?.let { remoteUser.messageList.add(it) }
+                                    ?.let { remoteUser.messages.add(it) }
                             }
                             REVIEW_VOTE -> remoteUser.isReviewVoted =
                                 snapshot.getValue(Boolean::class.java).isTrue()
