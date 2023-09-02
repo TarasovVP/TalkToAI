@@ -17,13 +17,9 @@ class MainUseCaseImpl @Inject constructor(
     private val messageRepository: MessageRepository,
 ) : MainUseCase {
 
-    override suspend fun getOnBoardingSeen(): Flow<Boolean?> {
-        return dataStoreRepository.onBoardingSeen()
-    }
+    override suspend fun getOnBoardingSeen(): Flow<Boolean?> = dataStoreRepository.onBoardingSeen()
 
-    override fun isLoggedInUser(): Boolean {
-        return authRepository.isLoggedInUser()
-    }
+    override fun isLoggedInUser() = authRepository.isLoggedInUser()
 
     override fun getRemoteUser(result: (Result<RemoteUser>) -> Unit) =
         realDataBaseRepository.getRemoteUser { operationResult ->

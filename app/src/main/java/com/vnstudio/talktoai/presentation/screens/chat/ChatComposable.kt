@@ -87,18 +87,20 @@ fun ChatScreen(
                 } else {
                     viewModel.insertMessage(
                         Message(
+                            id = Date().time,
                             chatId = currentChatState.value?.id ?: 0,
                             author = "me",
                             message = messageText,
-                            createdAt = Date().time
+                            updatedAt = Date().time
                         )
                     )
                     viewModel.insertMessage(
                         Message(
+                            id = Date().time,
                             chatId = currentChatState.value?.id ?: 0,
                             author = "gpt-3.5-turbo",
                             message = String.EMPTY,
-                            createdAt = 0
+                            updatedAt = Date().time
                         )
                     )
                     viewModel.sendRequest(
