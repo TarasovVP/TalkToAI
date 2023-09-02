@@ -6,6 +6,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ChatDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertChats(chats: List<Chat>)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertChat(chat: Chat)
 

@@ -56,10 +56,11 @@ fun LoginScreen(infoMessageState: MutableState<InfoMessage?>, onNextScreen: (Str
             viewModel.signInAuthWithGoogle(idToken)
         }
     }
+    val resetPasswordText = stringResource(id = R.string.authorization_password_reset_success)
     val successPasswordResetState = viewModel.successPasswordResetLiveData.observeAsState()
     LaunchedEffect(successPasswordResetState.value) {
         successPasswordResetState.value?.let {
-            viewModel.exceptionLiveData.postValue("Пароль успешно сброшен")
+            infoMessageState.value = InfoMessage(resetPasswordText)
         }
     }
     val successSignInState = viewModel.successSignInLiveData.observeAsState()
@@ -88,12 +89,12 @@ fun LoginScreen(infoMessageState: MutableState<InfoMessage?>, onNextScreen: (Str
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Вход", modifier = Modifier
+            text = stringResource(id = R.string.authorization_enter), modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp), textAlign = TextAlign.Center
         )
         Text(
-            text = "С помощью Google",
+            text = stringResource(id = R.string.authorization_with_google_account),
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
@@ -105,11 +106,11 @@ fun LoginScreen(infoMessageState: MutableState<InfoMessage?>, onNextScreen: (Str
             launcher.launch(viewModel.googleSignInClient.signInIntent)
         }
         OrDivider(modifier = Modifier)
-        PrimaryTextField("Email", emailInputValue)
+        PrimaryTextField(stringResource(id = R.string.authorization_email), emailInputValue)
         PasswordTextField(passwordInputValue, stringResource(id = R.string.authorization_password))
         Row {
             LinkButton(
-                text = "Регистрация", modifier = Modifier
+                text = stringResource(id = R.string.authorization_sign_up), modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
             ) {
@@ -122,25 +123,25 @@ fun LoginScreen(infoMessageState: MutableState<InfoMessage?>, onNextScreen: (Str
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                Text(text = "Забыли пароль?", color = Color.Blue, textAlign = TextAlign.End)
+                Text(text = stringResource(id = R.string.authorization_forgot_password), color = Color.Blue, textAlign = TextAlign.End)
             }
         }
         PrimaryButton(
-            text = "Войти",
+            text = stringResource(id = R.string.authorization_enter),
             emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
             modifier = Modifier
         ) {
             viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
         }
         OrDivider(modifier = Modifier)
-        SecondaryButton(text = "Без регистрации", false, modifier = Modifier) {
+        SecondaryButton(text = stringResource(id = R.string.authorization_continue_without_account), false, modifier = Modifier) {
             showUnauthorizedEnterDialog.value = true
         }
     }
 
     DataEditDialog(
-        "Введите ваш Email и мы отправим  Ваш пароль",
-        "Email",
+        stringResource(id = R.string.authorization_forgot_password_title),
+        stringResource(id = R.string.authorization_enter),
         emailInputValue,
         showForgotPasswordDialog,
         onDismiss = {
@@ -151,7 +152,7 @@ fun LoginScreen(infoMessageState: MutableState<InfoMessage?>, onNextScreen: (Str
     }
 
     ConfirmationDialog(
-        "Пользователя с таким Email не существует. Сначала необходимо создать аккаунт. Перейти на экран регистрации?",
+        stringResource(id = R.string.authorization_account_not_exist),
         showAccountExistDialog,
         onDismiss = {
             showAccountExistDialog.value = false
@@ -162,7 +163,7 @@ fun LoginScreen(infoMessageState: MutableState<InfoMessage?>, onNextScreen: (Str
     }
 
     ConfirmationDialog(
-        "У неавторизованого пользователя недоступен ряд возмножностей. В том числе нет доступа к хранению данных в удаленном доступе",
+        stringResource(id = R.string.authorization_unauthorized_enter),
         showUnauthorizedEnterDialog,
         onDismiss = {
             showUnauthorizedEnterDialog.value = false

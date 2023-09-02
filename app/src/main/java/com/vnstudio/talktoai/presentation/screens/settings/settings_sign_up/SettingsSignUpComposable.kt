@@ -109,7 +109,7 @@ fun SettingsSignUpScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            text = "С помощью Google",
+            text = stringResource(id = R.string.authorization_with_google_account),
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
@@ -121,10 +121,10 @@ fun SettingsSignUpScreen(
             launcher.launch(viewModel.googleSignInClient.signInIntent)
         }
         OrDivider(modifier = Modifier)
-        PrimaryTextField("Email", emailInputValue)
+        PrimaryTextField(stringResource(id = R.string.authorization_email), emailInputValue)
         PasswordTextField(passwordInputValue, stringResource(id = R.string.authorization_password))
         PrimaryButton(
-            text = "Зарегистрироваться",
+            text = stringResource(id = R.string.authorization_sign_up),
             emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
             modifier = Modifier
         ) {
@@ -133,7 +133,7 @@ fun SettingsSignUpScreen(
         TransferDataCard(transferDataState)
     }
     ConfirmationDialog(
-        "Пользователь с таким Email уже существует. Вы можете перейти в этот аккаунт. При включенном выборе переноса данных - они будут перенесены в аккаунт, при выключенном - удалены безвозвартно. Перейти?",
+        stringResource(id = R.string.authorization_account_exist),
         showAccountExistDialog,
         onDismiss = {
             viewModel.googleSignInClient.signOut()
@@ -161,7 +161,7 @@ fun TransferDataCard(transferDataState: MutableState<Boolean>) {
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "Перенести данные?",
+                    text = stringResource(id = R.string.settings_account_transfer_data_title),
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 8.dp)
@@ -177,7 +177,7 @@ fun TransferDataCard(transferDataState: MutableState<Boolean>) {
                     .background(Primary300)
             )
             Text(
-                text = if (transferDataState.value) "Cозданные данные будут перенесены в ваш аккаунт." else "Cозданные данные будут удалены.",
+                text = if (transferDataState.value) stringResource(id = R.string.settings_account_transfer_data_turn_on) else stringResource(id = R.string.settings_account_transfer_data_turn_off),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)

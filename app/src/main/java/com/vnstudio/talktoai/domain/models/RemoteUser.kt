@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class RemoteUser(
-    var chatList: ArrayList<Chat> = arrayListOf(),
-    var messageList: ArrayList<Message> = arrayListOf(),
+    var chats: ArrayList<Chat> = arrayListOf(),
+    var messages: ArrayList<Message> = arrayListOf(),
     var isReviewVoted: Boolean = false,
 ) : Parcelable

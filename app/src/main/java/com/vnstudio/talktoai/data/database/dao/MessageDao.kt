@@ -6,6 +6,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MessageDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertMessages(messages: List<Message>)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMessage(message: Message)
 

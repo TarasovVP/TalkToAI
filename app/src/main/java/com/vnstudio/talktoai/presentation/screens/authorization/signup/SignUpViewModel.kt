@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
+import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SignUpUseCase
@@ -44,7 +45,7 @@ class SignUpViewModel @Inject constructor(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.postValue("Network is unavailable")
+            exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
         }
     }
 
@@ -63,7 +64,7 @@ class SignUpViewModel @Inject constructor(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.postValue("Network is unavailable")
+            exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
         }
     }
 
@@ -82,7 +83,7 @@ class SignUpViewModel @Inject constructor(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.postValue("Network is unavailable")
+            exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
         }
     }
 
@@ -101,7 +102,7 @@ class SignUpViewModel @Inject constructor(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.postValue("Network is unavailable")
+            exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
         }
     }
 }

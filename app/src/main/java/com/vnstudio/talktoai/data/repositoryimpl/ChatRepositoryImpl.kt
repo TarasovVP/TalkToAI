@@ -7,6 +7,9 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ChatRepositoryImpl @Inject constructor(private val chatDao: ChatDao) : ChatRepository {
+
+    override suspend fun insertChats(chats: List<Chat>) = chatDao.insertChats(chats)
+
     override suspend fun insertChat(chat: Chat) = chatDao.insertChat(chat)
 
     override suspend fun getChats(): Flow<List<Chat>> = chatDao.getChats()

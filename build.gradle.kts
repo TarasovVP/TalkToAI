@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.google.dagger:hilt-android-gradle-plugin:2.46.1")
+        classpath("com.google.dagger:hilt-android-gradle-plugin:${rootProject.extra.get("hiltVersion")}")
         classpath("com.google.gms:google-services:4.3.15")
         classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.9")
     }

@@ -80,21 +80,13 @@ fun SettingsAccountScreen(
             }
         }
 
-    val accountAvatar = when {
-        viewModel.isGoogleAuthUser() -> R.drawable.ic_avatar_google
-        viewModel.isAuthorisedUser() -> R.drawable.ic_avatar_email
-        else -> R.drawable.ic_avatar_anonymous
-    }
-    val accountName =
-        if (viewModel.isAuthorisedUser()) viewModel.currentUserEmail() else stringResource(id = R.string.settings_account_unauthorised)
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        AccountCard(accountAvatar, accountName) {
+        AccountCard(viewModel) {
             showLogOutDialog.value = true
         }
         if (viewModel.isAuthorisedUser() && viewModel.isGoogleAuthUser().not()) {
@@ -111,11 +103,11 @@ fun SettingsAccountScreen(
                 }
             }
         } else {
-            PrimaryButton(text = "Создать аккаунт", modifier = Modifier) {
+            PrimaryButton(text = stringResource(id = R.string.authorization_signing_up), modifier = Modifier) {
                 onNextScreen.invoke(NavigationScreen.SettingsSignUpScreen().route)
             }
             EmptyState(
-                text = "Ваши данные хранятся локально в рамках одной сессии и будут потеряны при выходе из этого аккаунта, очистке кеша или переустановке приложения. Для подключения удаленного хранения данных и доступа к нему с любого устройства, зарегистрируйтесь.",
+                text = stringResource(id = R.string.empty_state_account),
                 modifier = Modifier
             )
         }
@@ -126,8 +118,8 @@ fun SettingsAccountScreen(
     }
 
     ConfirmationDialog(when {
-        viewModel.isAuthorisedUser() -> "Вы действительно хотите разлогиниться?"
-        else -> "При выходе из неавторизованого аккаунта вы потеряете все созданные данные. Для сохранения зарегистрируйтесь. Все равно выйти?"
+        viewModel.isAuthorisedUser() -> stringResource(id = R.string.settings_account_log_out)
+        else -> stringResource(id = R.string.settings_account_unauthorised_log_out)
     }, showLogOutDialog, onDismiss = {
         showLogOutDialog.value = false
     }) {
@@ -162,8 +154,7 @@ fun SettingsAccountScreen(
 }
 
 @Composable
-fun AccountCard(accountAvatar: Int, accountName: String, onClick: () -> Unit) {
-
+fun AccountCard(viewModel: SettingsAccountViewModel, onClick: () -> Unit) {
     Card(modifier = Modifier.fillMaxWidth(), elevation = 1.dp) {
         Row(
             modifier = Modifier
@@ -172,7 +163,11 @@ fun AccountCard(accountAvatar: Int, accountName: String, onClick: () -> Unit) {
         ) {
             ShapeableImage(
                 modifier = Modifier.size(50.dp),
-                drawableResId = accountAvatar,
+                drawableResId = when {
+                    viewModel.isGoogleAuthUser() -> R.drawable.ic_avatar_google
+                    viewModel.isAuthorisedUser() -> R.drawable.ic_avatar_email
+                    else -> R.drawable.ic_avatar_anonymous
+                },
                 contentDescription = "Account avatar"
             )
             Column(
@@ -180,12 +175,12 @@ fun AccountCard(accountAvatar: Int, accountName: String, onClick: () -> Unit) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = accountName, modifier = Modifier
+                    text = if (viewModel.isAuthorisedUser()) viewModel.currentUserEmail() else stringResource(id = R.string.settings_account_unauthorised), modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 8.dp, top = 8.dp)
                 )
                 LinkButton(
-                    text = "Выйти", modifier = Modifier
+                    text = stringResource(id = if (viewModel.isAuthorisedUser()) R.string.settings_account_log_out_title else R.string.settings_account_unauthorised_log_out_title), modifier = Modifier
                         .wrapContentSize(), onClick = onClick
                 )
             }

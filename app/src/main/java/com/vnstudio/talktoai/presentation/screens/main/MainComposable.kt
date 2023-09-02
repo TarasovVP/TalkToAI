@@ -43,7 +43,11 @@ fun AppContent() {
 
     val chatsState = viewModel.chatsLiveData.observeAsState()
     LaunchedEffect(viewModel) {
-        viewModel.getChats()
+        if (viewModel.isLoggedInUser()) {
+            viewModel.getRemoteUser()
+        } else {
+            viewModel.getChats()
+        }
     }
 
     val onBoardingSeenState = viewModel.onBoardingSeenLiveData.observeAsState()
