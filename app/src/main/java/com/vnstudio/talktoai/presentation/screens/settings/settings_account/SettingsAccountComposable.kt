@@ -86,7 +86,7 @@ fun SettingsAccountScreen(
         else -> R.drawable.ic_avatar_anonymous
     }
     val accountName =
-        if (viewModel.isAuthorisedUser()) viewModel.currentUserEmail() else "Неавторизованный"
+        if (viewModel.isAuthorisedUser()) viewModel.currentUserEmail() else stringResource(id = R.string.settings_account_unauthorised)
 
     Column(
         modifier = Modifier
@@ -98,12 +98,12 @@ fun SettingsAccountScreen(
             showLogOutDialog.value = true
         }
         if (viewModel.isAuthorisedUser() && viewModel.isGoogleAuthUser().not()) {
-            PrimaryButton(text = "Сменить пароль", modifier = Modifier) {
+            PrimaryButton(text = stringResource(id = R.string.settings_account_change_password_title), modifier = Modifier) {
                 showChangePasswordDialog.value = true
             }
         }
         if (viewModel.isAuthorisedUser()) {
-            SecondaryButton(text = "Удалить аккаунт", true, modifier = Modifier) {
+            SecondaryButton(text = stringResource(id = R.string.settings_account_delete_title), true, modifier = Modifier) {
                 if (viewModel.isGoogleAuthUser()) {
                     showDeleteGoogleAccountDialog.value = true
                 } else {
