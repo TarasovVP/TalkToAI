@@ -297,6 +297,7 @@ fun AppSnackBar(snackBarHostState: SnackbarHostState) {
 fun AppNavHost(
     navController: NavHostController,
     startDestination: String,
+    isAuthorisedEnterState: MutableState<Boolean?>,
     isSettingsDrawerMode: MutableState<Boolean?>,
     infoMessageState: MutableState<InfoMessage?>,
 ) {
@@ -310,6 +311,7 @@ fun AppNavHost(
             route = NavigationScreen.OnboardingScreen().route
         ) {
             OnboardingScreen {
+                isAuthorisedEnterState.value = true
                 navController.navigate(NavigationScreen.LoginScreen().route)
             }
         }
@@ -324,6 +326,7 @@ fun AppNavHost(
             route = NavigationScreen.SignUpScreen().route
         ) {
             SignUpScreen(infoMessageState) { route ->
+                isAuthorisedEnterState.value = true
                 navController.navigate(route)
             }
         }

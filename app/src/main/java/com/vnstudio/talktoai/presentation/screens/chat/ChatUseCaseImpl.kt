@@ -22,7 +22,10 @@ class ChatUseCaseImpl @Inject constructor(
     override suspend fun insertChat(chat: Chat) = chatRepository.insertChat(chat)
 
     override suspend fun getCurrentChat(): Flow<Chat?> = chatRepository.getCurrentChat()
+
     override fun isAuthorisedUser() = authRepository.isAuthorisedUser()
+
+    override fun insertRemoteChat(chat: Chat, result: (Result<Unit>) -> Unit) = realDataBaseRepository.insertChat(chat, result)
 
     override fun insertRemoteMessage(message: Message, result: (Result<Unit>) -> Unit) = realDataBaseRepository.insertMessage(message, result)
 
@@ -30,7 +33,9 @@ class ChatUseCaseImpl @Inject constructor(
 
     override suspend fun updateMessage(message: Message) = messageRepository.updateMessage(message)
 
-    override suspend fun getMessagesFromChat(chatId: Int) = messageRepository.getMessagesFromChat(chatId)
+    override suspend fun deleteMessage(id: Long) = messageRepository.deleteMessage(id)
+
+    override suspend fun getMessagesFromChat(chatId: Long) = messageRepository.getMessagesFromChat(chatId)
 
     override suspend fun sendRequest(apiRequest: ApiRequest) = messageRepository.sendRequest(apiRequest)
 

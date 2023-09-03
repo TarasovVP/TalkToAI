@@ -91,12 +91,12 @@ fun ChatScreen(
                             chatId = currentChatState.value?.id ?: 0,
                             author = "me",
                             message = messageText,
-                            updatedAt = Date().time
+                            updatedAt = Date().time / 1000
                         )
                     )
-                    viewModel.insertMessage(
+                    viewModel.insertLocalMessage(
                         Message(
-                            id = Date().time,
+                            id = 0,
                             chatId = currentChatState.value?.id ?: 0,
                             author = "gpt-3.5-turbo",
                             message = String.EMPTY,
@@ -123,7 +123,7 @@ fun ChatScreen(
         onDismiss = {
             showCreateChatDialog.value = false
         }) { newChatName ->
-        viewModel.insertChat(Chat(name = newChatName, updated = Date().time))
+        viewModel.insertChat(Chat(id = Date().time, name = newChatName, updated = Date().time))
         showCreateChatDialog.value = false
     }
 

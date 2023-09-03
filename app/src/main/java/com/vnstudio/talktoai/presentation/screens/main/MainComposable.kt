@@ -30,7 +30,8 @@ fun AppContent() {
 
     val currentRouteState = navController.currentBackStackEntryAsState().value?.destination?.route
     val startDestinationState = remember { mutableStateOf<String?>(null) }
-    val isSettingsDrawerMode = remember { mutableStateOf<Boolean?>(null) }
+    val isAuthorizedEnterState = remember { mutableStateOf<Boolean?>(null) }
+    val isSettingsDrawerModeState = remember { mutableStateOf<Boolean?>(null) }
 
     val showCreateChatDialog = remember { mutableStateOf(false) }
     val showEditChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -42,13 +43,6 @@ fun AppContent() {
     }
 
     val chatsState = viewModel.chatsLiveData.observeAsState()
-    LaunchedEffect(viewModel) {
-        if (viewModel.isLoggedInUser()) {
-            viewModel.getRemoteUser()
-        } else {
-            viewModel.getChats()
-        }
-    }
 
     val onBoardingSeenState = viewModel.onBoardingSeenLiveData.observeAsState()
     LaunchedEffect(onBoardingSeenState.value) {
@@ -56,14 +50,24 @@ fun AppContent() {
             startDestinationState.value = when {
                 isOnboardingSeen.not() -> NavigationScreen.OnboardingScreen().route
                 viewModel.isLoggedInUser().not() -> NavigationScreen.LoginScreen().route
-                isSettingsDrawerMode.value.isTrue() -> NavigationScreen.SettingsChatScreen().route
-                else -> NavigationScreen.ChatScreen().route
+                isSettingsDrawerModeState.value.isTrue() -> NavigationScreen.SettingsChatScreen().route
+                else -> {
+                    isAuthorizedEnterState.value = viewModel.isAuthorisedUser()
+                    NavigationScreen.ChatScreen().route
+                }
             }
         }
     }
 
-    LaunchedEffect(isSettingsDrawerMode.value) {
-        isSettingsDrawerMode.value?.let { isSettingsDrawerMode ->
+    LaunchedEffect(isAuthorizedEnterState.value) {
+        isAuthorizedEnterState.value?.let { isAuthorizedEnter ->
+            viewModel.getChats()
+            if (isAuthorizedEnter) viewModel.getRemoteUser()
+        }
+    }
+
+    LaunchedEffect(isSettingsDrawerModeState.value) {
+        isSettingsDrawerModeState.value?.let { isSettingsDrawerMode ->
             startDestinationState.value =
                 if (isSettingsDrawerMode) NavigationScreen.SettingsChatScreen().route else NavigationScreen.ChatScreen().route
             if (isSettingsDrawerMode) {
@@ -128,7 +132,7 @@ fun AppContent() {
         drawerGesturesEnabled = isSettingsScreen(currentRouteState) || currentRouteState == NavigationScreen.ChatScreen().route,
         drawerContent = {
             AppDrawer(
-                isSettingsDrawerMode,
+                isSettingsDrawerModeState,
                 currentRouteState,
                 chats = chatsState,
                 onCreateChatClick = {
@@ -155,7 +159,7 @@ fun AppContent() {
         },
         content = {
             startDestinationState.value?.let { startDestination ->
-                AppNavHost(navController, startDestination, isSettingsDrawerMode, infoMessageState)
+                AppNavHost(navController, startDestination, isAuthorizedEnterState, isSettingsDrawerModeState, infoMessageState)
             }
             ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 
@@ -167,7 +171,7 @@ fun AppContent() {
                 onDismiss = {
                     showCreateChatDialog.value = false
                 }) { newChatName ->
-                viewModel.insertChat(Chat(name = newChatName, updated = Date().time))
+                viewModel.insertChat(Chat(id = Date().time, name = newChatName, updated = Date().time))
                 showCreateChatDialog.value = false
                 scope.launch {
                     scaffoldState.drawerState.close()

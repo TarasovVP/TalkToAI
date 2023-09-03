@@ -4,9 +4,11 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
+import com.vnstudio.talktoai.R
 import kotlinx.coroutines.*
 
-open class BaseViewModel(application: Application) : AndroidViewModel(application) {
+open class BaseViewModel(private val application: Application) : AndroidViewModel(application) {
 
     val exceptionLiveData = MutableLiveData<String>()
     val isProgressProcessLiveData = MutableLiveData<Boolean>()
@@ -17,6 +19,14 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun hideProgress() {
         isProgressProcessLiveData.postValue(false)
+    }
+
+    fun checkNetworkAvailable(networkAvailableResult: () -> Unit) {
+        if (application.isNetworkAvailable()) {
+            networkAvailableResult.invoke()
+        } else {
+            exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
+        }
     }
 
     protected fun launch(
