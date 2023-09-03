@@ -15,13 +15,17 @@ interface ChatUseCase {
 
     fun isAuthorisedUser(): Boolean
 
+    fun insertRemoteChat(chat: Chat, result: (Result<Unit>) -> Unit)
+
     suspend fun insertMessage(message: Message)
 
     fun insertRemoteMessage(message: Message, result: (Result<Unit>) -> Unit)
 
     suspend fun updateMessage(message: Message)
 
-    suspend fun getMessagesFromChat(chatId: Int): Flow<List<Message>>
+    suspend fun deleteMessage(id: Long)
+
+    suspend fun getMessagesFromChat(chatId: Long): Flow<List<Message>>
 
     suspend fun sendRequest(apiRequest: ApiRequest): Flow<Result<ApiResponse>>
 }

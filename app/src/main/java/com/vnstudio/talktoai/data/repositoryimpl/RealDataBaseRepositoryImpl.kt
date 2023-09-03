@@ -2,11 +2,12 @@ package com.vnstudio.talktoai.data.repositoryimpl
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
-import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.models.Feedback
+import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.infrastructure.Constants.CHATS
@@ -16,6 +17,7 @@ import com.vnstudio.talktoai.infrastructure.Constants.PRIVACY_POLICY
 import com.vnstudio.talktoai.infrastructure.Constants.REVIEW_VOTE
 import com.vnstudio.talktoai.infrastructure.Constants.USERS
 import javax.inject.Inject
+
 
 class RealDataBaseRepositoryImpl @Inject constructor(
     private val firebaseDatabase: FirebaseDatabase,
@@ -95,6 +97,22 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             }.addOnFailureListener { exception ->
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
+    }
+
+    override fun addRemoteChatListener(remoteChatListener: ValueEventListener) {
+        firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty()).child(CHATS).addValueEventListener(remoteChatListener)
+    }
+
+    override fun addRemoteMessageListener(remoteMessageListener: ValueEventListener) {
+        firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty()).child(MESSAGES).addValueEventListener(remoteMessageListener)
+    }
+
+    override fun removeRemoteChatListener(remoteChatListener: ValueEventListener) {
+        firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty()).child(CHATS).removeEventListener(remoteChatListener)
+    }
+
+    override fun removeRemoteMessageListener(remoteMessageListener: ValueEventListener) {
+        firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty()).child(MESSAGES).removeEventListener(remoteMessageListener)
     }
 
     override fun insertChat(chat: Chat, result: (Result<Unit>) -> Unit) {

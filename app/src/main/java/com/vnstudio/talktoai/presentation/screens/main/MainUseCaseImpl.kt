@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai.presentation.screens.main
 
+import com.google.firebase.database.ValueEventListener
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.models.RemoteUser
@@ -21,10 +22,28 @@ class MainUseCaseImpl @Inject constructor(
 
     override fun isLoggedInUser() = authRepository.isLoggedInUser()
 
+    override fun isAuthorisedUser() = authRepository.isAuthorisedUser()
+
     override fun getRemoteUser(result: (Result<RemoteUser>) -> Unit) =
         realDataBaseRepository.getRemoteUser { operationResult ->
             result.invoke(operationResult)
         }
+
+    override fun addRemoteChatListener(remoteChatListener: ValueEventListener) {
+        realDataBaseRepository.addRemoteChatListener(remoteChatListener)
+    }
+
+    override fun addRemoteMessageListener(remoteMessageListener: ValueEventListener) {
+        realDataBaseRepository.addRemoteMessageListener(remoteMessageListener)
+    }
+
+    override fun removeRemoteChatListener(remoteChatListener: ValueEventListener) {
+        realDataBaseRepository.removeRemoteChatListener(remoteChatListener)
+    }
+
+    override fun removeRemoteMessageListener(remoteMessageListener: ValueEventListener) {
+        realDataBaseRepository.removeRemoteMessageListener(remoteMessageListener)
+    }
 
     override suspend fun setReviewVoted(isReviewVoted: Boolean) =
         dataStoreRepository.setReviewVoted(isReviewVoted)
@@ -38,6 +57,8 @@ class MainUseCaseImpl @Inject constructor(
     override suspend fun updateChats(chats: List<Chat>) = chatRepository.updateChats(chats)
 
     override suspend fun insertChat(chat: Chat) = chatRepository.insertChat(chat)
+
+    override fun insertRemoteChat(chat: Chat, result: (Result<Unit>) -> Unit) = realDataBaseRepository.insertChat(chat, result)
 
     override suspend fun updateChat(chat: Chat) = chatRepository.updateChat(chat)
 

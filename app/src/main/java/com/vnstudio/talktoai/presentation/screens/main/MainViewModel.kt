@@ -3,11 +3,12 @@ package com.vnstudio.talktoai.presentation.screens.main
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.vnstudio.talktoai.CommonExtensions.EMPTY
-import com.vnstudio.talktoai.CommonExtensions.isNotNull
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
-import com.vnstudio.talktoai.domain.models.RemoteUser
+import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.MainUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
@@ -24,6 +25,9 @@ class MainViewModel @Inject constructor(
     val onBoardingSeenLiveData = MutableLiveData<Boolean>()
     val chatsLiveData = MutableLiveData<List<Chat>>()
 
+    private var remoteChatListener: ValueEventListener? = null
+    private var remoteMessageListener: ValueEventListener? = null
+
     fun getOnBoardingSeen() {
         launch {
             mainUseCase.getOnBoardingSeen().collect { isOnBoardingSeen ->
@@ -36,13 +40,18 @@ class MainViewModel @Inject constructor(
         return mainUseCase.isLoggedInUser()
     }
 
+    fun isAuthorisedUser(): Boolean {
+        return mainUseCase.isAuthorisedUser()
+    }
+
     fun getRemoteUser() {
         launch {
             mainUseCase.getRemoteUser { operationResult ->
                 when (operationResult) {
-                    is Result.Success -> operationResult.data.takeIf { it.isNotNull() }
-                        ?.let { setCurrentUserData(it) }
-                        ?: exceptionLiveData.postValue(String.EMPTY)
+                    is Result.Success -> {
+                        addRemoteChatListener()
+                        addRemoteMessageListener()
+                    }
                     is Result.Failure -> operationResult.errorMessage?.let {
                         exceptionLiveData.postValue(
                             it
@@ -53,11 +62,46 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun setCurrentUserData(remoteUser: RemoteUser) {
-        launch {
-            mainUseCase.insertChats(remoteUser.chats)
-            mainUseCase.insertMessages(remoteUser.messages)
+    private fun addRemoteChatListener() {
+        remoteChatListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val chats = arrayListOf<Chat>()
+                dataSnapshot.children.forEach { child ->
+                    child.getValue(Chat::class.java)
+                        ?.let { chats.add(it) }
+                }
+                launch {
+                    mainUseCase.insertChats(chats)
+                }
+                Log.e("changeDBTAG", "RealDataBaseRepositoryImpl listenRemoteChatChanges onDataChange chats $chats")
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                exceptionLiveData.postValue(databaseError.message)
+            }
         }
+        remoteChatListener?.let { mainUseCase.addRemoteChatListener(it) }
+    }
+
+    private fun addRemoteMessageListener() {
+        remoteMessageListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val messages = arrayListOf<Message>()
+                dataSnapshot.children.forEach { child ->
+                    child.getValue(Message::class.java)
+                        ?.let { messages.add(it) }
+                }
+                launch {
+                    mainUseCase.insertMessages(messages)
+                }
+                Log.e("changeDBTAG", "RealDataBaseRepositoryImpl listenRemoteMessageChanges onDataChange messages $messages")
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                exceptionLiveData.postValue(databaseError.message)
+            }
+        }
+        remoteMessageListener?.let { mainUseCase.addRemoteMessageListener(it) }
     }
 
     fun getChats() {
@@ -85,9 +129,25 @@ class MainViewModel @Inject constructor(
     }
 
     fun insertChat(chat: Chat) {
-        showProgress()
-        launch {
-            mainUseCase.insertChat(chat)
+        if (mainUseCase.isAuthorisedUser()) {
+            checkNetworkAvailable {
+                showProgress()
+                mainUseCase.insertRemoteChat(chat) { authResult ->
+                    when (authResult) {
+                        is Result.Success -> {
+
+                        }
+                        is Result.Failure -> authResult.errorMessage?.let {
+                            exceptionLiveData.postValue(it)
+                        }
+                    }
+                    hideProgress()
+                }
+            }
+        } else {
+            launch {
+                mainUseCase.insertChat(chat)
+            }
         }
     }
 
@@ -103,6 +163,12 @@ class MainViewModel @Inject constructor(
         launch {
             mainUseCase.deleteChat(chat)
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        remoteChatListener?.let { mainUseCase.removeRemoteChatListener(it) }
+        remoteMessageListener?.let { mainUseCase.removeRemoteMessageListener(it) }
     }
 
 }

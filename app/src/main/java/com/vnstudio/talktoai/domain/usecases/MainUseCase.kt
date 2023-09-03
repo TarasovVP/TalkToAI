@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai.domain.usecases
 
+import com.google.firebase.database.ValueEventListener
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.models.RemoteUser
@@ -12,7 +13,17 @@ interface MainUseCase {
 
     fun isLoggedInUser(): Boolean
 
+    fun isAuthorisedUser(): Boolean
+
     fun getRemoteUser(result: (Result<RemoteUser>) -> Unit)
+
+    fun addRemoteChatListener(remoteChatListener: ValueEventListener)
+
+    fun addRemoteMessageListener(remoteMessageListener: ValueEventListener)
+
+    fun removeRemoteChatListener(remoteChatListener: ValueEventListener)
+
+    fun removeRemoteMessageListener(remoteMessageListener: ValueEventListener)
 
     suspend fun setReviewVoted(isReviewVoted: Boolean)
 
@@ -25,6 +36,8 @@ interface MainUseCase {
     suspend fun updateChats(chats: List<Chat>)
 
     suspend fun insertChat(chat: Chat)
+
+    fun insertRemoteChat(chat: Chat, result: (Result<Unit>) -> Unit)
 
     suspend fun updateChat(chat: Chat)
 

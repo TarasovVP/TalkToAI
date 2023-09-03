@@ -11,7 +11,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Message(
     @PrimaryKey var id: Long = 0,
-    var chatId: Int = 0,
+    var chatId: Long = 0,
     var author: String = String.EMPTY,
     var message: String = String.EMPTY,
     var updatedAt: Long = 0,

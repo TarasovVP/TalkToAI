@@ -16,9 +16,11 @@ interface MessageRepository {
 
     suspend fun getMessages(): Flow<List<Message>>
 
-    suspend fun getMessagesFromChat(chatId: Int): Flow<List<Message>>
+    suspend fun getMessagesFromChat(chatId: Long): Flow<List<Message>>
 
-    suspend fun deleteMessagesFromChat(chatId: Int)
+    suspend fun deleteMessage(id: Long)
+
+    suspend fun deleteMessagesFromChat(chatId: Long)
 
     suspend fun sendRequest(apiRequest: ApiRequest): Flow<Result<ApiResponse>>
 }

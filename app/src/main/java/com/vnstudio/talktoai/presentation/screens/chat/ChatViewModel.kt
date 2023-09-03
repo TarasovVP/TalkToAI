@@ -3,8 +3,6 @@ package com.vnstudio.talktoai.presentation.screens.chat
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
-import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
@@ -25,9 +23,25 @@ class ChatViewModel @Inject constructor(
     val messagesLiveData = MutableLiveData<List<Message>>()
 
     fun insertChat(chat: Chat) {
-        showProgress()
-        launch {
-            chatUseCase.insertChat(chat)
+        if (chatUseCase.isAuthorisedUser()) {
+            checkNetworkAvailable {
+                showProgress()
+                chatUseCase.insertRemoteChat(chat) { authResult ->
+                    when (authResult) {
+                        is Result.Success -> {
+
+                        }
+                        is Result.Failure -> authResult.errorMessage?.let {
+                            exceptionLiveData.postValue(it)
+                        }
+                    }
+                    hideProgress()
+                }
+            }
+        } else {
+            launch {
+                chatUseCase.insertChat(chat)
+            }
         }
     }
 
@@ -50,7 +64,7 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    private fun getMessagesFromChat(chatId: Int) {
+    private fun getMessagesFromChat(chatId: Long) {
         Log.e(
             "messagesTAG",
             "ChatViewModel getMessagesFromChat before messagesLiveData ${messagesLiveData.value?.map { it.message }}"
@@ -95,11 +109,13 @@ class ChatViewModel @Inject constructor(
                 when (result) {
                     is Result.Success -> result.data?.let { apiResponse ->
                         val updatedMessage = Message(
+                            id = apiResponse.created?.toLongOrNull() ?: 0,
                             chatId = messagesLiveData.value?.lastOrNull()?.chatId ?: 0,
                             author = apiResponse.model.orEmpty(),
                             message = apiResponse.choices?.firstOrNull()?.message?.content.orEmpty(),
                             updatedAt = apiResponse.created?.toLongOrNull() ?: 0
                         )
+                        chatUseCase.deleteMessage(0)
                         insertMessage(updatedMessage)
                     }
                     is Result.Failure -> Log.e(
@@ -114,28 +130,30 @@ class ChatViewModel @Inject constructor(
 
     fun insertMessage(message: Message) {
         if (chatUseCase.isAuthorisedUser()) {
-            if (application.isNetworkAvailable()) {
-                showProgress()
-                chatUseCase.insertRemoteMessage(message) { authResult ->
-                    when (authResult) {
-                        is Result.Success -> {
-                            launch {
-                                chatUseCase.insertMessage(message)
-                            }
-                        }
-                        is Result.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.postValue(it)
-                        }
-                    }
-                    hideProgress()
-                }
-            } else {
-                exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
-            }
+            insertRemoteMessage(message)
         } else {
-            launch {
-                chatUseCase.insertMessage(message)
+            insertLocalMessage(message)
+        }
+    }
+
+    private fun insertRemoteMessage(message: Message) {
+        checkNetworkAvailable {
+            chatUseCase.insertRemoteMessage(message) { authResult ->
+                when (authResult) {
+                    is Result.Success -> {
+
+                    }
+                    is Result.Failure -> authResult.errorMessage?.let {
+                        exceptionLiveData.postValue(it)
+                    }
+                }
             }
+        }
+    }
+
+    fun insertLocalMessage(message: Message) {
+        launch {
+            chatUseCase.insertMessage(message)
         }
     }
 

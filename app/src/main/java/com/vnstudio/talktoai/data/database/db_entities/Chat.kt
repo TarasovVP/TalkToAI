@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = CHATS)
 @Parcelize
 data class Chat(
-    @PrimaryKey(autoGenerate = true) var id: Int = 0,
+    @PrimaryKey var id: Long = 0,
     var name: String = String.EMPTY,
     var updated: Long = 0,
 ) : Parcelable
