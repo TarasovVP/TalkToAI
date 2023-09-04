@@ -43,5 +43,11 @@ interface MainUseCase {
 
     suspend fun updateChat(chat: Chat)
 
+    fun updateRemoteChat(chat: Chat, result: (Result<Unit>) -> Unit)
+
     suspend fun deleteChat(chat: Chat)
+
+    fun deleteRemoteChat(chat: Chat, result: (Result<Unit>) -> Unit)
+
+    suspend fun updateMessages(messages: List<Message>)
 }

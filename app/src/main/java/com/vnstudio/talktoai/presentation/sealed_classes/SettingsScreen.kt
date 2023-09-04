@@ -1,4 +1,4 @@
-package com.vnstudio.talktoai.presentation.screens.sealed_classes
+package com.vnstudio.talktoai.presentation.sealed_classes
 
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen

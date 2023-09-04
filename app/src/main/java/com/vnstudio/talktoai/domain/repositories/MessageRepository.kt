@@ -12,8 +12,6 @@ interface MessageRepository {
 
     suspend fun insertMessage(message: Message)
 
-    suspend fun updateMessage(message: Message)
-
     suspend fun getMessages(): Flow<List<Message>>
 
     suspend fun getMessagesFromChat(chatId: Long): Flow<List<Message>>
@@ -21,6 +19,8 @@ interface MessageRepository {
     suspend fun deleteMessage(id: Long)
 
     suspend fun deleteMessagesFromChat(chatId: Long)
+
+    suspend fun updateMessages(messages: List<Message>)
 
     suspend fun sendRequest(apiRequest: ApiRequest): Flow<Result<ApiResponse>>
 }

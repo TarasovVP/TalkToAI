@@ -33,6 +33,8 @@ interface RealDataBaseRepository {
 
     fun deleteMessageList(messageIdList: List<String>, result: (Result<Unit>) -> Unit)
 
+    fun deleteMessagesByChatId(chatId: Long, result: (Result<Unit>) -> Unit)
+
     fun setReviewVoted(result: (Result<Unit>) -> Unit)
 
     fun insertFeedback(feedback: Feedback, result: (Result<Unit>) -> Unit)

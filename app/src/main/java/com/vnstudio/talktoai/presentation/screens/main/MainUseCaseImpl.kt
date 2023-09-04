@@ -61,8 +61,18 @@ class MainUseCaseImpl @Inject constructor(
 
     override suspend fun updateChat(chat: Chat) = chatRepository.updateChat(chat)
 
+    override fun updateRemoteChat(chat: Chat, result: (Result<Unit>) -> Unit) = realDataBaseRepository.updateChat(chat, result)
+
     override suspend fun deleteChat(chat: Chat) {
         chatRepository.deleteChat(chat)
         messageRepository.deleteMessagesFromChat(chat.id)
     }
+
+    override fun deleteRemoteChat(chat: Chat, result: (Result<Unit>) -> Unit) {
+        realDataBaseRepository.deleteChat(chat) {
+            realDataBaseRepository.deleteMessagesByChatId(chat.id, result)
+        }
+    }
+
+    override suspend fun updateMessages(messages: List<Message>) = messageRepository.updateMessages(messages)
 }

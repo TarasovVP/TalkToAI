@@ -45,7 +45,6 @@ fun ChatScreen(
 ) {
     val viewModel: ChatViewModel = hiltViewModel()
     val showCreateChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val inputValue = remember { mutableStateOf(TextFieldValue()) }
     val currentChatState = viewModel.currentChatLiveData.observeAsState()
     val messagesState = viewModel.messagesLiveData.observeAsState()
 
@@ -81,7 +80,7 @@ fun ChatScreen(
                 showCreateChatDialog.value = true
             }
         } else {
-            ChatTextField(inputValue = inputValue) { messageText ->
+            ChatTextField(inputValue = mutableStateOf( TextFieldValue())) { messageText ->
                 if (messageText.isEmpty()) {
                     Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
                 } else {
@@ -99,9 +98,9 @@ fun ChatScreen(
                         chatId = currentChatState.value?.id ?: 0,
                         author = "gpt-3.5-turbo",
                         message = String.EMPTY,
-                        updatedAt = Date().time
+                        updatedAt = Date().time / 1000 + 1
                     )
-                    viewModel.insertLocalMessage(temporaryMessage)
+                    viewModel.insertMessage(temporaryMessage)
                     viewModel.sendRequest(
                         temporaryMessage,
                         ApiRequest(
@@ -151,23 +150,6 @@ fun MessageList(messages: List<Message>, modifier: Modifier = Modifier) {
     }
     LaunchedEffect(messages.size) {
         scrollState.scrollToItem(messages.size - 1)
-    }
-}
-
-@Composable
-fun IntroMessage(isChatsEmpty: Boolean, modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = if (isChatsEmpty) "Что бы начать работу с ИИ создайте чат" else "Введите свой вопрос или воспользуйтесь микрофоном....",
-            fontSize = 16.sp,
-            modifier = Modifier
-                .wrapContentSize()
-                .border(1.dp, Primary300, shape = RoundedCornerShape(18.dp))
-                .padding(16.dp)
-        )
     }
 }
 

@@ -21,8 +21,6 @@ class MessageRepositoryImpl @Inject constructor(
 
     override suspend fun insertMessage(message: Message) = messageDao.insertMessage(message)
 
-    override suspend fun updateMessage(message: Message) = messageDao.updateMessage(message)
-
     override suspend fun getMessages(): Flow<List<Message>> = messageDao.getMessages()
 
     override suspend fun getMessagesFromChat(chatId: Long): Flow<List<Message>> = messageDao.getMessagesFromChat(chatId)
@@ -30,6 +28,11 @@ class MessageRepositoryImpl @Inject constructor(
     override suspend fun deleteMessage(id: Long) = messageDao.deleteMessage(id)
 
     override suspend fun deleteMessagesFromChat(chatId: Long) = messageDao.deleteMessagesFromChat(chatId)
+
+    override suspend fun updateMessages(messages: List<Message>) {
+        messageDao.deleteMissingMessages(messages.map { it.id })
+        messageDao.insertMessages(messages)
+    }
 
     override suspend fun sendRequest(apiRequest: ApiRequest) = flow {
         emit(apiService.sendRequest(apiRequest).apiCall())
