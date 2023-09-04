@@ -1,9 +1,9 @@
 package com.vnstudio.talktoai.data.repositoryimpl
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.models.Feedback
@@ -38,6 +38,7 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
+                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl insertRemoteUser exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -55,6 +56,7 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
+                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl updateRemoteUser exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -65,6 +67,7 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
+                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl deleteRemoteUser exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -87,22 +90,22 @@ class RealDataBaseRepositoryImpl @Inject constructor(
 
     override fun insertChat(chat: Chat, result: (Result<Unit>) -> Unit) {
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
-            .child(
-                CHATS
-            ).child(chat.id.toString()).setValue(chat)
+            .child(CHATS).child(chat.id.toString()).setValue(chat)
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
+                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl insertChat exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
 
     override fun updateChat(chat: Chat, result: (Result<Unit>) -> Unit) {
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
-            .child(CHATS).setValue(chat)
+            .child(CHATS).child(chat.id.toString()).updateChildren(mapOf("name" to chat.name))
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
+                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl updateChat exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -113,6 +116,7 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             .addOnCompleteListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
+                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl deleteChat exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -123,6 +127,7 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
+                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl insertMessage exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -138,6 +143,23 @@ class RealDataBaseRepositoryImpl @Inject constructor(
                     result.invoke(Result.Success())
                 }
             }.addOnFailureListener { exception ->
+                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl deleteMessageList exception ${exception.localizedMessage}")
+                result.invoke(Result.Failure(exception.localizedMessage))
+            }
+    }
+
+    override fun deleteMessagesByChatId(chatId: Long, result: (Result<Unit>) -> Unit) {
+        firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
+            .child(MESSAGES).get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    task.result.children.forEach { snapshot ->
+                        if (chatId == snapshot.getValue(Message::class.java)?.chatId) snapshot.ref.removeValue()
+                    }
+                    result.invoke(Result.Success())
+                }
+            }.addOnFailureListener { exception ->
+                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl deleteMessageList exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -148,6 +170,7 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
+                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl setReviewVoted exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -157,6 +180,7 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) result.invoke(Result.Success(task.result.value as? String))
             }.addOnFailureListener { exception ->
+                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl getPrivacyPolicy exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -167,6 +191,7 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
+                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl insertFeedback exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }

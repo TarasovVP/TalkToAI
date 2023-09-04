@@ -78,7 +78,7 @@ class MainViewModel @Inject constructor(
                         ?.let { chats.add(it) }
                 }
                 launch {
-                    mainUseCase.insertChats(chats)
+                    mainUseCase.updateChats(chats)
                 }
                 Log.e("changeDBTAG", "RealDataBaseRepositoryImpl listenRemoteChatChanges onDataChange chats $chats")
             }
@@ -99,7 +99,7 @@ class MainViewModel @Inject constructor(
                         ?.let { messages.add(it) }
                 }
                 launch {
-                    mainUseCase.insertMessages(messages)
+                    mainUseCase.updateMessages(messages)
                 }
                 Log.e("changeDBTAG", "RealDataBaseRepositoryImpl listenRemoteMessageChanges onDataChange messages $messages")
             }
@@ -159,16 +159,48 @@ class MainViewModel @Inject constructor(
     }
 
     fun updateChat(chat: Chat) {
-        showProgress()
-        launch {
-            mainUseCase.updateChat(chat)
+        if (mainUseCase.isAuthorisedUser()) {
+            checkNetworkAvailable {
+                showProgress()
+                mainUseCase.updateRemoteChat(chat) { authResult ->
+                    when (authResult) {
+                        is Result.Success -> {
+
+                        }
+                        is Result.Failure -> authResult.errorMessage?.let {
+                            exceptionLiveData.postValue(it)
+                        }
+                    }
+                    hideProgress()
+                }
+            }
+        } else {
+            launch {
+                mainUseCase.updateChat(chat)
+            }
         }
     }
 
     fun deleteChat(chat: Chat) {
-        showProgress()
-        launch {
-            mainUseCase.deleteChat(chat)
+        if (mainUseCase.isAuthorisedUser()) {
+            checkNetworkAvailable {
+                showProgress()
+                mainUseCase.deleteRemoteChat(chat) { authResult ->
+                    when (authResult) {
+                        is Result.Success -> {
+
+                        }
+                        is Result.Failure -> authResult.errorMessage?.let {
+                            exceptionLiveData.postValue(it)
+                        }
+                    }
+                    hideProgress()
+                }
+            }
+        } else {
+            launch {
+                mainUseCase.deleteChat(chat)
+            }
         }
     }
 

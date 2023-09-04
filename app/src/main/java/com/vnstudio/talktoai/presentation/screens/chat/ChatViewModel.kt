@@ -125,44 +125,24 @@ class ChatViewModel @Inject constructor(
 
     fun insertMessage(message: Message) {
         if (chatUseCase.isAuthorisedUser()) {
-            insertRemoteMessage(message)
-        } else {
-            insertLocalMessage(message)
-        }
-    }
+            checkNetworkAvailable {
+                showProgress()
+                chatUseCase.insertRemoteMessage(message) { authResult ->
+                    when (authResult) {
+                        is Result.Success -> {
 
-    private fun insertRemoteMessage(message: Message) {
-        checkNetworkAvailable {
-            chatUseCase.insertRemoteMessage(message) { authResult ->
-                when (authResult) {
-                    is Result.Success -> {
-
+                        }
+                        is Result.Failure -> authResult.errorMessage?.let {
+                            exceptionLiveData.postValue(it)
+                        }
                     }
-                    is Result.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.postValue(it)
-                    }
+                    hideProgress()
                 }
             }
-        }
-    }
-
-    fun insertLocalMessage(message: Message) {
-        launch {
-            chatUseCase.insertMessage(message)
-        }
-    }
-
-    private fun updateMessage(message: Message) {
-        Log.e(
-            "messagesTAG",
-            "ChatViewModel updateMessage messagesLiveData ${messagesLiveData.value?.map { it.message }}"
-        )
-        launch {
-            chatUseCase.updateMessage(message)
-            Log.e(
-                "apiTAG",
-                "ChatViewModel updateMessage message $message isProgressProcessLiveData ${isProgressProcessLiveData.value}"
-            )
+        } else {
+            launch {
+                chatUseCase.insertMessage(message)
+            }
         }
     }
 }

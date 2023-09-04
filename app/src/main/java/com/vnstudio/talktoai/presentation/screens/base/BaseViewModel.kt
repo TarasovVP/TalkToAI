@@ -1,6 +1,7 @@
 package com.vnstudio.talktoai.presentation.screens.base
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -43,6 +44,7 @@ open class BaseViewModel(private val application: Application) : AndroidViewMode
     protected open fun onError(throwable: Throwable, block: suspend CoroutineScope.() -> Unit) {
         hideProgress()
         throwable.printStackTrace()
+        Log.e("exceptionTAG", "BaseViewModel onError throwable ${throwable.localizedMessage}")
         exceptionLiveData.postValue(throwable.localizedMessage)
     }
 }

@@ -13,9 +13,6 @@ interface MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMessage(message: Message)
 
-    @Update
-    fun updateMessage(message: Message)
-
     @Query("SELECT * FROM messages")
     fun getMessages(): Flow<List<Message>>
 
@@ -27,4 +24,7 @@ interface MessageDao {
 
     @Query("DELETE FROM messages WHERE :id = id")
     fun deleteMessage(id: Long)
+
+    @Query("DELETE FROM messages WHERE id NOT IN (:messageIds)")
+    fun deleteMissingMessages(messageIds: List<Long>)
 }

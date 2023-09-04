@@ -36,8 +36,8 @@ import com.vnstudio.talktoai.presentation.screens.chat.ChatScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.login.LoginScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.onboarding.OnboardingScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpScreen
-import com.vnstudio.talktoai.presentation.screens.sealed_classes.SettingsScreen
-import com.vnstudio.talktoai.presentation.screens.sealed_classes.SettingsScreen.Companion.isSettingsScreen
+import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen
+import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen.Companion.isSettingsScreen
 import com.vnstudio.talktoai.presentation.screens.settings.settings_account.SettingsAccountScreen
 import com.vnstudio.talktoai.presentation.screens.settings.settings_chat.SettingsChatScreen
 import com.vnstudio.talktoai.presentation.screens.settings.settings_feedback.SettingsFeedbackScreen

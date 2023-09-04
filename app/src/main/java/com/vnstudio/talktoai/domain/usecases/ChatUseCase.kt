@@ -21,8 +21,6 @@ interface ChatUseCase {
 
     fun insertRemoteMessage(message: Message, result: (Result<Unit>) -> Unit)
 
-    suspend fun updateMessage(message: Message)
-
     suspend fun deleteMessage(id: Long)
 
     suspend fun getMessagesFromChat(chatId: Long): Flow<List<Message>>

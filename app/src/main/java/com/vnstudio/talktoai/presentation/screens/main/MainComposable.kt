@@ -16,8 +16,8 @@ import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.components.*
-import com.vnstudio.talktoai.presentation.screens.sealed_classes.SettingsScreen.Companion.isSettingsScreen
-import com.vnstudio.talktoai.presentation.screens.sealed_classes.SettingsScreen.Companion.settingsScreenNameByRoute
+import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen.Companion.isSettingsScreen
+import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen.Companion.settingsScreenNameByRoute
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -193,7 +193,6 @@ fun AppContent() {
                 onDismiss = {
                     showEditChatDialog.value = false
                 }) { newChatName ->
-                viewModel.chatsLiveData.value = listOf()
                 currentChat?.apply {
                     name = newChatName
                 }?.let { viewModel.updateChat(it) }

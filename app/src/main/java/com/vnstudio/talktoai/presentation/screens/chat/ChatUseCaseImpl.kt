@@ -31,8 +31,6 @@ class ChatUseCaseImpl @Inject constructor(
 
     override suspend fun insertMessage(message: Message) = messageRepository.insertMessage(message)
 
-    override suspend fun updateMessage(message: Message) = messageRepository.updateMessage(message)
-
     override suspend fun deleteMessage(id: Long) = messageRepository.deleteMessage(id)
 
     override suspend fun getMessagesFromChat(chatId: Long) = messageRepository.getMessagesFromChat(chatId)

@@ -13,8 +13,8 @@ interface ChatDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertChat(chat: Chat)
 
-    @Update
-    fun updateChats(chats: List<Chat>)
+    @Query("DELETE FROM chats WHERE id NOT IN (:chatIds)")
+    fun deleteMissingChats(chatIds: List<Long>)
 
     @Query("SELECT * FROM chats ORDER BY updated DESC")
     fun getChats(): Flow<List<Chat>>
