@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val application: Application,
+    application: Application,
     private val chatUseCase: ChatUseCase,
 ) : BaseViewModel(application) {
 
@@ -91,7 +91,7 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun sendRequest(apiRequest: ApiRequest) {
+    fun sendRequest(temporaryMessage: Message, apiRequest: ApiRequest) {
         Log.e(
             "messagesTAG",
             "ChatViewModel sendRequest messagesLiveData ${messagesLiveData.value?.map { it.message }}"
@@ -105,18 +105,13 @@ class ChatViewModel @Inject constructor(
                     "ChatViewModel sendRequest catch localizedMessage ${it.localizedMessage} isProgressProcessLiveData ${isProgressProcessLiveData.value}"
                 )
             }.collect { result ->
-
                 when (result) {
                     is Result.Success -> result.data?.let { apiResponse ->
-                        val updatedMessage = Message(
-                            id = apiResponse.created?.toLongOrNull() ?: 0,
-                            chatId = messagesLiveData.value?.lastOrNull()?.chatId ?: 0,
-                            author = apiResponse.model.orEmpty(),
-                            message = apiResponse.choices?.firstOrNull()?.message?.content.orEmpty(),
+                        insertMessage(temporaryMessage.apply {
+                            author = apiResponse.model.orEmpty()
+                            message = apiResponse.choices?.firstOrNull()?.message?.content.orEmpty()
                             updatedAt = apiResponse.created?.toLongOrNull() ?: 0
-                        )
-                        chatUseCase.deleteMessage(0)
-                        insertMessage(updatedMessage)
+                        })
                     }
                     is Result.Failure -> Log.e(
                         "apiTAG",

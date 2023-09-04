@@ -1,9 +1,9 @@
 package com.vnstudio.talktoai.domain.usecases
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ValueEventListener
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
-import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import kotlinx.coroutines.flow.Flow
 
@@ -11,11 +11,13 @@ interface MainUseCase {
 
     suspend fun getOnBoardingSeen(): Flow<Boolean?>
 
+    fun addAuthStateListener(authStateListener: FirebaseAuth.AuthStateListener)
+
+    fun removeAuthStateListener(authStateListener: FirebaseAuth.AuthStateListener)
+
     fun isLoggedInUser(): Boolean
 
     fun isAuthorisedUser(): Boolean
-
-    fun getRemoteUser(result: (Result<RemoteUser>) -> Unit)
 
     fun addRemoteChatListener(remoteChatListener: ValueEventListener)
 

@@ -1,9 +1,9 @@
 package com.vnstudio.talktoai.presentation.screens.main
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ValueEventListener
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
-import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.repositories.*
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.MainUseCase
@@ -20,14 +20,13 @@ class MainUseCaseImpl @Inject constructor(
 
     override suspend fun getOnBoardingSeen(): Flow<Boolean?> = dataStoreRepository.onBoardingSeen()
 
+    override fun addAuthStateListener(authStateListener: FirebaseAuth.AuthStateListener) = authRepository.addAuthStateListener(authStateListener)
+
+    override fun removeAuthStateListener(authStateListener: FirebaseAuth.AuthStateListener) = authRepository.removeAuthStateListener(authStateListener)
+
     override fun isLoggedInUser() = authRepository.isLoggedInUser()
 
     override fun isAuthorisedUser() = authRepository.isAuthorisedUser()
-
-    override fun getRemoteUser(result: (Result<RemoteUser>) -> Unit) =
-        realDataBaseRepository.getRemoteUser { operationResult ->
-            result.invoke(operationResult)
-        }
 
     override fun addRemoteChatListener(remoteChatListener: ValueEventListener) {
         realDataBaseRepository.addRemoteChatListener(remoteChatListener)
