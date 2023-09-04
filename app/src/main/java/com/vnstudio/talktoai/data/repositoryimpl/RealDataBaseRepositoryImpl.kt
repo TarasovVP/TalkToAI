@@ -59,36 +59,6 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             }
     }
 
-    override fun getRemoteUser(result: (Result<RemoteUser>) -> Unit) {
-        var currentUserDatabase =
-            firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
-        if (currentUserDatabase.key != firebaseAuth.currentUser?.uid.orEmpty()) currentUserDatabase =
-            firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
-        currentUserDatabase.get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val remoteUser = RemoteUser()
-                    task.result.children.forEach { snapshot ->
-                        when (snapshot.key) {
-                            CHATS -> snapshot.children.forEach { child ->
-                                child.getValue(Chat::class.java)
-                                    ?.let { remoteUser.chats.add(it) }
-                            }
-                            MESSAGES -> snapshot.children.forEach { child ->
-                                child.getValue(Message::class.java)
-                                    ?.let { remoteUser.messages.add(it) }
-                            }
-                            REVIEW_VOTE -> remoteUser.isReviewVoted =
-                                snapshot.getValue(Boolean::class.java).isTrue()
-                        }
-                    }
-                    result.invoke(Result.Success(remoteUser))
-                }
-            }.addOnFailureListener { exception ->
-                result.invoke(Result.Failure(exception.localizedMessage))
-            }
-    }
-
     override fun deleteRemoteUser(result: (Result<Unit>) -> Unit) {
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .removeValue()

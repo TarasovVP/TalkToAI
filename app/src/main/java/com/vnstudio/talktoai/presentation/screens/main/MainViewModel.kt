@@ -2,13 +2,20 @@ package com.vnstudio.talktoai.presentation.screens.main
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.vnstudio.talktoai.CommonExtensions.isNotNull
+import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
+import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.MainUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
@@ -24,9 +31,11 @@ class MainViewModel @Inject constructor(
 
     val onBoardingSeenLiveData = MutableLiveData<Boolean>()
     val chatsLiveData = MutableLiveData<List<Chat>>()
+    val authStateLiveData = MutableLiveData<AuthState>()
 
     private var remoteChatListener: ValueEventListener? = null
     private var remoteMessageListener: ValueEventListener? = null
+    private var authStateListener: FirebaseAuth.AuthStateListener? = null
 
     fun getOnBoardingSeen() {
         launch {
@@ -34,6 +43,22 @@ class MainViewModel @Inject constructor(
                 onBoardingSeenLiveData.postValue(isOnBoardingSeen.isTrue())
             }
         }
+    }
+
+    fun addAuthStateListener() {
+        Log.e("authTAG", "MainViewModel addAuthStateListener")
+        authStateListener  = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            val user = firebaseAuth.currentUser
+            val authState = when {
+                user?.isAnonymous.isTrue() -> AuthState.AUTHORISED_ANONYMOUSLY
+                user.isNotNull() -> AuthState.AUTHORISED
+                else -> AuthState.UNAUTHORISED
+            }
+            authStateLiveData.postValue(authState)
+            Log.e("authTAG", "MainViewModel addAuthStateListener authStateListener user.isNotNull() ${user.isNotNull()} user?.email ${user?.email} user?.isAnonymous ${user?.isAnonymous} ")
+
+        }
+        authStateListener?.let { mainUseCase.addAuthStateListener(it) }
     }
 
     fun isLoggedInUser(): Boolean {
@@ -44,25 +69,7 @@ class MainViewModel @Inject constructor(
         return mainUseCase.isAuthorisedUser()
     }
 
-    fun getRemoteUser() {
-        launch {
-            mainUseCase.getRemoteUser { operationResult ->
-                when (operationResult) {
-                    is Result.Success -> {
-                        addRemoteChatListener()
-                        addRemoteMessageListener()
-                    }
-                    is Result.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.postValue(
-                            it
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    private fun addRemoteChatListener() {
+    fun addRemoteChatListener() {
         remoteChatListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val chats = arrayListOf<Chat>()
@@ -83,7 +90,7 @@ class MainViewModel @Inject constructor(
         remoteChatListener?.let { mainUseCase.addRemoteChatListener(it) }
     }
 
-    private fun addRemoteMessageListener() {
+    fun addRemoteMessageListener() {
         remoteMessageListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val messages = arrayListOf<Message>()
@@ -165,10 +172,18 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
+    private fun removeAuthStateListener() {
+        authStateListener?.let { mainUseCase.removeAuthStateListener(it) }
+    }
+
+    fun removeRemoteUserListeners() {
         remoteChatListener?.let { mainUseCase.removeRemoteChatListener(it) }
         remoteMessageListener?.let { mainUseCase.removeRemoteMessageListener(it) }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        removeRemoteUserListeners()
+        removeAuthStateListener()
+    }
 }

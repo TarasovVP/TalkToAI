@@ -4,6 +4,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 import com.google.firebase.auth.GoogleAuthProvider
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
@@ -17,6 +18,14 @@ class AuthRepositoryImpl @Inject constructor(
     private val googleSignInClient: GoogleSignInClient,
 ) :
     AuthRepository {
+
+    override fun addAuthStateListener(authStateListener: AuthStateListener) {
+        firebaseAuth.addAuthStateListener(authStateListener)
+    }
+
+    override fun removeAuthStateListener(authStateListener: AuthStateListener) {
+        firebaseAuth.removeAuthStateListener(authStateListener)
+    }
 
     override fun isLoggedInUser(): Boolean {
         return firebaseAuth.currentUser.isNotNull()

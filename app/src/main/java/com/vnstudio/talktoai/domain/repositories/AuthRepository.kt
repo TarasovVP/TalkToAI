@@ -1,9 +1,14 @@
 package com.vnstudio.talktoai.domain.repositories
 
 import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.FirebaseAuth
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 
 interface AuthRepository {
+
+    fun addAuthStateListener(authStateListener: FirebaseAuth.AuthStateListener)
+
+    fun removeAuthStateListener(authStateListener: FirebaseAuth.AuthStateListener)
 
     fun isLoggedInUser(): Boolean
 

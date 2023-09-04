@@ -12,6 +12,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
+import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.components.*
@@ -28,9 +29,13 @@ fun AppContent() {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
 
+    val infoMessageState = remember { mutableStateOf<InfoMessage?>(null) }
+
     val currentRouteState = navController.currentBackStackEntryAsState().value?.destination?.route
     val startDestinationState = remember { mutableStateOf<String?>(null) }
-    val isAuthorizedEnterState = remember { mutableStateOf<Boolean?>(null) }
+    val onBoardingSeenState = viewModel.onBoardingSeenLiveData.observeAsState()
+    val authState = viewModel.authStateLiveData.observeAsState()
+    val chatsState = viewModel.chatsLiveData.observeAsState()
     val isSettingsDrawerModeState = remember { mutableStateOf<Boolean?>(null) }
 
     val showCreateChatDialog = remember { mutableStateOf(false) }
@@ -40,59 +45,34 @@ fun AppContent() {
 
     LaunchedEffect(Unit) {
         viewModel.getOnBoardingSeen()
+        viewModel.addAuthStateListener()
     }
 
-    val chatsState = viewModel.chatsLiveData.observeAsState()
-
-    val onBoardingSeenState = viewModel.onBoardingSeenLiveData.observeAsState()
     LaunchedEffect(onBoardingSeenState.value) {
         onBoardingSeenState.value?.let { isOnboardingSeen ->
             startDestinationState.value = when {
                 isOnboardingSeen.not() -> NavigationScreen.OnboardingScreen().route
                 viewModel.isLoggedInUser().not() -> NavigationScreen.LoginScreen().route
                 isSettingsDrawerModeState.value.isTrue() -> NavigationScreen.SettingsChatScreen().route
-                else -> {
-                    isAuthorizedEnterState.value = viewModel.isAuthorisedUser()
-                    NavigationScreen.ChatScreen().route
+                else -> NavigationScreen.ChatScreen().route
+            }
+        }
+    }
+
+    LaunchedEffect(authState.value) {
+        authState.value?.let { authStateValue ->
+            when(authStateValue) {
+                AuthState.UNAUTHORISED -> viewModel.removeRemoteUserListeners()
+                AuthState.AUTHORISED_ANONYMOUSLY -> viewModel.getChats()
+                AuthState.AUTHORISED -> {
+                    viewModel.getChats()
+                    viewModel.addRemoteChatListener()
+                    viewModel.addRemoteMessageListener()
                 }
             }
         }
     }
 
-    LaunchedEffect(isAuthorizedEnterState.value) {
-        isAuthorizedEnterState.value?.let { isAuthorizedEnter ->
-            viewModel.getChats()
-            if (isAuthorizedEnter) viewModel.getRemoteUser()
-        }
-    }
-
-    LaunchedEffect(isSettingsDrawerModeState.value) {
-        isSettingsDrawerModeState.value?.let { isSettingsDrawerMode ->
-            startDestinationState.value =
-                if (isSettingsDrawerMode) NavigationScreen.SettingsChatScreen().route else NavigationScreen.ChatScreen().route
-            if (isSettingsDrawerMode) {
-                navController.navigate(NavigationScreen.SettingsChatScreen().route)
-            } else {
-                if (navController.popBackStack(NavigationScreen.ChatScreen().route, false)
-                        .not()
-                ) navController.navigate(NavigationScreen.ChatScreen().route)
-            }
-
-        }
-    }
-
-    val infoMessageState = remember { mutableStateOf<InfoMessage?>(null) }
-    LaunchedEffect(infoMessageState.value) {
-        infoMessageState.value?.let { infoMessage ->
-            scope.launch {
-                scaffoldState.snackbarHostState.showSnackbar(
-                    message = infoMessage.message,
-                    actionLabel = infoMessage.type,
-                    duration = SnackbarDuration.Short
-                )
-            }
-        }
-    }
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -128,6 +108,18 @@ fun AppContent() {
         },
         snackbarHost = { snackBarHostState ->
             AppSnackBar(snackBarHostState)
+            LaunchedEffect(infoMessageState.value) {
+                infoMessageState.value?.let { infoMessage ->
+                    scope.launch {
+                        scaffoldState.snackbarHostState.showSnackbar(
+                            message = infoMessage.message,
+                            actionLabel = infoMessage.type,
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                }
+            }
+
         },
         drawerGesturesEnabled = isSettingsScreen(currentRouteState) || currentRouteState == NavigationScreen.ChatScreen().route,
         drawerContent = {
@@ -156,10 +148,24 @@ fun AppContent() {
                     scaffoldState.drawerState.close()
                 }
             }
+            LaunchedEffect(isSettingsDrawerModeState.value) {
+                isSettingsDrawerModeState.value?.let { isSettingsDrawerMode ->
+                    startDestinationState.value =
+                        if (isSettingsDrawerMode) NavigationScreen.SettingsChatScreen().route else NavigationScreen.ChatScreen().route
+                    if (isSettingsDrawerMode) {
+                        navController.navigate(NavigationScreen.SettingsChatScreen().route)
+                    } else {
+                        if (navController.popBackStack(NavigationScreen.ChatScreen().route, false)
+                                .not()
+                        ) navController.navigate(NavigationScreen.ChatScreen().route)
+                    }
+
+                }
+            }
         },
         content = {
             startDestinationState.value?.let { startDestination ->
-                AppNavHost(navController, startDestination, isAuthorizedEnterState, isSettingsDrawerModeState, infoMessageState)
+                AppNavHost(navController, startDestination, isSettingsDrawerModeState, infoMessageState)
             }
             ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 

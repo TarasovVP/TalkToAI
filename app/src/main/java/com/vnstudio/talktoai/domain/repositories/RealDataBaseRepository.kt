@@ -6,15 +6,12 @@ import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.models.Feedback
 import com.vnstudio.talktoai.domain.sealed_classes.Result
-import com.vnstudio.talktoai.infrastructure.Constants
 
 interface RealDataBaseRepository {
 
     fun insertRemoteUser(remoteUser: RemoteUser, result: (Result<Unit>) -> Unit)
 
     fun updateRemoteUser(remoteUser: RemoteUser, result: (Result<Unit>) -> Unit)
-
-    fun getRemoteUser(result: (Result<RemoteUser>) -> Unit)
 
     fun deleteRemoteUser(result: (Result<Unit>) -> Unit)
 

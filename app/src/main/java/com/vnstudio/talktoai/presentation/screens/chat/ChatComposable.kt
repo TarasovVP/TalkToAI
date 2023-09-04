@@ -87,23 +87,23 @@ fun ChatScreen(
                 } else {
                     viewModel.insertMessage(
                         Message(
-                            id = Date().time,
+                            id = Date().time / 1000,
                             chatId = currentChatState.value?.id ?: 0,
                             author = "me",
                             message = messageText,
                             updatedAt = Date().time / 1000
                         )
                     )
-                    viewModel.insertLocalMessage(
-                        Message(
-                            id = 0,
-                            chatId = currentChatState.value?.id ?: 0,
-                            author = "gpt-3.5-turbo",
-                            message = String.EMPTY,
-                            updatedAt = Date().time
-                        )
+                    val temporaryMessage = Message(
+                        id = Date().time / 1000 + 1,
+                        chatId = currentChatState.value?.id ?: 0,
+                        author = "gpt-3.5-turbo",
+                        message = String.EMPTY,
+                        updatedAt = Date().time
                     )
+                    viewModel.insertLocalMessage(temporaryMessage)
                     viewModel.sendRequest(
+                        temporaryMessage,
                         ApiRequest(
                             model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
                                 MessageApi(role = "user", content = messageText)
