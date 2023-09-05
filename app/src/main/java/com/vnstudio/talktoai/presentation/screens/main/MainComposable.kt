@@ -151,16 +151,17 @@ fun AppContent() {
             }
             LaunchedEffect(isSettingsDrawerModeState.value) {
                 isSettingsDrawerModeState.value?.let { isSettingsDrawerMode ->
-                    startDestinationState.value =
-                        if (isSettingsDrawerMode) NavigationScreen.SettingsChatScreen().route else NavigationScreen.ChatScreen().route
                     if (isSettingsDrawerMode) {
+                        viewModel.removeRemoteUserListeners()
+                        startDestinationState.value = NavigationScreen.SettingsChatScreen().route
                         navController.navigate(NavigationScreen.SettingsChatScreen().route)
                     } else {
+                        viewModel.addRemoteChatListener()
+                        viewModel.addRemoteMessageListener()
                         if (navController.popBackStack(NavigationScreen.ChatScreen().route, false)
                                 .not()
                         ) navController.navigate(NavigationScreen.ChatScreen().route)
                     }
-
                 }
             }
         },
