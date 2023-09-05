@@ -2,16 +2,13 @@ package com.vnstudio.talktoai.presentation.screens.main
 
 import android.app.Application
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
-import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
@@ -20,7 +17,10 @@ import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.MainUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,6 +36,7 @@ class MainViewModel @Inject constructor(
     private var remoteChatListener: ValueEventListener? = null
     private var remoteMessageListener: ValueEventListener? = null
     private var authStateListener: FirebaseAuth.AuthStateListener? = null
+    private var chatsFlowSubscription: Job? = null
 
     fun getOnBoardingSeen() {
         launch {
@@ -113,7 +114,8 @@ class MainViewModel @Inject constructor(
 
     fun getChats() {
         showProgress()
-        launch {
+        chatsFlowSubscription?.cancel()
+        chatsFlowSubscription = launch {
             mainUseCase.getChats().catch {
                 hideProgress()
                 Log.e(
@@ -124,6 +126,7 @@ class MainViewModel @Inject constructor(
                 chatsLiveData.postValue(chats)
                 hideProgress()
                 Log.e("apiTAG", "MainViewModel getChats chats $chats")
+                Log.e("changeDBTAG", "MainViewModel getChats chatsLiveData.value ${chatsLiveData.value} chats $chats")
             }
         }
     }
@@ -217,5 +220,6 @@ class MainViewModel @Inject constructor(
         super.onCleared()
         removeRemoteUserListeners()
         removeAuthStateListener()
+        chatsFlowSubscription?.cancel()
     }
 }

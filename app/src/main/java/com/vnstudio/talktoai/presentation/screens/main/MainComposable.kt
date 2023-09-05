@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai.presentation.screens.main
 
+import android.util.Log
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.rememberScaffoldState
@@ -47,7 +48,7 @@ fun AppContent() {
         viewModel.getOnBoardingSeen()
         viewModel.addAuthStateListener()
     }
-
+    Log.e("changeDBTAG", "AppContent chatsState ${chatsState.value}")
     LaunchedEffect(onBoardingSeenState.value) {
         onBoardingSeenState.value?.let { isOnboardingSeen ->
             startDestinationState.value = when {
