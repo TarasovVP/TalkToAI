@@ -132,9 +132,11 @@ fun AppContent() {
                     showCreateChatDialog.value = true
                 },
                 onChatClick = { chat ->
-                    viewModel.updateChats(
+                    viewModel.updateChat(
                         viewModel.chatsLiveData.value.orEmpty()
-                            .onEach { if (it.id == chat.id) it.updated = Date().time })
+                            .first { it.id == chat.id }.apply {
+                                updated = Date().time
+                            })
                     scope.launch {
                         scaffoldState.drawerState.close()
                     }

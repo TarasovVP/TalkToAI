@@ -101,7 +101,7 @@ class RealDataBaseRepositoryImpl @Inject constructor(
 
     override fun updateChat(chat: Chat, result: (Result<Unit>) -> Unit) {
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
-            .child(CHATS).child(chat.id.toString()).updateChildren(mapOf("name" to chat.name))
+            .child(CHATS).child(chat.id.toString()).updateChildren(mapOf("name" to chat.name, "updated" to chat.updated))
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->

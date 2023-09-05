@@ -134,13 +134,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun updateChats(chats: List<Chat>) {
-        showProgress()
-        launch {
-            mainUseCase.updateChats(chats)
-        }
-    }
-
     fun insertChat(chat: Chat) {
         if (mainUseCase.isAuthorisedUser()) {
             checkNetworkAvailable {
