@@ -53,7 +53,10 @@ class MainViewModel @Inject constructor(
             val authState = when {
                 user?.isAnonymous.isTrue() -> AuthState.AUTHORISED_ANONYMOUSLY
                 user.isNotNull() -> AuthState.AUTHORISED
-                else -> AuthState.UNAUTHORISED
+                else -> {
+                    chatsFlowSubscription?.cancel()
+                    AuthState.UNAUTHORISED
+                }
             }
             authStateLiveData.postValue(authState)
             Log.e("authTAG", "MainViewModel addAuthStateListener authStateListener user.isNotNull() ${user.isNotNull()} user?.email ${user?.email} user?.isAnonymous ${user?.isAnonymous} ")
@@ -218,6 +221,7 @@ class MainViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
+        Log.e("changeDBTAG", "RealDataBaseRepositoryImpl onCleared")
         removeRemoteUserListeners()
         removeAuthStateListener()
         chatsFlowSubscription?.cancel()
