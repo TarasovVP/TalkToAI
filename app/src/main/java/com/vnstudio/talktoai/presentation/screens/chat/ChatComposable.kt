@@ -28,6 +28,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
+import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
@@ -56,21 +57,22 @@ fun ChatScreen(
             .fillMaxSize(),
         verticalArrangement = Arrangement.Top
     ) {
-        if (messagesState.value.isNullOrEmpty()) {
-            EmptyState(
-                text = if (currentChatState.value.isNull()) "Что бы начать работу с ИИ создайте чат" else "Введите свой вопрос или воспользуйтесь микрофоном....",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(45.dp)
-                    .weight(1f)
-            )
-        } else {
-            MessageList(
-                messagesState.value.orEmpty(), modifier = Modifier
+        messagesState.value.takeIf { it.isNotNull() }?.let { messages ->
+            if (messages.isEmpty()) {
+                EmptyState(
+                    text = if (currentChatState.value.isNull()) "Что бы начать работу с ИИ создайте чат" else "Введите свой вопрос или воспользуйтесь микрофоном....",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(45.dp)
+                        .weight(1f)
+                )
+            } else {
+                MessageList(messages, modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 16.dp)
-            )
-        }
+                )
+            }
+        } ?: CircularProgress()
         if (currentChatState.value == null) {
             TextIconButton(
                 "Новый чат",
