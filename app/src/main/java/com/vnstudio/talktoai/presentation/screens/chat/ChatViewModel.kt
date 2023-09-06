@@ -3,7 +3,6 @@ package com.vnstudio.talktoai.presentation.screens.chat
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
@@ -11,10 +10,8 @@ import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.ChatUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,7 +20,7 @@ class ChatViewModel @Inject constructor(
     private val chatUseCase: ChatUseCase,
 ) : BaseViewModel(application) {
 
-    val currentChatLiveData = MutableLiveData<Chat?>()
+    val currentChatLiveData = MutableLiveData<Chat>()
     val messagesLiveData = MutableLiveData<List<Message>>()
 
     private var messagesFlowSubscription: Job? = null
@@ -55,24 +52,13 @@ class ChatViewModel @Inject constructor(
         launch {
             chatUseCase.getCurrentChat().catch {
                 hideProgress()
-                Log.e(
-                    "apiTAG",
-                    "ChatViewModel getCurrentChat catch localizedMessage ${it.localizedMessage}"
-                )
             }.collect { result ->
-                Log.e(
-                    "apiTAG",
-                    "ChatViewModel getCurrentChat collect result $result isProgressProcessLiveData ${isProgressProcessLiveData.value}"
-                )
                 currentChatLiveData.postValue(result)
-                result?.id?.let {
-                    getMessagesFromChat(it)
-                }
             }
         }
     }
 
-    private fun getMessagesFromChat(chatId: Long) {
+    fun getMessagesFromChat(chatId: Long) {
         messagesFlowSubscription?.cancel()
         Log.e(
             "messagesTAG",

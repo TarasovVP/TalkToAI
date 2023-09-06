@@ -2,6 +2,7 @@ package com.vnstudio.talktoai.presentation.screens.main
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.State
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -30,7 +31,7 @@ class MainViewModel @Inject constructor(
 ) : BaseViewModel(application) {
 
     val onBoardingSeenLiveData = MutableLiveData<Boolean>()
-    val chatsLiveData = MutableLiveData<List<Chat>>()
+    val chatsLiveData = MutableLiveData<List<Chat>?>()
     val authStateLiveData = MutableLiveData<AuthState>()
 
     private var remoteChatListener: ValueEventListener? = null
@@ -118,6 +119,7 @@ class MainViewModel @Inject constructor(
     fun getChats() {
         showProgress()
         chatsFlowSubscription?.cancel()
+
         chatsFlowSubscription = launch {
             mainUseCase.getChats().catch {
                 hideProgress()
@@ -126,10 +128,11 @@ class MainViewModel @Inject constructor(
                     "MainViewModel getChats catch localizedMessage ${it.localizedMessage}"
                 )
             }.collect { chats ->
+                viewModelScope.launch(Dispatchers.Main) {
+                    chatsLiveData.value = null
+                }
                 chatsLiveData.postValue(chats)
                 hideProgress()
-                Log.e("apiTAG", "MainViewModel getChats chats $chats")
-                Log.e("changeDBTAG", "MainViewModel getChats chatsLiveData.value ${chatsLiveData.value} chats $chats")
             }
         }
     }
