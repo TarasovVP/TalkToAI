@@ -52,37 +52,17 @@ fun ChatScreen(
     LaunchedEffect(Unit) {
         viewModel.getCurrentChat()
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Top
     ) {
         messagesState.value.takeIf { it.isNotNull() }?.let { messages ->
-            if (messages.isEmpty()) {
-                EmptyState(
-                    text = if (currentChatState.value.isNull()) "Что бы начать работу с ИИ создайте чат" else "Введите свой вопрос или воспользуйтесь микрофоном....",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(45.dp)
-                        .weight(1f)
-                )
-            } else {
-                MessageList(messages, modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 16.dp)
-                )
-            }
-        } ?: CircularProgress()
-        if (currentChatState.value == null) {
-            TextIconButton(
-                "Новый чат",
-                R.drawable.ic_chat_add,
-                Modifier.padding(start = 45.dp, end = 45.dp, bottom = 45.dp)
-            ) {
-                showCreateChatDialog.value = true
-            }
-        } else {
-            ChatTextField(inputValue = mutableStateOf( TextFieldValue())) { messageText ->
+            MessagesScreen(messages, modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp)
+            ) { messageText ->
                 if (messageText.isEmpty()) {
                     Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
                 } else {
@@ -114,6 +94,9 @@ fun ChatScreen(
                 }
             }
         }
+        currentChatState.value.takeIf { it.isNotNull() }?.let { viewModel.getMessagesFromChat(it.id) } ?: CreateChatScreen {
+            showCreateChatDialog.value = true
+        }
     }
 
     DataEditDialog(
@@ -132,26 +115,66 @@ fun ChatScreen(
 }
 
 @Composable
-fun MessageList(messages: List<Message>, modifier: Modifier = Modifier) {
-    val scrollState = rememberLazyListState()
-    Box(modifier = modifier) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            state = scrollState
-        ) {
-            items(messages) { message ->
-                if (message.author == "me") {
-                    UserMessage(text = message.message)
-                } else {
-                    AIMessage(text = message.message) {
+fun CreateChatScreen(onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Top
+    ) {
+        EmptyState(
+            text = "Что бы начать работу с ИИ создайте чат" ,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(45.dp)
+                .weight(1f)
+        )
+        TextIconButton(
+            "Новый чат",
+            R.drawable.ic_chat_add,
+            Modifier.padding(start = 45.dp, end = 45.dp, bottom = 45.dp),
+            onClick
+        )
+    }
+}
 
+@Composable
+fun MessagesScreen(messages: List<Message>, modifier: Modifier = Modifier, onSendClick: (String) -> Unit) {
+    val scrollState = rememberLazyListState()
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Top
+    ) {
+        if (messages.isEmpty()) {
+            EmptyState(
+                text = "Введите свой вопрос или воспользуйтесь микрофоном....",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(45.dp)
+                    .weight(1f)
+            )
+        } else {
+            Box(modifier = modifier) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    state = scrollState
+                ) {
+                    items(messages) { message ->
+                        if (message.author == "me") {
+                            UserMessage(text = message.message)
+                        } else {
+                            AIMessage(text = message.message) {
+
+                            }
+                        }
                     }
                 }
             }
         }
+        ChatTextField(inputValue = mutableStateOf( TextFieldValue()), onSendClick)
     }
     LaunchedEffect(messages.size) {
-        scrollState.scrollToItem(messages.size - 1)
+        messages.size.takeIf { it > 0 }?.let {  scrollState.scrollToItem(it - 1)}
     }
 }
 

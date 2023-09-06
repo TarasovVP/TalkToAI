@@ -69,8 +69,8 @@ class MainUseCaseImpl @Inject constructor(
     }
 
     override fun deleteRemoteChat(chat: Chat, result: (Result<Unit>) -> Unit) {
-        realDataBaseRepository.deleteChat(chat) {
-            realDataBaseRepository.deleteMessagesByChatId(chat.id, result)
+        realDataBaseRepository.deleteMessagesByChatId(chat.id) {
+            realDataBaseRepository.deleteChat(chat, result)
         }
     }
 

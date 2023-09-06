@@ -37,6 +37,7 @@ fun AppContent() {
     val onBoardingSeenState = viewModel.onBoardingSeenLiveData.observeAsState()
     val authState = viewModel.authStateLiveData.observeAsState()
     val chatsState = viewModel.chatsLiveData.observeAsState()
+    Log.e("compareChatTAG", "AppContent chatsState.value ${chatsState.value}")
     val isSettingsDrawerModeState = remember { mutableStateOf<Boolean?>(null) }
 
     val showCreateChatDialog = remember { mutableStateOf(false) }
@@ -48,6 +49,7 @@ fun AppContent() {
         viewModel.getOnBoardingSeen()
         viewModel.addAuthStateListener()
     }
+
     Log.e("changeDBTAG", "AppContent chatsState ${chatsState.value}")
     LaunchedEffect(onBoardingSeenState.value) {
         onBoardingSeenState.value?.let { isOnboardingSeen ->
@@ -73,7 +75,6 @@ fun AppContent() {
             }
         }
     }
-
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -132,11 +133,10 @@ fun AppContent() {
                     showCreateChatDialog.value = true
                 },
                 onChatClick = { chat ->
-                    viewModel.updateChat(
-                        viewModel.chatsLiveData.value.orEmpty()
-                            .first { it.id == chat.id }.apply {
-                                updated = Date().time
-                            })
+                    viewModel.chatsLiveData.value.orEmpty()
+                        .firstOrNull { it.id == chat.id }?.apply {
+                            updated = Date().time
+                        }?.let { viewModel.updateChat(it) }
                     scope.launch {
                         scaffoldState.drawerState.close()
                     }
