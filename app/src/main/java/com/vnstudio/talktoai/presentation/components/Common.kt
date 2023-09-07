@@ -6,11 +6,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,12 +25,14 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.MutableLiveData
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.infrastructure.Constants
-import com.vnstudio.talktoai.presentation.theme.Neutral50
 import com.vnstudio.talktoai.presentation.theme.Primary300
-import com.vnstudio.talktoai.presentation.theme.Primary500
 import com.vnstudio.talktoai.presentation.theme.Primary700
 
 @Composable
@@ -126,12 +128,17 @@ fun EmptyState(text: String, modifier: Modifier) {
 }
 
 @Composable
-fun CircularProgress() {
-    Box(modifier = Modifier.fillMaxSize(), Alignment.Center) {
-        CircularProgressIndicator(
-            modifier = Modifier.size(100.dp),
-            color = Primary700,
-            strokeWidth = 5.dp
-        )
+fun MainProgress(isMainProgressVisible: MutableState<Boolean>) {
+    if (isMainProgressVisible.value) {
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.main_progress))
+        Box(contentAlignment = Alignment.Center, modifier = Modifier
+            .fillMaxSize()) {
+            LottieAnimation(
+                composition,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier
+                    .fillMaxSize(0.6f)
+            )
+        }
     }
 }

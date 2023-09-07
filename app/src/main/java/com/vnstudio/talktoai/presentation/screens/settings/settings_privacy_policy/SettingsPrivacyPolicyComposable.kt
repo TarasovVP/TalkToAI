@@ -4,23 +4,21 @@ import android.webkit.WebView
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.initWebView
-import com.vnstudio.talktoai.presentation.components.CircularProgress
+import com.vnstudio.talktoai.presentation.components.MainProgress
 
 @Composable
 fun SettingsPrivacyPolicyScreen() {
 
     val viewModel: SettingsPrivacyPolicyViewModel = hiltViewModel()
     val privacyPolicyUrlState = remember { mutableStateOf(String.EMPTY) }
+    val isMainProgressVisible = remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         viewModel.getAppLanguage()
@@ -38,12 +36,13 @@ fun SettingsPrivacyPolicyScreen() {
         }
     }
     privacyPolicyState.value.takeIf { it.isNullOrEmpty().not() }?.let { url ->
-        AppWebView(url)
-    } ?: CircularProgress()
+        AppWebView(url, isMainProgressVisible)
+    }
+    MainProgress(isMainProgressVisible)
 }
 
 @Composable
-fun AppWebView(webUrl: String) {
+fun AppWebView(webUrl: String, isMainProgressVisible: MutableState<Boolean>) {
     AndroidView(
         modifier = Modifier
             .fillMaxSize()
@@ -51,7 +50,7 @@ fun AppWebView(webUrl: String) {
         factory = { context ->
             WebView(context).apply {
                 initWebView(webUrl) {
-
+                    isMainProgressVisible.value = false
                 }
             }
         }
