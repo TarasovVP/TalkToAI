@@ -136,3 +136,7 @@ fun LocaleList.flagDrawable(): Int {
         else -> R.drawable.ic_flag_en
     }
 }
+
+fun Date.isDefineSecondsLater(seconds: Int, updated: Long): Boolean {
+    return time < (updated * 10000) + (seconds * 1000)
+}

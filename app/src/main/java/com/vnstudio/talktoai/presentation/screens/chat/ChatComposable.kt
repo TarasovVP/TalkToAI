@@ -29,15 +29,16 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
-import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.MessageApi
+import com.vnstudio.talktoai.isDefineSecondsLater
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.theme.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
@@ -161,9 +162,9 @@ fun MessagesScreen(messages: List<Message>, modifier: Modifier = Modifier, onSen
                 ) {
                     items(messages) { message ->
                         if (message.author == "me") {
-                            UserMessage(text = message.message)
+                            UserMessage(message = message)
                         } else {
-                            AIMessage(text = message.message) {
+                            AIMessage(message = message) {
 
                             }
                         }
@@ -179,7 +180,7 @@ fun MessagesScreen(messages: List<Message>, modifier: Modifier = Modifier, onSen
 }
 
 @Composable
-fun UserMessage(text: String) {
+fun UserMessage(message: Message) {
     Row(
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
@@ -202,7 +203,7 @@ fun UserMessage(text: String) {
                 )
         ) {
             Text(
-                text = text,
+                text = message.message,
                 fontSize = 16.sp,
                 color = Color.White,
                 modifier = Modifier
@@ -216,7 +217,7 @@ fun UserMessage(text: String) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AIMessage(text: String, onLongClick: () -> Unit) {
+fun AIMessage(message: Message, onLongClick: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.Bottom,
@@ -254,11 +255,27 @@ fun AIMessage(text: String, onLongClick: () -> Unit) {
                     )
                 )
         ) {
-            if (text.isEmpty()) {
-                MessageTypingAnimation()
-            } else {
-                Text(
-                    text = text,
+            if (message.message.isEmpty()) {
+                val format = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                Log.e(
+                    "timeTAG",
+                    "ChatComposable AIMessage message.message ${message.message} message.updatedAt ${format.format(Date(message.updatedAt * 1000))} Date().time ${format.format((Date().time) + 20000)}"
+                )
+            }
+
+
+            when {
+                message.message.isEmpty() && Date().isDefineSecondsLater(20, message.updatedAt) -> Text(
+                    text = "Error",
+                    fontSize = 16.sp,
+                    color = Color.Red,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .wrapContentSize()
+                )
+                message.message.isEmpty() -> MessageTypingAnimation()
+                else -> Text(
+                    text = message.message,
                     fontSize = 16.sp,
                     color = Color.White,
                     modifier = Modifier
