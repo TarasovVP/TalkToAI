@@ -3,6 +3,8 @@ package com.vnstudio.talktoai.presentation.screens.chat
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.vnstudio.talktoai.CommonExtensions.isNotNull
+import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
@@ -49,16 +51,22 @@ class ChatViewModel @Inject constructor(
     }
 
     fun getCurrentChat() {
+        showProgress()
         launch {
             chatUseCase.getCurrentChat().catch {
                 hideProgress()
-            }.collect { result ->
-                currentChatLiveData.postValue(result)
+            }.collect { chat ->
+                chat.takeIf { it.isNull() }?.let {
+                    currentChatLiveData.postValue(Chat())
+                    hideProgress()
+                } ?: currentChatLiveData.postValue(chat)
+
             }
         }
     }
 
     fun getMessagesFromChat(chatId: Long) {
+        showProgress()
         messagesFlowSubscription?.cancel()
         Log.e(
             "messagesTAG",
@@ -69,19 +77,19 @@ class ChatViewModel @Inject constructor(
                 hideProgress()
                 Log.e(
                     "apiTAG",
-                    "ChatViewModel getMessagesFromChat catch localizedMessage ${it.localizedMessage} isProgressProcessLiveData ${isProgressProcessLiveData.value}"
+                    "ChatViewModel getMessagesFromChat catch localizedMessage ${it.localizedMessage} isProgressProcessLiveData ${progressVisibilityLiveData.value}"
                 )
             }.collect { result ->
                 Log.e(
                     "apiTAG",
-                    "ChatViewModel getMessagesFromChat collect result.size ${result.size} chatId $chatId isProgressProcessLiveData ${isProgressProcessLiveData.value}"
+                    "ChatViewModel getMessagesFromChat collect result.size ${result.size} chatId $chatId isProgressProcessLiveData ${progressVisibilityLiveData.value}"
                 )
                 Log.e(
                     "messagesTAG",
                     "ChatViewModel getMessagesFromChat after messagesLiveData ${messagesLiveData.value?.map { it.message }}"
                 )
                 messagesLiveData.postValue(result)
-
+               hideProgress()
             }
         }
     }
@@ -97,7 +105,7 @@ class ChatViewModel @Inject constructor(
                 hideProgress()
                 Log.e(
                     "apiTAG",
-                    "ChatViewModel sendRequest catch localizedMessage ${it.localizedMessage} isProgressProcessLiveData ${isProgressProcessLiveData.value}"
+                    "ChatViewModel sendRequest catch localizedMessage ${it.localizedMessage} isProgressProcessLiveData ${progressVisibilityLiveData.value}"
                 )
             }.collect { result ->
                 when (result) {
@@ -110,7 +118,7 @@ class ChatViewModel @Inject constructor(
                     }
                     is Result.Failure -> Log.e(
                         "apiTAG",
-                        "ChatViewModel sendRequest Result.Failure localizedMessage ${result.errorMessage}  isProgressProcessLiveData ${isProgressProcessLiveData.value}"
+                        "ChatViewModel sendRequest Result.Failure localizedMessage ${result.errorMessage}  isProgressProcessLiveData ${progressVisibilityLiveData.value}"
                     )
                 }
                 hideProgress()

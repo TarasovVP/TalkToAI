@@ -11,16 +11,15 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.initWebView
-import com.vnstudio.talktoai.presentation.components.MainProgress
 
 @Composable
-fun SettingsPrivacyPolicyScreen() {
+fun SettingsPrivacyPolicyScreen(isMainProgressVisible: MutableState<Boolean>) {
 
     val viewModel: SettingsPrivacyPolicyViewModel = hiltViewModel()
     val privacyPolicyUrlState = remember { mutableStateOf(String.EMPTY) }
-    val isMainProgressVisible = remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
+        isMainProgressVisible.value = true
         viewModel.getAppLanguage()
     }
     val appLanguageState = viewModel.appLanguageLiveData.observeAsState()
@@ -38,7 +37,6 @@ fun SettingsPrivacyPolicyScreen() {
     privacyPolicyState.value.takeIf { it.isNullOrEmpty().not() }?.let { url ->
         AppWebView(url, isMainProgressVisible)
     }
-    MainProgress(isMainProgressVisible)
 }
 
 @Composable

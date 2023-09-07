@@ -33,6 +33,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary500
 @Composable
 fun SettingsAccountScreen(
     infoMessageState: MutableState<InfoMessage?>,
+    isMainProgressVisible: MutableState<Boolean>,
     onNextScreen: (String) -> Unit,
 ) {
 
