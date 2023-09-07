@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -44,6 +45,7 @@ import java.util.*
 @Composable
 fun ChatScreen(
     infoMessageState: MutableState<InfoMessage?>,
+    progressVisibilityState: MutableState<Boolean>,
 ) {
     val viewModel: ChatViewModel = hiltViewModel()
     val showCreateChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -60,7 +62,8 @@ fun ChatScreen(
         verticalArrangement = Arrangement.Top
     ) {
         messagesState.value.takeIf { it.isNotNull() }?.let { messages ->
-            MessagesScreen(messages, modifier = Modifier
+            val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = messages.lastIndex)
+            MessagesScreen(scrollState, messages, modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 16.dp)
             ) { messageText ->
@@ -95,8 +98,14 @@ fun ChatScreen(
                 }
             }
         }
-        currentChatState.value.takeIf { it.isNotNull() }?.let { viewModel.getMessagesFromChat(it.id) } ?: CreateChatScreen {
-            showCreateChatDialog.value = true
+        currentChatState.value?.let { chat ->
+            if (chat.id > 0) {
+                viewModel.getMessagesFromChat(chat.id)
+            } else {
+                CreateChatScreen {
+                    showCreateChatDialog.value = true
+                }
+            }
         }
     }
 
@@ -113,6 +122,7 @@ fun ChatScreen(
     }
 
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
+    ProgressVisibilityHandler(progressVisibilityState, viewModel.progressVisibilityLiveData)
 }
 
 @Composable
@@ -139,8 +149,12 @@ fun CreateChatScreen(onClick: () -> Unit) {
 }
 
 @Composable
-fun MessagesScreen(messages: List<Message>, modifier: Modifier = Modifier, onSendClick: (String) -> Unit) {
-    val scrollState = rememberLazyListState()
+fun MessagesScreen(
+    scrollState: LazyListState,
+    messages: List<Message>,
+    modifier: Modifier = Modifier,
+    onSendClick: (String) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -173,9 +187,6 @@ fun MessagesScreen(messages: List<Message>, modifier: Modifier = Modifier, onSen
             }
         }
         ChatTextField(inputValue = mutableStateOf( TextFieldValue()), onSendClick)
-    }
-    LaunchedEffect(messages.size) {
-        messages.size.takeIf { it > 0 }?.let {  scrollState.scrollToItem(it - 1)}
     }
 }
 

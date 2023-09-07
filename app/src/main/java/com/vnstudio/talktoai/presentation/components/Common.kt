@@ -1,11 +1,13 @@
 package com.vnstudio.talktoai.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,6 +52,23 @@ fun ExceptionMessageHandler(
             exceptionLiveData.value = null
         }
     }
+}
+
+@Composable
+fun ProgressVisibilityHandler(
+    progressVisibilityState: MutableState<Boolean>,
+    progressVisibilityLiveData: MutableLiveData<Boolean>,
+) {
+    val progressProcessState = progressVisibilityLiveData.observeAsState()
+    LaunchedEffect(progressProcessState.value) {
+        progressProcessState.value?.let {
+            progressVisibilityState.value = it
+        }
+    }
+    Log.e(
+        "progressTAG",
+        "Common ProgressVisibilityHandler progressVisibilityState ${progressVisibilityState.value} progressVisibilityLiveData ${progressVisibilityLiveData.value}"
+    )
 }
 
 @Composable
@@ -128,9 +147,20 @@ fun EmptyState(text: String, modifier: Modifier) {
 }
 
 @Composable
-fun MainProgress(isMainProgressVisible: MutableState<Boolean>) {
-    if (isMainProgressVisible.value) {
-        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.main_progress))
+fun MainProgress(progressVisibilityState: MutableState<Boolean>) {
+    Log.e(
+        "progressTAG",
+        "Common MainProgress progressVisibilityState ${progressVisibilityState.value}"
+    )
+    if (progressVisibilityState.value) {
+        Box(modifier = Modifier.fillMaxSize(), Alignment.Center) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(100.dp),
+                color = Primary700,
+                strokeWidth = 5.dp
+            )
+        }
+        /*val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.main_progress))
         Box(contentAlignment = Alignment.Center, modifier = Modifier
             .fillMaxSize()) {
             LottieAnimation(
@@ -139,6 +169,6 @@ fun MainProgress(isMainProgressVisible: MutableState<Boolean>) {
                 modifier = Modifier
                     .fillMaxSize(0.6f)
             )
-        }
+        }*/
     }
 }

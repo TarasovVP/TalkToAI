@@ -12,14 +12,14 @@ import kotlinx.coroutines.*
 open class BaseViewModel(private val application: Application) : AndroidViewModel(application) {
 
     val exceptionLiveData = MutableLiveData<String>()
-    val isProgressProcessLiveData = MutableLiveData<Boolean>()
+    val progressVisibilityLiveData = MutableLiveData<Boolean>()
 
     fun showProgress() {
-        isProgressProcessLiveData.postValue(true)
+        progressVisibilityLiveData.postValue(true)
     }
 
     fun hideProgress() {
-        isProgressProcessLiveData.postValue(false)
+        progressVisibilityLiveData.postValue(false)
     }
 
     fun checkNetworkAvailable(networkAvailableResult: () -> Unit) {

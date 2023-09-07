@@ -13,7 +13,11 @@ import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.components.PrimaryButton
 
 @Composable
-fun SettingsChatScreen(infoMessageState: MutableState<InfoMessage?>, onClick: () -> Unit) {
+fun SettingsChatScreen(
+    infoMessageState: MutableState<InfoMessage?>,
+    isMainProgressVisible: MutableState<Boolean>,
+    onClick: () -> Unit
+) {
 
     val viewModel: SettingsChatViewModel = hiltViewModel()
 

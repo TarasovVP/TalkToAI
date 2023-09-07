@@ -25,7 +25,10 @@ import com.vnstudio.talktoai.presentation.components.PrimaryButton
 import java.util.*
 
 @Composable
-fun SettingsFeedbackScreen(infoMessageState: MutableState<InfoMessage?>) {
+fun SettingsFeedbackScreen(
+    infoMessageState: MutableState<InfoMessage?>,
+    isMainProgressVisible: MutableState<Boolean>
+) {
 
     val viewModel: SettingsFeedbackViewModel = hiltViewModel()
     val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }

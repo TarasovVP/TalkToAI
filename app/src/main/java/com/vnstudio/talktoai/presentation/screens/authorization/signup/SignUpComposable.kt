@@ -25,7 +25,11 @@ import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.theme.Primary50
 
 @Composable
-fun SignUpScreen(infoMessageState: MutableState<InfoMessage?>, onNextScreen: (String) -> Unit) {
+fun SignUpScreen(
+    infoMessageState: MutableState<InfoMessage?>,
+    isMainProgressVisible: MutableState<Boolean>,
+    onNextScreen: (String) -> Unit
+) {
 
     val viewModel: SignUpViewModel = hiltViewModel()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }

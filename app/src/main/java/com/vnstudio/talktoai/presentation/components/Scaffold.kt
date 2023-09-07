@@ -299,6 +299,7 @@ fun AppNavHost(
     startDestination: String,
     isSettingsDrawerMode: MutableState<Boolean?>,
     infoMessageState: MutableState<InfoMessage?>,
+    progressVisibilityState: MutableState<Boolean>,
 ) {
     NavHost(navController, startDestination = startDestination,
         enterTransition = {
@@ -316,33 +317,33 @@ fun AppNavHost(
         composable(
             route = NavigationScreen.LoginScreen().route
         ) {
-            LoginScreen(infoMessageState) { route ->
+            LoginScreen(infoMessageState, progressVisibilityState) { route ->
                 navController.navigate(route)
             }
         }
         composable(
             route = NavigationScreen.SignUpScreen().route
         ) {
-            SignUpScreen(infoMessageState) { route ->
+            SignUpScreen(infoMessageState, progressVisibilityState) { route ->
                 navController.navigate(route)
             }
         }
         composable(
             route = NavigationScreen.ChatScreen().route
         ) {
-            ChatScreen(infoMessageState)
+            ChatScreen(infoMessageState, progressVisibilityState)
         }
         composable(
             route = NavigationScreen.SettingsChatScreen().route
         ) {
-            SettingsChatScreen(infoMessageState) {
+            SettingsChatScreen(infoMessageState, progressVisibilityState) {
 
             }
         }
         composable(
             route = NavigationScreen.SettingsAccountScreen().route
         ) {
-            SettingsAccountScreen(infoMessageState) { route ->
+            SettingsAccountScreen(infoMessageState, progressVisibilityState) { route ->
                 isSettingsDrawerMode.value = null
                 navController.navigate(route)
             }
@@ -350,7 +351,7 @@ fun AppNavHost(
         composable(
             route = NavigationScreen.SettingsSignUpScreen().route
         ) {
-            SettingsSignUpScreen(infoMessageState) { route ->
+            SettingsSignUpScreen(infoMessageState, progressVisibilityState) { route ->
                 isSettingsDrawerMode.value = null
                 navController.navigate(route)
             }
@@ -358,7 +359,7 @@ fun AppNavHost(
         composable(
             route = NavigationScreen.SettingsLanguageScreen().route
         ) {
-            SettingsLanguageScreen(infoMessageState)
+            SettingsLanguageScreen(infoMessageState, progressVisibilityState)
         }
         composable(
             route = NavigationScreen.SettingsThemeScreen().route
@@ -368,12 +369,12 @@ fun AppNavHost(
         composable(
             route = NavigationScreen.SettingsFeedbackScreen().route
         ) {
-            SettingsFeedbackScreen(infoMessageState)
+            SettingsFeedbackScreen(infoMessageState, progressVisibilityState)
         }
         composable(
             route = NavigationScreen.SettingsPrivacyPolicyScreen().route
         ) {
-            SettingsPrivacyPolicyScreen()
+            SettingsPrivacyPolicyScreen(progressVisibilityState)
         }
     }
 }
