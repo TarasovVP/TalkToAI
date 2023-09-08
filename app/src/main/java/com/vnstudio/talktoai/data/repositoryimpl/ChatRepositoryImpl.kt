@@ -14,7 +14,7 @@ class ChatRepositoryImpl @Inject constructor(private val chatDao: ChatDao) : Cha
 
     override suspend fun getChats(): Flow<List<Chat>> = chatDao.getChats()
 
-    override suspend fun getCurrentChat(): Flow<Chat?> = chatDao.getCurrentChat()
+    override suspend fun getChatById(chatId: Long): Flow<Chat?> = chatDao.getChatById(chatId)
 
     override suspend fun updateChat(chat: Chat) = chatDao.updateChat(chat)
 

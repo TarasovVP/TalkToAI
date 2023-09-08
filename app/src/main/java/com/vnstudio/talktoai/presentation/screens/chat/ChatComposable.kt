@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -44,6 +43,7 @@ import java.util.*
 
 @Composable
 fun ChatScreen(
+    currentChatId: Long?,
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,
 ) {
@@ -53,7 +53,7 @@ fun ChatScreen(
     val messagesState = viewModel.messagesLiveData.observeAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.getCurrentChat()
+        currentChatId?.let { viewModel.getCurrentChat(it) }
     }
 
     Column(
@@ -62,8 +62,7 @@ fun ChatScreen(
         verticalArrangement = Arrangement.Top
     ) {
         messagesState.value.takeIf { it.isNotNull() }?.let { messages ->
-            val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = messages.lastIndex)
-            MessagesScreen(scrollState, messages, modifier = Modifier
+            MessagesScreen(messages, modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 16.dp)
             ) { messageText ->
@@ -150,7 +149,6 @@ fun CreateChatScreen(onClick: () -> Unit) {
 
 @Composable
 fun MessagesScreen(
-    scrollState: LazyListState,
     messages: List<Message>,
     modifier: Modifier = Modifier,
     onSendClick: (String) -> Unit
@@ -169,6 +167,11 @@ fun MessagesScreen(
                     .weight(1f)
             )
         } else {
+            val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = messages.lastIndex)
+            Log.e(
+                "scrollTAG",
+                "ChatComposable MessagesScreen message.size ${messages.size} scrollState.firstVisibleItemIndex ${scrollState.firstVisibleItemIndex} firstVisibleItemScrollOffset ${scrollState.firstVisibleItemScrollOffset}"
+            )
             Box(modifier = modifier) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),

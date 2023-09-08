@@ -3,7 +3,6 @@ package com.vnstudio.talktoai.presentation.screens.chat
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
@@ -50,10 +49,10 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun getCurrentChat() {
+    fun getCurrentChat(chatId: Long) {
         showProgress()
         launch {
-            chatUseCase.getCurrentChat().catch {
+            chatUseCase.geturrentChat(chatId).catch {
                 hideProgress()
             }.collect { chat ->
                 chat.takeIf { it.isNull() }?.let {

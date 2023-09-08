@@ -23,8 +23,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
@@ -32,6 +34,7 @@ import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.flagDrawable
 import com.vnstudio.talktoai.infrastructure.Constants
+import com.vnstudio.talktoai.infrastructure.Constants.CURRENT_CHAT_ID
 import com.vnstudio.talktoai.presentation.screens.chat.ChatScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.login.LoginScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.onboarding.OnboardingScreen
@@ -157,7 +160,7 @@ fun AppDrawer(
                         DrawerItem(
                             name = chat.name,
                             mainIcon = R.drawable.ic_chat,
-                            isCurrent = chats.value.orEmpty().indexOf(chat) == 0,
+                            isCurrent = chat.isCurrent,
                             secondaryIcon = R.drawable.ic_delete,
                             isIconClick = true,
                             onIconClick = {
@@ -329,9 +332,13 @@ fun AppNavHost(
             }
         }
         composable(
-            route = NavigationScreen.ChatScreen().route
-        ) {
-            ChatScreen(infoMessageState, progressVisibilityState)
+            route = NavigationScreen.ChatScreen().route,
+            arguments = listOf(navArgument(CURRENT_CHAT_ID) {
+                type = NavType.LongType
+            })
+        ) { backStackEntry ->
+            val currentChatId = backStackEntry.arguments?.getLong(CURRENT_CHAT_ID)
+            ChatScreen(currentChatId, infoMessageState, progressVisibilityState)
         }
         composable(
             route = NavigationScreen.SettingsChatScreen().route
