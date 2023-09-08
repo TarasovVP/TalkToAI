@@ -2,6 +2,7 @@ package com.vnstudio.talktoai.data.database.db_entities
 
 import android.os.Parcelable
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.infrastructure.Constants.CHATS
@@ -13,4 +14,7 @@ data class Chat(
     @PrimaryKey var id: Long = 0,
     var name: String = String.EMPTY,
     var updated: Long = 0,
-) : Parcelable
+) : Parcelable {
+    @Ignore
+    var isCurrent = false
+}

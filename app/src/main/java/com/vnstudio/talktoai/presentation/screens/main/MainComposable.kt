@@ -134,10 +134,7 @@ fun AppContent() {
                     showCreateChatDialog.value = true
                 },
                 onChatClick = { chat ->
-                    viewModel.chatsLiveData.value.orEmpty()
-                        .firstOrNull { it.id == chat.id }?.apply {
-                            updated = Date().time
-                        }?.let { viewModel.updateChat(it) }
+                    navController.navigate("destination_chat_screen/${chat.id}")
                     scope.launch {
                         scaffoldState.drawerState.close()
                     }

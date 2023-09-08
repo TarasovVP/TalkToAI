@@ -21,7 +21,7 @@ class ChatUseCaseImpl @Inject constructor(
 
     override suspend fun insertChat(chat: Chat) = chatRepository.insertChat(chat)
 
-    override suspend fun getCurrentChat(): Flow<Chat?> = chatRepository.getCurrentChat()
+    override suspend fun geturrentChat(chatId: Long): Flow<Chat?> = chatRepository.getChatById(chatId)
 
     override fun isAuthorisedUser() = authRepository.isAuthorisedUser()
 

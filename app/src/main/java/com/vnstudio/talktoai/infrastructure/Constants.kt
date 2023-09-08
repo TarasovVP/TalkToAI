@@ -7,6 +7,9 @@ object Constants {
     const val SUCCESS_MESSAGE = "successMessage"
     const val ERROR_MESSAGE = "errorMessage"
 
+    //Chat
+    const val CURRENT_CHAT_ID = "current_chat_id"
+
     //Settings
     const val ON_BOARDING_SEEN = "onBoardingSeen"
     const val APP_LANG = "appLang"

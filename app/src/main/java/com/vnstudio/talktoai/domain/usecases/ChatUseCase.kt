@@ -11,7 +11,7 @@ interface ChatUseCase {
 
     suspend fun insertChat(chat: Chat)
 
-    suspend fun getCurrentChat(): Flow<Chat?>
+    suspend fun geturrentChat(chatId: Long): Flow<Chat?>
 
     fun isAuthorisedUser(): Boolean
 
