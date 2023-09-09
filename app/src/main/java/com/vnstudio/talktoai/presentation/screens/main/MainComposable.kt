@@ -11,11 +11,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.vnstudio.talktoai.CommonExtensions.isNotNull
+import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
+import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen.Companion.isSettingsScreen
 import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen.Companion.settingsScreenNameByRoute
@@ -80,7 +83,10 @@ fun AppContent() {
 
     LaunchedEffect(chatsState.value) {
         chatsState.value?.let { chatsState ->
-            currentChatState.value = currentChatState.value.takeIf { chatsState.contains(it) } ?: chatsState.firstOrNull()
+            if (chatsState.contains(currentChatState.value).not() && currentChatState.value.isNotNull()) {
+                currentChatState.value = chatsState.firstOrNull()
+                navController.navigate("$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id}")
+            }
         }
     }
 
@@ -143,7 +149,7 @@ fun AppContent() {
                 },
                 onChatClick = { chat ->
                     currentChatState.value = chat
-                    navController.navigate("destination_chat_screen/${chat.id}")
+                    navController.navigate("$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id}")
                     scope.launch {
                         scaffoldState.drawerState.close()
                     }

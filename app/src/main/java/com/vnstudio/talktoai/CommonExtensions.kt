@@ -16,6 +16,9 @@ import android.webkit.WebViewClient
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.android.gms.common.api.CommonStatusCodes.getStatusCodeString
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.infrastructure.Constants.DARK_MODE_TEXT
@@ -139,4 +142,8 @@ fun LocaleList.flagDrawable(): Int {
 
 fun Date.isDefineSecondsLater(seconds: Int, updated: Long): Boolean {
     return time < (updated * 10000) + (seconds * 1000)
+}
+
+fun ApiException.getStatusCodeText(): String {
+    return if (statusCode in -1..22) getStatusCodeString(statusCode) else "Операцию не удалось выполнить"
 }
