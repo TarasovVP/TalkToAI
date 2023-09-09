@@ -44,6 +44,7 @@ fun AppContent() {
     val showCreateChatDialog = remember { mutableStateOf(false) }
     val showEditChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
     val showDeleteChatDialog = remember { mutableStateOf(false) }
+    val currentChatState = remember { mutableStateOf<Chat?>(null) }
     val deleteChatState = remember { mutableStateOf<Chat?>(null) }
 
     LaunchedEffect(Unit) {
@@ -77,6 +78,12 @@ fun AppContent() {
         }
     }
 
+    LaunchedEffect(chatsState.value) {
+        chatsState.value?.let { chatsState ->
+            currentChatState.value = currentChatState.value.takeIf { chatsState.contains(it) } ?: chatsState.firstOrNull()
+        }
+    }
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -87,7 +94,7 @@ fun AppContent() {
                     navController.navigateUp()
                 }
                 isSettingsScreen(currentRouteState) || currentRouteState == NavigationScreen.ChatScreen().route -> PrimaryTopBar(
-                    title = if (currentRouteState == NavigationScreen.ChatScreen().route) chatsState.value?.firstOrNull()?.name
+                    title = if (currentRouteState == NavigationScreen.ChatScreen().route) currentChatState.value?.name
                         ?: stringResource(id = com.vnstudio.talktoai.R.string.app_name) else stringResource(
                         id = settingsScreenNameByRoute(
                             currentRouteState
@@ -129,11 +136,13 @@ fun AppContent() {
             AppDrawer(
                 isSettingsDrawerModeState,
                 currentRouteState,
+                currentChatState.value?.id,
                 chats = chatsState,
                 onCreateChatClick = {
                     showCreateChatDialog.value = true
                 },
                 onChatClick = { chat ->
+                    currentChatState.value = chat
                     navController.navigate("destination_chat_screen/${chat.id}")
                     scope.launch {
                         scaffoldState.drawerState.close()
@@ -158,9 +167,7 @@ fun AppContent() {
                     } else {
                         viewModel.addRemoteChatListener()
                         viewModel.addRemoteMessageListener()
-                        if (navController.popBackStack(NavigationScreen.ChatScreen().route, false)
-                                .not()
-                        ) navController.navigate(NavigationScreen.ChatScreen().route)
+                        if (navController.popBackStack(NavigationScreen.ChatScreen().route, false).not()) navController.navigate(NavigationScreen.ChatScreen().route)
                     }
                 }
             }
@@ -181,21 +188,21 @@ fun AppContent() {
                 }) { newChatName ->
                 viewModel.insertChat(Chat(id = Date().time, name = newChatName, updated = Date().time))
                 showCreateChatDialog.value = false
+                currentChatState.value = null
                 scope.launch {
                     scaffoldState.drawerState.close()
                 }
             }
 
-            val currentChat = chatsState.value?.firstOrNull()
             DataEditDialog(
                 "Изменить название чата?",
                 "Название чата",
-                mutableStateOf(TextFieldValue(currentChat?.name.orEmpty())),
+                mutableStateOf(TextFieldValue(currentChatState.value?.name.orEmpty())),
                 showEditChatDialog,
                 onDismiss = {
                     showEditChatDialog.value = false
                 }) { newChatName ->
-                currentChat?.apply {
+                currentChatState.value?.apply {
                     name = newChatName
                 }?.let { viewModel.updateChat(it) }
                 showEditChatDialog.value = false

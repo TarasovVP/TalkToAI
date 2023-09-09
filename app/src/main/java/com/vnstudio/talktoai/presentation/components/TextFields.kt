@@ -21,6 +21,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.R
+import com.vnstudio.talktoai.presentation.theme.Neutral400
+import com.vnstudio.talktoai.presentation.theme.Neutral600
 import com.vnstudio.talktoai.presentation.theme.Primary500
 import com.vnstudio.talktoai.presentation.theme.Primary900
 
@@ -110,14 +112,16 @@ fun PasswordTextField(inputValue: MutableState<TextFieldValue>, placeHolder: Str
 
 @Composable
 fun ChatTextField(
+    isEnabled: Boolean,
+    modifier: Modifier,
     inputValue: MutableState<TextFieldValue>,
     onSendClick: (String) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .background(color = Primary900)
+            .background(color = if (isEnabled) Primary900 else Neutral400)
             .height(IntrinsicSize.Min)
     ) {
         TextField(value = inputValue.value,
@@ -134,26 +138,23 @@ fun ChatTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-                .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
+                .border(1.dp, if (isEnabled) Primary500 else Neutral600, shape = RoundedCornerShape(16.dp))
                 .background(
                     color = Color.White,
                     shape = RoundedCornerShape(16.dp)
-                ),
+                )
+                .clickable(enabled = isEnabled) {},
             maxLines = 6,
             trailingIcon = {
-                Box(
-                    modifier = Modifier
-                        .clickable {
-                            onSendClick.invoke(inputValue.value.text)
-                            inputValue.value = TextFieldValue(String.EMPTY)
-                            focusManager.clearFocus()
-
-                        }
-                ) {
+                IconButton(enabled = isEnabled, onClick = {
+                    onSendClick.invoke(inputValue.value.text)
+                    inputValue.value = TextFieldValue(String.EMPTY)
+                    focusManager.clearFocus()
+                }) {
                     Icon(
                         imageVector = ImageVector.vectorResource(if (inputValue.value.text.isEmpty()) R.drawable.ic_voice_record else R.drawable.ic_message_send),
                         contentDescription = "Send message button",
-                        tint = Primary900
+                        tint = if (isEnabled) Primary900 else Neutral600
                     )
                 }
             }

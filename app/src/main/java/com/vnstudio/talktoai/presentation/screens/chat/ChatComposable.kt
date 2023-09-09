@@ -35,6 +35,7 @@ import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.MessageApi
+import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.isDefineSecondsLater
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.theme.*
@@ -43,7 +44,7 @@ import java.util.*
 
 @Composable
 fun ChatScreen(
-    currentChatId: Long?,
+    currentChatId: Long,
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,
 ) {
@@ -53,7 +54,8 @@ fun ChatScreen(
     val messagesState = viewModel.messagesLiveData.observeAsState()
 
     LaunchedEffect(Unit) {
-        currentChatId?.let { viewModel.getCurrentChat(it) }
+        Log.e("apiTAG", "ChatScreen getCurrentChat currentChatId $currentChatId")
+        viewModel.getCurrentChat(currentChatId)
     }
 
     Column(
@@ -61,50 +63,53 @@ fun ChatScreen(
             .fillMaxSize(),
         verticalArrangement = Arrangement.Top
     ) {
-        messagesState.value.takeIf { it.isNotNull() }?.let { messages ->
-            MessagesScreen(messages, modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 16.dp)
-            ) { messageText ->
-                if (messageText.isEmpty()) {
-                    Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
+        Box(modifier = Modifier.weight(1f)) {
+            messagesState.value.takeIf { it.isNotNull() }?.let { messages ->
+                MessagesList(messages, modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                )
+            }
+            currentChatState.value?.let { chat ->
+                if (chat.id != DEFAULT_CHAT_ID) {
+                    viewModel.getMessagesFromChat(chat.id)
                 } else {
-                    viewModel.insertMessage(
-                        Message(
-                            id = Date().time / 1000,
-                            chatId = currentChatState.value?.id ?: 0,
-                            author = "me",
-                            message = messageText,
-                            updatedAt = Date().time / 1000
-                        )
-                    )
-                    val temporaryMessage = Message(
-                        id = Date().time / 1000 + 1,
-                        chatId = currentChatState.value?.id ?: 0,
-                        author = "gpt-3.5-turbo",
-                        message = String.EMPTY,
-                        updatedAt = Date().time / 1000 + 1
-                    )
-                    viewModel.insertMessage(temporaryMessage)
-                    viewModel.sendRequest(
-                        temporaryMessage,
-                        ApiRequest(
-                            model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
-                                MessageApi(role = "user", content = messageText)
-                            )
-                        )
-                    )
+                    CreateChatScreen(Modifier) {
+                        showCreateChatDialog.value = true
+                    }
                 }
             }
         }
-        currentChatState.value?.let { chat ->
-            if (chat.id > 0) {
-                viewModel.getMessagesFromChat(chat.id)
+        ChatTextField(currentChatState.value?.id != DEFAULT_CHAT_ID, Modifier, inputValue = mutableStateOf( TextFieldValue())) { messageText ->
+            if (messageText.isEmpty()) {
+                Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
             } else {
-                CreateChatScreen {
-                    showCreateChatDialog.value = true
-                }
+                viewModel.insertMessage(
+                    Message(
+                        id = Date().time / 1000,
+                        chatId = currentChatState.value?.id ?: 0,
+                        author = "me",
+                        message = messageText,
+                        updatedAt = Date().time / 1000
+                    )
+                )
+                val temporaryMessage = Message(
+                    id = Date().time / 1000 + 1,
+                    chatId = currentChatState.value?.id ?: 0,
+                    author = "gpt-3.5-turbo",
+                    message = String.EMPTY,
+                    updatedAt = Date().time / 1000 + 1
+                )
+                viewModel.insertMessage(temporaryMessage)
+                viewModel.sendRequest(
+                    temporaryMessage,
+                    ApiRequest(
+                        model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
+                            MessageApi(role = "user", content = messageText)
+                        )
+                    )
+                )
             }
+
         }
     }
 
@@ -125,10 +130,10 @@ fun ChatScreen(
 }
 
 @Composable
-fun CreateChatScreen(onClick: () -> Unit) {
+fun CreateChatScreen(modifier: Modifier, onClick: () -> Unit) {
     Column(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = modifier
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.Top
     ) {
         EmptyState(
@@ -148,23 +153,17 @@ fun CreateChatScreen(onClick: () -> Unit) {
 }
 
 @Composable
-fun MessagesScreen(
+fun MessagesList(
     messages: List<Message>,
-    modifier: Modifier = Modifier,
-    onSendClick: (String) -> Unit
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Top
-    ) {
+
         if (messages.isEmpty()) {
             EmptyState(
                 text = "Введите свой вопрос или воспользуйтесь микрофоном....",
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(45.dp)
-                    .weight(1f)
             )
         } else {
             val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = messages.lastIndex)
@@ -189,8 +188,6 @@ fun MessagesScreen(
                 }
             }
         }
-        ChatTextField(inputValue = mutableStateOf( TextFieldValue()), onSendClick)
-    }
 }
 
 @Composable

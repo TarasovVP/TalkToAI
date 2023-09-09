@@ -9,6 +9,7 @@ object Constants {
 
     //Chat
     const val CURRENT_CHAT_ID = "current_chat_id"
+    const val DEFAULT_CHAT_ID = -1L
 
     //Settings
     const val ON_BOARDING_SEEN = "onBoardingSeen"
