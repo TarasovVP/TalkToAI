@@ -13,13 +13,13 @@ import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.initWebView
 
 @Composable
-fun SettingsPrivacyPolicyScreen(isMainProgressVisible: MutableState<Boolean>) {
+fun SettingsPrivacyPolicyScreen(progressVisibilityState: MutableState<Boolean>) {
 
     val viewModel: SettingsPrivacyPolicyViewModel = hiltViewModel()
     val privacyPolicyUrlState = remember { mutableStateOf(String.EMPTY) }
 
     LaunchedEffect(Unit) {
-        isMainProgressVisible.value = true
+        progressVisibilityState.value = true
         viewModel.getAppLanguage()
     }
     val appLanguageState = viewModel.appLanguageLiveData.observeAsState()
@@ -35,12 +35,12 @@ fun SettingsPrivacyPolicyScreen(isMainProgressVisible: MutableState<Boolean>) {
         }
     }
     privacyPolicyState.value.takeIf { it.isNullOrEmpty().not() }?.let { url ->
-        AppWebView(url, isMainProgressVisible)
+        AppWebView(url, progressVisibilityState)
     }
 }
 
 @Composable
-fun AppWebView(webUrl: String, isMainProgressVisible: MutableState<Boolean>) {
+fun AppWebView(webUrl: String, progressVisibilityState: MutableState<Boolean>) {
     AndroidView(
         modifier = Modifier
             .fillMaxSize()
@@ -48,7 +48,7 @@ fun AppWebView(webUrl: String, isMainProgressVisible: MutableState<Boolean>) {
         factory = { context ->
             WebView(context).apply {
                 initWebView(webUrl) {
-                    isMainProgressVisible.value = false
+                    progressVisibilityState.value = false
                 }
             }
         }

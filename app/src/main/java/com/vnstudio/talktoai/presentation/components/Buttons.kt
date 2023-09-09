@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnstudio.talktoai.R
@@ -105,11 +107,11 @@ fun GoogleButton(modifier: Modifier, onClick: () -> Unit) {
 }
 
 @Composable
-fun LinkButton(text: String, modifier: Modifier, onClick: () -> Unit) {
+fun LinkButton(text: String, modifier: Modifier, textAlign: TextAlign? = null,  onClick: () -> Unit) {
     TextButton(
         onClick = onClick, modifier = modifier
     ) {
-        Text(text = text, color = Color.Blue)
+        Text(text = text, maxLines = 1, overflow = TextOverflow.Ellipsis, color = Blue, textAlign = textAlign, modifier = Modifier.wrapContentSize())
     }
 }
 

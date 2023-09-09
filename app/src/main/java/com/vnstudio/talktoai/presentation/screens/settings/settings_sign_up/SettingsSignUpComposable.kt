@@ -30,7 +30,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary50
 @Composable
 fun SettingsSignUpScreen(
     infoMessageState: MutableState<InfoMessage?>,
-    isMainProgressVisible: MutableState<Boolean>,
+    progressVisibilityState: MutableState<Boolean>,
     onNextScreen: (String) -> Unit,
 ) {
 
@@ -105,10 +105,10 @@ fun SettingsSignUpScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .background(Primary50),
+            .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
+        Spacer(modifier = Modifier.height(40.dp))
         Text(
             text = stringResource(id = R.string.authorization_with_google_account),
             modifier = Modifier.fillMaxWidth(),

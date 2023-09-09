@@ -34,7 +34,7 @@ fun AppContent() {
     val scaffoldState = rememberScaffoldState()
 
     val infoMessageState = remember { mutableStateOf<InfoMessage?>(null) }
-    val isMainProgressVisible = remember { mutableStateOf(false) }
+    val progressVisibilityState = remember { mutableStateOf(false) }
 
     val currentRouteState = navController.currentBackStackEntryAsState().value?.destination?.route
     val startDestinationState = remember { mutableStateOf<String?>(null) }
@@ -180,7 +180,7 @@ fun AppContent() {
         },
         content = {
             startDestinationState.value?.let { startDestination ->
-                AppNavHost(navController, startDestination, isSettingsDrawerModeState, infoMessageState,  isMainProgressVisible)
+                AppNavHost(navController, startDestination, isSettingsDrawerModeState, infoMessageState,  progressVisibilityState)
             }
             ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 
@@ -222,6 +222,6 @@ fun AppContent() {
                 deleteChatState.value = null
             }
 
-            MainProgress(isMainProgressVisible)
+            MainProgress(progressVisibilityState)
         })
 }

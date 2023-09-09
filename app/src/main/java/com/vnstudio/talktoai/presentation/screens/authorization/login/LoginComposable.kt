@@ -2,15 +2,12 @@ package com.vnstudio.talktoai.presentation.screens.authorization.login
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -18,21 +15,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.CommonStatusCodes
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.getStatusCodeText
-import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
 import com.vnstudio.talktoai.presentation.components.*
-import com.vnstudio.talktoai.presentation.theme.Primary50
 
 @Composable
 fun LoginScreen(
     infoMessageState: MutableState<InfoMessage?>,
-    isMainProgressVisible: MutableState<Boolean>,
+    progressVisibilityState: MutableState<Boolean>,
     onNextScreen: (String) -> Unit
 ) {
 
@@ -95,10 +89,10 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .background(Primary50),
-        verticalArrangement = Arrangement.Center
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top
     ) {
+        Spacer(modifier = Modifier.height(40.dp))
         Text(
             text = stringResource(id = R.string.authorization_enter), modifier = Modifier
                 .fillMaxWidth()
@@ -119,22 +113,19 @@ fun LoginScreen(
         OrDivider(modifier = Modifier)
         PrimaryTextField(stringResource(id = R.string.authorization_email), emailInputValue)
         PasswordTextField(passwordInputValue, stringResource(id = R.string.authorization_password))
-        Row {
-            LinkButton(
-                text = stringResource(id = R.string.authorization_sign_up), modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        )  {
+            LinkButton(text = stringResource(id = R.string.authorization_sign_up), textAlign = TextAlign.Start, modifier = Modifier
+                .wrapContentSize()
+                .padding(start = 16.dp)) {
                 onNextScreen.invoke(NavigationScreen.SignUpScreen().route)
             }
-            TextButton(
-                onClick = {
-                    showForgotPasswordDialog.value = true
-                }, modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                Text(text = stringResource(id = R.string.authorization_forgot_password), color = Color.Blue, textAlign = TextAlign.End)
+            Spacer(modifier = Modifier.weight(0.5f))
+            LinkButton(text = stringResource(id = R.string.authorization_forgot_password), textAlign = TextAlign.End, modifier = Modifier
+                .wrapContentSize()
+                .padding(end = 16.dp)) {
+                showForgotPasswordDialog.value = true
             }
         }
         PrimaryButton(
@@ -182,4 +173,5 @@ fun LoginScreen(
         showUnauthorizedEnterDialog.value = false
     }
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
+    ProgressVisibilityHandler(progressVisibilityState, viewModel.progressVisibilityLiveData)
 }

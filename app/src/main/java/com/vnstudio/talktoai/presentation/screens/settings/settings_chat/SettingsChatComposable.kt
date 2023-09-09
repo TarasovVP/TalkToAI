@@ -15,7 +15,7 @@ import com.vnstudio.talktoai.presentation.components.PrimaryButton
 @Composable
 fun SettingsChatScreen(
     infoMessageState: MutableState<InfoMessage?>,
-    isMainProgressVisible: MutableState<Boolean>,
+    progressVisibilityState: MutableState<Boolean>,
     onClick: () -> Unit
 ) {
 

@@ -30,7 +30,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary700
 @Composable
 fun SettingsLanguageScreen(
     infoMessageState: MutableState<InfoMessage?>,
-    isMainProgressVisible: MutableState<Boolean>
+    progressVisibilityState: MutableState<Boolean>
 ) {
 
     val viewModel: SettingsLanguageViewModel = hiltViewModel()
