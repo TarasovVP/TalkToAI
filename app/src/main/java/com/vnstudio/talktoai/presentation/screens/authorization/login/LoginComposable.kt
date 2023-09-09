@@ -94,7 +94,7 @@ fun LoginScreen(
     ) {
         Spacer(modifier = Modifier.height(40.dp))
         Text(
-            text = stringResource(id = R.string.authorization_enter), modifier = Modifier
+            text = stringResource(id = R.string.authorization_entrance), modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp), textAlign = TextAlign.Center
         )
@@ -104,6 +104,7 @@ fun LoginScreen(
             textAlign = TextAlign.Center
         )
         GoogleButton(
+            stringResource(id = R.string.authorization_entrance),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
@@ -143,7 +144,7 @@ fun LoginScreen(
 
     DataEditDialog(
         stringResource(id = R.string.authorization_forgot_password_title),
-        stringResource(id = R.string.authorization_enter),
+        stringResource(id = R.string.authorization_email),
         emailInputValue,
         showForgotPasswordDialog,
         onDismiss = {

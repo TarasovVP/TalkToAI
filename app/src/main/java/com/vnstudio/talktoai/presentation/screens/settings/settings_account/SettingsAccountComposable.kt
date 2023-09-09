@@ -25,6 +25,7 @@ import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import com.vnstudio.talktoai.R
+import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.components.*
@@ -38,10 +39,15 @@ fun SettingsAccountScreen(
 ) {
 
     val viewModel: SettingsAccountViewModel = hiltViewModel()
+    val authState =  remember { mutableStateOf<AuthState?>(null) }
     val showLogOutDialog = remember { mutableStateOf(false) }
     val showChangePasswordDialog = remember { mutableStateOf(false) }
     val showDeleteGoogleAccountDialog = remember { mutableStateOf(false) }
     val showDeleteEmailAccountDialog = remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        authState.value = viewModel.getAuthState()
+    }
 
     val reAuthenticateState = viewModel.reAuthenticateLiveData.observeAsState()
     LaunchedEffect(reAuthenticateState.value) {
@@ -77,6 +83,7 @@ fun SettingsAccountScreen(
                     viewModel.reAuthenticate(authCredential)
                 }
             } catch (e: ApiException) {
+                viewModel.googleSignInClient.signOut()
                 viewModel.exceptionLiveData.postValue(CommonStatusCodes.getStatusCodeString(e.statusCode))
             }
         }
@@ -87,17 +94,17 @@ fun SettingsAccountScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        AccountCard(viewModel) {
+        AccountCard(authState.value, viewModel.currentUserEmail()) {
             showLogOutDialog.value = true
         }
-        if (viewModel.isAuthorisedUser() && viewModel.isGoogleAuthUser().not()) {
+        if (authState.value == AuthState.AUTHORISED_EMAIL) {
             PrimaryButton(text = stringResource(id = R.string.settings_account_change_password_title), modifier = Modifier) {
                 showChangePasswordDialog.value = true
             }
         }
-        if (viewModel.isAuthorisedUser()) {
+        if (authState.value == AuthState.AUTHORISED_EMAIL || authState.value == AuthState.AUTHORISED_GOOGLE) {
             SecondaryButton(text = stringResource(id = R.string.settings_account_delete_title), true, modifier = Modifier) {
-                if (viewModel.isGoogleAuthUser()) {
+                if (authState.value == AuthState.AUTHORISED_GOOGLE) {
                     showDeleteGoogleAccountDialog.value = true
                 } else {
                     showDeleteEmailAccountDialog.value = true
@@ -114,14 +121,15 @@ fun SettingsAccountScreen(
         }
     }
 
-    ForgotPasswordDialog(showChangePasswordDialog) { password ->
+    ChangePasswordDialog(showChangePasswordDialog) { password ->
         viewModel.changePassword(password.first, password.second)
     }
 
-    ConfirmationDialog(when {
-        viewModel.isAuthorisedUser() -> stringResource(id = R.string.settings_account_log_out)
-        else -> stringResource(id = R.string.settings_account_unauthorised_log_out)
-    }, showLogOutDialog, onDismiss = {
+    ConfirmationDialog(
+        when (authState.value) {
+            AuthState.AUTHORISED_ANONYMOUSLY -> stringResource(id = R.string.settings_account_unauthorised_log_out)
+            else -> stringResource(id = R.string.settings_account_log_out)
+        }, showLogOutDialog, onDismiss = {
         showLogOutDialog.value = false
     }) {
         viewModel.signOut()
@@ -152,10 +160,11 @@ fun SettingsAccountScreen(
     }
 
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
+    ProgressVisibilityHandler(progressVisibilityState, viewModel.progressVisibilityLiveData)
 }
 
 @Composable
-fun AccountCard(viewModel: SettingsAccountViewModel, onClick: () -> Unit) {
+fun AccountCard(authState: AuthState?, email: String, onClick: () -> Unit) {
     Card(modifier = Modifier.fillMaxWidth(), elevation = 1.dp) {
         Row(
             modifier = Modifier
@@ -164,9 +173,9 @@ fun AccountCard(viewModel: SettingsAccountViewModel, onClick: () -> Unit) {
         ) {
             ShapeableImage(
                 modifier = Modifier.size(50.dp),
-                drawableResId = when {
-                    viewModel.isGoogleAuthUser() -> R.drawable.ic_avatar_google
-                    viewModel.isAuthorisedUser() -> R.drawable.ic_avatar_email
+                drawableResId = when (authState) {
+                    AuthState.AUTHORISED_GOOGLE -> R.drawable.ic_avatar_google
+                    AuthState.AUTHORISED_EMAIL -> R.drawable.ic_avatar_email
                     else -> R.drawable.ic_avatar_anonymous
                 },
                 contentDescription = "Account avatar"
@@ -176,12 +185,12 @@ fun AccountCard(viewModel: SettingsAccountViewModel, onClick: () -> Unit) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = if (viewModel.isAuthorisedUser()) viewModel.currentUserEmail() else stringResource(id = R.string.settings_account_unauthorised), modifier = Modifier
+                    text = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) email else stringResource(id = R.string.settings_account_unauthorised), modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 8.dp, top = 8.dp)
                 )
                 LinkButton(
-                    text = stringResource(id = if (viewModel.isAuthorisedUser()) R.string.settings_account_log_out_title else R.string.settings_account_unauthorised_log_out_title), modifier = Modifier
+                    text = stringResource(id = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) R.string.settings_account_log_out_title else R.string.settings_account_unauthorised_log_out_title), modifier = Modifier
                         .wrapContentSize(), onClick = onClick
                 )
             }
@@ -190,7 +199,7 @@ fun AccountCard(viewModel: SettingsAccountViewModel, onClick: () -> Unit) {
 }
 
 @Composable
-fun ForgotPasswordDialog(
+fun ChangePasswordDialog(
     showDialog: MutableState<Boolean>,
     onConfirmationClick: (Pair<String, String>) -> Unit,
 ) {

@@ -23,9 +23,11 @@ import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
+import com.vnstudio.talktoai.infrastructure.Constants
+import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
+import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.theme.Primary300
-import com.vnstudio.talktoai.presentation.theme.Primary50
 
 @Composable
 fun SettingsSignUpScreen(
@@ -43,6 +45,7 @@ fun SettingsSignUpScreen(
     val accountExistState = viewModel.accountExistLiveData.observeAsState()
     LaunchedEffect(accountExistState.value) {
         accountExistState.value?.let {
+            viewModel.googleSignInClient.signOut()
             showAccountExistDialog.value = true
         }
     }
@@ -87,7 +90,7 @@ fun SettingsSignUpScreen(
     val successRemoteUserState = viewModel.successRemoteUserLiveData.observeAsState()
     LaunchedEffect(successRemoteUserState.value) {
         successRemoteUserState.value?.let {
-            onNextScreen.invoke(NavigationScreen.ChatScreen().route)
+            onNextScreen.invoke("${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}")
         }
     }
 
@@ -98,6 +101,7 @@ fun SettingsSignUpScreen(
                 val account = task.getResult(ApiException::class.java)
                 account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
             } catch (e: ApiException) {
+                viewModel.googleSignInClient.signOut()
                 viewModel.exceptionLiveData.postValue(CommonStatusCodes.getStatusCodeString(e.statusCode))
             }
         }
@@ -115,6 +119,7 @@ fun SettingsSignUpScreen(
             textAlign = TextAlign.Center
         )
         GoogleButton(
+            stringResource(id = R.string.authorization_signing_up),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
@@ -134,7 +139,7 @@ fun SettingsSignUpScreen(
         TransferDataCard(transferDataState)
     }
     ConfirmationDialog(
-        stringResource(id = R.string.authorization_account_exist),
+        stringResource(id = R.string.settings_account_exist),
         showAccountExistDialog,
         onDismiss = {
             viewModel.googleSignInClient.signOut()
@@ -149,6 +154,7 @@ fun SettingsSignUpScreen(
         showAccountExistDialog.value = false
     }
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
+    ProgressVisibilityHandler(progressVisibilityState, viewModel.progressVisibilityLiveData)
 }
 
 @Composable
