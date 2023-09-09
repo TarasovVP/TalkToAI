@@ -22,6 +22,10 @@ import com.google.android.gms.common.api.CommonStatusCodes
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
+import com.vnstudio.talktoai.getStatusCodeText
+import com.vnstudio.talktoai.infrastructure.Constants
+import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
+import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.theme.Primary50
 
@@ -42,7 +46,9 @@ fun LoginScreen(
     val accountExistState = viewModel.accountExistLiveData.observeAsState()
     LaunchedEffect(accountExistState.value) {
         accountExistState.value?.let {
+            viewModel.googleSignInClient.signOut()
             showAccountExistDialog.value = true
+            viewModel.accountExistLiveData.value = null
         }
     }
     val isEmailAccountExistState = viewModel.isEmailAccountExistLiveData.observeAsState()
@@ -70,7 +76,7 @@ fun LoginScreen(
     val successSignInState = viewModel.successSignInLiveData.observeAsState()
     LaunchedEffect(successSignInState.value) {
         successSignInState.value?.let {
-            onNextScreen.invoke(NavigationScreen.ChatScreen().route)
+            onNextScreen.invoke("${DESTINATION_CHAT_SCREEN}/$DEFAULT_CHAT_ID")
         }
     }
 
@@ -81,7 +87,8 @@ fun LoginScreen(
                 val account = task.getResult(ApiException::class.java)
                 account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
             } catch (e: ApiException) {
-                viewModel.exceptionLiveData.postValue(CommonStatusCodes.getStatusCodeString(e.statusCode))
+                viewModel.googleSignInClient.signOut()
+                viewModel.exceptionLiveData.postValue(e.getStatusCodeText())
             }
         }
 
@@ -161,7 +168,6 @@ fun LoginScreen(
         onDismiss = {
             showAccountExistDialog.value = false
         }) {
-        viewModel.googleSignInClient.signOut()
         showAccountExistDialog.value = false
         onNextScreen.invoke(NavigationScreen.SignUpScreen().route)
     }

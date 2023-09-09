@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai.presentation.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.Image
@@ -342,6 +343,9 @@ fun AppNavHost(
         ) { backStackEntry ->
             val currentChatId = backStackEntry.arguments?.getLong(CURRENT_CHAT_ID) ?: DEFAULT_CHAT_ID
             ChatScreen(currentChatId, infoMessageState, progressVisibilityState)
+            BackHandler(true) {
+
+            }
         }
         composable(
             route = NavigationScreen.SettingsChatScreen().route

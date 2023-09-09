@@ -21,6 +21,9 @@ import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
+import com.vnstudio.talktoai.infrastructure.Constants
+import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
+import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.theme.Primary50
 
@@ -66,7 +69,7 @@ fun SignUpScreen(
     val successSignInState = viewModel.createCurrentUserLiveData.observeAsState()
     LaunchedEffect(successSignInState.value) {
         successSignInState.value?.let {
-            onNextScreen.invoke(NavigationScreen.ChatScreen().route)
+            onNextScreen.invoke("${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}")
         }
     }
 
