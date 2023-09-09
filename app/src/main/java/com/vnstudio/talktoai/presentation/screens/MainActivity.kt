@@ -37,9 +37,7 @@ class MainActivity : AppCompatActivity() {
                 setContent {
                     ProvideWindowInsets(consumeWindowInsets = false) {
                         TalkToAITheme {
-                            Box(modifier = Modifier.background(Primary50)) {
-                                AppContent()
-                            }
+                            AppContent()
                         }
                     }
                 }

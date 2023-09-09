@@ -3,6 +3,7 @@ package com.vnstudio.talktoai.presentation.theme
 import androidx.compose.ui.graphics.Color
 
 val White = Color(0xFFFFFFFF)
+val Blue = Color(0xFFF1469B8)
 
 val Primary50 = Color(0xFFF0FDFA)
 val Primary100 = Color(0xFFCCFBF1)

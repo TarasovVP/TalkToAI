@@ -21,7 +21,6 @@ import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
-import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
 import com.vnstudio.talktoai.presentation.components.*
@@ -30,7 +29,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary50
 @Composable
 fun SignUpScreen(
     infoMessageState: MutableState<InfoMessage?>,
-    isMainProgressVisible: MutableState<Boolean>,
+    progressVisibilityState: MutableState<Boolean>,
     onNextScreen: (String) -> Unit
 ) {
 
@@ -87,10 +86,10 @@ fun SignUpScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .background(Primary50),
+            .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
+        Spacer(modifier = Modifier.height(40.dp))
         Text(
             text = stringResource(id = R.string.authorization_sign_up), modifier = Modifier
                 .fillMaxWidth()
@@ -113,11 +112,8 @@ fun SignUpScreen(
             stringResource(id = R.string.authorization_enter), emailInputValue)
         PasswordTextField(passwordInputValue, stringResource(id = R.string.authorization_password))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = stringResource(id = R.string.authorization_entrance_title))
-            LinkButton(
-                text = stringResource(id = R.string.authorization_enter), modifier = Modifier
-                    .wrapContentSize()
-            ) {
+            Text(text = stringResource(id = R.string.authorization_entrance_title), modifier = Modifier.padding(start = 16.dp))
+            LinkButton(text = stringResource(id = R.string.authorization_enter), modifier = Modifier.wrapContentSize()) {
                 onNextScreen.invoke(NavigationScreen.LoginScreen().route)
             }
         }
@@ -130,4 +126,5 @@ fun SignUpScreen(
         }
     }
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
+    ProgressVisibilityHandler(progressVisibilityState, viewModel.progressVisibilityLiveData)
 }

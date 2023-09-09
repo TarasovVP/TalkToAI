@@ -27,7 +27,7 @@ import java.util.*
 @Composable
 fun SettingsFeedbackScreen(
     infoMessageState: MutableState<InfoMessage?>,
-    isMainProgressVisible: MutableState<Boolean>
+    progressVisibilityState: MutableState<Boolean>
 ) {
 
     val viewModel: SettingsFeedbackViewModel = hiltViewModel()
