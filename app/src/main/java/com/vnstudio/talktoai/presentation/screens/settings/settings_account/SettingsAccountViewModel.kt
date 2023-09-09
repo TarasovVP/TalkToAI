@@ -8,6 +8,7 @@ import com.google.firebase.auth.AuthCredential
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.AppDatabase
+import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsAccountUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
@@ -25,12 +26,12 @@ class SettingsAccountViewModel @Inject constructor(
     val successLiveData = MutableLiveData<Unit>()
     val successChangePasswordLiveData = MutableLiveData<Unit>()
 
-    fun isAuthorisedUser(): Boolean {
-        return settingsAccountUseCase.isAuthorisedUser()
-    }
-
-    fun isGoogleAuthUser(): Boolean {
-        return settingsAccountUseCase.isGoogleAuthUser()
+    fun getAuthState(): AuthState {
+        return when {
+            settingsAccountUseCase.isGoogleAuthUser() -> AuthState.AUTHORISED_GOOGLE
+            settingsAccountUseCase.isAuthorisedUser() -> AuthState.AUTHORISED_EMAIL
+            else -> AuthState.AUTHORISED_ANONYMOUSLY
+        }
     }
 
     fun currentUserEmail(): String {

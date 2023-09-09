@@ -153,14 +153,14 @@ fun MainProgress(progressVisibilityState: MutableState<Boolean>) {
         "Common MainProgress progressVisibilityState ${progressVisibilityState.value}"
     )
     if (progressVisibilityState.value) {
-        Box(modifier = Modifier.fillMaxSize(), Alignment.Center) {
+        /*Box(modifier = Modifier.fillMaxSize(), Alignment.Center) {
             CircularProgressIndicator(
                 modifier = Modifier.size(100.dp),
                 color = Primary700,
                 strokeWidth = 5.dp
             )
-        }
-        /*val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.main_progress))
+        }*/
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.main_progress))
         Box(contentAlignment = Alignment.Center, modifier = Modifier
             .fillMaxSize()) {
             LottieAnimation(
@@ -169,6 +169,6 @@ fun MainProgress(progressVisibilityState: MutableState<Boolean>) {
                 modifier = Modifier
                     .fillMaxSize(0.6f)
             )
-        }*/
+        }
     }
 }

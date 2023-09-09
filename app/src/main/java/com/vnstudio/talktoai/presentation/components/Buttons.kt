@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -20,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.presentation.theme.*
-
 
 @Composable
 fun PrimaryButton(
@@ -76,15 +76,15 @@ fun SubmitButtons(
             .padding(8.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        SecondaryButton(text = "Cancel", false, Modifier.weight(1f), onClick = onDismiss)
-        PrimaryButton(text = "OK", isEnabled, Modifier.weight(1f)) {
+        SecondaryButton(text = stringResource(id = R.string.button_cancel), false, Modifier.weight(1f), onClick = onDismiss)
+        PrimaryButton(text = stringResource(id = R.string.button_ok), isEnabled, Modifier.weight(1f)) {
             onConfirmationClick.invoke()
         }
     }
 }
 
 @Composable
-fun GoogleButton(modifier: Modifier, onClick: () -> Unit) {
+fun GoogleButton(title: String, modifier: Modifier, onClick: () -> Unit) {
     Row(modifier = modifier
         .wrapContentSize()
         .border(1.dp, color = Primary300, shape = RoundedCornerShape(16.dp))
@@ -99,7 +99,7 @@ fun GoogleButton(modifier: Modifier, onClick: () -> Unit) {
                 .padding(top = 8.dp, start = 16.dp, bottom = 8.dp)
         )
         Text(
-            text = "Войти",
+            text = title,
             fontSize = 16.sp,
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
         )

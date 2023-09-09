@@ -2,7 +2,6 @@ package com.vnstudio.talktoai.presentation.screens.authorization.signup
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -24,7 +23,6 @@ import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
 import com.vnstudio.talktoai.presentation.components.*
-import com.vnstudio.talktoai.presentation.theme.Primary50
 
 @Composable
 fun SignUpScreen(
@@ -41,6 +39,7 @@ fun SignUpScreen(
     val accountExistState = viewModel.accountExistLiveData.observeAsState()
     LaunchedEffect(accountExistState.value) {
         accountExistState.value?.let {
+            viewModel.googleSignInClient.signOut()
             showAccountExistDialog.value = true
         }
     }
@@ -79,6 +78,7 @@ fun SignUpScreen(
                 val account = task.getResult(ApiException::class.java)
                 account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
             } catch (e: ApiException) {
+                viewModel.googleSignInClient.signOut()
                 viewModel.exceptionLiveData.postValue(CommonStatusCodes.getStatusCodeString(e.statusCode))
             }
         }
@@ -101,6 +101,7 @@ fun SignUpScreen(
             textAlign = TextAlign.Center
         )
         GoogleButton(
+            stringResource(id = R.string.authorization_signing_up),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
@@ -109,11 +110,11 @@ fun SignUpScreen(
         }
         OrDivider(modifier = Modifier)
         PrimaryTextField(
-            stringResource(id = R.string.authorization_enter), emailInputValue)
+            stringResource(id = R.string.authorization_email), emailInputValue)
         PasswordTextField(passwordInputValue, stringResource(id = R.string.authorization_password))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(id = R.string.authorization_entrance_title), modifier = Modifier.padding(start = 16.dp))
-            LinkButton(text = stringResource(id = R.string.authorization_enter), modifier = Modifier.wrapContentSize()) {
+            LinkButton(text = stringResource(id = R.string.authorization_entrance), modifier = Modifier.wrapContentSize()) {
                 onNextScreen.invoke(NavigationScreen.LoginScreen().route)
             }
         }

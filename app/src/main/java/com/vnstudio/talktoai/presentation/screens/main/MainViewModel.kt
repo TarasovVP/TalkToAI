@@ -2,7 +2,6 @@ package com.vnstudio.talktoai.presentation.screens.main
 
 import android.app.Application
 import android.util.Log
-import androidx.compose.runtime.State
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -53,7 +52,7 @@ class MainViewModel @Inject constructor(
             val user = firebaseAuth.currentUser
             val authState = when {
                 user?.isAnonymous.isTrue() -> AuthState.AUTHORISED_ANONYMOUSLY
-                user.isNotNull() -> AuthState.AUTHORISED
+                user.isNotNull() -> AuthState.AUTHORISED_EMAIL
                 else -> {
                     chatsFlowSubscription?.cancel()
                     AuthState.UNAUTHORISED

@@ -12,7 +12,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
-import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.domain.enums.AuthState
@@ -72,7 +71,7 @@ fun AppContent() {
             when(authStateValue) {
                 AuthState.UNAUTHORISED -> viewModel.removeRemoteUserListeners()
                 AuthState.AUTHORISED_ANONYMOUSLY -> viewModel.getChats()
-                AuthState.AUTHORISED -> {
+                else -> {
                     viewModel.getChats()
                     viewModel.addRemoteChatListener()
                     viewModel.addRemoteMessageListener()
