@@ -9,6 +9,7 @@ import com.vnstudio.talktoai.domain.repositories.MessageRepository
 import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnstudio.talktoai.domain.usecases.ChatUseCase
 import com.vnstudio.talktoai.domain.sealed_classes.Result
+import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -21,7 +22,12 @@ class ChatUseCaseImpl @Inject constructor(
 
     override suspend fun insertChat(chat: Chat) = chatRepository.insertChat(chat)
 
-    override suspend fun geturrentChat(chatId: Long): Flow<Chat?> = chatRepository.getChatById(chatId)
+    override suspend fun getCurrentChat(chatId: Long): Flow<Chat?> {
+        return when (chatId) {
+            DEFAULT_CHAT_ID -> chatRepository.getLastUpdatedChat()
+            else -> chatRepository.getChatById(chatId)
+        }
+    }
 
     override fun isAuthorisedUser() = authRepository.isAuthorisedUser()
 

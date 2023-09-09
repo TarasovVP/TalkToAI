@@ -35,6 +35,7 @@ import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.flagDrawable
 import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.infrastructure.Constants.CURRENT_CHAT_ID
+import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.presentation.screens.chat.ChatScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.login.LoginScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.onboarding.OnboardingScreen
@@ -106,6 +107,7 @@ fun SecondaryTopBar(title: String, onNavigationIconClick: () -> Unit) {
 fun AppDrawer(
     isSettingsDrawerMode: MutableState<Boolean?>,
     currentRouteState: String?,
+    currentChatId: Long?,
     chats: State<List<Chat>?>,
     onCreateChatClick: () -> Unit,
     onChatClick: (Chat) -> Unit,
@@ -160,7 +162,7 @@ fun AppDrawer(
                         DrawerItem(
                             name = chat.name,
                             mainIcon = R.drawable.ic_chat,
-                            isCurrent = chat.isCurrent,
+                            isCurrent = chat.id == currentChatId,
                             secondaryIcon = R.drawable.ic_delete,
                             isIconClick = true,
                             onIconClick = {
@@ -335,9 +337,10 @@ fun AppNavHost(
             route = NavigationScreen.ChatScreen().route,
             arguments = listOf(navArgument(CURRENT_CHAT_ID) {
                 type = NavType.LongType
+                defaultValue = DEFAULT_CHAT_ID
             })
         ) { backStackEntry ->
-            val currentChatId = backStackEntry.arguments?.getLong(CURRENT_CHAT_ID)
+            val currentChatId = backStackEntry.arguments?.getLong(CURRENT_CHAT_ID) ?: DEFAULT_CHAT_ID
             ChatScreen(currentChatId, infoMessageState, progressVisibilityState)
         }
         composable(

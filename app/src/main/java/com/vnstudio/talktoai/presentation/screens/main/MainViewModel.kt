@@ -119,7 +119,6 @@ class MainViewModel @Inject constructor(
     fun getChats() {
         showProgress()
         chatsFlowSubscription?.cancel()
-
         chatsFlowSubscription = launch {
             mainUseCase.getChats().catch {
                 hideProgress()

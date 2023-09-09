@@ -52,14 +52,15 @@ class ChatViewModel @Inject constructor(
     fun getCurrentChat(chatId: Long) {
         showProgress()
         launch {
-            chatUseCase.geturrentChat(chatId).catch {
+            chatUseCase.getCurrentChat(chatId).catch {
                 hideProgress()
             }.collect { chat ->
-                chat.takeIf { it.isNull() }?.let {
+                if (chat.isNull()) {
                     currentChatLiveData.postValue(Chat())
-                    hideProgress()
-                } ?: currentChatLiveData.postValue(chat)
-
+                } else {
+                    currentChatLiveData.postValue(chat)
+                }
+                hideProgress()
             }
         }
     }
