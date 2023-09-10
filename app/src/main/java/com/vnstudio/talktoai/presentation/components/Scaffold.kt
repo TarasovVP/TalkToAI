@@ -7,8 +7,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -21,6 +19,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -37,6 +36,7 @@ import com.vnstudio.talktoai.flagDrawable
 import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.infrastructure.Constants.CURRENT_CHAT_ID
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
+import com.vnstudio.talktoai.presentation.components.draggable.DragDropColumn
 import com.vnstudio.talktoai.presentation.screens.chat.ChatScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.login.LoginScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.onboarding.OnboardingScreen
@@ -113,6 +113,7 @@ fun AppDrawer(
     onCreateChatClick: () -> Unit,
     onChatClick: (Chat) -> Unit,
     onDeleteChatClick: (Chat) -> Unit,
+    onSwap: (Int, Int) -> Unit,
     onNextScreen: (String) -> Unit,
 ) {
     Column(
@@ -154,23 +155,24 @@ fun AppDrawer(
                         .padding(top = 16.dp)
                 )
             } else {
-                LazyColumn(
+                DragDropColumn(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = 16.dp, vertical = 24.dp)
-                ) {
-                    items(chats.value.orEmpty()) { chat ->
-                        DrawerItem(
-                            name = chat.name,
-                            mainIcon = R.drawable.ic_chat,
-                            isCurrent = chat.id == currentChatId,
-                            secondaryIcon = R.drawable.ic_delete,
-                            isIconClick = true,
-                            onIconClick = {
-                                onDeleteChatClick.invoke(chat)
-                            },
-                            onItemClick = { onChatClick.invoke(chat) })
-                    }
+                        .padding(horizontal = 16.dp, vertical = 24.dp),
+                    items = chats.value.orEmpty(),
+                    onSwap = onSwap
+                ) {chat, elevation ->
+                    DrawerItem(
+                        name = chat.name,
+                        mainIcon = R.drawable.ic_chat,
+                        isCurrent = chat.id == currentChatId,
+                        secondaryIcon = R.drawable.ic_delete,
+                        elevation = elevation,
+                        isIconClick = true,
+                        onIconClick = {
+                            onDeleteChatClick.invoke(chat)
+                        },
+                        onItemClick = { onChatClick.invoke(chat) })
                 }
             }
             TextIconButton(
@@ -181,7 +183,6 @@ fun AppDrawer(
             )
         }
     }
-
 }
 
 @Composable
@@ -227,6 +228,7 @@ fun DrawerItem(
     mainIcon: Int,
     isCurrent: Boolean,
     secondaryIcon: Int? = null,
+    elevation: Dp? = null,
     isIconClick: Boolean? = false,
     onIconClick: () -> Unit = {},
     onItemClick: () -> Unit,
@@ -245,7 +247,7 @@ fun DrawerItem(
                 }
             },
         backgroundColor = if (isCurrent) Primary800 else Primary900,
-        elevation = 1.dp
+        elevation = elevation ?: 0.dp
     ) {
         Row(
             modifier = Modifier

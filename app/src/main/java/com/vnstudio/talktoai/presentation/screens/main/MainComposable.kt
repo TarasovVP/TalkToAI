@@ -11,7 +11,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
@@ -163,6 +162,16 @@ fun AppContent() {
                     showDeleteChatDialog.value = true
                     deleteChatState.value = chat
                 },
+                onSwap = { firstIndex, secondIndex ->
+                    Log.e("swapTAG", "MainComposable onSwap firstIndex $firstIndex secondIndex $secondIndex")
+                    val fromItem = viewModel.chatsLiveData.value?.get(firstIndex)
+                    val toItem = viewModel.chatsLiveData.value?.get(secondIndex)
+                    val newList = viewModel.chatsLiveData.value.orEmpty().toMutableList()
+                    toItem?.let { newList[firstIndex] = it }
+                    fromItem?.let { newList[secondIndex] = it }
+                    viewModel.chatsLiveData.value = null
+                    viewModel.chatsLiveData.value = newList
+                }
             ) { route ->
                 navController.navigate(route)
                 scope.launch {
