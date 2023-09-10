@@ -7,6 +7,7 @@ import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
+import com.vnstudio.talktoai.domain.enums.MessageStatus
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.ChatUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
@@ -21,7 +22,7 @@ class ChatViewModel @Inject constructor(
     private val chatUseCase: ChatUseCase,
 ) : BaseViewModel(application) {
 
-    val currentChatLiveData = MutableLiveData<Chat>()
+    val currentChatLiveData = MutableLiveData<Chat?>()
     val messagesLiveData = MutableLiveData<List<Message>>()
 
     private var messagesFlowSubscription: Job? = null
@@ -88,7 +89,7 @@ class ChatViewModel @Inject constructor(
                     "messagesTAG",
                     "ChatViewModel getMessagesFromChat after messagesLiveData ${messagesLiveData.value?.map { it.message }}"
                 )
-                messagesLiveData.postValue(result)
+               messagesLiveData.postValue(result)
                hideProgress()
             }
         }
@@ -114,12 +115,19 @@ class ChatViewModel @Inject constructor(
                             author = apiResponse.model.orEmpty()
                             message = apiResponse.choices?.firstOrNull()?.message?.content.orEmpty()
                             updatedAt = apiResponse.created?.toLongOrNull() ?: 0
+                            status = MessageStatus.SUCCESS
                         })
                     }
-                    is Result.Failure -> Log.e(
-                        "apiTAG",
-                        "ChatViewModel sendRequest Result.Failure localizedMessage ${result.errorMessage}  isProgressProcessLiveData ${progressVisibilityLiveData.value}"
-                    )
+                    is Result.Failure -> {
+                        insertMessage(temporaryMessage.apply {
+                            status = MessageStatus.ERROR
+                            errorMessage = result.errorMessage.orEmpty()
+                        })
+                        Log.e(
+                            "apiTAG",
+                            "ChatViewModel sendRequest Result.Failure localizedMessage ${result.errorMessage}  isProgressProcessLiveData ${progressVisibilityLiveData.value}"
+                        )
+                    }
                 }
                 hideProgress()
             }
