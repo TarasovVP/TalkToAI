@@ -12,11 +12,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
+import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
+import com.vnstudio.talktoai.dateToMilliseconds
 import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
+import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen.Companion.isSettingsScreen
@@ -82,9 +85,12 @@ fun AppContent() {
 
     LaunchedEffect(chatsState.value) {
         chatsState.value?.let { chatsState ->
-            if (chatsState.contains(currentChatState.value).not() && currentChatState.value.isNotNull()) {
-                currentChatState.value = chatsState.firstOrNull()
-                navController.navigate("$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id}")
+            when {
+                currentChatState.value.isNull() -> currentChatState.value = chatsState.firstOrNull()
+                chatsState.contains(currentChatState.value).not() -> {
+                    currentChatState.value = chatsState.firstOrNull()
+                    navController.navigate("$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id ?: DEFAULT_CHAT_ID}")
+                }
             }
         }
     }
@@ -191,7 +197,7 @@ fun AppContent() {
                 onDismiss = {
                     showCreateChatDialog.value = false
                 }) { newChatName ->
-                viewModel.insertChat(Chat(id = Date().time, name = newChatName, updated = Date().time))
+                viewModel.insertChat(Chat(id = Date().dateToMilliseconds(), name = newChatName, updated = Date().dateToMilliseconds()))
                 showCreateChatDialog.value = false
                 currentChatState.value = null
                 scope.launch {

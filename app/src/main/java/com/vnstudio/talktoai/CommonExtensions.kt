@@ -11,6 +11,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.LocaleList
+import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.LifecycleOwner
@@ -26,6 +27,7 @@ import com.vnstudio.talktoai.infrastructure.Constants.ENCODING
 import com.vnstudio.talktoai.infrastructure.Constants.MIME_TYPE
 import com.vnstudio.talktoai.infrastructure.Constants.WHITE_MODE_TEXT
 import retrofit2.Response
+import java.text.SimpleDateFormat
 import java.util.*
 
 object CommonExtensions {
@@ -141,7 +143,16 @@ fun LocaleList.flagDrawable(): Int {
 }
 
 fun Date.isDefineSecondsLater(seconds: Int, updated: Long): Boolean {
-    return time < (updated * 10000) + (seconds * 1000)
+    Log.e("dateTAG", "CommonExtensions isDefineSecondsLater time + (seconds * 1000) ${(time + (seconds * 1000)).millsSecondsToDateTime()} (updated * 1000) ${(updated * 1000).millsSecondsToDateTime()}")
+    return time + (seconds * 1000) < (updated * 1000)
+}
+
+fun Long.millsSecondsToDateTime(): String {
+    return SimpleDateFormat("dd-MM-yyyy, HH:mm:ss", Locale.getDefault()).format(Date(this))
+}
+
+fun Date.dateToMilliseconds(): Long {
+    return time / 1000
 }
 
 fun ApiException.getStatusCodeText(): String {

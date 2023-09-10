@@ -32,14 +32,15 @@ import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
+import com.vnstudio.talktoai.dateToMilliseconds
 import com.vnstudio.talktoai.domain.ApiRequest
+import com.vnstudio.talktoai.domain.enums.MessageStatus
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.MessageApi
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.isDefineSecondsLater
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.theme.*
-import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
@@ -69,6 +70,7 @@ fun ChatScreen(
                     .padding(horizontal = 16.dp)
                 )
             }
+            Log.e("apiTAG", "ChatScreen Column currentChatState.value ${currentChatState.value}")
             currentChatState.value?.let { chat ->
                 if (chat.id != DEFAULT_CHAT_ID) {
                     viewModel.getMessagesFromChat(chat.id)
@@ -79,25 +81,26 @@ fun ChatScreen(
                 }
             }
         }
-        ChatTextField(currentChatState.value?.id != DEFAULT_CHAT_ID, Modifier, inputValue = mutableStateOf( TextFieldValue())) { messageText ->
+        ChatTextField((currentChatState.value?.id ?: DEFAULT_CHAT_ID) != DEFAULT_CHAT_ID, Modifier, inputValue = mutableStateOf( TextFieldValue())) { messageText ->
             if (messageText.isEmpty()) {
                 Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
             } else {
                 viewModel.insertMessage(
                     Message(
-                        id = Date().time / 1000,
+                        id = Date().dateToMilliseconds(),
                         chatId = currentChatState.value?.id ?: 0,
                         author = "me",
                         message = messageText,
-                        updatedAt = Date().time / 1000
+                        updatedAt = Date().dateToMilliseconds()
                     )
                 )
                 val temporaryMessage = Message(
-                    id = Date().time / 1000 + 1,
+                    id = Date().dateToMilliseconds() + 1,
                     chatId = currentChatState.value?.id ?: 0,
                     author = "gpt-3.5-turbo",
                     message = String.EMPTY,
-                    updatedAt = Date().time / 1000 + 1
+                    updatedAt = Date().dateToMilliseconds() + 1,
+                    status = MessageStatus.REQUESTING
                 )
                 viewModel.insertMessage(temporaryMessage)
                 viewModel.sendRequest(
@@ -121,7 +124,7 @@ fun ChatScreen(
         onDismiss = {
             showCreateChatDialog.value = false
         }) { newChatName ->
-        viewModel.insertChat(Chat(id = Date().time, name = newChatName, updated = Date().time))
+        viewModel.insertChat(Chat(id = Date().dateToMilliseconds(), name = newChatName, updated = Date().dateToMilliseconds()))
         showCreateChatDialog.value = false
     }
 
@@ -266,25 +269,16 @@ fun AIMessage(message: Message, onLongClick: () -> Unit) {
                     )
                 )
         ) {
-            if (message.message.isEmpty()) {
-                val format = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-                Log.e(
-                    "timeTAG",
-                    "ChatComposable AIMessage message.message ${message.message} message.updatedAt ${format.format(Date(message.updatedAt * 1000))} Date().time ${format.format((Date().time) + 20000)}"
-                )
-            }
-
-
             when {
-                message.message.isEmpty() && Date().isDefineSecondsLater(20, message.updatedAt) -> Text(
-                    text = "Error",
+                message.status == MessageStatus.ERROR && Date().isDefineSecondsLater(20, message.updatedAt) -> Text(
+                    text = message.errorMessage,
                     fontSize = 16.sp,
                     color = Color.Red,
                     modifier = Modifier
                         .padding(16.dp)
                         .wrapContentSize()
                 )
-                message.message.isEmpty() -> MessageTypingAnimation()
+                message.status == MessageStatus.REQUESTING -> MessageTypingAnimation()
                 else -> Text(
                     text = message.message,
                     fontSize = 16.sp,
