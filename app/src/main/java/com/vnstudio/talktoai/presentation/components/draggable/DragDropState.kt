@@ -32,9 +32,8 @@ class DragDropState internal constructor(
     internal var previousItemOffset = Animatable(0f)
         private set
 
-    // used to obtain initial offsets on drag start
-    private var initiallyDraggedElement by mutableStateOf<LazyListItemInfo?>(null)
 
+    private var initiallyDraggedElement by mutableStateOf<LazyListItemInfo?>(null)
     var currentIndexOfDraggedItem by mutableStateOf<Int?>(null)
 
     private val initialOffsets: Pair<Int, Int>?
@@ -59,9 +58,7 @@ class DragDropState internal constructor(
     fun onDragInterrupted() {
         if (currentIndexOfDraggedItem != null) {
             previousIndexOfDraggedItem = currentIndexOfDraggedItem
-            // val startOffset = draggingItemOffset
             scope.launch {
-                //previousItemOffset.snapTo(startOffset)
                 previousItemOffset.animateTo(
                     0f,
                     tween(easing = FastOutLinearInEasing)

@@ -61,6 +61,21 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             }
     }
 
+    override fun updateRemoteChats(chats: List<Chat>, result: (Result<Unit>) -> Unit) {
+        val updatesMap = hashMapOf<String, Any>()
+        chats.forEach { chat ->
+            updatesMap["$CHATS/${chat.id}"] = chat
+        }
+        firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
+            .updateChildren(updatesMap)
+            .addOnSuccessListener {
+                result.invoke(Result.Success())
+            }.addOnFailureListener { exception ->
+                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl updateRemoteUser exception ${exception.localizedMessage}")
+                result.invoke(Result.Failure(exception.localizedMessage))
+            }
+    }
+
     override fun deleteRemoteUser(result: (Result<Unit>) -> Unit) {
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .removeValue()

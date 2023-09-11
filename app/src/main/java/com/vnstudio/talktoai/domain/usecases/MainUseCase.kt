@@ -37,6 +37,8 @@ interface MainUseCase {
 
     suspend fun updateChats(chats: List<Chat>)
 
+    fun updateRemoteChats(chats: List<Chat>, result: (Result<Unit>) -> Unit)
+
     suspend fun insertChat(chat: Chat)
 
     fun insertRemoteChat(chat: Chat, result: (Result<Unit>) -> Unit)

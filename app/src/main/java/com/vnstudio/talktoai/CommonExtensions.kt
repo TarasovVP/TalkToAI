@@ -67,17 +67,6 @@ object CommonExtensions {
         }
     }
 
-    private fun <T> LiveData<T>.safeObserve(owner: LifecycleOwner, observer: (t: T) -> Unit) {
-        this.observe(owner) {
-            it?.let(observer)
-        }
-    }
-
-    fun <T> MutableLiveData<T>.safeSingleObserve(owner: LifecycleOwner, observer: (t: T) -> Unit) {
-        safeObserve(owner, observer)
-        value = null
-    }
-
     val String.Companion.EMPTY: String
         get() = ""
 

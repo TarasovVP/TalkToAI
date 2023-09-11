@@ -55,6 +55,8 @@ class MainUseCaseImpl @Inject constructor(
 
     override suspend fun updateChats(chats: List<Chat>) = chatRepository.updateChats(chats)
 
+    override fun updateRemoteChats(chats: List<Chat>, result: (Result<Unit>) -> Unit) = realDataBaseRepository.updateRemoteChats(chats, result)
+
     override suspend fun insertChat(chat: Chat) = chatRepository.insertChat(chat)
 
     override fun insertRemoteChat(chat: Chat, result: (Result<Unit>) -> Unit) = realDataBaseRepository.insertChat(chat, result)

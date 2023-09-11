@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai.data.repositoryimpl
 
+import android.util.Log
 import com.vnstudio.talktoai.data.database.dao.ChatDao
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.domain.repositories.ChatRepository
