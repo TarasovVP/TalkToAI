@@ -15,6 +15,8 @@ interface RealDataBaseRepository {
 
     fun deleteRemoteUser(result: (Result<Unit>) -> Unit)
 
+    fun updateRemoteChats(chats: List<Chat>, result: (Result<Unit>) -> Unit)
+
     fun addRemoteChatListener(remoteChatListener: ValueEventListener)
 
     fun addRemoteMessageListener(remoteMessageListener: ValueEventListener)

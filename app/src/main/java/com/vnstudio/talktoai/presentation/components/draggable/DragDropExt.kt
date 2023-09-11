@@ -9,12 +9,11 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalViewConfiguration
+import androidx.compose.ui.platform.ViewConfiguration
 import androidx.compose.ui.zIndex
 
 @Composable
@@ -74,5 +73,31 @@ fun LazyItemScope.DraggableItem(
     }
     Column(modifier = modifier.then(draggingModifier)) {
         content(dragging)
+    }
+}
+
+@Composable
+fun UpdateViewConfiguration(
+    longPressTimeoutMillis: Long? = null,
+    content: @Composable () -> Unit
+) {
+    fun ViewConfiguration.updateViewConfiguration() = object : ViewConfiguration {
+        override val longPressTimeoutMillis
+            get() = longPressTimeoutMillis ?: this@updateViewConfiguration.longPressTimeoutMillis
+
+        override val doubleTapTimeoutMillis
+            get() = this@updateViewConfiguration.doubleTapTimeoutMillis
+
+        override val doubleTapMinTimeMillis
+            get() = this@updateViewConfiguration.doubleTapMinTimeMillis
+
+        override val touchSlop: Float
+            get() = this@updateViewConfiguration.touchSlop
+    }
+
+    CompositionLocalProvider(
+        LocalViewConfiguration provides LocalViewConfiguration.current.updateViewConfiguration()
+    ) {
+        content()
     }
 }

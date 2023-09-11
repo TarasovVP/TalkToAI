@@ -16,7 +16,7 @@ interface ChatDao {
     @Query("DELETE FROM chats WHERE id NOT IN (:chatIds)")
     fun deleteMissingChats(chatIds: List<Long>)
 
-    @Query("SELECT * FROM chats ORDER BY updated DESC")
+    @Query("SELECT * FROM chats ORDER BY listOrder DESC")
     fun getChats(): Flow<List<Chat>>
 
     @Query("SELECT * FROM chats ORDER BY updated DESC LIMIT 1")
@@ -27,6 +27,9 @@ interface ChatDao {
 
     @Update
     fun updateChat(chat: Chat)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    fun updateChats(chats: List<Chat>)
 
     @Delete
     fun deleteChat(chat: Chat)

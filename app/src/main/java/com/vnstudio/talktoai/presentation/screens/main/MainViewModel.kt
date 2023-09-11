@@ -135,6 +135,31 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun updateChats(chats: List<Chat>) {
+        launch {
+            if (mainUseCase.isAuthorisedUser()) {
+                checkNetworkAvailable {
+                    showProgress()
+                    mainUseCase.updateRemoteChats(chats) { authResult ->
+                        when (authResult) {
+                            is Result.Success -> {
+
+                            }
+                            is Result.Failure -> authResult.errorMessage?.let {
+                                exceptionLiveData.postValue(it)
+                            }
+                        }
+                        hideProgress()
+                    }
+                }
+            } else {
+                launch {
+                    mainUseCase.updateChats(chatsLiveData.value.orEmpty())
+                }
+            }
+        }
+    }
+
     fun insertChat(chat: Chat) {
         if (mainUseCase.isAuthorisedUser()) {
             checkNetworkAvailable {
@@ -219,5 +244,19 @@ class MainViewModel @Inject constructor(
         removeRemoteUserListeners()
         removeAuthStateListener()
         chatsFlowSubscription?.cancel()
+    }
+
+    fun swapChats(firstIndex: Int, secondIndex: Int) {
+        val fromItem = chatsLiveData.value?.get(firstIndex)
+        val toItem = chatsLiveData.value?.get(secondIndex)
+        val newList = chatsLiveData.value.orEmpty().toMutableList()
+        toItem?.let { newList[firstIndex] = it.apply {
+            listOrder = chatsLiveData.value.orEmpty().size - firstIndex
+        } }
+        fromItem?.let { newList[secondIndex] = it.apply {
+            listOrder = chatsLiveData.value.orEmpty().size - secondIndex
+        } }
+        chatsLiveData.value = null
+        chatsLiveData.value = newList
     }
 }

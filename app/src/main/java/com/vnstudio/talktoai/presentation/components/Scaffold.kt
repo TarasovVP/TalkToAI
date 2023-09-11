@@ -3,14 +3,13 @@ package com.vnstudio.talktoai.presentation.components
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -114,6 +113,7 @@ fun AppDrawer(
     onChatClick: (Chat) -> Unit,
     onDeleteChatClick: (Chat) -> Unit,
     onSwap: (Int, Int) -> Unit,
+    onDragEnd: () -> Unit,
     onNextScreen: (String) -> Unit,
 ) {
     Column(
@@ -160,19 +160,21 @@ fun AppDrawer(
                         .weight(1f)
                         .padding(horizontal = 16.dp, vertical = 24.dp),
                     items = chats.value.orEmpty(),
-                    onSwap = onSwap
-                ) {chat, elevation ->
+                    onSwap = onSwap,
+                    onDragEnd = onDragEnd
+                ) {chat, isDragging ->
+                    val elevation = animateDpAsState(if (isDragging) 4.dp else 1.dp)
                     DrawerItem(
                         name = chat.name,
                         mainIcon = R.drawable.ic_chat,
                         isCurrent = chat.id == currentChatId,
-                        secondaryIcon = R.drawable.ic_delete,
-                        elevation = elevation,
+                        secondaryIcon = if (isDragging) R.drawable.ic_drag_handle else R.drawable.ic_delete,
+                        elevation = elevation.value,
                         isIconClick = true,
                         onIconClick = {
-                            onDeleteChatClick.invoke(chat)
+                            if (isDragging.not()) onDeleteChatClick.invoke(chat)
                         },
-                        onItemClick = { onChatClick.invoke(chat) })
+                        onItemClick = { if (isDragging.not()) onChatClick.invoke(chat) })
                 }
             }
             TextIconButton(
@@ -247,7 +249,7 @@ fun DrawerItem(
                 }
             },
         backgroundColor = if (isCurrent) Primary800 else Primary900,
-        elevation = elevation ?: 0.dp
+        elevation = elevation ?: 1.dp
     ) {
         Row(
             modifier = Modifier

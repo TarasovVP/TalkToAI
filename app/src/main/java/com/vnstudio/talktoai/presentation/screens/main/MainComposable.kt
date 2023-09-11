@@ -164,13 +164,10 @@ fun AppContent() {
                 },
                 onSwap = { firstIndex, secondIndex ->
                     Log.e("swapTAG", "MainComposable onSwap firstIndex $firstIndex secondIndex $secondIndex")
-                    val fromItem = viewModel.chatsLiveData.value?.get(firstIndex)
-                    val toItem = viewModel.chatsLiveData.value?.get(secondIndex)
-                    val newList = viewModel.chatsLiveData.value.orEmpty().toMutableList()
-                    toItem?.let { newList[firstIndex] = it }
-                    fromItem?.let { newList[secondIndex] = it }
-                    viewModel.chatsLiveData.value = null
-                    viewModel.chatsLiveData.value = newList
+                    viewModel.swapChats(firstIndex, secondIndex)
+                },
+                onDragEnd = {
+                    viewModel.updateChats(chatsState.value.orEmpty())
                 }
             ) { route ->
                 navController.navigate(route)
@@ -206,7 +203,7 @@ fun AppContent() {
                 onDismiss = {
                     showCreateChatDialog.value = false
                 }) { newChatName ->
-                viewModel.insertChat(Chat(id = Date().dateToMilliseconds(), name = newChatName, updated = Date().dateToMilliseconds()))
+                viewModel.insertChat(Chat(id = Date().dateToMilliseconds(), name = newChatName, updated = Date().dateToMilliseconds(), listOrder = chatsState.value.orEmpty().size + 1))
                 showCreateChatDialog.value = false
                 currentChatState.value = null
                 scope.launch {
