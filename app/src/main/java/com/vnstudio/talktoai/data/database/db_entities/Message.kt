@@ -1,7 +1,9 @@
 package com.vnstudio.talktoai.data.database.db_entities
 
 import android.os.Parcelable
+import androidx.compose.runtime.mutableStateOf
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.domain.enums.MessageStatus
@@ -17,5 +19,8 @@ data class Message(
     var message: String = String.EMPTY,
     var updatedAt: Long = 0,
     var status: MessageStatus? = null,
-    var errorMessage: String = String.EMPTY
-) : Parcelable
+    var errorMessage: String = String.EMPTY,
+) : Parcelable {
+    @Ignore
+    var isCheckedToDelete = mutableStateOf(false)
+}

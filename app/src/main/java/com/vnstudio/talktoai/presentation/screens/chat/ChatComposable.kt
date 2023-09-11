@@ -1,7 +1,9 @@
 package com.vnstudio.talktoai.presentation.screens.chat
 
 import android.util.Log
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,8 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.*
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +35,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
+import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
@@ -40,12 +47,14 @@ import com.vnstudio.talktoai.domain.models.MessageApi
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.isDefineSecondsLater
 import com.vnstudio.talktoai.presentation.components.*
+import com.vnstudio.talktoai.presentation.components.draggable.UpdateViewConfiguration
 import com.vnstudio.talktoai.presentation.theme.*
 import java.util.*
 
 @Composable
 fun ChatScreen(
     currentChatId: Long,
+    isMessageDeleteModeState: MutableState<Boolean?>,
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,
 ) {
@@ -66,8 +75,9 @@ fun ChatScreen(
     ) {
         Box(modifier = Modifier.weight(1f)) {
             messagesState.value.takeIf { it.isNotNull() }?.let { messages ->
-                MessagesList(messages, modifier = Modifier
-                    .padding(horizontal = 16.dp)
+                MessagesList(
+                    messages, isMessageDeleteModeState, modifier = Modifier
+                        .padding(horizontal = 16.dp)
                 )
             }
             Log.e("apiTAG", "ChatScreen Column currentChatState.value ${currentChatState.value}")
@@ -81,39 +91,54 @@ fun ChatScreen(
                 }
             }
         }
-        ChatTextField((currentChatState.value?.id ?: DEFAULT_CHAT_ID) != DEFAULT_CHAT_ID, Modifier, inputValue = mutableStateOf( TextFieldValue())) { messageText ->
-            if (messageText.isEmpty()) {
-                Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
-            } else {
-                viewModel.insertMessage(
-                    Message(
-                        id = Date().dateToMilliseconds(),
-                        chatId = currentChatState.value?.id ?: 0,
-                        author = "me",
-                        message = messageText,
-                        updatedAt = Date().dateToMilliseconds()
-                    )
-                )
-                val temporaryMessage = Message(
-                    id = Date().dateToMilliseconds() + 1,
-                    chatId = currentChatState.value?.id ?: 0,
-                    author = "gpt-3.5-turbo",
-                    message = String.EMPTY,
-                    updatedAt = Date().dateToMilliseconds() + 1,
-                    status = MessageStatus.REQUESTING
-                )
-                viewModel.insertMessage(temporaryMessage)
-                viewModel.sendRequest(
-                    temporaryMessage,
-                    ApiRequest(
-                        model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
-                            MessageApi(role = "user", content = messageText)
+        if (isMessageDeleteModeState.value.isTrue()) {
+            MessageDeleteField(
+                modifier = Modifier,
+                onCancelClick = { isMessageDeleteModeState.value = false},
+                onCopyClick = {
+                    Log.e("apiTAG", "ChatScreen MessageDeleteField onCopyClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}")
+                }) {
+                Log.e("apiTAG", "ChatScreen MessageDeleteField onDeleteClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}")
+            }
+        } else {
+            ChatTextField(
+                (currentChatState.value?.id ?: DEFAULT_CHAT_ID) != DEFAULT_CHAT_ID,
+                Modifier,
+                inputValue = mutableStateOf(TextFieldValue())
+            ) { messageText ->
+                if (messageText.isEmpty()) {
+                    Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
+                } else {
+                    viewModel.insertMessage(
+                        Message(
+                            id = Date().dateToMilliseconds(),
+                            chatId = currentChatState.value?.id ?: 0,
+                            author = "me",
+                            message = messageText,
+                            updatedAt = Date().dateToMilliseconds()
                         )
                     )
-                )
+                    val temporaryMessage = Message(
+                        id = Date().dateToMilliseconds() + 1,
+                        chatId = currentChatState.value?.id ?: 0,
+                        author = "gpt-3.5-turbo",
+                        message = String.EMPTY,
+                        updatedAt = Date().dateToMilliseconds() + 1,
+                        status = MessageStatus.REQUESTING
+                    )
+                    viewModel.insertMessage(temporaryMessage)
+                    viewModel.sendRequest(
+                        temporaryMessage,
+                        ApiRequest(
+                            model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
+                                MessageApi(role = "user", content = messageText)
+                            )
+                        )
+                    )
+                }
             }
-
         }
+
     }
 
     DataEditDialog(
@@ -124,7 +149,13 @@ fun ChatScreen(
         onDismiss = {
             showCreateChatDialog.value = false
         }) { newChatName ->
-        viewModel.insertChat(Chat(id = Date().dateToMilliseconds(), name = newChatName, updated = Date().dateToMilliseconds()))
+        viewModel.insertChat(
+            Chat(
+                id = Date().dateToMilliseconds(),
+                name = newChatName,
+                updated = Date().dateToMilliseconds()
+            )
+        )
         showCreateChatDialog.value = false
     }
 
@@ -140,7 +171,7 @@ fun CreateChatScreen(modifier: Modifier, onClick: () -> Unit) {
         verticalArrangement = Arrangement.Top
     ) {
         EmptyState(
-            text = "Что бы начать работу с ИИ создайте чат" ,
+            text = "Что бы начать работу с ИИ создайте чат",
             modifier = Modifier
                 .fillMaxSize()
                 .padding(45.dp)
@@ -158,22 +189,26 @@ fun CreateChatScreen(modifier: Modifier, onClick: () -> Unit) {
 @Composable
 fun MessagesList(
     messages: List<Message>,
-    modifier: Modifier = Modifier
+    isMessageDeleteModeState: MutableState<Boolean?>,
+    modifier: Modifier = Modifier,
 ) {
 
-        if (messages.isEmpty()) {
-            EmptyState(
-                text = "Введите свой вопрос или воспользуйтесь микрофоном....",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(45.dp)
-            )
-        } else {
-            val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = messages.lastIndex)
-            Log.e(
-                "scrollTAG",
-                "ChatComposable MessagesScreen message.size ${messages.size} scrollState.firstVisibleItemIndex ${scrollState.firstVisibleItemIndex} firstVisibleItemScrollOffset ${scrollState.firstVisibleItemScrollOffset}"
-            )
+    if (messages.isEmpty()) {
+        EmptyState(
+            text = "Введите свой вопрос или воспользуйтесь микрофоном....",
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(45.dp)
+        )
+    } else {
+        val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = messages.lastIndex)
+        Log.e(
+            "scrollTAG",
+            "ChatComposable MessagesScreen message.size ${messages.size} scrollState.firstVisibleItemIndex ${scrollState.firstVisibleItemIndex} firstVisibleItemScrollOffset ${scrollState.firstVisibleItemScrollOffset}"
+        )
+        UpdateViewConfiguration(
+            longPressTimeoutMillis = 200L
+        ) {
             Box(modifier = modifier) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
@@ -181,27 +216,54 @@ fun MessagesList(
                 ) {
                     items(messages) { message ->
                         if (message.author == "me") {
-                            UserMessage(message = message)
+                            UserMessage(message = message, isMessageDeleteModeState)
                         } else {
-                            AIMessage(message = message) {
-
-                            }
+                            AIMessage(message = message, isMessageDeleteModeState)
                         }
                     }
                 }
             }
         }
+    }
 }
 
 @Composable
-fun UserMessage(message: Message) {
+fun UserMessage(
+    message: Message,
+    isMessageDeleteModeState: MutableState<Boolean?>
+) {
     Row(
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
+            .pointerInput(isMessageDeleteModeState.value) {
+                if (isMessageDeleteModeState.value.isTrue()) {
+                    detectTapGestures(onTap = {
+                        message.isCheckedToDelete.value = message.isCheckedToDelete.value.not()
+                        Log.e("tapTAG", "ChatScreen UserMessage onTap")
+                    })
+                } else {
+                    detectTapGestures(onLongPress = {
+                        Log.e("tapTAG", "ChatScreen UserMessage onLongPress")
+                        isMessageDeleteModeState.value = true
+                    })
+                }
+            }
     ) {
+        if (isMessageDeleteModeState.value.isTrue()) {
+            Checkbox(checked = message.isCheckedToDelete.value,
+                colors = CheckboxDefaults.colors(
+                checkedColor = Primary400,
+                uncheckedColor = Primary400,
+                checkmarkColor = White
+            ), onCheckedChange = { isChecked ->
+                message.isCheckedToDelete.value = isChecked
+                Log.e("tapTAG", "ChatScreen UserMessage Checkbox onCheckedChange isChecked $isChecked")
+            })
+            Spacer(modifier = Modifier.weight(1f))
+        }
         Box(
             modifier = Modifier
                 .wrapContentSize()
@@ -229,31 +291,54 @@ fun UserMessage(message: Message) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AIMessage(message: Message, onLongClick: () -> Unit) {
+fun AIMessage(
+    message: Message,
+    isMessageDeleteModeState: MutableState<Boolean?>
+) {
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.Bottom,
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .combinedClickable(
-                onClick = { },
-                onLongClick = onLongClick
-            )
+            .pointerInput(isMessageDeleteModeState.value) {
+                if (isMessageDeleteModeState.value.isTrue()) {
+                    detectTapGestures(onTap = {
+                        message.isCheckedToDelete.value = message.isCheckedToDelete.value.not()
+                        Log.e("tapTAG", "ChatScreen AIMessage onTap")
+                    })
+                } else {
+                    detectTapGestures(onLongPress = {
+                        Log.e("tapTAG", "ChatScreen AIMessage onLongPress")
+                        isMessageDeleteModeState.value = true
+                    })
+                }
+            }
     ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(R.drawable.avatar_ai)
-                .crossfade(true)
-                .build(),
-            contentDescription = "AI avatar",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(32.dp)
-        )
+        if (isMessageDeleteModeState.value.isTrue()) {
+            Checkbox(checked =message.isCheckedToDelete.value,
+                colors = CheckboxDefaults.colors(
+                    checkedColor = Primary400,
+                    uncheckedColor = Primary400,
+                    checkmarkColor = White
+                ), onCheckedChange = { isChecked ->
+                message.isCheckedToDelete.value = isChecked
+                Log.e("tapTAG", "ChatScreen UserMessage Checkbox onCheckedChange isChecked $isChecked")
+            })
+        } else {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(R.drawable.avatar_ai)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "AI avatar",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(32.dp)
+            )
+        }
         Box(
             modifier = Modifier
                 .wrapContentSize()
@@ -278,7 +363,10 @@ fun AIMessage(message: Message, onLongClick: () -> Unit) {
                         .padding(16.dp)
                         .wrapContentSize()
                 )
-                message.status == MessageStatus.REQUESTING && Date().isDefineSecondsLater(20, message.updatedAt) -> Text(
+                message.status == MessageStatus.REQUESTING && Date().isDefineSecondsLater(
+                    20,
+                    message.updatedAt
+                ) -> Text(
                     text = "Неизвестная ошибка",
                     fontSize = 16.sp,
                     color = Color.Red,
@@ -296,6 +384,34 @@ fun AIMessage(message: Message, onLongClick: () -> Unit) {
                         .wrapContentSize()
 
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun MessageDeleteField(
+    modifier: Modifier,
+    onCancelClick: () -> Unit,
+    onCopyClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Neutral400)
+            .height(IntrinsicSize.Min)
+    ) {
+        Row {
+            TextButton(onClick = onCancelClick) {
+                Text(text = stringResource(id = R.string.button_cancel), color = Neutral50)
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(onClick = onCopyClick) {
+                Image(painter = painterResource(id = R.drawable.ic_copy), contentDescription = "Message copy button")
+            }
+            IconButton(onClick = onDeleteClick) {
+                Image(painter = painterResource(id = R.drawable.ic_delete), contentDescription = "Message delete button")
             }
         }
     }
