@@ -11,6 +11,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.vnstudio.talktoai.CommonExtensions.isNotTrue
 import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
@@ -44,6 +45,7 @@ fun AppContent() {
     val chatsState = viewModel.chatsLiveData.observeAsState()
     Log.e("compareChatTAG", "AppContent chatsState.value ${chatsState.value}")
     val isSettingsDrawerModeState = remember { mutableStateOf<Boolean?>(null) }
+    val isMessageDeleteModeState = remember { mutableStateOf<Boolean?>(null) }
 
     val showCreateChatDialog = remember { mutableStateOf(false) }
     val showEditChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -98,6 +100,7 @@ fun AppContent() {
         scaffoldState = scaffoldState,
         topBar = {
             when {
+                isMessageDeleteModeState.value.isTrue() -> DeleteModeTopBar("Выбрано")
                 currentRouteState == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
                     stringResource(id = settingsScreenNameByRoute(currentRouteState))
                 ) {
@@ -141,7 +144,7 @@ fun AppContent() {
             }
 
         },
-        drawerGesturesEnabled = isSettingsScreen(currentRouteState) || currentRouteState == NavigationScreen.ChatScreen().route,
+        drawerGesturesEnabled = isSettingsScreen(currentRouteState) || (currentRouteState == NavigationScreen.ChatScreen().route && isMessageDeleteModeState.value.isNotTrue()),
         drawerContent = {
             AppDrawer(
                 isSettingsDrawerModeState,
@@ -191,7 +194,7 @@ fun AppContent() {
         },
         content = {
             startDestinationState.value?.let { startDestination ->
-                AppNavHost(navController, startDestination, isSettingsDrawerModeState, infoMessageState,  progressVisibilityState)
+                AppNavHost(navController, startDestination, isSettingsDrawerModeState, isMessageDeleteModeState, infoMessageState,  progressVisibilityState)
             }
             ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 

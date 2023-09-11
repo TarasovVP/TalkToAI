@@ -104,6 +104,14 @@ fun SecondaryTopBar(title: String, onNavigationIconClick: () -> Unit) {
 }
 
 @Composable
+fun DeleteModeTopBar(title: String) {
+    TopAppBar(
+        title = { Text(title) },
+        backgroundColor = Primary900,
+        contentColor = Neutral50)
+}
+
+@Composable
 fun AppDrawer(
     isSettingsDrawerMode: MutableState<Boolean?>,
     currentRouteState: String?,
@@ -308,6 +316,7 @@ fun AppNavHost(
     navController: NavHostController,
     startDestination: String,
     isSettingsDrawerMode: MutableState<Boolean?>,
+    isMessageDeleteModeState: MutableState<Boolean?>,
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,
 ) {
@@ -346,7 +355,7 @@ fun AppNavHost(
             })
         ) { backStackEntry ->
             val currentChatId = backStackEntry.arguments?.getLong(CURRENT_CHAT_ID) ?: DEFAULT_CHAT_ID
-            ChatScreen(currentChatId, infoMessageState, progressVisibilityState)
+            ChatScreen(currentChatId, isMessageDeleteModeState, infoMessageState, progressVisibilityState)
             BackHandler(true) {
 
             }
