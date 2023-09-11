@@ -20,6 +20,8 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.CommonStatusCodes.getStatusCodeString
+import com.google.gson.Gson
+import com.vnstudio.talktoai.domain.ApiErrorResponse
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.infrastructure.Constants.DARK_MODE_TEXT
@@ -59,6 +61,11 @@ object CommonExtensions {
             if (isSuccessful) {
                 body()?.let { body ->
                     return Result.Success(body)
+                }
+            } else {
+                errorBody()?.let { errorBody ->
+                    val errorMessage = Gson().fromJson(errorBody.string(), ApiErrorResponse::class.java)
+                    return Result.Failure(errorMessage.error?.code)
                 }
             }
             return Result.Failure(message())
