@@ -270,8 +270,16 @@ fun AIMessage(message: Message, onLongClick: () -> Unit) {
                 )
         ) {
             when {
-                message.status == MessageStatus.ERROR && Date().isDefineSecondsLater(20, message.updatedAt) -> Text(
+                message.status == MessageStatus.ERROR -> Text(
                     text = message.errorMessage,
+                    fontSize = 16.sp,
+                    color = Color.Red,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .wrapContentSize()
+                )
+                message.status == MessageStatus.REQUESTING && Date().isDefineSecondsLater(20, message.updatedAt) -> Text(
+                    text = "Неизвестная ошибка",
                     fontSize = 16.sp,
                     color = Color.Red,
                     modifier = Modifier
