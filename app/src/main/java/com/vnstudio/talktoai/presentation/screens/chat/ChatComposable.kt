@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai.presentation.screens.chat
 
+import android.content.ClipData
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,24 +9,25 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -92,14 +94,26 @@ fun ChatScreen(
             }
         }
         if (isMessageDeleteModeState.value.isTrue()) {
+            val clipboardManager = LocalContext.current.getSystemService(ClipboardManager::class.java)
             MessageDeleteField(
                 modifier = Modifier,
-                onCancelClick = { isMessageDeleteModeState.value = false},
+                onCancelClick = {
+                    messagesState.value?.forEach { message ->
+                        message.isCheckedToDelete.value = false
+                    }
+                    isMessageDeleteModeState.value = false
+                },
                 onCopyClick = {
+                    clipboardManager?.setText(AnnotatedString("Test"))
+
                     Log.e("apiTAG", "ChatScreen MessageDeleteField onCopyClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}")
-                }) {
-                Log.e("apiTAG", "ChatScreen MessageDeleteField onDeleteClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}")
-            }
+                },
+                onDeleteClick = {
+                    Log.e("apiTAG", "ChatScreen MessageDeleteField onDeleteClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}")
+                },
+                onShareClick = {
+                    Log.e("apiTAG", "ChatScreen MessageDeleteField onShareClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}")
+                })
         } else {
             ChatTextField(
                 (currentChatState.value?.id ?: DEFAULT_CHAT_ID) != DEFAULT_CHAT_ID,
@@ -253,15 +267,17 @@ fun UserMessage(
             }
     ) {
         if (isMessageDeleteModeState.value.isTrue()) {
-            Checkbox(checked = message.isCheckedToDelete.value,
-                colors = CheckboxDefaults.colors(
-                checkedColor = Primary400,
-                uncheckedColor = Primary400,
-                checkmarkColor = White
-            ), onCheckedChange = { isChecked ->
-                message.isCheckedToDelete.value = isChecked
-                Log.e("tapTAG", "ChatScreen UserMessage Checkbox onCheckedChange isChecked $isChecked")
-            })
+            Box(modifier = Modifier.size(32.dp)) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(if (message.isCheckedToDelete.value) R.drawable.ic_checked_check_box else R.drawable.ic_empty_check_box)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "AI avatar",
+                    contentScale = ContentScale.Inside,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
             Spacer(modifier = Modifier.weight(1f))
         }
         Box(
@@ -317,15 +333,18 @@ fun AIMessage(
             }
     ) {
         if (isMessageDeleteModeState.value.isTrue()) {
-            Checkbox(checked =message.isCheckedToDelete.value,
-                colors = CheckboxDefaults.colors(
-                    checkedColor = Primary400,
-                    uncheckedColor = Primary400,
-                    checkmarkColor = White
-                ), onCheckedChange = { isChecked ->
-                message.isCheckedToDelete.value = isChecked
-                Log.e("tapTAG", "ChatScreen UserMessage Checkbox onCheckedChange isChecked $isChecked")
-            })
+            Box(modifier = Modifier.size(32.dp)) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(if (message.isCheckedToDelete.value) R.drawable.ic_checked_check_box else R.drawable.ic_empty_check_box)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Message checkbox",
+                    contentScale = ContentScale.Inside,
+                    modifier = Modifier
+                        .size(24.dp)
+                )
+            }
         } else {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -335,7 +354,6 @@ fun AIMessage(
                 contentDescription = "AI avatar",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .clip(CircleShape)
                     .size(32.dp)
             )
         }
@@ -395,14 +413,15 @@ fun MessageDeleteField(
     onCancelClick: () -> Unit,
     onCopyClick: () -> Unit,
     onDeleteClick: () -> Unit,
+    onShareClick: () -> Unit,
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(Neutral400)
+            .background(Primary900)
             .height(IntrinsicSize.Min)
     ) {
-        Row {
+        Row(Modifier.padding(16.dp).height(TextFieldDefaults.MinHeight)) {
             TextButton(onClick = onCancelClick) {
                 Text(text = stringResource(id = R.string.button_cancel), color = Neutral50)
             }
@@ -412,6 +431,9 @@ fun MessageDeleteField(
             }
             IconButton(onClick = onDeleteClick) {
                 Image(painter = painterResource(id = R.drawable.ic_delete), contentDescription = "Message delete button")
+            }
+            IconButton(onClick = onShareClick) {
+                Image(painter = painterResource(id = R.drawable.ic_share), contentDescription = "Message share button")
             }
         }
     }
