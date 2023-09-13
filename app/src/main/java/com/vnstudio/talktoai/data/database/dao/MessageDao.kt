@@ -26,5 +26,5 @@ interface MessageDao {
     fun deleteMessage(id: Long)
 
     @Query("DELETE FROM messages WHERE id NOT IN (:messageIds)")
-    fun deleteMissingMessages(messageIds: List<Long>)
+    fun deleteMessages(messageIds: List<Long>)
 }

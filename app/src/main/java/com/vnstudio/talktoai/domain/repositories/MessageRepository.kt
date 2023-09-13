@@ -18,6 +18,8 @@ interface MessageRepository {
 
     suspend fun deleteMessage(id: Long)
 
+    suspend fun deleteMessages(messageIds: List<Long>)
+
     suspend fun deleteMessagesFromChat(chatId: Long)
 
     suspend fun updateMessages(messages: List<Message>)

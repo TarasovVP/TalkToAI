@@ -147,13 +147,13 @@ class RealDataBaseRepositoryImpl @Inject constructor(
             }
     }
 
-    override fun deleteMessageList(messageIdList: List<String>, result: (Result<Unit>) -> Unit) {
+    override fun deleteMessages(messageIds: List<String>, result: (Result<Unit>) -> Unit) {
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .child(MESSAGES).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     task.result.children.forEach { snapshot ->
-                        if (messageIdList.contains(snapshot.key)) snapshot.ref.removeValue()
+                        if (messageIds.contains(snapshot.key)) snapshot.ref.removeValue()
                     }
                     result.invoke(Result.Success())
                 }

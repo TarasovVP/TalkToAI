@@ -157,6 +157,29 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    fun deleteMessages(messageIds: List<Long>) {
+        if (chatUseCase.isAuthorisedUser()) {
+            checkNetworkAvailable {
+                showProgress()
+                chatUseCase.deleteRemoteMessages(messageIds) { authResult ->
+                    when (authResult) {
+                        is Result.Success -> {
+
+                        }
+                        is Result.Failure -> authResult.errorMessage?.let {
+                            exceptionLiveData.postValue(it)
+                        }
+                    }
+                    hideProgress()
+                }
+            }
+        } else {
+            launch {
+                chatUseCase.deleteMessages(messageIds)
+            }
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         messagesFlowSubscription?.cancel()

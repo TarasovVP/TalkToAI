@@ -14,7 +14,7 @@ interface ChatDao {
     fun insertChat(chat: Chat)
 
     @Query("DELETE FROM chats WHERE id NOT IN (:chatIds)")
-    fun deleteMissingChats(chatIds: List<Long>)
+    fun deleteChats(chatIds: List<Long>)
 
     @Query("SELECT * FROM chats ORDER BY listOrder DESC")
     fun getChats(): Flow<List<Chat>>
