@@ -5,6 +5,7 @@ import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.ApiResponse
 import com.vnstudio.talktoai.domain.sealed_classes.Result
+import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
 import kotlinx.coroutines.flow.Flow
 
 interface ChatUseCase {
@@ -17,13 +18,13 @@ interface ChatUseCase {
 
     fun insertRemoteChat(chat: Chat, result: (Result<Unit>) -> Unit)
 
-    suspend fun insertMessage(message: Message)
+    suspend fun insertMessage(messageUIModel: MessageUIModel)
 
-    fun insertRemoteMessage(message: Message, result: (Result<Unit>) -> Unit)
+    fun insertRemoteMessage(messageUIModel: MessageUIModel, result: (Result<Unit>) -> Unit)
 
     suspend fun deleteMessage(id: Long)
 
-    suspend fun getMessagesFromChat(chatId: Long): Flow<List<Message>>
+    suspend fun getMessagesFromChat(chatId: Long): Flow<List<MessageUIModel>>
 
     suspend fun sendRequest(apiRequest: ApiRequest): Flow<Result<ApiResponse>>
 }

@@ -85,6 +85,8 @@ object CommonExtensions {
 
     fun Boolean?.isNotTrue() = this != true
 
+    fun Long?.orZero() = this ?: 0
+
     fun Context.setAppLocale(language: String): Context {
         val locale = Locale(language)
         Locale.setDefault(locale)

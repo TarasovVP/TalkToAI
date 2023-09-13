@@ -1,4 +1,4 @@
-package com.vnstudio.talktoai.data.repositoryimpl
+package com.vnstudio.talktoai.data.repositoryimpls
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth

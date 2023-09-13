@@ -1,4 +1,4 @@
-package com.vnstudio.talktoai.data.repositoryimpl
+package com.vnstudio.talktoai.data.repositoryimpls
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.AuthCredential

@@ -1,6 +1,5 @@
 package com.vnstudio.talktoai.presentation.screens.chat
 
-import android.content.ClipData
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,7 +26,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -40,7 +38,6 @@ import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
-import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.dateToMilliseconds
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.enums.MessageStatus
@@ -51,6 +48,7 @@ import com.vnstudio.talktoai.isDefineSecondsLater
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.components.draggable.UpdateViewConfiguration
 import com.vnstudio.talktoai.presentation.theme.*
+import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
 import java.util.*
 
 @Composable
@@ -124,7 +122,7 @@ fun ChatScreen(
                     Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
                 } else {
                     viewModel.insertMessage(
-                        Message(
+                        MessageUIModel(
                             id = Date().dateToMilliseconds(),
                             chatId = currentChatState.value?.id ?: 0,
                             author = "me",
@@ -132,7 +130,7 @@ fun ChatScreen(
                             updatedAt = Date().dateToMilliseconds()
                         )
                     )
-                    val temporaryMessage = Message(
+                    val temporaryMessage = MessageUIModel(
                         id = Date().dateToMilliseconds() + 1,
                         chatId = currentChatState.value?.id ?: 0,
                         author = "gpt-3.5-turbo",
@@ -202,7 +200,7 @@ fun CreateChatScreen(modifier: Modifier, onClick: () -> Unit) {
 
 @Composable
 fun MessagesList(
-    messages: List<Message>,
+    messages: List<MessageUIModel>,
     isMessageDeleteModeState: MutableState<Boolean?>,
     modifier: Modifier = Modifier,
 ) {
@@ -243,7 +241,7 @@ fun MessagesList(
 
 @Composable
 fun UserMessage(
-    message: Message,
+    message: MessageUIModel,
     isMessageDeleteModeState: MutableState<Boolean?>
 ) {
     Row(
@@ -309,7 +307,7 @@ fun UserMessage(
 
 @Composable
 fun AIMessage(
-    message: Message,
+    message: MessageUIModel,
     isMessageDeleteModeState: MutableState<Boolean?>
 ) {
     Row(

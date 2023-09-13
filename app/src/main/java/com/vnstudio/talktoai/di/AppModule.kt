@@ -18,10 +18,12 @@ import com.vnstudio.talktoai.data.database.dao.ChatDao
 import com.vnstudio.talktoai.data.database.dao.MessageDao
 import com.vnstudio.talktoai.data.network.ApiService
 import com.vnstudio.talktoai.data.network.HeaderInterceptor
-import com.vnstudio.talktoai.data.repositoryimpl.*
+import com.vnstudio.talktoai.data.repositoryimpls.*
+import com.vnstudio.talktoai.domain.mappers.MessageUIMapper
 import com.vnstudio.talktoai.domain.repositories.*
 import com.vnstudio.talktoai.domain.usecases.*
 import com.vnstudio.talktoai.infrastructure.Constants.SERVER_TIMEOUT
+import com.vnstudio.talktoai.presentation.mapperimpls.MessageUIMapperImpl
 import com.vnstudio.talktoai.presentation.screens.chat.ChatUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.main.MainUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.authorization.login.LoginUseCaseImpl
@@ -205,13 +207,20 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideMessageUIMapper(): MessageUIMapper {
+        return MessageUIMapperImpl()
+    }
+
+    @Singleton
+    @Provides
     fun provideChatUseCase(
         chatRepository: ChatRepository,
         messageRepository: MessageRepository,
         authRepository: AuthRepository,
-        realDataBaseRepository: RealDataBaseRepository
+        realDataBaseRepository: RealDataBaseRepository,
+        messageUIMapper: MessageUIMapper
     ): ChatUseCase {
-        return ChatUseCaseImpl(chatRepository, messageRepository, authRepository, realDataBaseRepository)
+        return ChatUseCaseImpl(chatRepository, messageRepository, authRepository, realDataBaseRepository, messageUIMapper)
     }
 
     @Singleton

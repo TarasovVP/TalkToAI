@@ -5,12 +5,12 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.data.database.db_entities.Chat
-import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.enums.MessageStatus
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.ChatUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
+import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
@@ -23,7 +23,7 @@ class ChatViewModel @Inject constructor(
 ) : BaseViewModel(application) {
 
     val currentChatLiveData = MutableLiveData<Chat?>()
-    val messagesLiveData = MutableLiveData<List<Message>>()
+    val messagesLiveData = MutableLiveData<List<MessageUIModel>>()
 
     private var messagesFlowSubscription: Job? = null
 
@@ -95,7 +95,7 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun sendRequest(temporaryMessage: Message, apiRequest: ApiRequest) {
+    fun sendRequest(temporaryMessage: MessageUIModel, apiRequest: ApiRequest) {
         Log.e(
             "messagesTAG",
             "ChatViewModel sendRequest messagesLiveData ${messagesLiveData.value?.map { it.message }}"
@@ -134,7 +134,7 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun insertMessage(message: Message) {
+    fun insertMessage(message: MessageUIModel) {
         if (chatUseCase.isAuthorisedUser()) {
             checkNetworkAvailable {
                 showProgress()
