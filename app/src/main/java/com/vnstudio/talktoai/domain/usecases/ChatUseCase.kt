@@ -1,7 +1,6 @@
 package com.vnstudio.talktoai.domain.usecases
 
 import com.vnstudio.talktoai.data.database.db_entities.Chat
-import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.ApiResponse
 import com.vnstudio.talktoai.domain.sealed_classes.Result
@@ -22,7 +21,9 @@ interface ChatUseCase {
 
     fun insertRemoteMessage(messageUIModel: MessageUIModel, result: (Result<Unit>) -> Unit)
 
-    suspend fun deleteMessage(id: Long)
+    suspend fun deleteMessages(messageIds: List<Long>)
+
+    fun deleteRemoteMessages(messageIds: List<Long>, result: (Result<Unit>) -> Unit)
 
     suspend fun getMessagesFromChat(chatId: Long): Flow<List<MessageUIModel>>
 

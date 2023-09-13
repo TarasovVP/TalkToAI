@@ -3,7 +3,8 @@ package com.vnstudio.talktoai.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -21,7 +22,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.R
-import com.vnstudio.talktoai.presentation.theme.Neutral400
 import com.vnstudio.talktoai.presentation.theme.Neutral600
 import com.vnstudio.talktoai.presentation.theme.Primary500
 import com.vnstudio.talktoai.presentation.theme.Primary900
@@ -111,53 +111,49 @@ fun PasswordTextField(inputValue: MutableState<TextFieldValue>, placeHolder: Str
 }
 
 @Composable
-fun ChatTextField(
+fun TextFieldWithButton(
     isEnabled: Boolean,
-    modifier: Modifier,
     inputValue: MutableState<TextFieldValue>,
     onSendClick: (String) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
-    Box(
-        modifier = modifier
+    TextField(value = inputValue.value,
+        onValueChange = { newValue ->
+            inputValue.value = newValue
+        }, placeholder = { Text(text = "Enter request") },
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor = Color.White,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+        ),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
             .fillMaxWidth()
-            .background(color = if (isEnabled) Primary900 else Neutral400)
-            .height(IntrinsicSize.Min)
-    ) {
-        TextField(value = inputValue.value,
-            onValueChange = { newValue ->
-                inputValue.value = newValue
-            }, placeholder = { Text(text = "Enter request") },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.White,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            ),
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .border(1.dp, if (isEnabled) Primary500 else Neutral600, shape = RoundedCornerShape(16.dp))
-                .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(16.dp)
+            .padding(16.dp)
+            .border(
+                1.dp,
+                if (isEnabled) Primary500 else Neutral600,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .clickable(enabled = isEnabled) {},
+        maxLines = 6,
+        trailingIcon = {
+            IconButton(enabled = isEnabled, onClick = {
+                onSendClick.invoke(inputValue.value.text)
+                inputValue.value = TextFieldValue(String.EMPTY)
+                focusManager.clearFocus()
+            }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(if (inputValue.value.text.isEmpty()) R.drawable.ic_voice_record else R.drawable.ic_message_send),
+                    contentDescription = "Send message button",
+                    tint = if (isEnabled) Primary900 else Neutral600
                 )
-                .clickable(enabled = isEnabled) {},
-            maxLines = 6,
-            trailingIcon = {
-                IconButton(enabled = isEnabled, onClick = {
-                    onSendClick.invoke(inputValue.value.text)
-                    inputValue.value = TextFieldValue(String.EMPTY)
-                    focusManager.clearFocus()
-                }) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(if (inputValue.value.text.isEmpty()) R.drawable.ic_voice_record else R.drawable.ic_message_send),
-                        contentDescription = "Send message button",
-                        tint = if (isEnabled) Primary900 else Neutral600
-                    )
-                }
             }
-        )
-    }
+        }
+    )
 }

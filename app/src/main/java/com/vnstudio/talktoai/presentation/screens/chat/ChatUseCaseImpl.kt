@@ -44,12 +44,14 @@ class ChatUseCaseImpl @Inject constructor(
         messageRepository.insertMessage(messageUIMapper.mapFromUIModel(messageUIModel))
     }
 
-    override suspend fun deleteMessage(id: Long) = messageRepository.deleteMessage(id)
 
-    override suspend fun getMessagesFromChat(chatId: Long): Flow<List<MessageUIModel>> {
-        return messageRepository.getMessagesFromChat(chatId).map { messages ->
-            messageUIMapper.mapToUIModelList(messages)
-        }
+
+    override suspend fun deleteMessages(messageIds: List<Long>) = messageRepository.deleteMessages(messageIds)
+
+    override fun deleteRemoteMessages(messageIds: List<Long>, result: (Result<Unit>) -> Unit) = realDataBaseRepository.deleteMessages(messageIds.map { it.toString() }, result)
+
+    override suspend fun getMessagesFromChat(chatId: Long): Flow<List<MessageUIModel>> = messageRepository.getMessagesFromChat(chatId).map { messages ->
+        messageUIMapper.mapToUIModelList(messages)
     }
 
     override suspend fun sendRequest(apiRequest: ApiRequest) = messageRepository.sendRequest(apiRequest)

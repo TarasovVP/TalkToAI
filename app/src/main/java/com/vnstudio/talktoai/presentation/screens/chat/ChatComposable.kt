@@ -9,7 +9,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -68,6 +71,12 @@ fun ChatScreen(
         viewModel.getCurrentChat(currentChatId)
     }
 
+    LaunchedEffect(currentChatState.value) {
+        currentChatState.value?.let { chat ->
+            viewModel.getMessagesFromChat(chat.id)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -81,76 +90,89 @@ fun ChatScreen(
                 )
             }
             Log.e("apiTAG", "ChatScreen Column currentChatState.value ${currentChatState.value}")
-            currentChatState.value?.let { chat ->
-                if (chat.id != DEFAULT_CHAT_ID) {
-                    viewModel.getMessagesFromChat(chat.id)
-                } else {
-                    CreateChatScreen(Modifier) {
-                        showCreateChatDialog.value = true
-                    }
-                }
-            }
         }
-        if (isMessageDeleteModeState.value.isTrue()) {
-            val clipboardManager = LocalContext.current.getSystemService(ClipboardManager::class.java)
-            MessageDeleteField(
-                modifier = Modifier,
-                onCancelClick = {
-                    messagesState.value?.forEach { message ->
-                        message.isCheckedToDelete.value = false
-                    }
-                    isMessageDeleteModeState.value = false
-                },
-                onCopyClick = {
-                    clipboardManager?.setText(AnnotatedString("Test"))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Primary900)
+        ) {
+            when {
+                currentChatState.value?.id == DEFAULT_CHAT_ID -> CreateChatScreen {
+                    showCreateChatDialog.value = true
+                }
+                isMessageDeleteModeState.value.isTrue() -> {
+                    val clipboardManager =
+                        LocalContext.current.getSystemService(ClipboardManager::class.java)
+                    MessageDeleteField(
+                        onCancelClick = {
+                            messagesState.value?.forEach { message ->
+                                message.isCheckedToDelete.value = false
+                            }
+                            isMessageDeleteModeState.value = false
+                        },
+                        onCopyClick = {
+                            clipboardManager?.setText(AnnotatedString("Test"))
 
-                    Log.e("apiTAG", "ChatScreen MessageDeleteField onCopyClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}")
-                },
-                onDeleteClick = {
-                    Log.e("apiTAG", "ChatScreen MessageDeleteField onDeleteClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}")
-                },
-                onShareClick = {
-                    Log.e("apiTAG", "ChatScreen MessageDeleteField onShareClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}")
-                })
-        } else {
-            ChatTextField(
-                (currentChatState.value?.id ?: DEFAULT_CHAT_ID) != DEFAULT_CHAT_ID,
-                Modifier,
-                inputValue = mutableStateOf(TextFieldValue())
-            ) { messageText ->
-                if (messageText.isEmpty()) {
-                    Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
-                } else {
-                    viewModel.insertMessage(
-                        MessageUIModel(
-                            id = Date().dateToMilliseconds(),
-                            chatId = currentChatState.value?.id ?: 0,
-                            author = "me",
-                            message = messageText,
-                            updatedAt = Date().dateToMilliseconds()
-                        )
-                    )
-                    val temporaryMessage = MessageUIModel(
-                        id = Date().dateToMilliseconds() + 1,
-                        chatId = currentChatState.value?.id ?: 0,
-                        author = "gpt-3.5-turbo",
-                        message = String.EMPTY,
-                        updatedAt = Date().dateToMilliseconds() + 1,
-                        status = MessageStatus.REQUESTING
-                    )
-                    viewModel.insertMessage(temporaryMessage)
-                    viewModel.sendRequest(
-                        temporaryMessage,
-                        ApiRequest(
-                            model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
-                                MessageApi(role = "user", content = messageText)
+                            Log.e(
+                                "apiTAG",
+                                "ChatScreen MessageDeleteField onCopyClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}"
                             )
-                        )
-                    )
+                        },
+                        onDeleteClick = {
+                            Log.e(
+                                "apiTAG",
+                                "ChatScreen MessageDeleteField onDeleteClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}"
+                            )
+                            messagesState.value?.filter { it.isCheckedToDelete.value.isTrue() }?.map { it.id }
+                                ?.let { viewModel.deleteMessages(it) }
+                        },
+                        onShareClick = {
+                            Log.e(
+                                "apiTAG",
+                                "ChatScreen MessageDeleteField onShareClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}"
+                            )
+                        })
+                }
+                currentChatState.value.isNotNull() && currentChatState.value?.id != DEFAULT_CHAT_ID -> {
+                    TextFieldWithButton(
+                        (currentChatState.value?.id ?: DEFAULT_CHAT_ID) != DEFAULT_CHAT_ID,
+                        inputValue = mutableStateOf(TextFieldValue())
+                    ) { messageText ->
+                        if (messageText.isEmpty()) {
+                            Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
+                        } else {
+                            viewModel.insertMessage(
+                                MessageUIModel(
+                                    id = Date().time,
+                                    chatId = currentChatState.value?.id ?: 0,
+                                    author = "me",
+                                    message = messageText,
+                                    updatedAt = Date().dateToMilliseconds(),
+                                    status = MessageStatus.SUCCESS
+                                )
+                            )
+                            val temporaryMessage = MessageUIModel(
+                                id = Date().time + 1,
+                                chatId = currentChatState.value?.id ?: 0,
+                                author = "gpt-3.5-turbo",
+                                message = String.EMPTY,
+                                updatedAt = Date().dateToMilliseconds() + 1,
+                                status = MessageStatus.REQUESTING
+                            )
+                            viewModel.insertMessage(temporaryMessage)
+                            viewModel.sendRequest(
+                                temporaryMessage,
+                                ApiRequest(
+                                    model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
+                                        MessageApi(role = "user", content = messageText)
+                                    )
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
-
     }
 
     DataEditDialog(
@@ -173,29 +195,6 @@ fun ChatScreen(
 
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
     ProgressVisibilityHandler(progressVisibilityState, viewModel.progressVisibilityLiveData)
-}
-
-@Composable
-fun CreateChatScreen(modifier: Modifier, onClick: () -> Unit) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.Top
-    ) {
-        EmptyState(
-            text = "Что бы начать работу с ИИ создайте чат",
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(45.dp)
-                .weight(1f)
-        )
-        TextIconButton(
-            "Новый чат",
-            R.drawable.ic_chat_add,
-            Modifier.padding(start = 45.dp, end = 45.dp, bottom = 45.dp),
-            onClick
-        )
-    }
 }
 
 @Composable
@@ -242,7 +241,7 @@ fun MessagesList(
 @Composable
 fun UserMessage(
     message: MessageUIModel,
-    isMessageDeleteModeState: MutableState<Boolean?>
+    isMessageDeleteModeState: MutableState<Boolean?>,
 ) {
     Row(
         horizontalArrangement = Arrangement.End,
@@ -308,7 +307,7 @@ fun UserMessage(
 @Composable
 fun AIMessage(
     message: MessageUIModel,
-    isMessageDeleteModeState: MutableState<Boolean?>
+    isMessageDeleteModeState: MutableState<Boolean?>,
 ) {
     Row(
         horizontalArrangement = Arrangement.Start,
@@ -406,33 +405,54 @@ fun AIMessage(
 }
 
 @Composable
+fun CreateChatScreen(onClick: () -> Unit) {
+    Row(
+        Modifier
+            .padding(16.dp)
+            .height(TextFieldDefaults.MinHeight)
+    ) {
+        TextIconButton(
+            "Новый чат",
+            R.drawable.ic_chat_add,
+            Modifier,
+            onClick
+        )
+    }
+}
+
+@Composable
 fun MessageDeleteField(
-    modifier: Modifier,
     onCancelClick: () -> Unit,
     onCopyClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onShareClick: () -> Unit,
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(Primary900)
-            .height(IntrinsicSize.Min)
+    Row(
+        Modifier
+            .padding(16.dp)
+            .height(TextFieldDefaults.MinHeight)
     ) {
-        Row(Modifier.padding(16.dp).height(TextFieldDefaults.MinHeight)) {
-            TextButton(onClick = onCancelClick) {
-                Text(text = stringResource(id = R.string.button_cancel), color = Neutral50)
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = onCopyClick) {
-                Image(painter = painterResource(id = R.drawable.ic_copy), contentDescription = "Message copy button")
-            }
-            IconButton(onClick = onDeleteClick) {
-                Image(painter = painterResource(id = R.drawable.ic_delete), contentDescription = "Message delete button")
-            }
-            IconButton(onClick = onShareClick) {
-                Image(painter = painterResource(id = R.drawable.ic_share), contentDescription = "Message share button")
-            }
+        TextButton(onClick = onCancelClick) {
+            Text(text = stringResource(id = R.string.button_cancel), color = Neutral50)
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        IconButton(onClick = onCopyClick) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_copy),
+                contentDescription = "Message copy button"
+            )
+        }
+        IconButton(onClick = onDeleteClick) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_delete),
+                contentDescription = "Message delete button"
+            )
+        }
+        IconButton(onClick = onShareClick) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_share),
+                contentDescription = "Message share button"
+            )
         }
     }
 }
