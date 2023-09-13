@@ -1,6 +1,7 @@
-package com.vnstudio.talktoai.data.repositoryimpl
+package com.vnstudio.talktoai.data.repositoryimpls
 
 import com.vnstudio.talktoai.CommonExtensions.apiCall
+import com.vnstudio.talktoai.CommonExtensions.orZero
 import com.vnstudio.talktoai.data.database.dao.MessageDao
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.data.network.ApiService
@@ -30,7 +31,7 @@ class MessageRepositoryImpl @Inject constructor(
     override suspend fun deleteMessagesFromChat(chatId: Long) = messageDao.deleteMessagesFromChat(chatId)
 
     override suspend fun updateMessages(messages: List<Message>) {
-        messageDao.deleteMissingMessages(messages.map { it.id })
+        messageDao.deleteMissingMessages(messages.map { it.id.orZero() })
         messageDao.insertMessages(messages)
     }
 

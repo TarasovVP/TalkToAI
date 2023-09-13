@@ -1,4 +1,4 @@
-package com.vnstudio.talktoai.data.repositoryimpl
+package com.vnstudio.talktoai.data.repositoryimpls
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
