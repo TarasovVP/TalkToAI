@@ -158,6 +158,7 @@ class ChatViewModel @Inject constructor(
     }
 
     fun deleteMessages(messageIds: List<Long>) {
+        showProgress()
         if (chatUseCase.isAuthorisedUser()) {
             checkNetworkAvailable {
                 showProgress()
@@ -178,6 +179,7 @@ class ChatViewModel @Inject constructor(
                 chatUseCase.deleteMessages(messageIds)
             }
         }
+        hideProgress()
     }
 
     override fun onCleared() {
