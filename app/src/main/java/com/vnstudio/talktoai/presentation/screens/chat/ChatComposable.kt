@@ -1,5 +1,7 @@
 package com.vnstudio.talktoai.presentation.screens.chat
 
+import android.content.Context
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -46,6 +48,7 @@ import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.enums.MessageStatus
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.MessageApi
+import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG_RU
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.isDefineSecondsLater
 import com.vnstudio.talktoai.presentation.components.*
@@ -61,6 +64,7 @@ fun ChatScreen(
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,
 ) {
+    val context = LocalContext.current
     val viewModel: ChatViewModel = hiltViewModel()
     val showCreateChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
     val currentChatState = viewModel.currentChatLiveData.observeAsState()
@@ -102,7 +106,7 @@ fun ChatScreen(
                 }
                 isMessageDeleteModeState.value.isTrue() -> {
                     val clipboardManager =
-                        LocalContext.current.getSystemService(ClipboardManager::class.java)
+                        LocalClipboardManager.current
                     MessageDeleteField(
                         onCancelClick = {
                             messagesState.value?.forEach { message ->
@@ -111,11 +115,13 @@ fun ChatScreen(
                             isMessageDeleteModeState.value = false
                         },
                         onCopyClick = {
-                            clipboardManager?.setText(AnnotatedString("Test"))
-
+                            val textToCopy =
+                                messagesState.value?.filter { it.isCheckedToDelete.value }?.joinToString { "${it.author}: ${it.message} \n" }.orEmpty()
+                            clipboardManager.setText(AnnotatedString(textToCopy))
+                            isMessageDeleteModeState.value = false
                             Log.e(
                                 "apiTAG",
-                                "ChatScreen MessageDeleteField onCopyClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}"
+                                "ChatScreen MessageDeleteField onCopyClick textToCopy $textToCopy "
                             )
                         },
                         onDeleteClick = {
@@ -125,12 +131,25 @@ fun ChatScreen(
                             )
                             messagesState.value?.filter { it.isCheckedToDelete.value.isTrue() }?.map { it.id }
                                 ?.let { viewModel.deleteMessages(it) }
+                            isMessageDeleteModeState.value = false
                         },
                         onShareClick = {
                             Log.e(
                                 "apiTAG",
                                 "ChatScreen MessageDeleteField onShareClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}"
                             )
+
+
+                            //TODO
+                            /*iniTextToSpeech(context) {textToSpeech ->
+                                val text =
+                                    messagesState.value?.filter { it.isCheckedToDelete.value }?.joinToString { it.message }.orEmpty()
+                                Log.e(
+                                    "textToSpeechTAG",
+                                    "ChatComposable onShareClick text $text"
+                                )
+                                textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+                            }*/
                         })
                 }
                 currentChatState.value.isNotNull() && currentChatState.value?.id != DEFAULT_CHAT_ID -> {
@@ -195,6 +214,39 @@ fun ChatScreen(
 
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
     ProgressVisibilityHandler(progressVisibilityState, viewModel.progressVisibilityLiveData)
+}
+
+//TODO
+private fun iniTextToSpeech(context: Context, successInit: (TextToSpeech) -> Unit) {
+    var textToSpeech: TextToSpeech? = null
+    val textToSpeechInitListener = TextToSpeech.OnInitListener { status ->
+        if (status == TextToSpeech.SUCCESS) {
+            val result = textToSpeech?.setLanguage(Locale(APP_LANG_RU))
+
+            if (result == TextToSpeech.LANG_MISSING_DATA ||
+                result == TextToSpeech.LANG_NOT_SUPPORTED
+            ) {
+                Log.e(
+                    "textToSpeechTAG",
+                    "ChatComposable iniTextToSpeech language not supported error"
+                )
+                // Handle language not supported error
+            } else {
+                Log.e(
+                    "textToSpeechTAG",
+                    "ChatComposable iniTextToSpeech initialization success"
+                )
+                textToSpeech?.let { successInit.invoke(it) }
+            }
+        } else {
+            Log.e(
+                "textToSpeechTAG",
+                "ChatComposable iniTextToSpeech TTS initialization failure"
+            )
+            // Handle TTS initialization failure
+        }
+    }
+    textToSpeech = TextToSpeech(context, textToSpeechInitListener)
 }
 
 @Composable
