@@ -10,6 +10,7 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.vnstudio.talktoai.domain.models.InfoMessage
+import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.domain.usecases.SignUpUseCase
 import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpViewModel
@@ -41,6 +42,10 @@ class SignUpUITests {
 
     private val infoMessageState = mutableStateOf<InfoMessage?>(null)
     private val progressVisibilityState = mutableStateOf(false)
+    private var onNextScreenValue: String? = null
+    private var onNextScreen: (String) -> Unit = {
+        onNextScreenValue = it
+    }
 
     @Before
     fun setUp() {
@@ -49,8 +54,9 @@ class SignUpUITests {
             SignUpScreen(
                 SignUpViewModel(application, signUpUseCase, googleSignInClient),
                 infoMessageState = infoMessageState,
-                progressVisibilityState = progressVisibilityState
-            ) {}
+                progressVisibilityState = progressVisibilityState,
+                onNextScreen
+            )
         }
     }
 
@@ -99,5 +105,11 @@ class SignUpUITests {
             composeTestRule.onNodeWithText(application.getString(R.string.authorization_password)).performTextInput("testPassword")
             assertIsEnabled().performClick()
         }
+    }
+
+    @Test
+    fun checkSignUpEntrance() {
+        composeTestRule.onNodeWithText(application.getString(R.string.authorization_entrance)).assertIsDisplayed().performClick()
+        assert(NavigationScreen.LoginScreen().route == onNextScreenValue)
     }
 }
