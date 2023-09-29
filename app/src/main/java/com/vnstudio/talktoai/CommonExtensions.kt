@@ -14,6 +14,7 @@ import android.os.LocaleList
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.compose.runtime.State
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -28,6 +29,7 @@ import com.vnstudio.talktoai.infrastructure.Constants.DARK_MODE_TEXT
 import com.vnstudio.talktoai.infrastructure.Constants.ENCODING
 import com.vnstudio.talktoai.infrastructure.Constants.MIME_TYPE
 import com.vnstudio.talktoai.infrastructure.Constants.WHITE_MODE_TEXT
+import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
@@ -155,4 +157,14 @@ fun Date.dateToMilliseconds(): Long {
 
 fun ApiException.getStatusCodeText(): String {
     return if (statusCode in -1..22) getStatusCodeString(statusCode) else "Операцию не удалось выполнить"
+}
+
+fun List<MessageUIModel>?.clearCheckToAction() {
+    this?.forEach { message ->
+        message.isCheckedToDelete.value = false
+    }
+}
+
+fun List<MessageUIModel>?.textToAction(): String {
+    return this?.filter { it.isCheckedToDelete.value }?.joinToString { "${it.author}: ${it.message} \n" }.orEmpty()
 }

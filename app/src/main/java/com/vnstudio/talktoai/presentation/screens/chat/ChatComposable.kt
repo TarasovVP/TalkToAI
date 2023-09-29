@@ -1,8 +1,11 @@
 package com.vnstudio.talktoai.presentation.screens.chat
 
 import android.content.Context
+import android.content.Intent
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -38,19 +41,18 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.vnstudio.talktoai.*
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
-import com.vnstudio.talktoai.dateToMilliseconds
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.enums.MessageStatus
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.MessageApi
 import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG_RU
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
-import com.vnstudio.talktoai.isDefineSecondsLater
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.components.draggable.UpdateViewConfiguration
 import com.vnstudio.talktoai.presentation.theme.*
@@ -105,40 +107,48 @@ fun ChatScreen(
                     showCreateChatDialog.value = true
                 }
                 isMessageDeleteModeState.value.isTrue() -> {
-                    val clipboardManager =
-                        LocalClipboardManager.current
+                    val clipboardManager = LocalClipboardManager.current
+                    val shareIntentLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
+                        Log.e(
+                            "apiTAG",
+                            "ChatScreen MessageDeleteField onShareClick shareIntentLauncher onComplete"
+                        )
+                    }
                     MessageDeleteField(
                         onCancelClick = {
-                            messagesState.value?.forEach { message ->
-                                message.isCheckedToDelete.value = false
-                            }
+                            messagesState.value.clearCheckToAction()
                             isMessageDeleteModeState.value = false
                         },
                         onCopyClick = {
-                            val textToCopy =
-                                messagesState.value?.filter { it.isCheckedToDelete.value }?.joinToString { "${it.author}: ${it.message} \n" }.orEmpty()
-                            clipboardManager.setText(AnnotatedString(textToCopy))
+                            clipboardManager.setText(AnnotatedString(messagesState.value.textToAction()))
+                            messagesState.value.clearCheckToAction()
                             isMessageDeleteModeState.value = false
-                            Log.e(
-                                "apiTAG",
-                                "ChatScreen MessageDeleteField onCopyClick textToCopy $textToCopy "
-                            )
                         },
                         onDeleteClick = {
                             Log.e(
                                 "apiTAG",
                                 "ChatScreen MessageDeleteField onDeleteClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}"
                             )
-                            messagesState.value?.filter { it.isCheckedToDelete.value.isTrue() }?.map { it.id }
-                                ?.let { viewModel.deleteMessages(it) }
+                            messagesState.value.clearCheckToAction()
                             isMessageDeleteModeState.value = false
                         },
                         onShareClick = {
+
+                            Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, messagesState.value.textToAction())
+
+                                val chooser = Intent.createChooser(this, "Share Text")
+                                shareIntentLauncher.launch(chooser)
+                            }
+
+                            messagesState.value.clearCheckToAction()
+                            isMessageDeleteModeState.value = false
+
                             Log.e(
                                 "apiTAG",
                                 "ChatScreen MessageDeleteField onShareClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}"
                             )
-
 
                             //TODO
                             /*iniTextToSpeech(context) {textToSpeech ->

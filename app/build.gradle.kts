@@ -19,7 +19,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.vnstudio.talktoai.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -66,19 +66,20 @@ dependencies {
     val navigationVersion = rootProject.extra.get("navigationVersion")
     val roomVersion = rootProject.extra.get("roomVersion")
 
-    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation("com.google.accompanist:accompanist-insets:0.10.0")
 
     //Testing
-    testImplementation("junit:junit:4.13.2")
+    implementation("com.google.ar:core:1.39.0")
+    implementation("androidx.test:runner:1.5.2")
+    debugImplementation("androidx.test:monitor:1.6.1")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
-    debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:$composeVersion")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.1")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.1")
+    implementation("androidx.navigation:navigation-testing:2.7.3")
 
     //Lifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
@@ -90,6 +91,7 @@ dependencies {
     implementation("androidx.compose.material:material:$composeVersion")
     implementation("androidx.compose.runtime:runtime-livedata:$composeVersion")
     implementation("androidx.compose.runtime:runtime:$composeVersion")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0-alpha01")
 
     //Navigation
     implementation("androidx.navigation:navigation-compose:$navigationVersion")
@@ -114,7 +116,11 @@ dependencies {
     //Hilt
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-compiler:$hiltVersion")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0-alpha01")
+    kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:$hiltVersion")
+    androidTestAnnotationProcessor("com.google.dagger:hilt-android-compiler:$hiltVersion")
+    implementation("com.google.dagger:hilt-android-testing:$hiltVersion")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:$hiltVersion")
 
     //Room
     implementation("androidx.room:room-runtime:$roomVersion")
