@@ -21,6 +21,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -40,6 +41,7 @@ import com.vnstudio.talktoai.presentation.screens.chat.ChatScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.login.LoginScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.onboarding.OnboardingScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpScreen
+import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpViewModel
 import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen
 import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen.Companion.isSettingsScreen
 import com.vnstudio.talktoai.presentation.screens.settings.settings_account.SettingsAccountScreen
@@ -343,7 +345,7 @@ fun AppNavHost(
         composable(
             route = NavigationScreen.SignUpScreen().route
         ) {
-            SignUpScreen(infoMessageState, progressVisibilityState) { route ->
+            SignUpScreen(hiltViewModel(), infoMessageState, progressVisibilityState) { route ->
                 navController.navigate(route)
             }
         }

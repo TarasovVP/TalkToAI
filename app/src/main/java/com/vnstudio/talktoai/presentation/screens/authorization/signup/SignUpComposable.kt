@@ -26,12 +26,11 @@ import com.vnstudio.talktoai.presentation.components.*
 
 @Composable
 fun SignUpScreen(
+    viewModel: SignUpViewModel,
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,
     onNextScreen: (String) -> Unit
 ) {
-
-    val viewModel: SignUpViewModel = hiltViewModel()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
     val showAccountExistDialog = remember { mutableStateOf(false) }
@@ -41,6 +40,7 @@ fun SignUpScreen(
         accountExistState.value?.let {
             viewModel.googleSignInClient.signOut()
             showAccountExistDialog.value = true
+            viewModel.accountExistLiveData.value = null
         }
     }
     val isEmailAccountExistState = viewModel.createEmailAccountLiveData.observeAsState()
@@ -125,6 +125,15 @@ fun SignUpScreen(
         ) {
             viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
         }
+    }
+    ConfirmationDialog(
+        stringResource(id = R.string.authorization_account_exist),
+        showAccountExistDialog,
+        onDismiss = {
+            showAccountExistDialog.value = false
+        }) {
+        showAccountExistDialog.value = false
+        onNextScreen.invoke(NavigationScreen.LoginScreen().route)
     }
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
     ProgressVisibilityHandler(progressVisibilityState, viewModel.progressVisibilityLiveData)

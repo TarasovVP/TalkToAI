@@ -1,6 +1,8 @@
 package com.vnstudio.talktoai.presentation.screens.authorization.login
 
 import android.app.Application
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
