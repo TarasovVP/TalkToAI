@@ -2,9 +2,12 @@ package com.vnstudio.talktoai
 
 import android.app.Application
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithText
-import androidx.test.platform.app.InstrumentationRegistry
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.usecases.SignUpUseCase
@@ -54,10 +57,47 @@ class SignUpUITests {
     @Test
     fun checkSignUpTitle() {
         composeTestRule.onNodeWithText(
-            InstrumentationRegistry.getInstrumentation().targetContext.getString(
+            application.getString(
                 R.string.authorization_sign_up
             )
-        ).assertExists()
+        ).assertIsDisplayed()
+    }
 
+    @Test
+    fun checkSignUpEmail() {
+        composeTestRule.onNodeWithText(
+            application.getString(R.string.authorization_email)
+        ).assertIsDisplayed().performTextInput("testEmail")
+        composeTestRule.onNodeWithText("testEmail").assertIsDisplayed()
+    }
+
+    @Test
+    fun checkSignUpPassword() {
+        composeTestRule.onNodeWithText(
+            application.getString(R.string.authorization_password)
+        ).assertIsDisplayed().performTextInput("testPassword")
+        composeTestRule.onNodeWithText(PasswordVisualTransformation().filter(AnnotatedString("testPassword")).text.toString()).assertIsDisplayed()
+    }
+
+    @Test
+    fun checkSignUpEntranceTitle() {
+        composeTestRule.onNodeWithText(
+            application.getString(R.string.authorization_entrance_title)
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            application.getString(R.string.authorization_entrance)
+        ).assertIsDisplayed()
+    }
+
+    @Test
+    fun checkSignUpContinue() {
+        composeTestRule.onNodeWithTag("sign_up_button").apply {
+            assertIsDisplayed()
+            assertIsNotEnabled()
+            composeTestRule.onNodeWithText(application.getString(R.string.authorization_email)).assertIsDisplayed().performTextInput("testEmail")
+            assertIsNotEnabled()
+            composeTestRule.onNodeWithText(application.getString(R.string.authorization_password)).performTextInput("testPassword")
+            assertIsEnabled().performClick()
+        }
     }
 }
