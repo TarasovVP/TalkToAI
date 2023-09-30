@@ -322,7 +322,7 @@ fun AppNavHost(
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,
 ) {
-    NavHost(navController, startDestination = startDestination,
+    NavHost(navController, startDestination = startDestination.takeIf { it.isNotEmpty() } ?: NavigationScreen.OnboardingScreen().route,
         enterTransition = {
             EnterTransition.None
         }, exitTransition = {
@@ -338,7 +338,7 @@ fun AppNavHost(
         composable(
             route = NavigationScreen.LoginScreen().route
         ) {
-            LoginScreen(infoMessageState, progressVisibilityState) { route ->
+            LoginScreen(hiltViewModel(), infoMessageState, progressVisibilityState) { route ->
                 navController.navigate(route)
             }
         }
