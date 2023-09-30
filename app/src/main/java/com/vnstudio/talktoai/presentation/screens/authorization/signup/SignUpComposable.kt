@@ -5,14 +5,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
@@ -35,38 +33,27 @@ fun SignUpScreen(
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
     val showAccountExistDialog = remember { mutableStateOf(false) }
 
-    val accountExistState = viewModel.accountExistLiveData.observeAsState()
-    LaunchedEffect(accountExistState.value) {
-        accountExistState.value?.let {
+    val signUpUiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(signUpUiState) {
+        signUpUiState.accountExist?.let {
             viewModel.googleSignInClient.signOut()
             showAccountExistDialog.value = true
-            viewModel.accountExistLiveData.value = null
+            signUpUiState.accountExist = null
         }
-    }
-    val isEmailAccountExistState = viewModel.createEmailAccountLiveData.observeAsState()
-    LaunchedEffect(isEmailAccountExistState.value) {
-        isEmailAccountExistState.value?.let {
+        signUpUiState.createEmailAccount?.let {
             viewModel.createUserWithEmailAndPassword(
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
             )
         }
-    }
-    val isGoogleAccountExistState = viewModel.createGoogleAccountLiveData.observeAsState()
-    LaunchedEffect(isGoogleAccountExistState.value) {
-        isGoogleAccountExistState.value?.let { idToken ->
+        signUpUiState.createGoogleAccount?.let { idToken ->
             viewModel.createUserWithGoogle(idToken)
         }
-    }
-    val successSignUpState = viewModel.successSignUpLiveData.observeAsState()
-    LaunchedEffect(successSignUpState.value) {
-        successSignUpState.value?.let {
+        signUpUiState.successSignUp?.let {
             viewModel.insertRemoteUser(RemoteUser())
         }
-    }
-    val successSignInState = viewModel.createCurrentUserLiveData.observeAsState()
-    LaunchedEffect(successSignInState.value) {
-        successSignInState.value?.let {
+        signUpUiState.createCurrentUser?.let {
             onNextScreen.invoke("${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}")
         }
     }

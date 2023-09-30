@@ -1,7 +1,6 @@
 package com.vnstudio.talktoai.presentation.screens.authorization.signup
 
 import android.app.Application
-import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
 import com.vnstudio.talktoai.R
@@ -10,6 +9,9 @@ import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SignUpUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,11 +21,8 @@ class SignUpViewModel @Inject constructor(
     val googleSignInClient: GoogleSignInClient,
 ) : BaseViewModel(application) {
 
-    val accountExistLiveData = MutableLiveData<Unit>()
-    val createEmailAccountLiveData = MutableLiveData<Unit>()
-    val createGoogleAccountLiveData = MutableLiveData<String>()
-    val successSignUpLiveData = MutableLiveData<Unit>()
-    val createCurrentUserLiveData = MutableLiveData<Unit>()
+    private val _uiState = MutableStateFlow(SignUpUIState())
+    val uiState: StateFlow<SignUpUIState> = _uiState.asStateFlow()
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
         if (application.isNetworkAvailable()) {
@@ -32,14 +31,12 @@ class SignUpViewModel @Inject constructor(
                 when (authResult) {
                     is Result.Success -> when {
                         authResult.data.isNullOrEmpty()
-                            .not() -> accountExistLiveData.postValue(Unit)
-                        idToken.isNullOrEmpty() -> createEmailAccountLiveData.postValue(Unit)
-                        else -> idToken.let { createGoogleAccountLiveData.postValue(it) }
+                            .not() -> updateUIState(SignUpUIState(accountExist = true))
+                        idToken.isNullOrEmpty() -> updateUIState(SignUpUIState(createEmailAccount = true))
+                        else -> updateUIState(SignUpUIState(createGoogleAccount = idToken))
                     }
                     is Result.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.postValue(
-                            it
-                        )
+                        exceptionLiveData.postValue(it)
                     }
                 }
                 hideProgress()
@@ -54,7 +51,7 @@ class SignUpViewModel @Inject constructor(
             showProgress()
             signUpUseCase.createUserWithGoogle(idToken) { operationResult ->
                 when (operationResult) {
-                    is Result.Success -> successSignUpLiveData.postValue(Unit)
+                    is Result.Success -> updateUIState(SignUpUIState(successSignUp = true))
                     is Result.Failure -> operationResult.errorMessage?.let {
                         exceptionLiveData.postValue(
                             it
@@ -73,7 +70,7 @@ class SignUpViewModel @Inject constructor(
             showProgress()
             signUpUseCase.createUserWithEmailAndPassword(email, password) { operationResult ->
                 when (operationResult) {
-                    is Result.Success -> successSignUpLiveData.postValue(Unit)
+                    is Result.Success -> updateUIState(SignUpUIState(successSignUp = true))
                     is Result.Failure -> operationResult.errorMessage?.let {
                         exceptionLiveData.postValue(
                             it
@@ -92,7 +89,7 @@ class SignUpViewModel @Inject constructor(
             showProgress()
             signUpUseCase.insertRemoteUser(remoteUser) { operationResult ->
                 when (operationResult) {
-                    is Result.Success -> createCurrentUserLiveData.postValue(Unit)
+                    is Result.Success ->updateUIState(SignUpUIState(createCurrentUser = true))
                     is Result.Failure -> operationResult.errorMessage?.let {
                         exceptionLiveData.postValue(
                             it
@@ -104,5 +101,9 @@ class SignUpViewModel @Inject constructor(
         } else {
             exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
         }
+    }
+
+    private fun updateUIState(newUIState: SignUpUIState) {
+        _uiState.value = newUIState
     }
 }

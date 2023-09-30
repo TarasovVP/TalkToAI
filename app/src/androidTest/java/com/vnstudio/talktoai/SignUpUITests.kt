@@ -6,8 +6,6 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
@@ -104,6 +102,9 @@ class SignUpUITests {
             assertIsNotEnabled()
             composeTestRule.onNodeWithText(application.getString(R.string.authorization_password)).performTextInput("testPassword")
             assertIsEnabled().performClick()
+            composeTestRule.waitUntil(10000) {
+                "The email address is badly formatted." == infoMessageState.value?.message
+            }
         }
     }
 
