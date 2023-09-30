@@ -80,6 +80,8 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.1")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.1")
     implementation("androidx.navigation:navigation-testing:2.7.3")
+    implementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("io.mockk:mockk:1.13.7")
 
     //Lifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
