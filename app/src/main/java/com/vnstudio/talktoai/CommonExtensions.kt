@@ -30,6 +30,7 @@ import com.vnstudio.talktoai.infrastructure.Constants.ENCODING
 import com.vnstudio.talktoai.infrastructure.Constants.MIME_TYPE
 import com.vnstudio.talktoai.infrastructure.Constants.WHITE_MODE_TEXT
 import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
+import dagger.hilt.android.testing.HiltTestApplication
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
@@ -101,7 +102,7 @@ object CommonExtensions {
     fun Application.isNetworkAvailable(): Boolean {
         return when (this) {
             is TalkToAIApp -> isNetworkAvailable.isTrue()
-            //is HiltTestApplication -> true
+            is HiltTestApplication -> true
             else -> false
         }
     }
