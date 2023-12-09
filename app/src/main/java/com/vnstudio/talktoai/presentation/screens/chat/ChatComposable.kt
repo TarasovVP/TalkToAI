@@ -14,7 +14,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextFieldDefaults
@@ -31,7 +33,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -165,7 +170,9 @@ fun ChatScreen(
                 currentChatState.value.isNotNull() && currentChatState.value?.id != DEFAULT_CHAT_ID -> {
                     TextFieldWithButton(
                         (currentChatState.value?.id ?: DEFAULT_CHAT_ID) != DEFAULT_CHAT_ID,
-                        inputValue = mutableStateOf(TextFieldValue())
+                        inputValue = remember {
+                            mutableStateOf(TextFieldValue())
+                        }
                     ) { messageText ->
                         if (messageText.isEmpty()) {
                             Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
@@ -207,7 +214,9 @@ fun ChatScreen(
     DataEditDialog(
         "Создать новый чат?",
         "Название чата",
-        mutableStateOf(TextFieldValue()),
+        remember {
+            mutableStateOf(TextFieldValue())
+        },
         showCreateChatDialog,
         onDismiss = {
             showCreateChatDialog.value = false
@@ -305,6 +314,12 @@ fun UserMessage(
     message: MessageUIModel,
     isMessageDeleteModeState: MutableState<Boolean?>,
 ) {
+    val linesCount = remember { mutableIntStateOf(1) }
+    val isTruncated = remember { mutableStateOf(false) }
+    Log.e(
+        "textLayoutTAG",
+        "ChatComposable UserMessage ClickableText maxLinesState ${linesCount.intValue} message ${message.message}"
+    )
     Row(
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
@@ -353,14 +368,10 @@ fun UserMessage(
                     )
                 )
         ) {
-            Text(
-                text = message.message,
-                fontSize = 16.sp,
-                color = Color.White,
-                modifier = Modifier
-                    .padding(10.dp)
-                    .wrapContentSize()
-
+            TruncatableText(
+                message = message.message,
+                isTruncated = isTruncated,
+                linesCount = linesCount
             )
         }
     }
@@ -371,6 +382,8 @@ fun AIMessage(
     message: MessageUIModel,
     isMessageDeleteModeState: MutableState<Boolean?>,
 ) {
+    val linesCount = remember { mutableIntStateOf(1) }
+    val isTruncated = remember { mutableStateOf(false) }
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.Bottom,
@@ -452,14 +465,10 @@ fun AIMessage(
                         .wrapContentSize()
                 )
                 message.status == MessageStatus.REQUESTING -> MessageTypingAnimation()
-                else -> Text(
-                    text = message.message,
-                    fontSize = 16.sp,
-                    color = Color.White,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .wrapContentSize()
-
+                else -> TruncatableText(
+                    message = message.message,
+                    isTruncated = isTruncated,
+                    linesCount = linesCount
                 )
             }
         }

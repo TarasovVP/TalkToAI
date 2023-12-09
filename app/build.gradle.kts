@@ -61,7 +61,6 @@ android {
 
 dependencies {
 
-    val composeVersion = rootProject.extra.get("composeVersion")
     val hiltVersion = rootProject.extra.get("hiltVersion")
     val navigationVersion = rootProject.extra.get("navigationVersion")
     val roomVersion = rootProject.extra.get("roomVersion")
@@ -88,11 +87,12 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0-alpha01")
 
     //Compose
-    implementation("androidx.compose.ui:ui:$composeVersion")
-    implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
-    implementation("androidx.compose.material:material:$composeVersion")
-    implementation("androidx.compose.runtime:runtime-livedata:$composeVersion")
-    implementation("androidx.compose.runtime:runtime:$composeVersion")
+    implementation(platform("androidx.compose:compose-bom:2023.06.00"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material:material")
+    implementation("androidx.compose.runtime:runtime-livedata")
+    implementation("androidx.compose.runtime:runtime")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0-alpha01")
 
     //Navigation

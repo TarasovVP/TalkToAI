@@ -1,11 +1,15 @@
 package com.vnstudio.talktoai.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -16,15 +20,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.presentation.theme.Neutral600
 import com.vnstudio.talktoai.presentation.theme.Primary500
 import com.vnstudio.talktoai.presentation.theme.Primary900
+import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
 
 @Composable
 fun PrimaryTextField(
@@ -156,4 +164,60 @@ fun TextFieldWithButton(
             }
         }
     )
+}
+
+@Composable
+fun TruncatableText(
+    message: String,
+    isTruncated: MutableState<Boolean>,
+    linesCount: MutableState<Int>
+) {
+    val truncatedText = remember { mutableStateOf(message) }
+    if ( linesCount.value > 2) {
+        val annotatedString = buildAnnotatedString {
+            val textSpanStyle = MaterialTheme.typography.body1.toSpanStyle().copy(color = Color.White)
+            withStyle(style = textSpanStyle) {
+                append(if (isTruncated.value) truncatedText.value else message)
+            }
+            val truncationButton = if (isTruncated.value) " More " else " Hide "
+            withStyle(style = textSpanStyle.copy(color = Color.Blue)) {
+                append( truncationButton )
+                addStringAnnotation(
+                    tag = "CLICKABLE",
+                    annotation = "icon",
+                    start = length - truncationButton.length,
+                    end = length
+                )
+            }
+        }
+
+        ClickableText(
+            text = annotatedString,
+            modifier = Modifier
+                .padding(10.dp)
+                .wrapContentSize()
+                .let { if (isTruncated.value) it.heightIn(max = 68.dp) else it },
+            onClick = { offset ->
+                annotatedString.getStringAnnotations(tag = "CLICKABLE", start = offset, end = offset).firstOrNull()?.let {
+                    isTruncated.value = isTruncated.value.not()
+                }
+            }
+        )
+    } else {
+        Text(
+            text = message,
+            fontSize = 16.sp,
+            color = Color.White,
+            modifier = Modifier
+                .padding(10.dp)
+                .wrapContentSize(),
+            onTextLayout = { textLayoutResult ->
+                if (textLayoutResult.lineCount > 3) {
+                    linesCount.value = textLayoutResult.lineCount
+                    truncatedText.value = message.substring(0, textLayoutResult.getLineEnd(1)) + "..."
+
+                }
+            }
+        )
+    }
 }
