@@ -21,6 +21,7 @@ data class MessageUIModel(
     var updatedAt: Long = 0,
     var status: MessageStatus = MessageStatus.REQUESTING,
     var errorMessage: String = String.EMPTY,
+    var isTruncated: Boolean = false,
 ) : Parcelable {
     @IgnoredOnParcel
     var isCheckedToDelete = mutableStateOf(false)

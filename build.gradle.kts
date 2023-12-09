@@ -1,6 +1,5 @@
 buildscript {
     extra.apply {
-        set("composeVersion", "1.5.0")
         set("hiltVersion", "2.46.1")
         set("navigationVersion", "2.7.0")
         set("roomVersion", "2.5.2")
