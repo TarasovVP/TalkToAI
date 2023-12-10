@@ -180,7 +180,7 @@ fun TruncatableText(
                 append(if (isTruncated.value) truncatedText.value else message)
             }
             val truncationButton = if (isTruncated.value) " More " else " Hide "
-            withStyle(style = textSpanStyle.copy(color = Color.Blue)) {
+            withStyle(style = textSpanStyle.copy(color = Color.Blue, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic, fontSize = 12.sp)) {
                 append( truncationButton )
                 addStringAnnotation(
                     tag = "CLICKABLE",
