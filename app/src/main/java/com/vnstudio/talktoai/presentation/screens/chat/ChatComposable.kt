@@ -6,6 +6,9 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -14,9 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextFieldDefaults
@@ -33,10 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -71,7 +69,6 @@ fun ChatScreen(
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,
 ) {
-    val context = LocalContext.current
     val viewModel: ChatViewModel = hiltViewModel()
     val showCreateChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
     val currentChatState = viewModel.currentChatLiveData.observeAsState()
@@ -111,14 +108,16 @@ fun ChatScreen(
                 currentChatState.value?.id == DEFAULT_CHAT_ID -> CreateChatScreen {
                     showCreateChatDialog.value = true
                 }
+
                 isMessageDeleteModeState.value.isTrue() -> {
                     val clipboardManager = LocalClipboardManager.current
-                    val shareIntentLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
-                        Log.e(
-                            "apiTAG",
-                            "ChatScreen MessageDeleteField onShareClick shareIntentLauncher onComplete"
-                        )
-                    }
+                    val shareIntentLauncher =
+                        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
+                            Log.e(
+                                "apiTAG",
+                                "ChatScreen MessageDeleteField onShareClick shareIntentLauncher onComplete"
+                            )
+                        }
                     MessageDeleteField(
                         onCancelClick = {
                             messagesState.value.clearCheckToAction()
@@ -167,6 +166,7 @@ fun ChatScreen(
                             }*/
                         })
                 }
+
                 currentChatState.value.isNotNull() && currentChatState.value?.id != DEFAULT_CHAT_ID -> {
                     TextFieldWithButton(
                         (currentChatState.value?.id ?: DEFAULT_CHAT_ID) != DEFAULT_CHAT_ID,
@@ -175,7 +175,10 @@ fun ChatScreen(
                         }
                     ) { messageText ->
                         if (messageText.isEmpty()) {
-                            Log.e("apiTAG", "ChatContent ChatTextField inputValue.value.text.isEmpty()")
+                            Log.e(
+                                "apiTAG",
+                                "ChatContent ChatTextField inputValue.value.text.isEmpty()"
+                            )
                         } else {
                             viewModel.insertMessage(
                                 MessageUIModel(
@@ -235,39 +238,6 @@ fun ChatScreen(
     ProgressVisibilityHandler(progressVisibilityState, viewModel.progressVisibilityLiveData)
 }
 
-//TODO
-private fun iniTextToSpeech(context: Context, successInit: (TextToSpeech) -> Unit) {
-    var textToSpeech: TextToSpeech? = null
-    val textToSpeechInitListener = TextToSpeech.OnInitListener { status ->
-        if (status == TextToSpeech.SUCCESS) {
-            val result = textToSpeech?.setLanguage(Locale(APP_LANG_RU))
-
-            if (result == TextToSpeech.LANG_MISSING_DATA ||
-                result == TextToSpeech.LANG_NOT_SUPPORTED
-            ) {
-                Log.e(
-                    "textToSpeechTAG",
-                    "ChatComposable iniTextToSpeech language not supported error"
-                )
-                // Handle language not supported error
-            } else {
-                Log.e(
-                    "textToSpeechTAG",
-                    "ChatComposable iniTextToSpeech initialization success"
-                )
-                textToSpeech?.let { successInit.invoke(it) }
-            }
-        } else {
-            Log.e(
-                "textToSpeechTAG",
-                "ChatComposable iniTextToSpeech TTS initialization failure"
-            )
-            // Handle TTS initialization failure
-        }
-    }
-    textToSpeech = TextToSpeech(context, textToSpeechInitListener)
-}
-
 @Composable
 fun MessagesList(
     messages: List<MessageUIModel>,
@@ -284,10 +254,7 @@ fun MessagesList(
         )
     } else {
         val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = messages.lastIndex)
-        Log.e(
-            "scrollTAG",
-            "ChatComposable MessagesScreen message.size ${messages.size} scrollState.firstVisibleItemIndex ${scrollState.firstVisibleItemIndex} firstVisibleItemScrollOffset ${scrollState.firstVisibleItemScrollOffset}"
-        )
+
         UpdateViewConfiguration(
             longPressTimeoutMillis = 200L
         ) {
@@ -297,11 +264,11 @@ fun MessagesList(
                     state = scrollState
                 ) {
                     items(messages) { message ->
-                        if (message.author == "me") {
-                            UserMessage(message = message, isMessageDeleteModeState)
-                        } else {
-                            AIMessage(message = message, isMessageDeleteModeState)
-                        }
+                        Message(
+                            isUserAuthor = message.author == "me",
+                            message = message,
+                            isMessageDeleteModeState = isMessageDeleteModeState
+                        )
                     }
                 }
             }
@@ -310,31 +277,33 @@ fun MessagesList(
 }
 
 @Composable
-fun UserMessage(
+fun Message(
+    isUserAuthor: Boolean,
     message: MessageUIModel,
     isMessageDeleteModeState: MutableState<Boolean?>,
 ) {
     val linesCount = remember { mutableIntStateOf(1) }
     val isTruncated = remember { mutableStateOf(false) }
-    Log.e(
-        "textLayoutTAG",
-        "ChatComposable UserMessage ClickableText maxLinesState ${linesCount.intValue} message ${message.message}"
-    )
+
     Row(
-        horizontalArrangement = Arrangement.End,
+        horizontalArrangement = if (isUserAuthor) Arrangement.End else Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessMedium
+                )
+            )
             .pointerInput(isMessageDeleteModeState.value) {
                 if (isMessageDeleteModeState.value.isTrue()) {
                     detectTapGestures(onTap = {
                         message.isCheckedToDelete.value = message.isCheckedToDelete.value.not()
-                        Log.e("tapTAG", "ChatScreen UserMessage onTap")
                     })
                 } else {
                     detectTapGestures(onLongPress = {
-                        Log.e("tapTAG", "ChatScreen UserMessage onLongPress")
                         isMessageDeleteModeState.value = true
                     })
                 }
@@ -353,71 +322,7 @@ fun UserMessage(
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
-        }
-        Box(
-            modifier = Modifier
-                .wrapContentSize()
-                .widthIn(0.dp, (LocalConfiguration.current.screenWidthDp * 0.8).dp)
-                .background(
-                    color = Primary500,
-                    shape = RoundedCornerShape(
-                        topStart = 16.dp,
-                        topEnd = 16.dp,
-                        bottomStart = 16.dp,
-                        bottomEnd = 2.dp
-                    )
-                )
-        ) {
-            TruncatableText(
-                message = message.message,
-                isTruncated = isTruncated,
-                linesCount = linesCount
-            )
-        }
-    }
-}
-
-@Composable
-fun AIMessage(
-    message: MessageUIModel,
-    isMessageDeleteModeState: MutableState<Boolean?>,
-) {
-    val linesCount = remember { mutableIntStateOf(1) }
-    val isTruncated = remember { mutableStateOf(false) }
-    Row(
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.Bottom,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .pointerInput(isMessageDeleteModeState.value) {
-                if (isMessageDeleteModeState.value.isTrue()) {
-                    detectTapGestures(onTap = {
-                        message.isCheckedToDelete.value = message.isCheckedToDelete.value.not()
-                        Log.e("tapTAG", "ChatScreen AIMessage onTap")
-                    })
-                } else {
-                    detectTapGestures(onLongPress = {
-                        Log.e("tapTAG", "ChatScreen AIMessage onLongPress")
-                        isMessageDeleteModeState.value = true
-                    })
-                }
-            }
-    ) {
-        if (isMessageDeleteModeState.value.isTrue()) {
-            Box(modifier = Modifier.size(32.dp)) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(if (message.isCheckedToDelete.value) R.drawable.ic_checked_check_box else R.drawable.ic_empty_check_box)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "Message checkbox",
-                    contentScale = ContentScale.Inside,
-                    modifier = Modifier
-                        .size(24.dp)
-                )
-            }
-        } else {
+        } else if (isUserAuthor.not()) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(R.drawable.avatar_ai)
@@ -432,15 +337,14 @@ fun AIMessage(
         Box(
             modifier = Modifier
                 .wrapContentSize()
-                .padding(start = 8.dp)
                 .widthIn(0.dp, (LocalConfiguration.current.screenWidthDp * 0.8).dp)
                 .background(
-                    color = Primary600,
+                    color = if (isUserAuthor) Primary500 else Primary600,
                     shape = RoundedCornerShape(
                         topStart = 16.dp,
                         topEnd = 16.dp,
-                        bottomStart = 2.dp,
-                        bottomEnd = 16.dp
+                        bottomStart = if (isUserAuthor) 16.dp else 2.dp,
+                        bottomEnd = if (isUserAuthor) 2.dp else 16.dp
                     )
                 )
         ) {
@@ -450,9 +354,10 @@ fun AIMessage(
                     fontSize = 16.sp,
                     color = Color.Red,
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(8.dp)
                         .wrapContentSize()
                 )
+
                 message.status == MessageStatus.REQUESTING && Date().isDefineSecondsLater(
                     20,
                     message.updatedAt
@@ -461,9 +366,10 @@ fun AIMessage(
                     fontSize = 16.sp,
                     color = Color.Red,
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(8.dp)
                         .wrapContentSize()
                 )
+
                 message.status == MessageStatus.REQUESTING -> MessageTypingAnimation()
                 else -> TruncatableText(
                     message = message.message,
@@ -475,72 +381,73 @@ fun AIMessage(
     }
 }
 
-@Composable
-fun CreateChatScreen(onClick: () -> Unit) {
-    Row(
-        Modifier
-            .padding(16.dp)
-            .height(TextFieldDefaults.MinHeight)
-    ) {
-        TextIconButton(
-            "Новый чат",
-            R.drawable.ic_chat_add,
-            Modifier,
-            onClick
-        )
-    }
-}
 
-@Composable
-fun MessageDeleteField(
-    onCancelClick: () -> Unit,
-    onCopyClick: () -> Unit,
-    onDeleteClick: () -> Unit,
-    onShareClick: () -> Unit,
-) {
-    Row(
-        Modifier
-            .padding(16.dp)
-            .height(TextFieldDefaults.MinHeight)
-    ) {
-        TextButton(onClick = onCancelClick) {
-            Text(text = stringResource(id = R.string.button_cancel), color = Neutral50)
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = onCopyClick) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_copy),
-                contentDescription = "Message copy button"
-            )
-        }
-        IconButton(onClick = onDeleteClick) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_delete),
-                contentDescription = "Message delete button"
-            )
-        }
-        IconButton(onClick = onShareClick) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_share),
-                contentDescription = "Message share button"
+    @Composable
+    fun CreateChatScreen(onClick: () -> Unit) {
+        Row(
+            Modifier
+                .padding(16.dp)
+                .height(TextFieldDefaults.MinHeight)
+        ) {
+            TextIconButton(
+                "Новый чат",
+                R.drawable.ic_chat_add,
+                Modifier,
+                onClick
             )
         }
     }
-}
 
-@Composable
-fun MessageTypingAnimation() {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.message_typing))
-    Box(
-        Modifier
-            .padding(16.dp)
+    @Composable
+    fun MessageDeleteField(
+        onCancelClick: () -> Unit,
+        onCopyClick: () -> Unit,
+        onDeleteClick: () -> Unit,
+        onShareClick: () -> Unit,
     ) {
-        LottieAnimation(
-            composition,
-            iterations = LottieConstants.IterateForever,
-            modifier = Modifier
-                .width(52.dp)
-                .height(12.dp)
-        )
+        Row(
+            Modifier
+                .padding(16.dp)
+                .height(TextFieldDefaults.MinHeight)
+        ) {
+            TextButton(onClick = onCancelClick) {
+                Text(text = stringResource(id = R.string.button_cancel), color = Neutral50)
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(onClick = onCopyClick) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_copy),
+                    contentDescription = "Message copy button"
+                )
+            }
+            IconButton(onClick = onDeleteClick) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_delete),
+                    contentDescription = "Message delete button"
+                )
+            }
+            IconButton(onClick = onShareClick) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_share),
+                    contentDescription = "Message share button"
+                )
+            }
+        }
     }
-}
+
+    @Composable
+    fun MessageTypingAnimation() {
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.message_typing))
+        Box(
+            Modifier
+                .padding(16.dp)
+        ) {
+            LottieAnimation(
+                composition,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier
+                    .width(52.dp)
+                    .height(12.dp)
+            )
+        }
+    }
