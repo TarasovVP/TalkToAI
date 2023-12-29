@@ -1,8 +1,6 @@
 package com.vnstudio.talktoai.presentation.screens.chat
 
-import android.content.Context
 import android.content.Intent
-import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -54,7 +52,6 @@ import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.enums.MessageStatus
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.MessageApi
-import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG_RU
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.components.draggable.UpdateViewConfiguration
@@ -283,7 +280,6 @@ fun Message(
     isMessageDeleteModeState: MutableState<Boolean?>,
 ) {
     val linesCount = remember { mutableIntStateOf(1) }
-    val isTruncated = remember { mutableStateOf(false) }
 
     Row(
         horizontalArrangement = if (isUserAuthor) Arrangement.End else Arrangement.Start,
@@ -373,7 +369,7 @@ fun Message(
                 message.status == MessageStatus.REQUESTING -> MessageTypingAnimation()
                 else -> TruncatableText(
                     message = message.message,
-                    isTruncated = isTruncated,
+                    isTruncated = message.isTruncated,
                     linesCount = linesCount
                 )
             }
