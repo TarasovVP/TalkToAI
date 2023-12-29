@@ -20,9 +20,10 @@ data class MessageUIModel(
     var message: String = String.EMPTY,
     var updatedAt: Long = 0,
     var status: MessageStatus = MessageStatus.REQUESTING,
-    var errorMessage: String = String.EMPTY,
-    var isTruncated: Boolean = false,
+    var errorMessage: String = String.EMPTY
 ) : Parcelable {
     @IgnoredOnParcel
     var isCheckedToDelete = mutableStateOf(false)
+    @IgnoredOnParcel
+    var isTruncated = mutableStateOf(true)
 }
