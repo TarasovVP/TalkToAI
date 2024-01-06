@@ -279,7 +279,10 @@ fun Message(
     message: MessageUIModel,
     isMessageDeleteModeState: MutableState<Boolean?>,
 ) {
-    val linesCount = remember { mutableIntStateOf(1) }
+    val paddings = getDimensionResource(resId = R.dimen.large_padding).value + getDimensionResource(resId = if (isUserAuthor) R.dimen.large_padding else R.dimen.small_padding).value + getDimensionResource(resId = R.dimen.default_text_size).value * 2 + getDimensionResource(resId = R.dimen.default_text_size).value * 2 + if (isUserAuthor) 0f else getDimensionResource(resId = R.dimen.avatar_size).value
+    val linesCount = textLinesCount(message.message, paddings, getDimensionResource(resId = R.dimen.default_text_size).value)
+    val changedMessage = if (linesCount > 2 && message.isTruncated.value) message.message.substring(0, charsInLine(paddings, getDimensionResource(resId = R.dimen.default_text_size).value).toInt()) + "..." else message.message
+    Log.e("charWidthTAG", "ChatComposable: message.message ${message.message.takeIf { it.length > 6 }?.substring(0, 6) } message.length ${message.message.length }")
 
     Row(
         horizontalArrangement = if (isUserAuthor) Arrangement.End else Arrangement.Start,
@@ -338,8 +341,8 @@ fun Message(
                     color = if (isUserAuthor) Primary500 else Primary600,
                     shape = RoundedCornerShape(
                         topStart = 16.dp,
-                        topEnd = 16.dp,
-                        bottomStart = if (isUserAuthor) 16.dp else 2.dp,
+                        topEnd = getDimensionResource(resId = R.dimen.large_padding),
+                        bottomStart = getDimensionResource(resId = if (isUserAuthor) R.dimen.large_padding else R.dimen.small_padding),
                         bottomEnd = if (isUserAuthor) 2.dp else 16.dp
                     )
                 )
@@ -368,7 +371,7 @@ fun Message(
 
                 message.status == MessageStatus.REQUESTING -> MessageTypingAnimation()
                 else -> TruncatableText(
-                    message = message.message,
+                    message = changedMessage,
                     isTruncated = message.isTruncated,
                     linesCount = linesCount
                 )

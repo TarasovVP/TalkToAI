@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai.presentation.components
 
+import android.text.TextPaint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -7,7 +8,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -16,11 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalViewConfiguration
-import androidx.compose.ui.platform.ViewConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -35,6 +36,8 @@ import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.presentation.theme.Primary300
 import com.vnstudio.talktoai.presentation.theme.Primary700
+import kotlin.math.ceil
+import kotlin.math.roundToInt
 
 @Composable
 fun ExceptionMessageHandler(
@@ -170,4 +173,40 @@ fun MainProgress(progressVisibilityState: MutableState<Boolean>) {
             )
         }
     }
+}
+
+@Composable
+fun textLinesCount(text: String, paddings: Float, textSize: Float) : Int {
+    val charsInLine = charsInLine(paddings, textSize)
+    return charsInLine.takeIf { it > 0 }?.let { ceil((text.length / it).toDouble()).toInt() } ?: 1
+}
+
+@Composable
+fun charsInLine(paddings: Float, textSize: Float) : Float {
+    val screenWidth = measureScreenWidth() - paddings
+    val charWidth = measureCharWidth(textSize)
+    return charWidth.takeIf { it > 0 }?.let { screenWidth / it } ?: 0f
+}
+
+@Composable
+fun measureScreenWidth(): Float {
+    val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
+    return screenWidthDp.value
+}
+
+@Composable
+fun measureCharWidth(textSize: Float): Float {
+    val density = LocalDensity.current.density
+    val textPaint = TextPaint().apply {
+        this.textSize = textSize * density
+    }
+    return textPaint.measureText(" ")
+}
+
+@Composable
+fun getDimensionResource(resId: Int): Dp {
+    val resources = LocalContext.current.resources
+    val density = LocalDensity.current.density
+    val sizeInPixels = resources.getDimension(resId)
+    return (sizeInPixels / density).dp
 }

@@ -1,6 +1,5 @@
 package com.vnstudio.talktoai.presentation.components
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,7 +31,6 @@ import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.presentation.theme.Neutral600
 import com.vnstudio.talktoai.presentation.theme.Primary500
 import com.vnstudio.talktoai.presentation.theme.Primary900
-import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
 
 @Composable
 fun PrimaryTextField(
@@ -170,14 +168,13 @@ fun TextFieldWithButton(
 fun TruncatableText(
     message: String,
     isTruncated: MutableState<Boolean>,
-    linesCount: MutableState<Int>
+    linesCount: Int
 ) {
-    val truncatedText = remember { mutableStateOf(message) }
-    if ( linesCount.value > 2) {
+    if ( linesCount > 2) {
         val annotatedString = buildAnnotatedString {
             val textSpanStyle = MaterialTheme.typography.body1.toSpanStyle().copy(color = Color.White)
             withStyle(style = textSpanStyle) {
-                append(if (isTruncated.value) truncatedText.value else message)
+                append(message)
             }
             val truncationButton = if (isTruncated.value) " More " else " Hide "
             withStyle(style = textSpanStyle.copy(color = Color.Blue, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic, fontSize = 12.sp)) {
@@ -206,18 +203,11 @@ fun TruncatableText(
     } else {
         Text(
             text = message,
-            fontSize = 16.sp,
+            fontSize = getDimensionResource(resId = R.dimen.default_text_size).value.sp,
             color = Color.White,
             modifier = Modifier
                 .padding(10.dp)
-                .wrapContentSize(),
-            onTextLayout = { textLayoutResult ->
-                if (textLayoutResult.lineCount > 3) {
-                    linesCount.value = textLayoutResult.lineCount
-                    truncatedText.value = message.substring(0, textLayoutResult.getLineEnd(1)) + "..."
-
-                }
-            }
+                .wrapContentSize()
         )
     }
 }

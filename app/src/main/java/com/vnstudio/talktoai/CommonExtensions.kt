@@ -14,12 +14,7 @@ import android.os.LocaleList
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.compose.runtime.State
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.CommonStatusCodes.getStatusCodeString
 import com.google.gson.Gson
 import com.vnstudio.talktoai.domain.ApiErrorResponse
@@ -67,7 +62,8 @@ object CommonExtensions {
                 }
             } else {
                 errorBody()?.let { errorBody ->
-                    val errorMessage = Gson().fromJson(errorBody.string(), ApiErrorResponse::class.java)
+                    val errorMessage =
+                        Gson().fromJson(errorBody.string(), ApiErrorResponse::class.java)
                     return Result.Failure(errorMessage.error?.code)
                 }
             }
@@ -144,7 +140,10 @@ fun LocaleList.flagDrawable(): Int {
 }
 
 fun Date.isDefineSecondsLater(seconds: Int, updated: Long): Boolean {
-    Log.e("dateTAG", "CommonExtensions isDefineSecondsLater time + (seconds * 1000) ${(time + (seconds * 1000)).millsSecondsToDateTime()} (updated * 1000) ${(updated * 1000).millsSecondsToDateTime()}")
+    Log.e(
+        "dateTAG",
+        "CommonExtensions isDefineSecondsLater time + (seconds * 1000) ${(time + (seconds * 1000)).millsSecondsToDateTime()} (updated * 1000) ${(updated * 1000).millsSecondsToDateTime()}"
+    )
     return time + (seconds * 1000) < (updated * 1000)
 }
 
@@ -167,5 +166,6 @@ fun List<MessageUIModel>?.clearCheckToAction() {
 }
 
 fun List<MessageUIModel>?.textToAction(): String {
-    return this?.filter { it.isCheckedToDelete.value }?.joinToString { "${it.author}: ${it.message} \n" }.orEmpty()
+    return this?.filter { it.isCheckedToDelete.value }
+        ?.joinToString { "${it.author}: ${it.message} \n" }.orEmpty()
 }
