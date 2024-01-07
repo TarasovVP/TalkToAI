@@ -131,11 +131,11 @@ fun ChatScreen(
                                 "apiTAG",
                                 "ChatScreen MessageDeleteField onDeleteClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}"
                             )
+                            viewModel.deleteMessages(messagesState.value?.filter { it.isCheckedToDelete.value }?.map { it.chatId } ?: listOf())
                             messagesState.value.clearCheckToAction()
                             isMessageDeleteModeState.value = false
                         },
                         onShareClick = {
-
                             Intent(Intent.ACTION_SEND).apply {
                                 type = "text/plain"
                                 putExtra(Intent.EXTRA_TEXT, messagesState.value.textToAction())
@@ -166,11 +166,12 @@ fun ChatScreen(
                 }
 
                 currentChatState.value.isNotNull() && currentChatState.value?.id != DEFAULT_CHAT_ID -> {
+                    val inputValue = remember {
+                        mutableStateOf(TextFieldValue())
+                    }
                     TextFieldWithButton(
                         (currentChatState.value?.id ?: DEFAULT_CHAT_ID) != DEFAULT_CHAT_ID,
-                        inputValue = remember {
-                            mutableStateOf(TextFieldValue())
-                        }
+                        inputValue = inputValue
                     ) { messageText ->
                         if (messageText.isEmpty()) {
                             Log.e(

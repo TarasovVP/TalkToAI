@@ -25,5 +25,5 @@ data class MessageUIModel(
     @IgnoredOnParcel
     var isCheckedToDelete = mutableStateOf(false)
     @IgnoredOnParcel
-    var isTruncated = mutableStateOf(true)
+    var isTruncated = mutableStateOf(false)
 }
