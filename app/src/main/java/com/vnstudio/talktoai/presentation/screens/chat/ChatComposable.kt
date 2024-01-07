@@ -45,6 +45,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.vnstudio.talktoai.*
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
+import com.vnstudio.talktoai.CommonExtensions.isNotTrue
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.data.database.db_entities.Chat
@@ -283,9 +284,7 @@ fun Message(
     val linesCount = textLinesCount(message.message, paddings, getDimensionResource(resId = R.dimen.default_text_size).value)
     val changedMessage = if (linesCount > 2 && message.isTruncated.value) message.message.substring(0, charsInLine(paddings, getDimensionResource(resId = R.dimen.default_text_size).value).toInt()) + "..." else message.message
     Log.e("charWidthTAG", "ChatComposable: message.message ${message.message.takeIf { it.length > 6 }?.substring(0, 6) } message.length ${message.message.length }")
-
     Row(
-        horizontalArrangement = if (isUserAuthor) Arrangement.End else Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
@@ -320,61 +319,69 @@ fun Message(
                     modifier = Modifier.size(24.dp)
                 )
             }
-            Spacer(modifier = Modifier.weight(1f))
-        } else if (isUserAuthor.not()) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(R.drawable.avatar_ai)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = "AI avatar",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(32.dp)
-            )
         }
-        Box(
+        Row(
+            horizontalArrangement = if (isUserAuthor) Arrangement.End else Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .wrapContentSize()
-                .widthIn(0.dp, (LocalConfiguration.current.screenWidthDp * 0.8).dp)
-                .background(
-                    color = if (isUserAuthor) Primary500 else Primary600,
-                    shape = RoundedCornerShape(
-                        topStart = 16.dp,
-                        topEnd = getDimensionResource(resId = R.dimen.large_padding),
-                        bottomStart = getDimensionResource(resId = if (isUserAuthor) R.dimen.large_padding else R.dimen.small_padding),
-                        bottomEnd = if (isUserAuthor) 2.dp else 16.dp
-                    )
-                )
+                .fillMaxWidth()
         ) {
-            when {
-                message.status == MessageStatus.ERROR -> Text(
-                    text = message.errorMessage,
-                    fontSize = 16.sp,
-                    color = Color.Red,
+            if (isUserAuthor.not() && isMessageDeleteModeState.value.isNotTrue()) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(R.drawable.avatar_ai)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "AI avatar",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .padding(8.dp)
-                        .wrapContentSize()
+                        .size(32.dp)
                 )
+            }
+            Spacer(modifier = Modifier.width(4.dp))
+            Box(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .widthIn(0.dp, (LocalConfiguration.current.screenWidthDp * 0.8).dp)
+                    .background(
+                        color = if (isUserAuthor) Primary500 else Primary600,
+                        shape = RoundedCornerShape(
+                            topStart = 16.dp,
+                            topEnd = getDimensionResource(resId = R.dimen.large_padding),
+                            bottomStart = getDimensionResource(resId = if (isUserAuthor) R.dimen.large_padding else R.dimen.small_padding),
+                            bottomEnd = if (isUserAuthor) 2.dp else 16.dp
+                        )
+                    )
+            ) {
+                when {
+                    message.status == MessageStatus.ERROR -> Text(
+                        text = message.errorMessage,
+                        fontSize = 16.sp,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .wrapContentSize()
+                    )
 
-                message.status == MessageStatus.REQUESTING && Date().isDefineSecondsLater(
-                    20,
-                    message.updatedAt
-                ) -> Text(
-                    text = "Неизвестная ошибка",
-                    fontSize = 16.sp,
-                    color = Color.Red,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .wrapContentSize()
-                )
+                    message.status == MessageStatus.REQUESTING && Date().isDefineSecondsLater(
+                        20,
+                        message.updatedAt
+                    ) -> Text(
+                        text = "Неизвестная ошибка",
+                        fontSize = 16.sp,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .wrapContentSize()
+                    )
 
-                message.status == MessageStatus.REQUESTING -> MessageTypingAnimation()
-                else -> TruncatableText(
-                    message = changedMessage,
-                    isTruncated = message.isTruncated,
-                    linesCount = linesCount
-                )
+                    message.status == MessageStatus.REQUESTING -> MessageTypingAnimation()
+                    else -> TruncatableText(
+                        message = changedMessage,
+                        isTruncated = message.isTruncated,
+                        linesCount = linesCount
+                    )
+                }
             }
         }
     }

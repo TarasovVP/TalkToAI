@@ -1,8 +1,10 @@
 package com.vnstudio.talktoai.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -17,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -27,6 +30,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
+import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.presentation.theme.Neutral600
 import com.vnstudio.talktoai.presentation.theme.Primary500
@@ -193,8 +197,18 @@ fun TruncatableText(
             modifier = Modifier
                 .padding(10.dp)
                 .wrapContentSize()
+                .pointerInput(Unit) {
+                    Log.e("clickTAG", "pointerInput: " )
+                    detectTapGestures(onTap = {
+                        Log.e("clickTAG", "pointerInput: " )
+                    })
+                    detectTapGestures(onLongPress = {
+                        Log.e("clickTAG", "pointerInput: " )
+                    })
+                }
                 .let { if (isTruncated.value) it.heightIn(max = 68.dp) else it },
             onClick = { offset ->
+                Log.e("clickTAG", "onClick: " )
                 annotatedString.getStringAnnotations(tag = "CLICKABLE", start = offset, end = offset).firstOrNull()?.let {
                     isTruncated.value = isTruncated.value.not()
                 }
