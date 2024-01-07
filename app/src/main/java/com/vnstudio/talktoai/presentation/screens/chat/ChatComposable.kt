@@ -116,7 +116,7 @@ fun ChatScreen(
                                 "ChatScreen MessageDeleteField onShareClick shareIntentLauncher onComplete"
                             )
                         }
-                    MessageDeleteField(
+                    MessageActionField(
                         onCancelClick = {
                             messagesState.value.clearCheckToAction()
                             isMessageDeleteModeState.value = false
@@ -243,7 +243,9 @@ fun MessagesList(
     isMessageDeleteModeState: MutableState<Boolean?>,
     modifier: Modifier = Modifier,
 ) {
-
+    LaunchedEffect(isMessageDeleteModeState.value.isTrue() && messages.none { it.isCheckedToDelete.value }) {
+        isMessageDeleteModeState.value = false
+    }
     if (messages.isEmpty()) {
         EmptyState(
             text = "Введите свой вопрос или воспользуйтесь микрофоном....",
@@ -304,6 +306,7 @@ fun Message(
                 } else {
                     detectTapGestures(onLongPress = {
                         isMessageDeleteModeState.value = true
+                        message.isCheckedToDelete.value = message.isCheckedToDelete.value.not()
                     })
                 }
             }
@@ -406,7 +409,7 @@ fun Message(
     }
 
     @Composable
-    fun MessageDeleteField(
+    fun MessageActionField(
         onCancelClick: () -> Unit,
         onCopyClick: () -> Unit,
         onDeleteClick: () -> Unit,
