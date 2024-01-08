@@ -83,6 +83,10 @@ fun ChatScreen(
         }
     }
 
+    LaunchedEffect(isMessageDeleteModeState.value.isTrue() && messagesState.value?.none { it.isCheckedToDelete.value }.isTrue()) {
+        isMessageDeleteModeState.value = false
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -93,7 +97,9 @@ fun ChatScreen(
                 MessagesList(
                     messages, isMessageDeleteModeState, modifier = Modifier
                         .padding(horizontal = 16.dp)
-                )
+                ) { message ->
+                    viewModel.updateMessage(message)
+                }
             }
             Log.e("apiTAG", "ChatScreen Column currentChatState.value ${currentChatState.value}")
         }
@@ -151,17 +157,6 @@ fun ChatScreen(
                                 "apiTAG",
                                 "ChatScreen MessageDeleteField onShareClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}"
                             )
-
-                            //TODO
-                            /*iniTextToSpeech(context) {textToSpeech ->
-                                val text =
-                                    messagesState.value?.filter { it.isCheckedToDelete.value }?.joinToString { it.message }.orEmpty()
-                                Log.e(
-                                    "textToSpeechTAG",
-                                    "ChatComposable onShareClick text $text"
-                                )
-                                textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
-                            }*/
                         })
                 }
 
@@ -242,10 +237,8 @@ fun MessagesList(
     messages: List<MessageUIModel>,
     isMessageDeleteModeState: MutableState<Boolean?>,
     modifier: Modifier = Modifier,
+    onMessageChange: (MessageUIModel) -> Unit = {}
 ) {
-    LaunchedEffect(isMessageDeleteModeState.value.isTrue() && messages.none { it.isCheckedToDelete.value }) {
-        isMessageDeleteModeState.value = false
-    }
     if (messages.isEmpty()) {
         EmptyState(
             text = "Введите свой вопрос или воспользуйтесь микрофоном....",
@@ -268,7 +261,8 @@ fun MessagesList(
                         Message(
                             isUserAuthor = message.author == "me",
                             message = message,
-                            isMessageDeleteModeState = isMessageDeleteModeState
+                            isMessageDeleteModeState = isMessageDeleteModeState,
+                            onMessageChange
                         )
                     }
                 }
@@ -282,10 +276,17 @@ fun Message(
     isUserAuthor: Boolean,
     message: MessageUIModel,
     isMessageDeleteModeState: MutableState<Boolean?>,
+    onMessageChange: (MessageUIModel) -> Unit = {},
 ) {
+    val isTruncatedState = remember { mutableStateOf(message.isTruncated) }
+
+    LaunchedEffect(isTruncatedState.value) {
+        onMessageChange(message.copy(isTruncated = isTruncatedState.value))
+    }
+
     val paddings = getDimensionResource(resId = R.dimen.large_padding).value + getDimensionResource(resId = if (isUserAuthor) R.dimen.large_padding else R.dimen.small_padding).value + getDimensionResource(resId = R.dimen.default_text_size).value * 2 + getDimensionResource(resId = R.dimen.default_text_size).value * 2 + if (isUserAuthor) 0f else getDimensionResource(resId = R.dimen.avatar_size).value
     val linesCount = textLinesCount(message.message, paddings, getDimensionResource(resId = R.dimen.default_text_size).value)
-    val changedMessage = if (linesCount > 2 && message.isTruncated.value) message.message.substring(0, charsInLine(paddings, getDimensionResource(resId = R.dimen.default_text_size).value).toInt()) + "..." else message.message
+    val changedMessage = if (linesCount > 2 && isTruncatedState.value) message.message.substring(0, charsInLine(paddings, getDimensionResource(resId = R.dimen.default_text_size).value).toInt()) + "..." else message.message
     Log.e("charWidthTAG", "ChatComposable: message.message ${message.message.takeIf { it.length > 6 }?.substring(0, 6) } message.length ${message.message.length }")
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -382,7 +383,7 @@ fun Message(
                     message.status == MessageStatus.REQUESTING -> MessageTypingAnimation()
                     else -> TruncatableText(
                         message = changedMessage,
-                        isTruncated = message.isTruncated,
+                        isTruncated = isTruncatedState,
                         linesCount = linesCount
                     )
                 }

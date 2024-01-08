@@ -14,7 +14,8 @@ class MessageUIMapperImpl : MessageUIMapper {
         message = from.message.orEmpty(),
         updatedAt = from.updatedAt.orZero(),
         status = from.status ?: MessageStatus.REQUESTING,
-        errorMessage = from.errorMessage.orEmpty())
+        errorMessage = from.errorMessage.orEmpty(),
+        isTruncated = from.truncated)
     }
 
     override fun mapFromUIModel(to: MessageUIModel): Message {
@@ -23,7 +24,8 @@ class MessageUIMapperImpl : MessageUIMapper {
             message = to.message,
             updatedAt = to.updatedAt,
             status = to.status,
-            errorMessage = to.errorMessage
+            errorMessage = to.errorMessage,
+            truncated = to.isTruncated
         )
     }
 

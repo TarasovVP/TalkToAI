@@ -157,6 +157,30 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    fun updateMessage(message: MessageUIModel) {
+        Log.e("truncateTAG", "ChatViewModel updateMessage message $message" )
+        if (chatUseCase.isAuthorisedUser()) {
+            checkNetworkAvailable {
+                showProgress()
+                chatUseCase.insertRemoteMessage(message) { authResult ->
+                    when (authResult) {
+                        is Result.Success -> {
+
+                        }
+                        is Result.Failure -> authResult.errorMessage?.let {
+                            exceptionLiveData.postValue(it)
+                        }
+                    }
+                    hideProgress()
+                }
+            }
+        } else {
+            launch {
+                chatUseCase.insertMessage(message)
+            }
+        }
+    }
+
     fun deleteMessages(messageIds: List<Long>) {
         showProgress()
         if (chatUseCase.isAuthorisedUser()) {
