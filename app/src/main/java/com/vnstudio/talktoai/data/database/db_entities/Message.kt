@@ -18,4 +18,5 @@ data class Message(
     var updatedAt: Long? = null,
     var status: MessageStatus? = null,
     var errorMessage: String? = String.EMPTY,
+    var truncated: Boolean = false
 ) : Parcelable

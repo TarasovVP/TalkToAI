@@ -174,6 +174,7 @@ fun TruncatableText(
     isTruncated: MutableState<Boolean>,
     linesCount: Int
 ) {
+    Log.e("truncateTAG", "TruncatableText isTruncated ${isTruncated.value}" )
     if ( linesCount > 2) {
         val annotatedString = buildAnnotatedString {
             val textSpanStyle = MaterialTheme.typography.body1.toSpanStyle().copy(color = Color.White)
