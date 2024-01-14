@@ -154,12 +154,12 @@ fun TextFieldWithButton(
         maxLines = 6,
         trailingIcon = {
             IconButton(enabled = isEnabled, onClick = {
-                onSendClick.invoke(inputValue.value.text)
+                onSendClick.invoke(inputValue.value.text.trim())
                 inputValue.value = TextFieldValue(String.EMPTY)
                 focusManager.clearFocus()
             }) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(if (inputValue.value.text.isEmpty()) R.drawable.ic_voice_record else R.drawable.ic_message_send),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_message_send),
                     contentDescription = "Send message button",
                     tint = if (isEnabled) Primary900 else Neutral600
                 )

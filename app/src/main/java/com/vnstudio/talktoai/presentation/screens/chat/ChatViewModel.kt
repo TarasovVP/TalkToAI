@@ -182,6 +182,7 @@ class ChatViewModel @Inject constructor(
     }
 
     fun deleteMessages(messageIds: List<Long>) {
+        Log.e("truncateTAG", "ChatViewModel deleteMessages messageIds $messageIds" )
         showProgress()
         if (chatUseCase.isAuthorisedUser()) {
             checkNetworkAvailable {
