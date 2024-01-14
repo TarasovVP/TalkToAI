@@ -42,6 +42,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.vnstudio.talktoai.*
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
@@ -53,6 +54,7 @@ import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.enums.MessageStatus
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.MessageApi
+import com.vnstudio.talktoai.domain.sealed_classes.MessageAction
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.presentation.components.*
 import com.vnstudio.talktoai.presentation.components.draggable.UpdateViewConfiguration
@@ -63,7 +65,7 @@ import java.util.*
 @Composable
 fun ChatScreen(
     currentChatId: Long,
-    isMessageDeleteModeState: MutableState<Boolean?>,
+    isMessageActionModeState: MutableState<Boolean?>,
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,
 ) {
@@ -71,6 +73,7 @@ fun ChatScreen(
     val showCreateChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
     val currentChatState = viewModel.currentChatLiveData.observeAsState()
     val messagesState = viewModel.messagesLiveData.observeAsState()
+    val messageActionState: MutableState<MessageAction> = remember { mutableStateOf(MessageAction.Cancel) }
 
     LaunchedEffect(Unit) {
         Log.e("apiTAG", "ChatScreen getCurrentChat currentChatId $currentChatId")
@@ -83,19 +86,63 @@ fun ChatScreen(
         }
     }
 
-    LaunchedEffect(isMessageDeleteModeState.value.isTrue() && messagesState.value?.none { it.isCheckedToDelete.value }.isTrue()) {
-        isMessageDeleteModeState.value = false
+    LaunchedEffect(isMessageActionModeState.value.isTrue() && messagesState.value?.none { it.isCheckedToDelete.value }.isTrue()) {
+        isMessageActionModeState.value = false
+    }
+
+    val clipboardManager = LocalClipboardManager.current
+    val shareIntentLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
+            Log.e(
+                "apiTAG",
+                "ChatScreen MessageDeleteField onShareClick shareIntentLauncher onComplete"
+            )
+        }
+    LaunchedEffect(messageActionState.value) {
+        when(messageActionState.value) {
+            is MessageAction.Delete -> {
+                viewModel.deleteMessages(messagesState.value?.filter { it.isCheckedToDelete.value }?.map { it.id } ?: listOf() )
+                messagesState.value.clearCheckToAction()
+                isMessageActionModeState.value = false
+            }
+            is MessageAction.Copy -> {
+                clipboardManager.setText(AnnotatedString(messagesState.value.textToAction()))
+                messagesState.value.clearCheckToAction()
+                isMessageActionModeState.value = false
+            }
+            is MessageAction.Share -> {
+                Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, messagesState.value.textToAction())
+
+                    val chooser = Intent.createChooser(this, "Share Text")
+                    shareIntentLauncher.launch(chooser)
+                }
+
+                messagesState.value.clearCheckToAction()
+                isMessageActionModeState.value = false
+            }
+            is MessageAction.Transfer -> {
+                //TODO
+            }
+
+            else -> {
+                messagesState.value?.clearCheckToAction()
+                isMessageActionModeState.value = false
+            }
+        }
     }
 
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .navigationBarsWithImePadding(),
         verticalArrangement = Arrangement.Top
     ) {
         Box(modifier = Modifier.weight(1f)) {
             messagesState.value.takeIf { it.isNotNull() }?.let { messages ->
                 MessagesList(
-                    messages, isMessageDeleteModeState, modifier = Modifier
+                    messages, isMessageActionModeState, modifier = Modifier
                         .padding(horizontal = 16.dp)
                 ) { message ->
                     viewModel.updateMessage(message)
@@ -113,51 +160,8 @@ fun ChatScreen(
                     showCreateChatDialog.value = true
                 }
 
-                isMessageDeleteModeState.value.isTrue() -> {
-                    val clipboardManager = LocalClipboardManager.current
-                    val shareIntentLauncher =
-                        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
-                            Log.e(
-                                "apiTAG",
-                                "ChatScreen MessageDeleteField onShareClick shareIntentLauncher onComplete"
-                            )
-                        }
-                    MessageActionField(
-                        onCancelClick = {
-                            messagesState.value.clearCheckToAction()
-                            isMessageDeleteModeState.value = false
-                        },
-                        onCopyClick = {
-                            clipboardManager.setText(AnnotatedString(messagesState.value.textToAction()))
-                            messagesState.value.clearCheckToAction()
-                            isMessageDeleteModeState.value = false
-                        },
-                        onDeleteClick = {
-                            Log.e(
-                                "apiTAG",
-                                "ChatScreen MessageDeleteField onDeleteClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}"
-                            )
-                            viewModel.deleteMessages(messagesState.value?.filter { it.isCheckedToDelete.value }?.map { it.chatId } ?: listOf())
-                            messagesState.value.clearCheckToAction()
-                            isMessageDeleteModeState.value = false
-                        },
-                        onShareClick = {
-                            Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(Intent.EXTRA_TEXT, messagesState.value.textToAction())
-
-                                val chooser = Intent.createChooser(this, "Share Text")
-                                shareIntentLauncher.launch(chooser)
-                            }
-
-                            messagesState.value.clearCheckToAction()
-                            isMessageDeleteModeState.value = false
-
-                            Log.e(
-                                "apiTAG",
-                                "ChatScreen MessageDeleteField onShareClick messagesState.value isCheckedToDelete ${messagesState.value?.filter { it.isCheckedToDelete.value }}"
-                            )
-                        })
+                isMessageActionModeState.value.isTrue() -> {
+                    MessageActionField(messageActionState)
                 }
 
                 currentChatState.value.isNotNull() && currentChatState.value?.id != DEFAULT_CHAT_ID -> {
@@ -168,12 +172,7 @@ fun ChatScreen(
                         (currentChatState.value?.id ?: DEFAULT_CHAT_ID) != DEFAULT_CHAT_ID,
                         inputValue = inputValue
                     ) { messageText ->
-                        if (messageText.isEmpty()) {
-                            Log.e(
-                                "apiTAG",
-                                "ChatContent ChatTextField inputValue.value.text.isEmpty()"
-                            )
-                        } else {
+
                             viewModel.insertMessage(
                                 MessageUIModel(
                                     id = Date().time,
@@ -202,7 +201,6 @@ fun ChatScreen(
                                 )
                             )
                         }
-                    }
                 }
             }
         }
@@ -235,7 +233,7 @@ fun ChatScreen(
 @Composable
 fun MessagesList(
     messages: List<MessageUIModel>,
-    isMessageDeleteModeState: MutableState<Boolean?>,
+    isMessageActionModeState: MutableState<Boolean?>,
     modifier: Modifier = Modifier,
     onMessageChange: (MessageUIModel) -> Unit = {}
 ) {
@@ -249,6 +247,10 @@ fun MessagesList(
     } else {
         val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = messages.lastIndex)
 
+        LaunchedEffect(messages.size) {
+            scrollState.animateScrollToItem(index = messages.size - 1)
+        }
+
         UpdateViewConfiguration(
             longPressTimeoutMillis = 200L
         ) {
@@ -261,7 +263,7 @@ fun MessagesList(
                         Message(
                             isUserAuthor = message.author == "me",
                             message = message,
-                            isMessageDeleteModeState = isMessageDeleteModeState,
+                            isMessageDeleteModeState = isMessageActionModeState,
                             onMessageChange
                         )
                     }
@@ -411,33 +413,30 @@ fun Message(
 
     @Composable
     fun MessageActionField(
-        onCancelClick: () -> Unit,
-        onCopyClick: () -> Unit,
-        onDeleteClick: () -> Unit,
-        onShareClick: () -> Unit,
+        messageActionState: MutableState<MessageAction>
     ) {
         Row(
             Modifier
                 .padding(16.dp)
                 .height(TextFieldDefaults.MinHeight)
         ) {
-            TextButton(onClick = onCancelClick) {
+            TextButton(onClick = { messageActionState.value = MessageAction.Cancel }) {
                 Text(text = stringResource(id = R.string.button_cancel), color = Neutral50)
             }
             Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = onCopyClick) {
+            IconButton(onClick = { messageActionState.value = MessageAction.Copy }) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_copy),
                     contentDescription = "Message copy button"
                 )
             }
-            IconButton(onClick = onDeleteClick) {
+            IconButton(onClick = { messageActionState.value = MessageAction.Delete }) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_delete),
                     contentDescription = "Message delete button"
                 )
             }
-            IconButton(onClick = onShareClick) {
+            IconButton(onClick = { messageActionState.value = MessageAction.Share }) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_share),
                     contentDescription = "Message share button"
