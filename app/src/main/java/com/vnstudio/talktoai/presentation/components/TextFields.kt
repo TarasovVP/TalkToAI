@@ -13,7 +13,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -30,7 +32,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
-import com.vnstudio.talktoai.CommonExtensions.isTrue
+import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.presentation.theme.Neutral600
 import com.vnstudio.talktoai.presentation.theme.Primary500
@@ -123,10 +125,21 @@ fun PasswordTextField(inputValue: MutableState<TextFieldValue>, placeHolder: Str
 @Composable
 fun TextFieldWithButton(
     isEnabled: Boolean,
-    inputValue: MutableState<TextFieldValue>,
     onSendClick: (String) -> Unit,
 ) {
+
+    val inputValue: MutableState<TextFieldValue> = remember {
+        mutableStateOf(TextFieldValue())
+    }
+
     val focusManager = LocalFocusManager.current
+    LaunchedEffect(inputValue.value) {
+        if (inputValue.value.text.isEmpty()) focusManager.clearFocus()
+        Log.e("inputValueTAG", "TextFields TextFieldWithButton LaunchedEffect inputValue ${inputValue.value.text}")
+    }
+
+    Log.e("inputValueTAG", "TextFields TextFieldWithButton inputValue ${inputValue.value.text}")
+
     TextField(value = inputValue.value,
         onValueChange = { newValue ->
             inputValue.value = newValue
@@ -153,10 +166,10 @@ fun TextFieldWithButton(
             .clickable(enabled = isEnabled) {},
         maxLines = 6,
         trailingIcon = {
-            IconButton(enabled = isEnabled, onClick = {
+            IconButton(enabled = isEnabled && inputValue.value.text.isNotBlank(), onClick = {
                 onSendClick.invoke(inputValue.value.text.trim())
                 inputValue.value = TextFieldValue(String.EMPTY)
-                focusManager.clearFocus()
+                Log.e("inputValueTAG", "TextFields TextFieldWithButton onClick inputValue ${inputValue.value.text}")
             }) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_message_send),
@@ -174,7 +187,7 @@ fun TruncatableText(
     isTruncated: MutableState<Boolean>,
     linesCount: Int
 ) {
-    Log.e("truncateTAG", "TruncatableText isTruncated ${isTruncated.value}" )
+    Log.e("truncateTAG", "TruncatableText init message ${message.takeIf { it.length > 6 }?.substring(0, 6) } isTruncated ${isTruncated.value}" )
     if ( linesCount > 2) {
         val annotatedString = buildAnnotatedString {
             val textSpanStyle = MaterialTheme.typography.body1.toSpanStyle().copy(color = Color.White)
@@ -199,17 +212,17 @@ fun TruncatableText(
                 .padding(10.dp)
                 .wrapContentSize()
                 .pointerInput(Unit) {
-                    Log.e("clickTAG", "pointerInput: " )
+                    Log.e("clickTAG", "pointerInput: ")
                     detectTapGestures(onTap = {
-                        Log.e("clickTAG", "pointerInput: " )
+                        Log.e("clickTAG", "pointerInput: ")
                     })
                     detectTapGestures(onLongPress = {
-                        Log.e("clickTAG", "pointerInput: " )
+                        Log.e("clickTAG", "pointerInput: ")
                     })
                 }
                 .let { if (isTruncated.value) it.heightIn(max = 68.dp) else it },
             onClick = { offset ->
-                Log.e("clickTAG", "onClick: " )
+                Log.e("truncateTAG", "TruncatableText onClick message ${message.takeIf { it.length > 6 }?.substring(0, 6) } isTruncated ${isTruncated.value}" )
                 annotatedString.getStringAnnotations(tag = "CLICKABLE", start = offset, end = offset).firstOrNull()?.let {
                     isTruncated.value = isTruncated.value.not()
                 }

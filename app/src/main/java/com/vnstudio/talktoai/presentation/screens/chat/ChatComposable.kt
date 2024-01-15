@@ -10,7 +10,19 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -19,8 +31,13 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,24 +60,40 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.insets.navigationBarsWithImePadding
-import com.vnstudio.talktoai.*
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.CommonExtensions.isNotTrue
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.R
+import com.vnstudio.talktoai.clearCheckToAction
 import com.vnstudio.talktoai.data.database.db_entities.Chat
+import com.vnstudio.talktoai.dateToMilliseconds
 import com.vnstudio.talktoai.domain.ApiRequest
 import com.vnstudio.talktoai.domain.enums.MessageStatus
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.MessageApi
 import com.vnstudio.talktoai.domain.sealed_classes.MessageAction
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
-import com.vnstudio.talktoai.presentation.components.*
+import com.vnstudio.talktoai.isDefineSecondsLater
+import com.vnstudio.talktoai.presentation.components.ConfirmationDialog
+import com.vnstudio.talktoai.presentation.components.DataEditDialog
+import com.vnstudio.talktoai.presentation.components.EmptyState
+import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
+import com.vnstudio.talktoai.presentation.components.ProgressVisibilityHandler
+import com.vnstudio.talktoai.presentation.components.TextFieldWithButton
+import com.vnstudio.talktoai.presentation.components.TextIconButton
+import com.vnstudio.talktoai.presentation.components.TruncatableText
+import com.vnstudio.talktoai.presentation.components.charsInLine
 import com.vnstudio.talktoai.presentation.components.draggable.UpdateViewConfiguration
-import com.vnstudio.talktoai.presentation.theme.*
+import com.vnstudio.talktoai.presentation.components.getDimensionResource
+import com.vnstudio.talktoai.presentation.components.textLinesCount
+import com.vnstudio.talktoai.presentation.theme.Neutral50
+import com.vnstudio.talktoai.presentation.theme.Primary500
+import com.vnstudio.talktoai.presentation.theme.Primary600
+import com.vnstudio.talktoai.presentation.theme.Primary900
 import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
-import java.util.*
+import com.vnstudio.talktoai.textToAction
+import java.util.Date
 
 @Composable
 fun ChatScreen(
@@ -73,7 +106,9 @@ fun ChatScreen(
     val showCreateChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
     val currentChatState = viewModel.currentChatLiveData.observeAsState()
     val messagesState = viewModel.messagesLiveData.observeAsState()
-    val messageActionState: MutableState<MessageAction> = remember { mutableStateOf(MessageAction.Cancel) }
+    val messageActionState: MutableState<MessageAction> =
+        remember { mutableStateOf(MessageAction.Cancel) }
+    val showMessageActionDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         Log.e("apiTAG", "ChatScreen getCurrentChat currentChatId $currentChatId")
@@ -86,30 +121,30 @@ fun ChatScreen(
         }
     }
 
-    LaunchedEffect(isMessageActionModeState.value.isTrue() && messagesState.value?.none { it.isCheckedToDelete.value }.isTrue()) {
+    LaunchedEffect(isMessageActionModeState.value.isTrue() && messagesState.value?.none { it.isCheckedToDelete.value }
+        .isTrue()) {
         isMessageActionModeState.value = false
     }
 
     val clipboardManager = LocalClipboardManager.current
     val shareIntentLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
+            infoMessageState.value = InfoMessage("Отправлено")
             Log.e(
                 "apiTAG",
                 "ChatScreen MessageDeleteField onShareClick shareIntentLauncher onComplete"
             )
         }
     LaunchedEffect(messageActionState.value) {
-        when(messageActionState.value) {
-            is MessageAction.Delete -> {
-                viewModel.deleteMessages(messagesState.value?.filter { it.isCheckedToDelete.value }?.map { it.id } ?: listOf() )
-                messagesState.value.clearCheckToAction()
-                isMessageActionModeState.value = false
-            }
+        when (messageActionState.value) {
+            is MessageAction.Delete -> showMessageActionDialog.value = true
             is MessageAction.Copy -> {
                 clipboardManager.setText(AnnotatedString(messagesState.value.textToAction()))
                 messagesState.value.clearCheckToAction()
                 isMessageActionModeState.value = false
+                infoMessageState.value = InfoMessage("Скопировано")
             }
+
             is MessageAction.Share -> {
                 Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
@@ -122,10 +157,8 @@ fun ChatScreen(
                 messagesState.value.clearCheckToAction()
                 isMessageActionModeState.value = false
             }
-            is MessageAction.Transfer -> {
-                //TODO
-            }
 
+            is MessageAction.Transfer -> showMessageActionDialog.value = true
             else -> {
                 messagesState.value?.clearCheckToAction()
                 isMessageActionModeState.value = false
@@ -165,42 +198,38 @@ fun ChatScreen(
                 }
 
                 currentChatState.value.isNotNull() && currentChatState.value?.id != DEFAULT_CHAT_ID -> {
-                    val inputValue = remember {
-                        mutableStateOf(TextFieldValue())
-                    }
                     TextFieldWithButton(
-                        (currentChatState.value?.id ?: DEFAULT_CHAT_ID) != DEFAULT_CHAT_ID,
-                        inputValue = inputValue
+                        (currentChatState.value?.id ?: DEFAULT_CHAT_ID) != DEFAULT_CHAT_ID
                     ) { messageText ->
 
-                            viewModel.insertMessage(
-                                MessageUIModel(
-                                    id = Date().time,
-                                    chatId = currentChatState.value?.id ?: 0,
-                                    author = "me",
-                                    message = messageText,
-                                    updatedAt = Date().dateToMilliseconds(),
-                                    status = MessageStatus.SUCCESS
-                                )
-                            )
-                            val temporaryMessage = MessageUIModel(
-                                id = Date().time + 1,
+                        viewModel.insertMessage(
+                            MessageUIModel(
+                                id = Date().time,
                                 chatId = currentChatState.value?.id ?: 0,
-                                author = "gpt-3.5-turbo",
-                                message = String.EMPTY,
-                                updatedAt = Date().dateToMilliseconds() + 1,
-                                status = MessageStatus.REQUESTING
+                                author = "me",
+                                message = messageText,
+                                updatedAt = Date().dateToMilliseconds(),
+                                status = MessageStatus.SUCCESS
                             )
-                            viewModel.insertMessage(temporaryMessage)
-                            viewModel.sendRequest(
-                                temporaryMessage,
-                                ApiRequest(
-                                    model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
-                                        MessageApi(role = "user", content = messageText)
-                                    )
+                        )
+                        val temporaryMessage = MessageUIModel(
+                            id = Date().time + 1,
+                            chatId = currentChatState.value?.id ?: 0,
+                            author = "gpt-3.5-turbo",
+                            message = String.EMPTY,
+                            updatedAt = Date().dateToMilliseconds() + 1,
+                            status = MessageStatus.REQUESTING
+                        )
+                        viewModel.insertMessage(temporaryMessage)
+                        viewModel.sendRequest(
+                            temporaryMessage,
+                            ApiRequest(
+                                model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
+                                    MessageApi(role = "user", content = messageText)
                                 )
                             )
-                        }
+                        )
+                    }
                 }
             }
         }
@@ -225,6 +254,36 @@ fun ChatScreen(
         )
         showCreateChatDialog.value = false
     }
+    ConfirmationDialog(
+        title = if (messageActionState.value is MessageAction.Delete) "Are you sure to delete?" else if (messageActionState.value is MessageAction.Delete) "Are you sure to transfer?" else String.EMPTY,
+        showDialog = showMessageActionDialog,
+        onDismiss = { showMessageActionDialog.value = false },
+        onConfirmationClick = {
+            when (messageActionState.value) {
+                is MessageAction.Delete -> {
+                    viewModel.deleteMessages(messagesState.value?.filter { it.isCheckedToDelete.value }
+                        ?.map { it.id } ?: listOf())
+                    messagesState.value.clearCheckToAction()
+                    isMessageActionModeState.value = false
+                    showMessageActionDialog.value = false
+                    infoMessageState.value = InfoMessage("Удалено")
+                }
+
+                is MessageAction.Transfer -> {
+                    //TODO
+                    messagesState.value.clearCheckToAction()
+                    isMessageActionModeState.value = false
+                    showMessageActionDialog.value = false
+                    infoMessageState.value = InfoMessage("Перенесено")
+                }
+
+                else -> {
+                    messagesState.value.clearCheckToAction()
+                    isMessageActionModeState.value = false
+                    showMessageActionDialog.value = false
+                }
+            }
+        })
 
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
     ProgressVisibilityHandler(progressVisibilityState, viewModel.progressVisibilityLiveData)
@@ -235,7 +294,7 @@ fun MessagesList(
     messages: List<MessageUIModel>,
     isMessageActionModeState: MutableState<Boolean?>,
     modifier: Modifier = Modifier,
-    onMessageChange: (MessageUIModel) -> Unit = {}
+    onMessageChange: (MessageUIModel) -> Unit = {},
 ) {
     if (messages.isEmpty()) {
         EmptyState(
@@ -281,15 +340,46 @@ fun Message(
     onMessageChange: (MessageUIModel) -> Unit = {},
 ) {
     val isTruncatedState = remember { mutableStateOf(message.isTruncated) }
-
+    Log.e(
+        "truncateTAG",
+        "ChatComposable Message before LaunchedEffect message.message ${
+            message.message.takeIf { it.length > 6 }?.substring(0, 6)
+        } message.isTruncated ${message.isTruncated} isTruncatedState.value ${isTruncatedState.value}"
+    )
     LaunchedEffect(isTruncatedState.value) {
+        Log.e(
+            "truncateTAG",
+            "ChatComposable Message LaunchedEffect(isTruncatedState.value) message.message ${
+                message.message.takeIf { it.length > 6 }?.substring(0, 6)
+            } message.isTruncated ${message.isTruncated} isTruncatedState.value ${isTruncatedState.value}"
+        )
         onMessageChange(message.copy(isTruncated = isTruncatedState.value))
     }
+    LaunchedEffect(message.isTruncated) {
+        isTruncatedState.value = message.isTruncated
+    }
 
-    val paddings = getDimensionResource(resId = R.dimen.large_padding).value + getDimensionResource(resId = if (isUserAuthor) R.dimen.large_padding else R.dimen.small_padding).value + getDimensionResource(resId = R.dimen.default_text_size).value * 2 + getDimensionResource(resId = R.dimen.default_text_size).value * 2 + if (isUserAuthor) 0f else getDimensionResource(resId = R.dimen.avatar_size).value
-    val linesCount = textLinesCount(message.message, paddings, getDimensionResource(resId = R.dimen.default_text_size).value)
-    val changedMessage = if (linesCount > 2 && isTruncatedState.value) message.message.substring(0, charsInLine(paddings, getDimensionResource(resId = R.dimen.default_text_size).value).toInt()) + "..." else message.message
-    Log.e("charWidthTAG", "ChatComposable: message.message ${message.message.takeIf { it.length > 6 }?.substring(0, 6) } message.length ${message.message.length }")
+    val paddings =
+        getDimensionResource(resId = R.dimen.large_padding).value + getDimensionResource(resId = if (isUserAuthor) R.dimen.large_padding else R.dimen.small_padding).value + getDimensionResource(
+            resId = R.dimen.default_text_size
+        ).value * 2 + getDimensionResource(resId = R.dimen.default_text_size).value * 2 + if (isUserAuthor) 0f else getDimensionResource(
+            resId = R.dimen.avatar_size
+        ).value
+    val linesCount = textLinesCount(
+        message.message,
+        paddings,
+        getDimensionResource(resId = R.dimen.default_text_size).value
+    )
+    val changedMessage = if (linesCount > 2 && isTruncatedState.value) message.message.substring(
+        0,
+        charsInLine(paddings, getDimensionResource(resId = R.dimen.default_text_size).value).toInt()
+    ) + "..." else message.message
+    Log.e(
+        "charWidthTAG",
+        "ChatComposable: message.message ${
+            message.message.takeIf { it.length > 6 }?.substring(0, 6)
+        } message.length ${message.message.length}"
+    )
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -394,70 +484,69 @@ fun Message(
     }
 }
 
-
-    @Composable
-    fun CreateChatScreen(onClick: () -> Unit) {
-        Row(
-            Modifier
-                .padding(16.dp)
-                .height(TextFieldDefaults.MinHeight)
-        ) {
-            TextIconButton(
-                "Новый чат",
-                R.drawable.ic_chat_add,
-                Modifier,
-                onClick
-            )
-        }
-    }
-
-    @Composable
-    fun MessageActionField(
-        messageActionState: MutableState<MessageAction>
+@Composable
+fun CreateChatScreen(onClick: () -> Unit) {
+    Row(
+        Modifier
+            .padding(16.dp)
+            .height(TextFieldDefaults.MinHeight)
     ) {
-        Row(
-            Modifier
-                .padding(16.dp)
-                .height(TextFieldDefaults.MinHeight)
-        ) {
-            TextButton(onClick = { messageActionState.value = MessageAction.Cancel }) {
-                Text(text = stringResource(id = R.string.button_cancel), color = Neutral50)
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = { messageActionState.value = MessageAction.Copy }) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_copy),
-                    contentDescription = "Message copy button"
-                )
-            }
-            IconButton(onClick = { messageActionState.value = MessageAction.Delete }) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_delete),
-                    contentDescription = "Message delete button"
-                )
-            }
-            IconButton(onClick = { messageActionState.value = MessageAction.Share }) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_share),
-                    contentDescription = "Message share button"
-                )
-            }
-        }
+        TextIconButton(
+            "Новый чат",
+            R.drawable.ic_chat_add,
+            Modifier,
+            onClick
+        )
     }
+}
 
-    @Composable
-    fun MessageTypingAnimation() {
-        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.message_typing))
-        Box(
-            Modifier
-                .padding(16.dp)
-        ) {
-            LottieAnimation(
-                composition,
-                iterations = LottieConstants.IterateForever,
-                modifier = Modifier
-                    .width(52.dp)
-                    .height(12.dp)
+@Composable
+fun MessageActionField(
+    messageActionState: MutableState<MessageAction>,
+) {
+    Row(
+        Modifier
+            .padding(16.dp)
+            .height(TextFieldDefaults.MinHeight)
+    ) {
+        TextButton(onClick = { messageActionState.value = MessageAction.Cancel }) {
+            Text(text = stringResource(id = R.string.button_cancel), color = Neutral50)
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        IconButton(onClick = { messageActionState.value = MessageAction.Copy }) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_copy),
+                contentDescription = "Message copy button"
+            )
+        }
+        IconButton(onClick = { messageActionState.value = MessageAction.Delete }) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_delete),
+                contentDescription = "Message delete button"
+            )
+        }
+        IconButton(onClick = { messageActionState.value = MessageAction.Share }) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_share),
+                contentDescription = "Message share button"
             )
         }
     }
+}
+
+@Composable
+fun MessageTypingAnimation() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.message_typing))
+    Box(
+        Modifier
+            .padding(16.dp)
+    ) {
+        LottieAnimation(
+            composition,
+            iterations = LottieConstants.IterateForever,
+            modifier = Modifier
+                .width(52.dp)
+                .height(12.dp)
+        )
+    }
+}
