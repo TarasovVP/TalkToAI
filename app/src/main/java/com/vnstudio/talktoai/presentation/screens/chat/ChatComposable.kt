@@ -325,7 +325,7 @@ fun MessagesList(
         }
 
         UpdateViewConfiguration(
-            longPressTimeoutMillis = 200L
+            longPressTimeoutMillis = 300L
         ) {
             Box(modifier = modifier) {
                 LazyColumn(
@@ -383,10 +383,6 @@ fun Message(
         paddings,
         getDimensionResource(resId = R.dimen.default_text_size).value
     )
-    val changedMessage = if (linesCount > 2 && isTruncatedState.value) message.message.substring(
-        0,
-        charsInLine(paddings, getDimensionResource(resId = R.dimen.default_text_size).value).toInt()
-    ) + "..." else message.message
     Log.e(
         "charWidthTAG",
         "ChatComposable: message.message ${
@@ -487,7 +483,7 @@ fun Message(
 
                     message.status == MessageStatus.REQUESTING -> MessageTypingAnimation()
                     else -> TruncatableText(
-                        message = changedMessage,
+                        message = message.message,
                         isTruncated = isTruncatedState,
                         linesCount = linesCount
                     )
