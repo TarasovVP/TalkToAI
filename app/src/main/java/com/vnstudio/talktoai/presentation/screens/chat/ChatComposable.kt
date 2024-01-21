@@ -4,9 +4,6 @@ import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -34,10 +31,12 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -106,9 +105,9 @@ fun ChatScreen(
     val showCreateChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
     val currentChatState = viewModel.currentChatLiveData.observeAsState()
     val messagesState = viewModel.messagesLiveData.observeAsState()
-    val messageActionState: MutableState<MessageAction> =
-        remember { mutableStateOf(MessageAction.Cancel) }
-    val showMessageActionDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val messageActionState: MutableState<String> = rememberSaveable { mutableStateOf(MessageAction.Cancel().value) }
+    val showMessageActionDialog: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
+    Log.e("apiTAG", "ChatScreen showMessageActionDialog ${showMessageActionDialog.value} messageActionState ${messageActionState.value}")
 
     LaunchedEffect(Unit) {
         Log.e("apiTAG", "ChatScreen getCurrentChat currentChatId $currentChatId")
@@ -137,15 +136,23 @@ fun ChatScreen(
         }
     LaunchedEffect(messageActionState.value) {
         when (messageActionState.value) {
-            is MessageAction.Delete -> showMessageActionDialog.value = true
-            is MessageAction.Copy -> {
+            MessageAction.Delete().value -> {
+                Log.e("apiTAG", "ChatScreen is MessageAction.Delete before showMessageActionDialog ${showMessageActionDialog.value}")
+                showMessageActionDialog.value = true
+                Log.e("apiTAG", "ChatScreen is MessageAction.Delete after showMessageActionDialog ${showMessageActionDialog.value}")
+            }
+            MessageAction.Copy().value -> {
                 clipboardManager.setText(AnnotatedString(messagesState.value.textToAction()))
-                messagesState.value.clearCheckToAction()
-                isMessageActionModeState.value = false
+                resetMessageActionState(
+                    messagesState,
+                    messageActionState,
+                    isMessageActionModeState,
+                    showMessageActionDialog
+                )
                 infoMessageState.value = InfoMessage("Скопировано")
             }
 
-            is MessageAction.Share -> {
+            MessageAction.Share().value -> {
                 Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
                     putExtra(Intent.EXTRA_TEXT, messagesState.value.textToAction())
@@ -153,15 +160,12 @@ fun ChatScreen(
                     val chooser = Intent.createChooser(this, "Share Text")
                     shareIntentLauncher.launch(chooser)
                 }
-
-                messagesState.value.clearCheckToAction()
-                isMessageActionModeState.value = false
+                resetMessageActionState(messagesState, messageActionState, isMessageActionModeState, showMessageActionDialog)
             }
 
-            is MessageAction.Transfer -> showMessageActionDialog.value = true
+            MessageAction.Transfer().value -> showMessageActionDialog.value = true
             else -> {
-                messagesState.value?.clearCheckToAction()
-                isMessageActionModeState.value = false
+                resetMessageActionState(messagesState, messageActionState, isMessageActionModeState, showMessageActionDialog)
             }
         }
     }
@@ -255,38 +259,48 @@ fun ChatScreen(
         showCreateChatDialog.value = false
     }
     ConfirmationDialog(
-        title = if (messageActionState.value is MessageAction.Delete) "Are you sure to delete?" else if (messageActionState.value is MessageAction.Delete) "Are you sure to transfer?" else String.EMPTY,
+        title = when (messageActionState.value) {
+            MessageAction.Delete().value -> "Are you sure to delete?"
+            MessageAction.Delete().value -> "Are you sure to transfer?"
+            else -> String.EMPTY
+        },
         showDialog = showMessageActionDialog,
         onDismiss = { showMessageActionDialog.value = false },
         onConfirmationClick = {
             when (messageActionState.value) {
-                is MessageAction.Delete -> {
+                MessageAction.Delete().value -> {
                     viewModel.deleteMessages(messagesState.value?.filter { it.isCheckedToDelete.value }
                         ?.map { it.id } ?: listOf())
-                    messagesState.value.clearCheckToAction()
-                    isMessageActionModeState.value = false
-                    showMessageActionDialog.value = false
+                    resetMessageActionState(messagesState, messageActionState, isMessageActionModeState, showMessageActionDialog)
                     infoMessageState.value = InfoMessage("Удалено")
                 }
 
-                is MessageAction.Transfer -> {
+                MessageAction.Transfer().value -> {
                     //TODO
-                    messagesState.value.clearCheckToAction()
-                    isMessageActionModeState.value = false
-                    showMessageActionDialog.value = false
+                    resetMessageActionState(messagesState, messageActionState, isMessageActionModeState, showMessageActionDialog)
                     infoMessageState.value = InfoMessage("Перенесено")
                 }
 
                 else -> {
-                    messagesState.value.clearCheckToAction()
-                    isMessageActionModeState.value = false
-                    showMessageActionDialog.value = false
+                    resetMessageActionState(messagesState, messageActionState, isMessageActionModeState, showMessageActionDialog)
                 }
             }
         })
 
     ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
     ProgressVisibilityHandler(progressVisibilityState, viewModel.progressVisibilityLiveData)
+}
+
+private fun resetMessageActionState(
+    messagesState: State<List<MessageUIModel>?>,
+    messageActionState: MutableState<String>,
+    isMessageActionModeState: MutableState<Boolean?>,
+    showMessageActionDialog: MutableState<Boolean>
+) {
+    messagesState.value.clearCheckToAction()
+    messageActionState.value = String.EMPTY
+    isMessageActionModeState.value = false
+    showMessageActionDialog.value = false
 }
 
 @Composable
@@ -385,12 +399,12 @@ fun Message(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .animateContentSize(
+            /*.animateContentSize(
                 animationSpec = spring(
                     dampingRatio = Spring.DampingRatioNoBouncy,
                     stiffness = Spring.StiffnessMedium
                 )
-            )
+            )*/
             .pointerInput(isMessageDeleteModeState.value) {
                 if (isMessageDeleteModeState.value.isTrue()) {
                     detectTapGestures(onTap = {
@@ -439,7 +453,7 @@ fun Message(
             Box(
                 modifier = Modifier
                     .wrapContentSize()
-                    .widthIn(0.dp, (LocalConfiguration.current.screenWidthDp * 0.8).dp)
+                    .widthIn(40.dp, (LocalConfiguration.current.screenWidthDp * 0.8).dp)
                     .background(
                         color = if (isUserAuthor) Primary500 else Primary600,
                         shape = RoundedCornerShape(
@@ -502,30 +516,30 @@ fun CreateChatScreen(onClick: () -> Unit) {
 
 @Composable
 fun MessageActionField(
-    messageActionState: MutableState<MessageAction>,
+    messageActionState: MutableState<String>,
 ) {
     Row(
         Modifier
             .padding(16.dp)
             .height(TextFieldDefaults.MinHeight)
     ) {
-        TextButton(onClick = { messageActionState.value = MessageAction.Cancel }) {
+        TextButton(onClick = { messageActionState.value = MessageAction.Cancel().value }) {
             Text(text = stringResource(id = R.string.button_cancel), color = Neutral50)
         }
         Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = { messageActionState.value = MessageAction.Copy }) {
+        IconButton(onClick = { messageActionState.value = MessageAction.Copy().value }) {
             Image(
                 painter = painterResource(id = R.drawable.ic_copy),
                 contentDescription = "Message copy button"
             )
         }
-        IconButton(onClick = { messageActionState.value = MessageAction.Delete }) {
+        IconButton(onClick = { messageActionState.value = MessageAction.Delete().value }) {
             Image(
                 painter = painterResource(id = R.drawable.ic_delete),
                 contentDescription = "Message delete button"
             )
         }
-        IconButton(onClick = { messageActionState.value = MessageAction.Share }) {
+        IconButton(onClick = { messageActionState.value = MessageAction.Share().value }) {
             Image(
                 painter = painterResource(id = R.drawable.ic_share),
                 contentDescription = "Message share button"
