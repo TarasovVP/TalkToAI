@@ -35,4 +35,11 @@ object Constants {
     const val ENCODING = "UTF-8"
     const val DARK_MODE_TEXT = "javascript:document.body.style.setProperty(\"color\", \"white\");"
     const val WHITE_MODE_TEXT = "javascript:document.body.style.setProperty(\"color\", \"black\");"
+
+    //Message Actions
+    const val MESSAGE_ACTION_CANCEL = "Cancel"
+    const val MESSAGE_ACTION_COPY = "Copy"
+    const val MESSAGE_ACTION_DELETE = "Delete"
+    const val MESSAGE_ACTION_TRANSFER = "Transfer"
+    const val MESSAGE_ACTION_SHARE = "Share"
 }
