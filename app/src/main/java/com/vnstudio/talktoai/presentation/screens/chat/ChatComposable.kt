@@ -353,7 +353,7 @@ fun Message(
     isMessageDeleteModeState: MutableState<Boolean?>,
     onMessageChange: (MessageUIModel) -> Unit = {},
 ) {
-    val isTruncatedState = remember { mutableStateOf(message.isTruncated) }
+    val isTruncatedState = rememberSaveable { mutableStateOf(message.isTruncated) }
     Log.e(
         "truncateTAG",
         "ChatComposable Message before LaunchedEffect message.message ${
@@ -367,10 +367,9 @@ fun Message(
                 message.message.takeIf { it.length > 6 }?.substring(0, 6)
             } message.isTruncated ${message.isTruncated} isTruncatedState.value ${isTruncatedState.value}"
         )
-        onMessageChange(message.copy(isTruncated = isTruncatedState.value))
-    }
-    LaunchedEffect(message.isTruncated) {
-        isTruncatedState.value = message.isTruncated
+        if (isTruncatedState.value != message.isTruncated) {
+            onMessageChange(message.copy(isTruncated = isTruncatedState.value))
+        }
     }
 
     val paddings =
