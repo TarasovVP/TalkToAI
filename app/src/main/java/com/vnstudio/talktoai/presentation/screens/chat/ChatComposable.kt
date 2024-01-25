@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -82,7 +83,6 @@ import com.vnstudio.talktoai.presentation.components.ProgressVisibilityHandler
 import com.vnstudio.talktoai.presentation.components.TextFieldWithButton
 import com.vnstudio.talktoai.presentation.components.TextIconButton
 import com.vnstudio.talktoai.presentation.components.TruncatableText
-import com.vnstudio.talktoai.presentation.components.charsInLine
 import com.vnstudio.talktoai.presentation.components.draggable.UpdateViewConfiguration
 import com.vnstudio.talktoai.presentation.components.getDimensionResource
 import com.vnstudio.talktoai.presentation.components.textLinesCount
@@ -105,9 +105,13 @@ fun ChatScreen(
     val showCreateChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
     val currentChatState = viewModel.currentChatLiveData.observeAsState()
     val messagesState = viewModel.messagesLiveData.observeAsState()
-    val messageActionState: MutableState<String> = rememberSaveable { mutableStateOf(MessageAction.Cancel().value) }
+    val messageActionState: MutableState<String> =
+        rememberSaveable { mutableStateOf(MessageAction.Cancel().value) }
     val showMessageActionDialog: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
-    Log.e("apiTAG", "ChatScreen showMessageActionDialog ${showMessageActionDialog.value} messageActionState ${messageActionState.value}")
+    Log.e(
+        "apiTAG",
+        "ChatScreen showMessageActionDialog ${showMessageActionDialog.value} messageActionState ${messageActionState.value}"
+    )
 
     LaunchedEffect(Unit) {
         Log.e("apiTAG", "ChatScreen getCurrentChat currentChatId $currentChatId")
@@ -137,10 +141,17 @@ fun ChatScreen(
     LaunchedEffect(messageActionState.value) {
         when (messageActionState.value) {
             MessageAction.Delete().value -> {
-                Log.e("apiTAG", "ChatScreen is MessageAction.Delete before showMessageActionDialog ${showMessageActionDialog.value}")
+                Log.e(
+                    "apiTAG",
+                    "ChatScreen is MessageAction.Delete before showMessageActionDialog ${showMessageActionDialog.value}"
+                )
                 showMessageActionDialog.value = true
-                Log.e("apiTAG", "ChatScreen is MessageAction.Delete after showMessageActionDialog ${showMessageActionDialog.value}")
+                Log.e(
+                    "apiTAG",
+                    "ChatScreen is MessageAction.Delete after showMessageActionDialog ${showMessageActionDialog.value}"
+                )
             }
+
             MessageAction.Copy().value -> {
                 clipboardManager.setText(AnnotatedString(messagesState.value.textToAction()))
                 resetMessageActionState(
@@ -160,12 +171,22 @@ fun ChatScreen(
                     val chooser = Intent.createChooser(this, "Share Text")
                     shareIntentLauncher.launch(chooser)
                 }
-                resetMessageActionState(messagesState, messageActionState, isMessageActionModeState, showMessageActionDialog)
+                resetMessageActionState(
+                    messagesState,
+                    messageActionState,
+                    isMessageActionModeState,
+                    showMessageActionDialog
+                )
             }
 
             MessageAction.Transfer().value -> showMessageActionDialog.value = true
             else -> {
-                resetMessageActionState(messagesState, messageActionState, isMessageActionModeState, showMessageActionDialog)
+                resetMessageActionState(
+                    messagesState,
+                    messageActionState,
+                    isMessageActionModeState,
+                    showMessageActionDialog
+                )
             }
         }
     }
@@ -271,18 +292,33 @@ fun ChatScreen(
                 MessageAction.Delete().value -> {
                     viewModel.deleteMessages(messagesState.value?.filter { it.isCheckedToDelete.value }
                         ?.map { it.id } ?: listOf())
-                    resetMessageActionState(messagesState, messageActionState, isMessageActionModeState, showMessageActionDialog)
+                    resetMessageActionState(
+                        messagesState,
+                        messageActionState,
+                        isMessageActionModeState,
+                        showMessageActionDialog
+                    )
                     infoMessageState.value = InfoMessage("Удалено")
                 }
 
                 MessageAction.Transfer().value -> {
                     //TODO
-                    resetMessageActionState(messagesState, messageActionState, isMessageActionModeState, showMessageActionDialog)
+                    resetMessageActionState(
+                        messagesState,
+                        messageActionState,
+                        isMessageActionModeState,
+                        showMessageActionDialog
+                    )
                     infoMessageState.value = InfoMessage("Перенесено")
                 }
 
                 else -> {
-                    resetMessageActionState(messagesState, messageActionState, isMessageActionModeState, showMessageActionDialog)
+                    resetMessageActionState(
+                        messagesState,
+                        messageActionState,
+                        isMessageActionModeState,
+                        showMessageActionDialog
+                    )
                 }
             }
         })
@@ -295,7 +331,7 @@ private fun resetMessageActionState(
     messagesState: State<List<MessageUIModel>?>,
     messageActionState: MutableState<String>,
     isMessageActionModeState: MutableState<Boolean?>,
-    showMessageActionDialog: MutableState<Boolean>
+    showMessageActionDialog: MutableState<Boolean>,
 ) {
     messagesState.value.clearCheckToAction()
     messageActionState.value = String.EMPTY
@@ -390,7 +426,7 @@ fun Message(
         } message.length ${message.message.length}"
     )
     Row(
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
@@ -413,16 +449,31 @@ fun Message(
                 }
             }
     ) {
-        if (isMessageDeleteModeState.value.isTrue()) {
-            Box(modifier = Modifier.size(32.dp)) {
+
+        Column(modifier = Modifier
+            .fillMaxHeight()
+            .width(32.dp)
+            .padding(top = 6.dp),
+            verticalArrangement = Arrangement.Top) {
+            if (isMessageDeleteModeState.value.isTrue()) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(if (message.isCheckedToDelete.value) R.drawable.ic_checked_check_box else R.drawable.ic_empty_check_box)
                         .crossfade(true)
                         .build(),
-                    contentDescription = "AI avatar",
+                    contentDescription = "Deleting message checkbox",
                     contentScale = ContentScale.Inside,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier
+                        .padding(2.dp)
+                )
+            } else if (isUserAuthor.not()) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(R.drawable.avatar_ai)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "AI avatar",
+                    contentScale = ContentScale.Crop
                 )
             }
         }
@@ -432,18 +483,6 @@ fun Message(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            if (isUserAuthor.not() && isMessageDeleteModeState.value.isNotTrue()) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(R.drawable.avatar_ai)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "AI avatar",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(32.dp)
-                )
-            }
             Spacer(modifier = Modifier.width(4.dp))
             Box(
                 modifier = Modifier
