@@ -1,6 +1,7 @@
 package com.vnstudio.talktoai.di
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
@@ -10,25 +11,21 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.vnstudio.talktoai.BuildConfig
 import com.vnstudio.talktoai.data.database.AppDatabase
 import com.vnstudio.talktoai.data.database.dao.ChatDao
 import com.vnstudio.talktoai.data.database.dao.MessageDao
 import com.vnstudio.talktoai.data.network.ApiService
-import com.vnstudio.talktoai.data.network.HeaderInterceptor
 import com.vnstudio.talktoai.data.repositoryimpls.*
 import com.vnstudio.talktoai.domain.mappers.MessageUIMapper
 import com.vnstudio.talktoai.domain.repositories.*
 import com.vnstudio.talktoai.domain.usecases.*
-import com.vnstudio.talktoai.infrastructure.Constants.SERVER_TIMEOUT
 import com.vnstudio.talktoai.presentation.mapperimpls.MessageUIMapperImpl
-import com.vnstudio.talktoai.presentation.screens.chat.ChatUseCaseImpl
-import com.vnstudio.talktoai.presentation.screens.main.MainUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.authorization.login.LoginUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.authorization.onboarding.OnBoardingUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.chat.ChatUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.main.MainUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_account.SettingsAccountUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_chat.SettingsChatUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_feedback.SettingsFeedbackUseCaseImpl
@@ -42,11 +39,15 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.header
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @Module
@@ -74,43 +75,38 @@ object AppModule {
         return BuildConfig.BASE_URL
     }
 
-    @Provides
-    @Singleton
-    fun provideGson(): Gson = GsonBuilder().setLenient().create()
 
-    @Singleton
     @Provides
-    fun provideHeaderInterceptor(): HeaderInterceptor {
-        return HeaderInterceptor()
+    fun provideApiService(baseUrl: String, httpClient: HttpClient): ApiService {
+        return ApiService(baseUrl, httpClient)
     }
 
     @Singleton
     @Provides
-    fun provideHttpClient(headerInterceptor: HeaderInterceptor): OkHttpClient {
-        return OkHttpClient.Builder()
-            .connectTimeout(SERVER_TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(SERVER_TIMEOUT, TimeUnit.SECONDS)
-            .writeTimeout(SERVER_TIMEOUT, TimeUnit.SECONDS)
-            .addInterceptor(headerInterceptor)
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
-            .build()
-    }
+    fun provideHttpClient(): HttpClient {
+        return HttpClient {
+            install(ContentNegotiation) {
+                json(Json {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                })
+            }
+            install(DefaultRequest) {
+                header("Content-Type", "application/json")
+                header("Authorization", "Bearer ${BuildConfig.OPENAI_API_KEY}")
+                header("OpenAI-Organization", BuildConfig.ORGANIZATION_ID)
+            }
+            install(Logging) {
+                logger = object : Logger {
+                    override fun log(message: String) {
+                        Log.e("Logger Ktor =>", message)
+                    }
 
-    @Singleton
-    @Provides
-    fun provideRetrofit(baseUrl: String, okHttpClient: OkHttpClient, gson: Gson): Retrofit {
-        return Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(baseUrl)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-    }
-
-    @Provides
-    fun provideApiService(retrofit: Retrofit): ApiService {
-        return retrofit.create(ApiService::class.java)
+                }
+                level = LogLevel.ALL
+            }
+        }
     }
 
     @Singleton
@@ -218,9 +214,15 @@ object AppModule {
         messageRepository: MessageRepository,
         authRepository: AuthRepository,
         realDataBaseRepository: RealDataBaseRepository,
-        messageUIMapper: MessageUIMapper
+        messageUIMapper: MessageUIMapper,
     ): ChatUseCase {
-        return ChatUseCaseImpl(chatRepository, messageRepository, authRepository, realDataBaseRepository, messageUIMapper)
+        return ChatUseCaseImpl(
+            chatRepository,
+            messageRepository,
+            authRepository,
+            realDataBaseRepository,
+            messageUIMapper
+        )
     }
 
     @Singleton

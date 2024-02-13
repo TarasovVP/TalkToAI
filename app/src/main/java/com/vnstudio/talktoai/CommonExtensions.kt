@@ -10,6 +10,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.net.http.HttpException
 import android.os.LocaleList
 import android.util.Log
 import android.webkit.WebView
@@ -26,6 +27,10 @@ import com.vnstudio.talktoai.infrastructure.Constants.MIME_TYPE
 import com.vnstudio.talktoai.infrastructure.Constants.WHITE_MODE_TEXT
 import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
 import dagger.hilt.android.testing.HiltTestApplication
+import io.ktor.client.call.body
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.readText
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
@@ -70,6 +75,19 @@ object CommonExtensions {
             return Result.Failure(message())
         } catch (e: Exception) {
             return Result.Failure(e.localizedMessage)
+        }
+    }
+
+    suspend inline fun <reified T> HttpResponse.handleResponse(): Result<T> {
+        if (status.value !in 200..299) {
+            val error = bodyAsText()
+            return Result.Failure(error)
+        }
+        return try {
+            val result: T = body()
+            Result.Success(result)
+        } catch (e: Exception) {
+            Result.Failure(e.localizedMessage)
         }
     }
 

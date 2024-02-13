@@ -1,13 +1,18 @@
 package com.vnstudio.talktoai.data.network
 
 import com.vnstudio.talktoai.domain.ApiRequest
-import com.vnstudio.talktoai.domain.ApiResponse
-import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.POST
+import io.ktor.client.HttpClient
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 
-interface ApiService {
+import javax.inject.Inject
 
-    @POST("chat/completions")
-    suspend fun sendRequest(@Body apiRequest: ApiRequest): Response<ApiResponse>
+class ApiService @Inject constructor(
+    private val baseUrl: String,
+    private val httpClient: HttpClient
+) {
+
+    suspend fun sendRequest(apiRequest: ApiRequest) = httpClient.post("$baseUrl/chat/completions") {
+        setBody(apiRequest)
+    }
 }
