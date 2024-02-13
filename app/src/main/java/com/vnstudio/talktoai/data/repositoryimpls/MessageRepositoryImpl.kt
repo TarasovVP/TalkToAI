@@ -1,11 +1,13 @@
 package com.vnstudio.talktoai.data.repositoryimpls
 
 import com.vnstudio.talktoai.CommonExtensions.apiCall
+import com.vnstudio.talktoai.CommonExtensions.handleResponse
 import com.vnstudio.talktoai.CommonExtensions.orZero
 import com.vnstudio.talktoai.data.database.dao.MessageDao
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.data.network.ApiService
 import com.vnstudio.talktoai.domain.ApiRequest
+import com.vnstudio.talktoai.domain.ApiResponse
 import com.vnstudio.talktoai.domain.repositories.MessageRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -38,6 +40,6 @@ class MessageRepositoryImpl @Inject constructor(
     }
 
     override suspend fun sendRequest(apiRequest: ApiRequest) = flow {
-        emit(apiService.sendRequest(apiRequest).apiCall())
+        emit(apiService.sendRequest(apiRequest).handleResponse<ApiResponse>())
     }.flowOn(Dispatchers.IO)
 }
