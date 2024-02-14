@@ -1,6 +1,5 @@
 package com.vnstudio.talktoai.data.repositoryimpls
 
-import com.vnstudio.talktoai.CommonExtensions.apiCall
 import com.vnstudio.talktoai.CommonExtensions.handleResponse
 import com.vnstudio.talktoai.CommonExtensions.orZero
 import com.vnstudio.talktoai.data.database.dao.MessageDao
@@ -40,6 +39,7 @@ class MessageRepositoryImpl @Inject constructor(
     }
 
     override suspend fun sendRequest(apiRequest: ApiRequest) = flow {
-        emit(apiService.sendRequest(apiRequest).handleResponse<ApiResponse>())
+        val httpResponse = apiService.sendRequest(apiRequest)
+        emit(httpResponse.handleResponse<ApiResponse>())
     }.flowOn(Dispatchers.IO)
 }
