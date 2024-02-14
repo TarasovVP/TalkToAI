@@ -1,15 +1,13 @@
 buildscript {
     extra.apply {
-        set("hiltVersion", "2.46.1")
         set("navigationVersion", "2.7.0")
         set("roomVersion", "2.5.2")
     }
 
     dependencies {
-        classpath("com.google.dagger:hilt-android-gradle-plugin:${rootProject.extra.get("hiltVersion")}")
-        classpath("com.google.gms:google-services:4.3.15")
+        classpath("com.google.gms:google-services:4.4.1")
         classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.9")
-        classpath("org.jetbrains.kotlin:kotlin-serialization:1.8.0")
+        classpath("org.jetbrains.kotlin:kotlin-serialization:1.9.22")
     }
 }
 

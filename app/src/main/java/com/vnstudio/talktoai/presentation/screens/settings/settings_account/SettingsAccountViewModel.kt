@@ -12,11 +12,10 @@ import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsAccountUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
-@HiltViewModel
-class SettingsAccountViewModel @Inject constructor(
+
+
+class SettingsAccountViewModel(
     private val application: Application,
     private val settingsAccountUseCase: SettingsAccountUseCase,
     val googleSignInClient: GoogleSignInClient

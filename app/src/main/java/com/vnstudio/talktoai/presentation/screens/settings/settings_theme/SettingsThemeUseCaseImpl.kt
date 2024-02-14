@@ -3,9 +3,9 @@ package com.vnstudio.talktoai.presentation.screens.settings.settings_theme
 import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
 import com.vnstudio.talktoai.domain.usecases.SettingsThemeUseCase
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class SettingsThemeUseCaseImpl @Inject constructor(
+
+class SettingsThemeUseCaseImpl(
     private val dataStoreRepository: DataStoreRepository,
 ) : SettingsThemeUseCase {
 

@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
@@ -23,7 +23,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary700
 @Composable
 fun SettingsThemeScreen(infoMessageState: MutableState<InfoMessage?>) {
 
-    val viewModel: SettingsThemeViewModel = hiltViewModel()
+    val viewModel: SettingsThemeViewModel = koinViewModel()
     val appThemeState = remember { mutableStateOf<Int?>(null) }
 
     LaunchedEffect(Unit) {

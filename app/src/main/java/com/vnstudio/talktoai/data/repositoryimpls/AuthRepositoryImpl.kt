@@ -11,9 +11,9 @@ import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.CommonExtensions.isNotTrue
 import com.vnstudio.talktoai.domain.repositories.AuthRepository
 import com.vnstudio.talktoai.domain.sealed_classes.Result
-import javax.inject.Inject
 
-class AuthRepositoryImpl @Inject constructor(
+
+class AuthRepositoryImpl(
     private val firebaseAuth: FirebaseAuth,
     private val googleSignInClient: GoogleSignInClient,
 ) :

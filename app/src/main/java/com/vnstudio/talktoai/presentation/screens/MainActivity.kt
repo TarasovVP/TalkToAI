@@ -1,26 +1,15 @@
 package com.vnstudio.talktoai.presentation.screens
 
-import android.content.Context
-import android.content.ContextWrapper
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.WindowCompat
 import com.google.accompanist.insets.ProvideWindowInsets
-import com.vnstudio.talktoai.CommonExtensions.setAppLocale
-import com.vnstudio.talktoai.di.DataStoreEntryPoint
 import com.vnstudio.talktoai.presentation.screens.main.AppContent
 import com.vnstudio.talktoai.presentation.screens.main.MainViewModel
 import com.vnstudio.talktoai.presentation.theme.TalkToAITheme
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.EntryPointAccessors
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import java.util.Locale
 
-@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     val viewModel: MainViewModel by viewModels()
@@ -41,7 +30,8 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    override fun attachBaseContext(newBase: Context) {
+    //TODO uncomment
+    /*override fun attachBaseContext(newBase: Context) {
         val dataStoreRepository = EntryPointAccessors.fromApplication(
             newBase,
             DataStoreEntryPoint::class.java
@@ -54,5 +44,5 @@ class MainActivity : AppCompatActivity() {
             dataStoreRepository.getAppLang().first()
         } ?: Locale.getDefault().language
         super.attachBaseContext(ContextWrapper(newBase.setAppLocale(appLang)))
-    }
+    }*/
 }

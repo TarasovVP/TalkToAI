@@ -21,7 +21,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -52,6 +51,7 @@ import com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_poli
 import com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpScreen
 import com.vnstudio.talktoai.presentation.screens.settings.settings_theme.SettingsThemeScreen
 import com.vnstudio.talktoai.presentation.theme.*
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun PrimaryTopBar(
@@ -338,14 +338,14 @@ fun AppNavHost(
         composable(
             route = NavigationScreen.LoginScreen().route
         ) {
-            LoginScreen(hiltViewModel(), infoMessageState, progressVisibilityState) { route ->
+            LoginScreen(koinViewModel(), infoMessageState, progressVisibilityState) { route ->
                 navController.navigate(route)
             }
         }
         composable(
             route = NavigationScreen.SignUpScreen().route
         ) {
-            SignUpScreen(hiltViewModel(), infoMessageState, progressVisibilityState) { route ->
+            SignUpScreen(koinViewModel(), infoMessageState, progressVisibilityState) { route ->
                 navController.navigate(route)
             }
         }

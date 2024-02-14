@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
@@ -36,7 +36,7 @@ fun SettingsSignUpScreen(
     onNextScreen: (String) -> Unit,
 ) {
 
-    val viewModel: SettingSignUpViewModel = hiltViewModel()
+    val viewModel: SettingSignUpViewModel = koinViewModel()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
     val showAccountExistDialog = remember { mutableStateOf(false) }

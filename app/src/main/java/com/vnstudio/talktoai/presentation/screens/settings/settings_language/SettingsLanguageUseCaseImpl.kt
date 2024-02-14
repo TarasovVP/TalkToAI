@@ -3,9 +3,9 @@ package com.vnstudio.talktoai.presentation.screens.settings.settings_language
 import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
 import com.vnstudio.talktoai.domain.usecases.SettingsLanguageUseCase
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class SettingsLanguageUseCaseImpl @Inject constructor(
+
+class SettingsLanguageUseCaseImpl(
     private val dataStoreRepository: DataStoreRepository,
 ) : SettingsLanguageUseCase {
 

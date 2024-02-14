@@ -4,9 +4,9 @@ import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.repositories.*
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsSignUpUseCase
-import javax.inject.Inject
 
-class SettingsSignUpUseCaseImpl @Inject constructor(
+
+class SettingsSignUpUseCaseImpl(
     private val chatRepository: ChatRepository,
     private val messageRepository: MessageRepository,
     private val authRepository: AuthRepository,

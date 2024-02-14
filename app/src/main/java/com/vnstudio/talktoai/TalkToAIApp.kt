@@ -4,9 +4,10 @@ import android.app.Application
 import com.google.android.gms.ads.MobileAds
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.vnstudio.talktoai.CommonExtensions.registerForNetworkUpdates
-import dagger.hilt.android.HiltAndroidApp
+import com.vnstudio.talktoai.di.appModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
-@HiltAndroidApp
 class TalkToAIApp : Application() {
 
     var isNetworkAvailable: Boolean? = null
@@ -17,6 +18,10 @@ class TalkToAIApp : Application() {
         FirebaseAnalytics.getInstance(this)
         registerForNetworkUpdates { isAvailable ->
             isNetworkAvailable = isAvailable
+        }
+        startKoin {
+            androidContext(this@TalkToAIApp)
+            modules(appModule)
         }
     }
 }

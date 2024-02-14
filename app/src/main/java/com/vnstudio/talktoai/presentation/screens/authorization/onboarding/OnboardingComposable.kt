@@ -15,7 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.presentation.components.PrimaryButton
 import com.vnstudio.talktoai.presentation.theme.Neutral50
@@ -23,7 +23,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary500
 
 @Composable
 fun OnboardingScreen(onNextScreen: () -> Unit) {
-    val viewModel: OnBoardingViewModel = hiltViewModel()
+    val viewModel: OnBoardingViewModel = koinViewModel()
     val pageState = remember {
         mutableStateOf(0)
     }

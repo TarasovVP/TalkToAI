@@ -4,9 +4,9 @@ import com.vnstudio.talktoai.data.database.dao.ChatDao
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.domain.repositories.ChatRepository
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class ChatRepositoryImpl @Inject constructor(private val chatDao: ChatDao) : ChatRepository {
+
+class ChatRepositoryImpl(private val chatDao: ChatDao) : ChatRepository {
 
     override suspend fun insertChats(chats: List<Chat>) = chatDao.insertChats(chats)
 

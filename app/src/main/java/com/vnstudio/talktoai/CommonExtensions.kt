@@ -10,15 +10,12 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import android.net.http.HttpException
 import android.os.LocaleList
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes.getStatusCodeString
-import com.google.gson.Gson
-import com.vnstudio.talktoai.domain.ApiErrorResponse
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.infrastructure.Constants.DARK_MODE_TEXT
@@ -26,12 +23,9 @@ import com.vnstudio.talktoai.infrastructure.Constants.ENCODING
 import com.vnstudio.talktoai.infrastructure.Constants.MIME_TYPE
 import com.vnstudio.talktoai.infrastructure.Constants.WHITE_MODE_TEXT
 import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
-import dagger.hilt.android.testing.HiltTestApplication
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
-import io.ktor.client.statement.readText
-import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -66,6 +60,7 @@ object CommonExtensions {
                 val error = bodyAsText()
                 Result.Failure(error)
             }
+
             else -> {
                 try {
                     val result = body<T>()
@@ -102,7 +97,6 @@ object CommonExtensions {
     fun Application.isNetworkAvailable(): Boolean {
         return when (this) {
             is TalkToAIApp -> isNetworkAvailable.isTrue()
-            is HiltTestApplication -> true
             else -> false
         }
     }

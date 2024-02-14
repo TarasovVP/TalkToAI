@@ -8,14 +8,14 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.initWebView
 
 @Composable
 fun SettingsPrivacyPolicyScreen(progressVisibilityState: MutableState<Boolean>) {
 
-    val viewModel: SettingsPrivacyPolicyViewModel = hiltViewModel()
+    val viewModel: SettingsPrivacyPolicyViewModel = koinViewModel()
     val privacyPolicyUrlState = remember { mutableStateOf(String.EMPTY) }
 
     LaunchedEffect(Unit) {

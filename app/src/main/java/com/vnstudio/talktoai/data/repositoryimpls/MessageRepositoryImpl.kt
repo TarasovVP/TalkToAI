@@ -12,9 +12,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import javax.inject.Inject
 
-class MessageRepositoryImpl @Inject constructor(
+
+class MessageRepositoryImpl(
     private val messageDao: MessageDao,
     private val apiService: ApiService,
 ) : MessageRepository {

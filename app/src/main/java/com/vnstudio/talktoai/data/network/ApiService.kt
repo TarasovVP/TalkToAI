@@ -5,9 +5,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import javax.inject.Inject
 
-class ApiService @Inject constructor(
+
+class ApiService(
     private val baseUrl: String,
     private val httpClient: HttpClient,
 ) {
