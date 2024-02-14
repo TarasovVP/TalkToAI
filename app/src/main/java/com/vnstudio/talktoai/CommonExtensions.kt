@@ -59,35 +59,21 @@ object CommonExtensions {
         connectivityManager.requestNetwork(networkRequest, networkCallback)
     }
 
-    fun <T> Response<T>.apiCall(): Result<T> {
-        try {
-            if (isSuccessful) {
-                body()?.let { body ->
-                    return Result.Success(body)
-                }
-            } else {
-                errorBody()?.let { errorBody ->
-                    val errorMessage =
-                        Gson().fromJson(errorBody.string(), ApiErrorResponse::class.java)
-                    return Result.Failure(errorMessage.error?.code)
+    suspend inline fun <reified T> HttpResponse?.handleResponse(): Result<T> {
+        return when {
+            this == null -> Result.Failure("Unknown error")
+            status.value !in 200..299 -> {
+                val error = bodyAsText()
+                Result.Failure(error)
+            }
+            else -> {
+                try {
+                    val result = body<T>()
+                    Result.Success(result)
+                } catch (e: Exception) {
+                    Result.Failure(e.localizedMessage)
                 }
             }
-            return Result.Failure(message())
-        } catch (e: Exception) {
-            return Result.Failure(e.localizedMessage)
-        }
-    }
-
-    suspend inline fun <reified T> HttpResponse.handleResponse(): Result<T> {
-        if (status.value !in 200..299) {
-            val error = bodyAsText()
-            return Result.Failure(error)
-        }
-        return try {
-            val result: T = body()
-            Result.Success(result)
-        } catch (e: Exception) {
-            Result.Failure(e.localizedMessage)
         }
     }
 
