@@ -1,44 +1,65 @@
 package com.vnstudio.talktoai.di
 
-import android.content.Context
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.vnstudio.talktoai.BuildConfig
 import com.vnstudio.talktoai.data.database.AppDatabase
-import com.vnstudio.talktoai.data.database.dao.ChatDao
-import com.vnstudio.talktoai.data.database.dao.MessageDao
 import com.vnstudio.talktoai.data.network.ApiService
-import com.vnstudio.talktoai.data.repositoryimpls.*
+import com.vnstudio.talktoai.data.repositoryimpls.AuthRepositoryImpl
+import com.vnstudio.talktoai.data.repositoryimpls.ChatRepositoryImpl
+import com.vnstudio.talktoai.data.repositoryimpls.DataStoreRepositoryImpl
+import com.vnstudio.talktoai.data.repositoryimpls.MessageRepositoryImpl
+import com.vnstudio.talktoai.data.repositoryimpls.RealDataBaseRepositoryImpl
 import com.vnstudio.talktoai.domain.mappers.MessageUIMapper
-import com.vnstudio.talktoai.domain.repositories.*
-import com.vnstudio.talktoai.domain.usecases.*
+import com.vnstudio.talktoai.domain.repositories.AuthRepository
+import com.vnstudio.talktoai.domain.repositories.ChatRepository
+import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
+import com.vnstudio.talktoai.domain.repositories.MessageRepository
+import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
+import com.vnstudio.talktoai.domain.usecases.ChatUseCase
+import com.vnstudio.talktoai.domain.usecases.LoginUseCase
+import com.vnstudio.talktoai.domain.usecases.MainUseCase
+import com.vnstudio.talktoai.domain.usecases.OnBoardingUseCase
+import com.vnstudio.talktoai.domain.usecases.SettingsAccountUseCase
+import com.vnstudio.talktoai.domain.usecases.SettingsChatUseCase
+import com.vnstudio.talktoai.domain.usecases.SettingsLanguageUseCase
+import com.vnstudio.talktoai.domain.usecases.SettingsListUseCase
+import com.vnstudio.talktoai.domain.usecases.SettingsPrivacyPolicyUseCase
+import com.vnstudio.talktoai.domain.usecases.SettingsSignUpUseCase
+import com.vnstudio.talktoai.domain.usecases.SettingsThemeUseCase
+import com.vnstudio.talktoai.domain.usecases.SignUpUseCase
 import com.vnstudio.talktoai.presentation.mapperimpls.MessageUIMapperImpl
 import com.vnstudio.talktoai.presentation.screens.authorization.login.LoginUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.authorization.login.LoginViewModel
 import com.vnstudio.talktoai.presentation.screens.authorization.onboarding.OnBoardingUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.authorization.onboarding.OnBoardingViewModel
 import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpViewModel
 import com.vnstudio.talktoai.presentation.screens.chat.ChatUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.chat.ChatViewModel
 import com.vnstudio.talktoai.presentation.screens.main.MainUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.main.MainViewModel
 import com.vnstudio.talktoai.presentation.screens.settings.settings_account.SettingsAccountUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.settings.settings_account.SettingsAccountViewModel
 import com.vnstudio.talktoai.presentation.screens.settings.settings_chat.SettingsChatUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.settings.settings_chat.SettingsChatViewModel
 import com.vnstudio.talktoai.presentation.screens.settings.settings_feedback.SettingsFeedbackUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.settings.settings_feedback.SettingsFeedbackViewModel
 import com.vnstudio.talktoai.presentation.screens.settings.settings_language.SettingsLanguageUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.settings.settings_language.SettingsLanguageViewModel
 import com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyViewModel
+import com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up.SettingSignUpViewModel
 import com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_theme.SettingsThemeUseCaseImpl
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
+import com.vnstudio.talktoai.presentation.screens.settings.settings_theme.SettingsThemeViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -48,43 +69,22 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import javax.inject.Singleton
+import org.koin.android.ext.koin.androidApplication
+import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-object AppModule {
-
-    @Singleton
-    @Provides
-    fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
-        return PreferenceDataStoreFactory.create(produceFile = {
-            context.preferencesDataStoreFile(context.packageName)
+val appModule = module {
+    single<DataStore<Preferences>> {
+        PreferenceDataStoreFactory.create(produceFile = {
+            androidContext().preferencesDataStoreFile(androidContext().packageName)
         })
     }
-
-    @Singleton
-    @Provides
-    fun provideDataStoreRepository(dataStore: DataStore<Preferences>): DataStoreRepository {
-        return DataStoreRepositoryImpl(dataStore)
-    }
-
-
-    @Singleton
-    @Provides
-    fun provideBaseUrl(): String {
-        return BuildConfig.BASE_URL
-    }
-
-
-    @Provides
-    fun provideApiService(baseUrl: String, httpClient: HttpClient): ApiService {
-        return ApiService(baseUrl, httpClient)
-    }
-
-    @Singleton
-    @Provides
-    fun provideHttpClient(): HttpClient {
-        return HttpClient {
+    single<DataStoreRepository> { DataStoreRepositoryImpl(get()) }
+    single { BuildConfig.BASE_URL }
+    single { ApiService(get<String>(), get()) }
+    single {
+        HttpClient {
             install(ContentNegotiation) {
                 json(Json {
                     prettyPrint = true
@@ -102,220 +102,201 @@ object AppModule {
                     override fun log(message: String) {
                         Log.e("Logger Ktor =>", message)
                     }
-
                 }
                 level = LogLevel.ALL
             }
         }
     }
-
-    @Singleton
-    @Provides
-    fun provideDatabase(@ApplicationContext appContext: Context): AppDatabase {
-        return AppDatabase.getDatabase(appContext)
-    }
-
-    @Singleton
-    @Provides
-    fun provideFirebaseAuth(): FirebaseAuth {
-        return FirebaseAuth.getInstance()
-    }
-
-    @Singleton
-    @Provides
-    fun provideGoogleSignInClient(@ApplicationContext context: Context): GoogleSignInClient {
+    single { AppDatabase.getDatabase(androidContext()) }
+    single { FirebaseAuth.getInstance() }
+    single {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(BuildConfig.SERVER_CLIENT_ID)
             .requestEmail()
             .build()
-        return GoogleSignIn.getClient(context, gso)
+        GoogleSignIn.getClient(androidContext(), gso)
     }
-
-    @Singleton
-    @Provides
-    fun provideFirebaseDatabase(): FirebaseDatabase {
-        return FirebaseDatabase.getInstance(BuildConfig.REALTIME_DATABASE)
-    }
-
-    @Singleton
-    @Provides
-    fun provideRealDataBaseRepository(
-        firebaseDatabase: FirebaseDatabase,
-        firebaseAuth: FirebaseAuth,
-    ): RealDataBaseRepository {
-        return RealDataBaseRepositoryImpl(firebaseDatabase, firebaseAuth)
-    }
-
-    @Singleton
-    @Provides
-    fun provideChatDao(db: AppDatabase) = db.chatDao()
-
-    @Singleton
-    @Provides
-    fun provideMessageDao(db: AppDatabase) = db.messageDao()
-
-    @Singleton
-    @Provides
-    fun provideChatRepository(
-        chatDao: ChatDao,
-    ): ChatRepository {
-        return ChatRepositoryImpl(chatDao)
-    }
-
-    @Singleton
-    @Provides
-    fun provideMessageRepository(
-        messageDao: MessageDao,
-        apiService: ApiService,
-    ): MessageRepository {
-        return MessageRepositoryImpl(messageDao, apiService)
-    }
-
-    @Singleton
-    @Provides
-    fun provideOnBoardingUseCase(dataStoreRepository: DataStoreRepository): OnBoardingUseCase {
-        return OnBoardingUseCaseImpl(dataStoreRepository)
-    }
-
-    @Singleton
-    @Provides
-    fun provideAuthRepository(
-        firebaseAuth: FirebaseAuth,
-        googleSignInClient: GoogleSignInClient,
-    ): AuthRepository {
-        return AuthRepositoryImpl(firebaseAuth, googleSignInClient)
-    }
-
-    @Singleton
-    @Provides
-    fun provideLoginUseCase(authRepository: AuthRepository): LoginUseCase {
-        return LoginUseCaseImpl(authRepository)
-    }
-
-    @Singleton
-    @Provides
-    fun provideSignUpUseCase(
-        authRepository: AuthRepository,
-        realDataBaseRepository: RealDataBaseRepository,
-    ): SignUpUseCase {
-        return SignUpUseCaseImpl(authRepository, realDataBaseRepository)
-    }
-
-    @Singleton
-    @Provides
-    fun provideMessageUIMapper(): MessageUIMapper {
-        return MessageUIMapperImpl()
-    }
-
-    @Singleton
-    @Provides
-    fun provideChatUseCase(
-        chatRepository: ChatRepository,
-        messageRepository: MessageRepository,
-        authRepository: AuthRepository,
-        realDataBaseRepository: RealDataBaseRepository,
-        messageUIMapper: MessageUIMapper,
-    ): ChatUseCase {
-        return ChatUseCaseImpl(
-            chatRepository,
-            messageRepository,
-            authRepository,
-            realDataBaseRepository,
-            messageUIMapper
+    single { FirebaseDatabase.getInstance(BuildConfig.REALTIME_DATABASE) }
+    single<RealDataBaseRepository> {
+        RealDataBaseRepositoryImpl(
+            firebaseDatabase = get(),
+            firebaseAuth = get()
         )
     }
-
-    @Singleton
-    @Provides
-    fun provideMainUseCase(
-        authRepository: AuthRepository,
-        dataStoreRepository: DataStoreRepository,
-        realDataBaseRepository: RealDataBaseRepository,
-        chatRepository: ChatRepository,
-        messageRepository: MessageRepository,
-    ): MainUseCase {
-        return MainUseCaseImpl(
-            authRepository,
-            dataStoreRepository,
-            realDataBaseRepository,
-            chatRepository,
-            messageRepository
+    single { get<AppDatabase>().chatDao() }
+    single { get<AppDatabase>().messageDao() }
+    single<ChatRepository> {
+        ChatRepositoryImpl(
+            chatDao = get()
         )
     }
-
-    @Singleton
-    @Provides
-    fun provideSettingsListUseCase(
-        realDataBaseRepository: RealDataBaseRepository,
-        authRepository: AuthRepository,
-    ): SettingsListUseCase {
-        return SettingsFeedbackUseCaseImpl(realDataBaseRepository, authRepository)
-    }
-
-    @Singleton
-    @Provides
-    fun provideSettingsChatUseCase(
-        realDataBaseRepository: RealDataBaseRepository,
-        dataStoreRepository: DataStoreRepository,
-        firebaseAuth: FirebaseAuth,
-    ): SettingsBlockerUseCase {
-        return SettingsChatUseCaseImpl(realDataBaseRepository, dataStoreRepository, firebaseAuth)
-    }
-
-    @Singleton
-    @Provides
-    fun provideSettingsAccountUseCase(
-        authRepository: AuthRepository,
-        realDataBaseRepository: RealDataBaseRepository,
-        dataStoreRepository: DataStoreRepository,
-    ): SettingsAccountUseCase {
-        return SettingsAccountUseCaseImpl(
-            authRepository,
-            realDataBaseRepository,
-            dataStoreRepository
+    single<MessageRepository> {
+        MessageRepositoryImpl(
+            messageDao = get(),
+            apiService = get()
         )
     }
-
-    @Singleton
-    @Provides
-    fun provideSettingsSignUpUseCase(
-        chatRepository: ChatRepository,
-        messageRepository: MessageRepository,
-        authRepository: AuthRepository,
-        realDataBaseRepository: RealDataBaseRepository,
-    ): SettingsSignUpUseCase {
-        return SettingsSignUpUseCaseImpl(
-            chatRepository,
-            messageRepository,
-            authRepository,
-            realDataBaseRepository
+    single<OnBoardingUseCase> {
+        OnBoardingUseCaseImpl(
+            dataStoreRepository = get()
         )
     }
-
-    @Singleton
-    @Provides
-    fun provideSettingsLanguageUseCase(dataStoreRepository: DataStoreRepository): SettingsLanguageUseCase {
-        return SettingsLanguageUseCaseImpl(dataStoreRepository)
+    single<AuthRepository> {
+        AuthRepositoryImpl(
+            firebaseAuth = get(),
+            googleSignInClient = get()
+        )
     }
-
-    @Singleton
-    @Provides
-    fun provideSettingsThemeUseCase(dataStoreRepository: DataStoreRepository): SettingsThemeUseCase {
-        return SettingsThemeUseCaseImpl(dataStoreRepository)
+    single<LoginUseCase> {
+        LoginUseCaseImpl(
+            authRepository = get()
+        )
     }
-
-    @Singleton
-    @Provides
-    fun provideSettingsPrivacyPolicyUseCase(
-        dataStoreRepository: DataStoreRepository,
-        realDataBaseRepository: RealDataBaseRepository,
-    ): SettingsPrivacyPolicyUseCase {
-        return SettingsPrivacyPolicyUseCaseImpl(dataStoreRepository, realDataBaseRepository)
+    single<SignUpUseCase> {
+        SignUpUseCaseImpl(
+            authRepository = get(),
+            realDataBaseRepository = get()
+        )
     }
-}
-
-@EntryPoint
-@InstallIn(SingletonComponent::class)
-interface DataStoreEntryPoint {
-    val dataStoreRepository: DataStoreRepository
+    single<MessageUIMapper> {
+        MessageUIMapperImpl()
+    }
+    single<ChatUseCase> {
+        ChatUseCaseImpl(
+            chatRepository = get(),
+            messageRepository = get(),
+            authRepository = get(),
+            realDataBaseRepository = get(),
+            messageUIMapper = get()
+        )
+    }
+    single<MainUseCase> {
+        MainUseCaseImpl(
+            authRepository = get(),
+            dataStoreRepository = get(),
+            realDataBaseRepository = get(),
+            chatRepository = get(),
+            messageRepository = get()
+        )
+    }
+    single<SettingsListUseCase> {
+        SettingsFeedbackUseCaseImpl(
+            authRepository = get(),
+            realDataBaseRepository = get()
+        )
+    }
+    single<SettingsChatUseCase> {
+        SettingsChatUseCaseImpl(
+            firebaseAuth = get(),
+            dataStoreRepository = get(),
+            realDataBaseRepository = get()
+        )
+    }
+    single<SettingsAccountUseCase> {
+        SettingsAccountUseCaseImpl(
+            authRepository = get(),
+            dataStoreRepository = get(),
+            realDataBaseRepository = get()
+        )
+    }
+    single<SettingsSignUpUseCase> {
+        SettingsSignUpUseCaseImpl(
+            chatRepository = get(),
+            messageRepository = get(),
+            authRepository = get(),
+            realDataBaseRepository = get()
+        )
+    }
+    single<SettingsLanguageUseCase> {
+        SettingsLanguageUseCaseImpl(
+            dataStoreRepository = get()
+        )
+    }
+    single<SettingsThemeUseCase> {
+        SettingsThemeUseCaseImpl(
+            dataStoreRepository = get()
+        )
+    }
+    single<SettingsPrivacyPolicyUseCase> {
+        SettingsPrivacyPolicyUseCaseImpl(
+            dataStoreRepository = get(),
+            realDataBaseRepository = get()
+        )
+    }
+    viewModel {
+        LoginViewModel(
+            application = androidApplication(),
+            loginUseCase = get(),
+            googleSignInClient = get()
+        )
+    }
+    viewModel {
+        OnBoardingViewModel(
+            application = androidApplication(),
+            onBoardingUseCase = get()
+        )
+    }
+    viewModel {
+        SignUpViewModel(
+            application = androidApplication(),
+            signUpUseCase = get(),
+            googleSignInClient = get()
+        )
+    }
+    viewModel {
+        ChatViewModel(
+            application = androidApplication(),
+            chatUseCase = get()
+        )
+    }
+    viewModel {
+        MainViewModel(
+            application = androidApplication(),
+            mainUseCase = get()
+        )
+    }
+    viewModel {
+        SettingsAccountViewModel(
+            application = androidApplication(),
+            settingsAccountUseCase = get(),
+            googleSignInClient = get()
+        )
+    }
+    viewModel {
+        SettingsChatViewModel(
+            application = androidApplication(),
+            settingsChatUseCase = get()
+        )
+    }
+    viewModel {
+        SettingsFeedbackViewModel(
+            application = androidApplication(),
+            settingsListUseCase = get()
+        )
+    }
+    viewModel {
+        SettingsLanguageViewModel(
+            application = androidApplication(),
+            settingsLanguageUseCase = get()
+        )
+    }
+    viewModel {
+        SettingsPrivacyPolicyViewModel(
+            application = androidApplication(),
+            settingsPrivacyPolicyUseCase = get()
+        )
+    }
+    viewModel {
+        SettingSignUpViewModel(
+            application = androidApplication(),
+            settingsSignUpUseCase = get(),
+            googleSignInClient = get()
+        )
+    }
+    viewModel {
+        SettingsThemeViewModel(
+            application = androidApplication(),
+            settingsThemeUseCase = get()
+        )
+    }
 }

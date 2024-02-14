@@ -5,11 +5,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.MutableLiveData
 import com.vnstudio.talktoai.domain.usecases.SettingsThemeUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
-@HiltViewModel
-class SettingsThemeViewModel @Inject constructor(
+class SettingsThemeViewModel(
     application: Application,
     private val settingsThemeUseCase: SettingsThemeUseCase,
 ) : BaseViewModel(application) {

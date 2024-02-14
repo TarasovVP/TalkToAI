@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG_EN
@@ -33,7 +33,7 @@ fun SettingsLanguageScreen(
     progressVisibilityState: MutableState<Boolean>
 ) {
 
-    val viewModel: SettingsLanguageViewModel = hiltViewModel()
+    val viewModel: SettingsLanguageViewModel = koinViewModel()
     val appLanguageState = remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {

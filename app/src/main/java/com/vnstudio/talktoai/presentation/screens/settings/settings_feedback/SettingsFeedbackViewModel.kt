@@ -8,11 +8,10 @@ import com.vnstudio.talktoai.domain.models.Feedback
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsListUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
-@HiltViewModel
-class SettingsFeedbackViewModel @Inject constructor(
+
+
+class SettingsFeedbackViewModel(
     private val application: Application,
     private val settingsListUseCase: SettingsListUseCase,
 ) : BaseViewModel(application) {

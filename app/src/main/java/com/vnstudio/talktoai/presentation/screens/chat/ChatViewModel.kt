@@ -11,13 +11,12 @@ import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.ChatUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
-import javax.inject.Inject
 
-@HiltViewModel
-class ChatViewModel @Inject constructor(
+
+
+class ChatViewModel(
     application: Application,
     private val chatUseCase: ChatUseCase,
 ) : BaseViewModel(application) {

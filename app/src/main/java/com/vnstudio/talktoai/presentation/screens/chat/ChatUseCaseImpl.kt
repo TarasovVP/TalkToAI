@@ -13,9 +13,9 @@ import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class ChatUseCaseImpl @Inject constructor(
+
+class ChatUseCaseImpl(
     private val chatRepository: ChatRepository,
     private val messageRepository: MessageRepository,
     private val authRepository: AuthRepository,

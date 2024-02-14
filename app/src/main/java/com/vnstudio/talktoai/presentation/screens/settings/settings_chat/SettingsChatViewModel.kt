@@ -2,23 +2,22 @@ package com.vnstudio.talktoai.presentation.screens.settings.settings_chat
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import com.vnstudio.talktoai.domain.usecases.SettingsBlockerUseCase
+import com.vnstudio.talktoai.domain.usecases.SettingsChatUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
-@HiltViewModel
-class SettingsChatViewModel @Inject constructor(
-    private val application: Application,
-    private val settingsBlockerUseCase: SettingsBlockerUseCase,
+
+
+class SettingsChatViewModel(
+    application: Application,
+    private val settingsChatUseCase: SettingsChatUseCase,
 ) : BaseViewModel(application) {
 
-    val blockerTurnOnLiveData = MutableLiveData<Boolean>()
+    val chatSettingsLiveData = MutableLiveData<Boolean>()
 
-    fun getBlockerTurnOn() {
+    fun getChatSettings() {
         launch {
-            settingsBlockerUseCase.getBlockerTurnOn().collect { blockerTurnOn ->
-                blockerTurnOnLiveData.postValue(blockerTurnOn ?: true)
+            settingsChatUseCase.getChatSettings().collect { blockerTurnOn ->
+                chatSettingsLiveData.postValue(blockerTurnOn ?: true)
             }
         }
     }

@@ -5,9 +5,9 @@ import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsPrivacyPolicyUseCase
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class SettingsPrivacyPolicyUseCaseImpl @Inject constructor(
+
+class SettingsPrivacyPolicyUseCaseImpl(
     private val dataStoreRepository: DataStoreRepository,
     private val realDataBaseRepository: RealDataBaseRepository,
 ) : SettingsPrivacyPolicyUseCase {

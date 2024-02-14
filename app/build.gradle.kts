@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("dagger.hilt.android.plugin")
     id("kotlin-kapt")
     id("kotlin-parcelize")
     id("com.google.gms.google-services")
@@ -20,7 +19,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "com.vnstudio.talktoai.HiltTestRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -62,30 +61,29 @@ android {
 
 dependencies {
 
-    val hiltVersion = rootProject.extra.get("hiltVersion")
     val navigationVersion = rootProject.extra.get("navigationVersion")
     val roomVersion = rootProject.extra.get("roomVersion")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.activity:activity-compose:1.8.2")
     implementation("com.google.accompanist:accompanist-insets:0.10.0")
 
     //Testing
-    implementation("com.google.ar:core:1.39.0")
+    implementation("com.google.ar:core:1.41.0")
     implementation("androidx.test:runner:1.5.2")
     debugImplementation("androidx.test:monitor:1.6.1")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.1")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.1")
-    implementation("androidx.navigation:navigation-testing:2.7.3")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.1")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.1")
+    implementation("androidx.navigation:navigation-testing:2.7.7")
     implementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation("io.mockk:mockk:1.13.7")
 
     //Lifecycle
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0-alpha01")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
     //Compose
     implementation(platform("androidx.compose:compose-bom:2023.06.00"))
@@ -94,7 +92,6 @@ dependencies {
     implementation("androidx.compose.material:material")
     implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.compose.runtime:runtime")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0-alpha01")
 
     //Navigation
     implementation("androidx.navigation:navigation-compose:$navigationVersion")
@@ -108,13 +105,8 @@ dependencies {
     implementation("com.firebaseui:firebase-ui-auth:8.0.2")
 
     //GoogleServices
-    implementation("com.google.android.gms:play-services-ads:22.3.0")
-    implementation("com.google.android.gms:play-services-auth:20.6.0")
-
-    //Api
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+    implementation("com.google.android.gms:play-services-ads:22.6.0")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     //Ktor
     implementation("io.ktor:ktor-client-android:2.3.7")
@@ -124,14 +116,9 @@ dependencies {
     implementation("io.ktor:ktor-client-logging-jvm:2.3.7")
     implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
 
-    //Hilt
-    implementation("com.google.dagger:hilt-android:$hiltVersion")
-    kapt("com.google.dagger:hilt-compiler:$hiltVersion")
-    kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:$hiltVersion")
-    androidTestAnnotationProcessor("com.google.dagger:hilt-android-compiler:$hiltVersion")
-    implementation("com.google.dagger:hilt-android-testing:$hiltVersion")
-    androidTestImplementation("com.google.dagger:hilt-android-testing:$hiltVersion")
+    // Koin
+    implementation("io.insert-koin:koin-android:3.5.3")
+    implementation("io.insert-koin:koin-androidx-compose:3.5.3")
 
     //Room
     implementation("androidx.room:room-runtime:$roomVersion")

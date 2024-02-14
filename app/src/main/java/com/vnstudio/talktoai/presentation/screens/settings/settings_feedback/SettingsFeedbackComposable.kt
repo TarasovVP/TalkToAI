@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.Feedback
@@ -30,7 +30,7 @@ fun SettingsFeedbackScreen(
     progressVisibilityState: MutableState<Boolean>
 ) {
 
-    val viewModel: SettingsFeedbackViewModel = hiltViewModel()
+    val viewModel: SettingsFeedbackViewModel = koinViewModel()
     val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }
 
     val successFeedbackState = viewModel.successFeedbackLiveData.observeAsState()

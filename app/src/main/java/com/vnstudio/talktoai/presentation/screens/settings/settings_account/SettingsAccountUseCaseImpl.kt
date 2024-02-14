@@ -7,9 +7,9 @@ import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
 import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsAccountUseCase
-import javax.inject.Inject
 
-class SettingsAccountUseCaseImpl @Inject constructor(
+
+class SettingsAccountUseCaseImpl(
     private val authRepository: AuthRepository,
     private val realDataBaseRepository: RealDataBaseRepository,
     private val dataStoreRepository: DataStoreRepository,

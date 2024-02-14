@@ -7,7 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.components.PrimaryButton
@@ -19,7 +19,7 @@ fun SettingsChatScreen(
     onClick: () -> Unit
 ) {
 
-    val viewModel: SettingsChatViewModel = hiltViewModel()
+    val viewModel: SettingsChatViewModel = koinViewModel()
 
     Column(
         modifier = Modifier.fillMaxSize(),

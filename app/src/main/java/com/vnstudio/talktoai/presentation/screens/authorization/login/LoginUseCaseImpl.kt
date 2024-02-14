@@ -3,9 +3,9 @@ package com.vnstudio.talktoai.presentation.screens.authorization.login
 import com.vnstudio.talktoai.domain.repositories.AuthRepository
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.LoginUseCase
-import javax.inject.Inject
 
-class LoginUseCaseImpl @Inject constructor(private val authRepository: AuthRepository) :
+
+class LoginUseCaseImpl(private val authRepository: AuthRepository) :
     LoginUseCase {
 
     override fun sendPasswordResetEmail(email: String, result: (Result<Unit>) -> Unit) =

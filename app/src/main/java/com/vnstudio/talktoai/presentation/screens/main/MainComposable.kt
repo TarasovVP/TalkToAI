@@ -8,7 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.vnstudio.talktoai.CommonExtensions.isNotTrue
@@ -30,7 +30,7 @@ import java.util.*
 @Composable
 fun AppContent() {
 
-    val viewModel: MainViewModel = hiltViewModel()
+    val viewModel: MainViewModel = koinViewModel()
     val navController = rememberNavController()
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()

@@ -6,12 +6,11 @@ import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsPrivacyPolicyUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.*
-import javax.inject.Inject
 
-@HiltViewModel
-class SettingsPrivacyPolicyViewModel @Inject constructor(
+
+
+class SettingsPrivacyPolicyViewModel(
     private val application: Application,
     private val settingsPrivacyPolicyUseCase: SettingsPrivacyPolicyUseCase,
 ) : BaseViewModel(application) {

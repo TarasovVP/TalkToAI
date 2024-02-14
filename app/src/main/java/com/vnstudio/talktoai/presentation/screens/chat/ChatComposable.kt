@@ -52,7 +52,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.airbnb.lottie.compose.LottieAnimation
@@ -101,7 +101,7 @@ fun ChatScreen(
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,
 ) {
-    val viewModel: ChatViewModel = hiltViewModel()
+    val viewModel: ChatViewModel = koinViewModel()
     val showCreateChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
     val currentChatState = viewModel.currentChatLiveData.observeAsState()
     val messagesState = viewModel.messagesLiveData.observeAsState()

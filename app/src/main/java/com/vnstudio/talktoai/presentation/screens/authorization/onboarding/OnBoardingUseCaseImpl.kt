@@ -2,9 +2,9 @@ package com.vnstudio.talktoai.presentation.screens.authorization.onboarding
 
 import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
 import com.vnstudio.talktoai.domain.usecases.OnBoardingUseCase
-import javax.inject.Inject
 
-class OnBoardingUseCaseImpl @Inject constructor(
+
+class OnBoardingUseCaseImpl(
     private val dataStoreRepository: DataStoreRepository,
 ) : OnBoardingUseCase {
 

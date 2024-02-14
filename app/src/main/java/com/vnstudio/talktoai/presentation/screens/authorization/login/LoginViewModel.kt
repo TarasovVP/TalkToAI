@@ -1,8 +1,6 @@
 package com.vnstudio.talktoai.presentation.screens.authorization.login
 
 import android.app.Application
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
@@ -10,11 +8,10 @@ import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.LoginUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
-@HiltViewModel
-class LoginViewModel @Inject constructor(
+
+
+class LoginViewModel(
     private val application: Application,
     private val loginUseCase: LoginUseCase,
     val googleSignInClient: GoogleSignInClient,

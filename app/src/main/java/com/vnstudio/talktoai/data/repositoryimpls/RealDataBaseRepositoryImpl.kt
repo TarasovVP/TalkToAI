@@ -16,10 +16,10 @@ import com.vnstudio.talktoai.infrastructure.Constants.MESSAGES
 import com.vnstudio.talktoai.infrastructure.Constants.PRIVACY_POLICY
 import com.vnstudio.talktoai.infrastructure.Constants.REVIEW_VOTE
 import com.vnstudio.talktoai.infrastructure.Constants.USERS
-import javax.inject.Inject
 
 
-class RealDataBaseRepositoryImpl @Inject constructor(
+
+class RealDataBaseRepositoryImpl(
     private val firebaseDatabase: FirebaseDatabase,
     private val firebaseAuth: FirebaseAuth,
 ) :

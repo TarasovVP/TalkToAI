@@ -9,12 +9,10 @@ import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsSignUpUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 
-@HiltViewModel
-class SettingSignUpViewModel @Inject constructor(
+
+class SettingSignUpViewModel(
     private val application: Application,
     private val settingsSignUpUseCase: SettingsSignUpUseCase,
     val googleSignInClient: GoogleSignInClient,

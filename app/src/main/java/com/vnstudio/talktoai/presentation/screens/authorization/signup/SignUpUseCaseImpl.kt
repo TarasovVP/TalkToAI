@@ -5,9 +5,9 @@ import com.vnstudio.talktoai.domain.repositories.AuthRepository
 import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SignUpUseCase
-import javax.inject.Inject
 
-class SignUpUseCaseImpl @Inject constructor(
+
+class SignUpUseCaseImpl(
     private val authRepository: AuthRepository,
     private val realDataBaseRepository: RealDataBaseRepository,
 ) : SignUpUseCase {

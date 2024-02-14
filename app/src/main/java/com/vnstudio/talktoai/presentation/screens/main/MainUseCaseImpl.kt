@@ -8,9 +8,9 @@ import com.vnstudio.talktoai.domain.repositories.*
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.MainUseCase
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class MainUseCaseImpl @Inject constructor(
+
+class MainUseCaseImpl(
     private val authRepository: AuthRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val realDataBaseRepository: RealDataBaseRepository,

@@ -5,9 +5,9 @@ import com.vnstudio.talktoai.domain.repositories.AuthRepository
 import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsListUseCase
-import javax.inject.Inject
 
-class SettingsFeedbackUseCaseImpl @Inject constructor(
+
+class SettingsFeedbackUseCaseImpl(
     private val realDataBaseRepository: RealDataBaseRepository,
     private val authRepository: AuthRepository,
 ) : SettingsListUseCase {
