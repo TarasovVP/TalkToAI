@@ -149,7 +149,9 @@ fun SettingsAccountScreen(
     DataEditDialog(
         stringResource(id = R.string.settings_account_email_delete),
         placeHolder = stringResource(id = R.string.settings_account_enter_current_password),
-        mutableStateOf(TextFieldValue()),
+        remember {
+            mutableStateOf(TextFieldValue())
+        },
         showDeleteEmailAccountDialog,
         onDismiss = {
             showDeleteEmailAccountDialog.value = false
@@ -204,8 +206,12 @@ fun ChangePasswordDialog(
     onConfirmationClick: (Pair<String, String>) -> Unit,
 ) {
     if (showDialog.value) {
-        val currentPasswordInputValue = mutableStateOf(TextFieldValue())
-        val newPasswordInputValue = mutableStateOf(TextFieldValue())
+        val currentPasswordInputValue = remember {
+            mutableStateOf(TextFieldValue())
+        }
+        val newPasswordInputValue = remember {
+            mutableStateOf(TextFieldValue())
+        }
         Column {
             Dialog(
                 onDismissRequest = {

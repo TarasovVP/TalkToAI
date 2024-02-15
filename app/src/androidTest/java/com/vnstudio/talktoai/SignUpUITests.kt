@@ -2,29 +2,31 @@ package com.vnstudio.talktoai
 
 import android.app.Application
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.vnstudio.talktoai.di.appModule
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.domain.usecases.SignUpUseCase
 import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpViewModel
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+import javax.inject.Inject
 
-
-
-@HiltAndroidTest
 class SignUpUITests {
-
-    @get:Rule(order = 1)
-    var hiltRule = HiltAndroidRule(this)
 
     @get:Rule(order = 2)
     val composeTestRule = createComposeRule()
@@ -47,7 +49,10 @@ class SignUpUITests {
 
     @Before
     fun setUp() {
-        hiltRule.inject()
+        startKoin {
+            androidContext(application)
+            modules(appModule)
+        }
         composeTestRule.setContent {
             SignUpScreen(
                 SignUpViewModel(application, signUpUseCase, googleSignInClient),
@@ -80,7 +85,8 @@ class SignUpUITests {
         composeTestRule.onNodeWithText(
             application.getString(R.string.authorization_password)
         ).assertIsDisplayed().performTextInput("testPassword")
-        composeTestRule.onNodeWithText(PasswordVisualTransformation().filter(AnnotatedString("testPassword")).text.toString()).assertIsDisplayed()
+        composeTestRule.onNodeWithText(PasswordVisualTransformation().filter(AnnotatedString("testPassword")).text.toString())
+            .assertIsDisplayed()
     }
 
     @Test
@@ -98,9 +104,11 @@ class SignUpUITests {
         composeTestRule.onNodeWithTag("sign_up_button").apply {
             assertIsDisplayed()
             assertIsNotEnabled()
-            composeTestRule.onNodeWithText(application.getString(R.string.authorization_email)).assertIsDisplayed().performTextInput("testEmail")
+            composeTestRule.onNodeWithText(application.getString(R.string.authorization_email))
+                .assertIsDisplayed().performTextInput("testEmail")
             assertIsNotEnabled()
-            composeTestRule.onNodeWithText(application.getString(R.string.authorization_password)).performTextInput("testPassword")
+            composeTestRule.onNodeWithText(application.getString(R.string.authorization_password))
+                .performTextInput("testPassword")
             assertIsEnabled().performClick()
             composeTestRule.waitUntil(10000) {
                 "The email address is badly formatted." == infoMessageState.value?.message
@@ -110,7 +118,8 @@ class SignUpUITests {
 
     @Test
     fun checkSignUpEntrance() {
-        composeTestRule.onNodeWithText(application.getString(R.string.authorization_entrance)).assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText(application.getString(R.string.authorization_entrance))
+            .assertIsDisplayed().performClick()
         assert(NavigationScreen.LoginScreen().route == onNextScreenValue)
     }
 }

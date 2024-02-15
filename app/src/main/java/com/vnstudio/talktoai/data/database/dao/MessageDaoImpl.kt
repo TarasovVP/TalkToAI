@@ -1,0 +1,86 @@
+package com.vnstudio.talktoai.data.database.dao
+
+import com.vnstudio.talktoai.AppDatabaseQueries
+import com.vnstudio.talktoai.data.database.db_entities.Message
+import com.vnstudio.talktoai.domain.enums.MessageStatus
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+
+class MessageDaoImpl(private val appDatabaseQueries: AppDatabaseQueries): MessageDao {
+
+        override fun insertMessages(messages: List<Message>) {
+            appDatabaseQueries.transaction {
+                messages.forEach { message ->
+                    appDatabaseQueries.insertMessage(
+                        message.id,
+                        message.chatId,
+                        message.author,
+                        message.message,
+                        message.updatedAt,
+                        message.status?.name,
+                        message.errorMessage,
+                        if (message.truncated) 1 else 0
+                    )
+                }
+            }
+        }
+
+        override fun insertMessage(message: Message) {
+            appDatabaseQueries.insertMessage(
+                message.id,
+                message.chatId,
+                message.author,
+                message.message,
+                message.updatedAt,
+                message.status?.name,
+                message.errorMessage,
+                if (message.truncated) 1 else 0
+            )
+        }
+
+        override fun deleteMessages(messageIds: List<Long>) {
+            appDatabaseQueries.transaction {
+                messageIds.forEach { messageId ->
+                    appDatabaseQueries.deleteMessage(messageId)
+                }
+            }
+        }
+
+        override fun getMessages(): Flow<List<Message>> {
+            val messages = appDatabaseQueries.getMessages().executeAsList().map { message ->
+                Message(
+                    message.id,
+                    message.chatId,
+                    message.author,
+                    message.message,
+                    message.updatedAt,
+                    MessageStatus.valueOf(message.status.orEmpty()),
+                    message.errorMessage,
+                    message.truncated == 1L
+                ) }
+            return flowOf( messages)
+        }
+
+        override fun getMessagesFromChat(chatId: Long): Flow<List<Message>> {
+            val messages = appDatabaseQueries.getMessagesFromChat(chatId).executeAsList().map { message ->
+                Message(
+                    message.id,
+                    message.chatId,
+                    message.author,
+                    message.message,
+                    message.updatedAt,
+                    MessageStatus.valueOf(message.status.orEmpty()),
+                    message.errorMessage,
+                    message.truncated == 1L
+                ) }
+            return flowOf( messages)
+        }
+
+    override fun deleteMessagesFromChat(chatId: Long) {
+        appDatabaseQueries.deleteMessagesFromChat(chatId)
+    }
+
+    override fun deleteMessage(id: Long) {
+        appDatabaseQueries.deleteMessage(id)
+    }
+}
