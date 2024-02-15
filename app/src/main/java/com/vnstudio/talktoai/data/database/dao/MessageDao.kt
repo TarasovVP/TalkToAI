@@ -1,30 +1,21 @@
 package com.vnstudio.talktoai.data.database.dao
 
-import androidx.room.*
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import kotlinx.coroutines.flow.Flow
 
-@Dao
 interface MessageDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMessages(messages: List<Message>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMessage(message: Message)
 
-    @Query("SELECT * FROM messages")
     fun getMessages(): Flow<List<Message>>
 
-    @Query("SELECT * FROM messages WHERE :chatId = chatId ORDER BY updatedAt")
     fun getMessagesFromChat(chatId: Long): Flow<List<Message>>
 
-    @Query("DELETE FROM messages WHERE :chatId = chatId")
     fun deleteMessagesFromChat(chatId: Long)
 
-    @Query("DELETE FROM messages WHERE :id = id")
     fun deleteMessage(id: Long)
 
-    @Query("DELETE FROM messages WHERE id NOT IN (:messageIds)")
     fun deleteMessages(messageIds: List<Long>)
 }

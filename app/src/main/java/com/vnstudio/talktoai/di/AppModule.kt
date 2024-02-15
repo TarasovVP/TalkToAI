@@ -9,8 +9,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.squareup.sqldelight.android.AndroidSqliteDriver
+import com.vnstudio.talktoai.AppDatabase
 import com.vnstudio.talktoai.BuildConfig
-import com.vnstudio.talktoai.data.database.AppDatabase
+import com.vnstudio.talktoai.data.database.dao.ChatDao
+import com.vnstudio.talktoai.data.database.dao.ChatDaoImpl
+import com.vnstudio.talktoai.data.database.dao.MessageDao
+import com.vnstudio.talktoai.data.database.dao.MessageDaoImpl
 import com.vnstudio.talktoai.data.network.ApiService
 import com.vnstudio.talktoai.data.repositoryimpls.AuthRepositoryImpl
 import com.vnstudio.talktoai.data.repositoryimpls.ChatRepositoryImpl
@@ -107,7 +112,14 @@ val appModule = module {
             }
         }
     }
-    single { AppDatabase.getDatabase(androidContext()) }
+    single {
+        val sqlDriver = AndroidSqliteDriver(
+            schema = AppDatabase.Schema,
+            context = androidContext(),
+            name = "person.db"
+        )
+        AppDatabase(sqlDriver)
+    }
     single { FirebaseAuth.getInstance() }
     single {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -123,8 +135,8 @@ val appModule = module {
             firebaseAuth = get()
         )
     }
-    single { get<AppDatabase>().chatDao() }
-    single { get<AppDatabase>().messageDao() }
+    single<ChatDao> { ChatDaoImpl(get<AppDatabase>().appDatabaseQueries) }
+    single<MessageDao> { MessageDaoImpl(get<AppDatabase>().appDatabaseQueries) }
     single<ChatRepository> {
         ChatRepositoryImpl(
             chatDao = get()

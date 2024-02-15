@@ -6,6 +6,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     id("kotlinx-serialization")
+    id("com.squareup.sqldelight")
 }
 
 android {
@@ -59,10 +60,15 @@ android {
     }
 }
 
+sqldelight {
+    database("AppDatabase") {
+        packageName = "com.vnstudio.talktoai"
+    }
+}
+
 dependencies {
 
     val navigationVersion = rootProject.extra.get("navigationVersion")
-    val roomVersion = rootProject.extra.get("roomVersion")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -80,6 +86,10 @@ dependencies {
     implementation("androidx.navigation:navigation-testing:2.7.7")
     implementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation("io.mockk:mockk:1.13.7")
+    // Koin Tests
+    testImplementation("io.insert-koin:koin-test:3.5.3")
+    testImplementation("io.insert-koin:koin-test-junit4:3.5.3")
+    testImplementation("io.insert-koin:koin-android-test:3.5.3")
 
     //Lifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -120,10 +130,8 @@ dependencies {
     implementation("io.insert-koin:koin-android:3.5.3")
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
 
-    //Room
-    implementation("androidx.room:room-runtime:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
+    //SQLDelight
+    implementation("com.squareup.sqldelight:android-driver:1.5.4")
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.2.2")

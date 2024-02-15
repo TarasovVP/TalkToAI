@@ -1,14 +1,21 @@
 package com.vnstudio.talktoai.presentation.screens.main
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
-import org.koin.androidx.compose.koinViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.vnstudio.talktoai.CommonExtensions.isNotTrue
@@ -21,11 +28,21 @@ import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
-import com.vnstudio.talktoai.presentation.components.*
+import com.vnstudio.talktoai.presentation.components.AppDrawer
+import com.vnstudio.talktoai.presentation.components.AppNavHost
+import com.vnstudio.talktoai.presentation.components.AppSnackBar
+import com.vnstudio.talktoai.presentation.components.ConfirmationDialog
+import com.vnstudio.talktoai.presentation.components.DataEditDialog
+import com.vnstudio.talktoai.presentation.components.DeleteModeTopBar
+import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
+import com.vnstudio.talktoai.presentation.components.MainProgress
+import com.vnstudio.talktoai.presentation.components.PrimaryTopBar
+import com.vnstudio.talktoai.presentation.components.SecondaryTopBar
 import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen.Companion.isSettingsScreen
 import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen.Companion.settingsScreenNameByRoute
 import kotlinx.coroutines.launch
-import java.util.*
+import org.koin.androidx.compose.koinViewModel
+import java.util.Date
 
 @Composable
 fun AppContent() {
@@ -72,7 +89,7 @@ fun AppContent() {
 
     LaunchedEffect(authState.value) {
         authState.value?.let { authStateValue ->
-            when(authStateValue) {
+            when (authStateValue) {
                 AuthState.UNAUTHORISED -> viewModel.removeRemoteUserListeners()
                 AuthState.AUTHORISED_ANONYMOUSLY -> viewModel.getChats()
                 else -> {
@@ -106,6 +123,7 @@ fun AppContent() {
                 ) {
                     navController.navigateUp()
                 }
+
                 isSettingsScreen(currentRouteState) || currentRouteState == NavigationScreen.ChatScreen().route -> PrimaryTopBar(
                     title = if (currentRouteState == NavigationScreen.ChatScreen().route) currentChatState.value?.name
                         ?: stringResource(id = com.vnstudio.talktoai.R.string.app_name) else stringResource(
@@ -166,7 +184,10 @@ fun AppContent() {
                     deleteChatState.value = chat
                 },
                 onSwap = { firstIndex, secondIndex ->
-                    Log.e("swapTAG", "MainComposable onSwap firstIndex $firstIndex secondIndex $secondIndex")
+                    Log.e(
+                        "swapTAG",
+                        "MainComposable onSwap firstIndex $firstIndex secondIndex $secondIndex"
+                    )
                     viewModel.swapChats(firstIndex, secondIndex)
                 },
                 onDragEnd = {
@@ -187,55 +208,77 @@ fun AppContent() {
                     } else {
                         viewModel.addRemoteChatListener()
                         viewModel.addRemoteMessageListener()
-                        if (navController.popBackStack(NavigationScreen.ChatScreen().route, false).not()) navController.navigate(NavigationScreen.ChatScreen().route)
+                        if (navController.popBackStack(NavigationScreen.ChatScreen().route, false)
+                                .not()
+                        ) navController.navigate(NavigationScreen.ChatScreen().route)
                     }
                 }
             }
         },
-        content = {
-            startDestinationState.value?.let { startDestination ->
-                AppNavHost(navController, startDestination, isSettingsDrawerModeState, isMessageDeleteModeState, infoMessageState,  progressVisibilityState)
-            }
-            ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
-
-            DataEditDialog(
-                "Создать новый чат?",
-                "Название чата",
-                mutableStateOf(TextFieldValue()),
-                showCreateChatDialog,
-                onDismiss = {
-                    showCreateChatDialog.value = false
-                }) { newChatName ->
-                viewModel.insertChat(Chat(id = Date().dateToMilliseconds(), name = newChatName, updated = Date().dateToMilliseconds(), listOrder = chatsState.value.orEmpty().size + 1))
-                showCreateChatDialog.value = false
-                currentChatState.value = null
-                scope.launch {
-                    scaffoldState.drawerState.close()
+        content = { paddingValues ->
+            Box(modifier = Modifier.padding(paddingValues)) {
+                startDestinationState.value?.let { startDestination ->
+                    AppNavHost(
+                        navController,
+                        startDestination,
+                        isSettingsDrawerModeState,
+                        isMessageDeleteModeState,
+                        infoMessageState,
+                        progressVisibilityState
+                    )
                 }
-            }
+                ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
 
-            DataEditDialog(
-                "Изменить название чата?",
-                "Название чата",
-                mutableStateOf(TextFieldValue(currentChatState.value?.name.orEmpty())),
-                showEditChatDialog,
-                onDismiss = {
+                DataEditDialog(
+                    "Создать новый чат?",
+                    "Название чата",
+                    remember {
+                        mutableStateOf(TextFieldValue())
+                    },
+                    showCreateChatDialog,
+                    onDismiss = {
+                        showCreateChatDialog.value = false
+                    }) { newChatName ->
+                    viewModel.insertChat(
+                        Chat(
+                            id = Date().dateToMilliseconds(),
+                            name = newChatName,
+                            updated = Date().dateToMilliseconds(),
+                            listOrder = chatsState.value.orEmpty().size + 1
+                        )
+                    )
+                    showCreateChatDialog.value = false
+                    currentChatState.value = null
+                    scope.launch {
+                        scaffoldState.drawerState.close()
+                    }
+                }
+
+                DataEditDialog(
+                    "Изменить название чата?",
+                    "Название чата",
+                    remember {
+                        mutableStateOf(TextFieldValue(currentChatState.value?.name.orEmpty()))
+                    },
+                    showEditChatDialog,
+                    onDismiss = {
+                        showEditChatDialog.value = false
+                    }) { newChatName ->
+                    currentChatState.value?.apply {
+                        name = newChatName
+                    }?.let { viewModel.updateChat(it) }
                     showEditChatDialog.value = false
-                }) { newChatName ->
-                currentChatState.value?.apply {
-                    name = newChatName
-                }?.let { viewModel.updateChat(it) }
-                showEditChatDialog.value = false
-            }
+                }
 
-            ConfirmationDialog("Удалить чат?", showDeleteChatDialog, onDismiss = {
-                showDeleteChatDialog.value = false
-            }) {
-                deleteChatState.value?.let { viewModel.deleteChat(it) }
-                showDeleteChatDialog.value = false
-                deleteChatState.value = null
-            }
+                ConfirmationDialog("Удалить чат?", showDeleteChatDialog, onDismiss = {
+                    showDeleteChatDialog.value = false
+                }) {
+                    deleteChatState.value?.let { viewModel.deleteChat(it) }
+                    showDeleteChatDialog.value = false
+                    deleteChatState.value = null
+                }
 
-            MainProgress(progressVisibilityState)
+                MainProgress(progressVisibilityState)
+            }
         })
 }
