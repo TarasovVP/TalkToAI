@@ -1,10 +1,12 @@
 package com.vnstudio.talktoai.data.database.dao
 
+import com.squareup.sqldelight.runtime.coroutines.asFlow
+import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.vnstudio.talktoai.AppDatabaseQueries
 import com.vnstudio.talktoai.data.database.db_entities.Message
 import com.vnstudio.talktoai.domain.enums.MessageStatus
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
 class MessageDaoImpl(private val appDatabaseQueries: AppDatabaseQueries): MessageDao {
 
@@ -47,33 +49,37 @@ class MessageDaoImpl(private val appDatabaseQueries: AppDatabaseQueries): Messag
         }
 
         override fun getMessages(): Flow<List<Message>> {
-            val messages = appDatabaseQueries.getMessages().executeAsList().map { message ->
-                Message(
-                    message.id,
-                    message.chatId,
-                    message.author,
-                    message.message,
-                    message.updatedAt,
-                    MessageStatus.valueOf(message.status.orEmpty()),
-                    message.errorMessage,
-                    message.truncated == 1L
-                ) }
-            return flowOf( messages)
+            return appDatabaseQueries.getMessages().asFlow().mapToList().map { messages ->
+                messages.map { message ->
+                    Message(
+                        message.id,
+                        message.chatId,
+                        message.author,
+                        message.message,
+                        message.updatedAt,
+                        MessageStatus.valueOf(message.status.orEmpty()),
+                        message.errorMessage,
+                        message.truncated == 1L
+                    )
+                }
+            }
         }
 
         override fun getMessagesFromChat(chatId: Long): Flow<List<Message>> {
-            val messages = appDatabaseQueries.getMessagesFromChat(chatId).executeAsList().map { message ->
-                Message(
-                    message.id,
-                    message.chatId,
-                    message.author,
-                    message.message,
-                    message.updatedAt,
-                    MessageStatus.valueOf(message.status.orEmpty()),
-                    message.errorMessage,
-                    message.truncated == 1L
-                ) }
-            return flowOf( messages)
+            return appDatabaseQueries.getMessagesFromChat(chatId).asFlow().mapToList().map { messages ->
+                messages.map { message ->
+                    Message(
+                        message.id,
+                        message.chatId,
+                        message.author,
+                        message.message,
+                        message.updatedAt,
+                        MessageStatus.valueOf(message.status.orEmpty()),
+                        message.errorMessage,
+                        message.truncated == 1L
+                    )
+                }
+            }
         }
 
     override fun deleteMessagesFromChat(chatId: Long) {

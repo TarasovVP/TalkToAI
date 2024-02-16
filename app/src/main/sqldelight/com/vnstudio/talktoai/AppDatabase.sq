@@ -6,11 +6,11 @@ CREATE TABLE Chat (
 );
 
 insertChats:
-INSERT INTO Chat (id, name, updated, listOrder)
+INSERT OR REPLACE INTO Chat (id, name, updated, listOrder)
 VALUES (?, ?, ?, ?);
 
 insertChat:
-INSERT INTO Chat (id, name, updated, listOrder)
+INSERT OR REPLACE INTO Chat (id, name, updated, listOrder)
 VALUES (?, ?, ?, ?);
 
 deleteChats:
@@ -49,11 +49,11 @@ CREATE TABLE Message (
 );
 
 insertMessages:
-INSERT INTO Message (id, chatId, author, message, updatedAt, status, errorMessage, truncated)
+INSERT OR REPLACE INTO Message (id, chatId, author, message, updatedAt, status, errorMessage, truncated)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 insertMessage:
-INSERT INTO Message (id, chatId, author, message, updatedAt, status, errorMessage, truncated)
+INSERT OR REPLACE INTO Message (id, chatId, author, message, updatedAt, status, errorMessage, truncated)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 getMessages:
