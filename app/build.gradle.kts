@@ -132,6 +132,7 @@ dependencies {
 
     //SQLDelight
     implementation("com.squareup.sqldelight:android-driver:1.5.4")
+    implementation("com.squareup.sqldelight:coroutines-extensions:1.5.4")
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.2.2")
