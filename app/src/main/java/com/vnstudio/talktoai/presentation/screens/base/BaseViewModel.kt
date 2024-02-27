@@ -3,30 +3,31 @@ package com.vnstudio.talktoai.presentation.screens.base
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
 import com.vnstudio.talktoai.R
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
 
 open class BaseViewModel(private val application: Application) : AndroidViewModel(application) {
 
-    val exceptionLiveData = MutableLiveData<String>()
-    val progressVisibilityLiveData = MutableLiveData<Boolean>()
+    val exceptionLiveData = MutableStateFlow<String?>(String.EMPTY)
+    val progressVisibilityLiveData = MutableStateFlow(false)
 
     fun showProgress() {
-        progressVisibilityLiveData.postValue(true)
+        progressVisibilityLiveData.value = true
     }
 
     fun hideProgress() {
-        progressVisibilityLiveData.postValue(false)
+        progressVisibilityLiveData.value = false
     }
 
     fun checkNetworkAvailable(networkAvailableResult: () -> Unit) {
         if (application.isNetworkAvailable()) {
             networkAvailableResult.invoke()
         } else {
-            exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
+            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
         }
     }
 
@@ -45,6 +46,6 @@ open class BaseViewModel(private val application: Application) : AndroidViewMode
         hideProgress()
         throwable.printStackTrace()
         Log.e("exceptionTAG", "BaseViewModel onError throwable ${throwable.localizedMessage}")
-        exceptionLiveData.postValue(throwable.localizedMessage)
+        exceptionLiveData.value = throwable.localizedMessage
     }
 }

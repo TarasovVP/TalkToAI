@@ -8,7 +8,6 @@ import androidx.compose.material.Card
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -40,54 +39,54 @@ fun SettingsSignUpScreen(
     val showAccountExistDialog = remember { mutableStateOf(false) }
     val transferDataState = remember { mutableStateOf(true) }
 
-    val accountExistState = viewModel.accountExistLiveData.observeAsState()
+    val accountExistState = viewModel.accountExistLiveData.collectAsState()
     LaunchedEffect(accountExistState.value) {
-        accountExistState.value?.let {
+        accountExistState.value.let {
             viewModel.googleSignInClient.signOut()
             showAccountExistDialog.value = true
         }
     }
-    val isEmailAccountExistState = viewModel.createEmailAccountLiveData.observeAsState()
+    val isEmailAccountExistState = viewModel.createEmailAccountLiveData.collectAsState()
     LaunchedEffect(isEmailAccountExistState.value) {
-        isEmailAccountExistState.value?.let {
+        isEmailAccountExistState.value.let {
             viewModel.createUserWithEmailAndPassword(
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
             )
         }
     }
-    val isGoogleAccountExistState = viewModel.createGoogleAccountLiveData.observeAsState()
+    val isGoogleAccountExistState = viewModel.createGoogleAccountLiveData.collectAsState()
     LaunchedEffect(isGoogleAccountExistState.value) {
-        isGoogleAccountExistState.value?.let { idToken ->
+        isGoogleAccountExistState.value.let { idToken ->
             viewModel.createUserWithGoogle(idToken, false)
         }
     }
 
-    val successAuthorisationState = viewModel.successAuthorisationLiveData.observeAsState()
+    val successAuthorisationState = viewModel.successAuthorisationLiveData.collectAsState()
     LaunchedEffect(successAuthorisationState.value) {
-        successAuthorisationState.value?.let { isExistUser ->
+        successAuthorisationState.value.let { isExistUser ->
             if (transferDataState.value) {
                 viewModel.createRemoteUser(isExistUser)
             } else {
-                viewModel.remoteUserLiveData.postValue(Pair(isExistUser, RemoteUser()))
+                viewModel.remoteUserLiveData.value = Pair(isExistUser, RemoteUser())
             }
         }
     }
 
-    val localUserState = viewModel.remoteUserLiveData.observeAsState()
+    val localUserState = viewModel.remoteUserLiveData.collectAsState()
     LaunchedEffect(localUserState.value) {
-        localUserState.value?.let {
-            if (it.first) {
-                viewModel.updateRemoteCurrentUser(it.second)
+        localUserState.value.let { userState ->
+            if (userState.first) {
+                userState.second?.let { it -> viewModel.updateRemoteCurrentUser(it) }
             } else {
-                viewModel.insertRemoteCurrentUser(it.second)
+                userState.second?.let { it -> viewModel.insertRemoteCurrentUser(it) }
             }
         }
     }
 
-    val successRemoteUserState = viewModel.successRemoteUserLiveData.observeAsState()
+    val successRemoteUserState = viewModel.successRemoteUserLiveData.collectAsState()
     LaunchedEffect(successRemoteUserState.value) {
-        successRemoteUserState.value?.let {
+        successRemoteUserState.value.let {
             onNextScreen.invoke("${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}")
         }
     }
@@ -100,7 +99,7 @@ fun SettingsSignUpScreen(
                 account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
             } catch (e: ApiException) {
                 viewModel.googleSignInClient.signOut()
-                viewModel.exceptionLiveData.postValue(CommonStatusCodes.getStatusCodeString(e.statusCode))
+                viewModel.exceptionLiveData.value = CommonStatusCodes.getStatusCodeString(e.statusCode)
             }
         }
 

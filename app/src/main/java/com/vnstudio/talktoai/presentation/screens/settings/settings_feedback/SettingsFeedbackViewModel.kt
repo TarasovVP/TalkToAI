@@ -1,14 +1,13 @@
 package com.vnstudio.talktoai.presentation.screens.settings.settings_feedback
 
 import android.app.Application
-import androidx.lifecycle.MutableLiveData
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.Feedback
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsListUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
-
+import kotlinx.coroutines.flow.MutableStateFlow
 
 
 class SettingsFeedbackViewModel(
@@ -16,7 +15,7 @@ class SettingsFeedbackViewModel(
     private val settingsListUseCase: SettingsListUseCase,
 ) : BaseViewModel(application) {
 
-    val successFeedbackLiveData = MutableLiveData<Unit>()
+    val successFeedbackLiveData = MutableStateFlow(Unit)
 
     fun currentUserEmail(): String {
         return settingsListUseCase.currentUserEmail()
@@ -27,13 +26,13 @@ class SettingsFeedbackViewModel(
             showProgress()
             settingsListUseCase.insertFeedback(feedback) { result ->
                 when (result) {
-                    is Result.Success -> successFeedbackLiveData.postValue(Unit)
-                    is Result.Failure -> exceptionLiveData.postValue(result.errorMessage.orEmpty())
+                    is Result.Success -> successFeedbackLiveData.value = Unit
+                    is Result.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
                 }
             }
             hideProgress()
         } else {
-            exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
+            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
         }
     }
 }

@@ -8,7 +8,6 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -33,7 +32,7 @@ fun SettingsFeedbackScreen(
     val viewModel: SettingsFeedbackViewModel = koinViewModel()
     val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }
 
-    val successFeedbackState = viewModel.successFeedbackLiveData.observeAsState()
+    val successFeedbackState = viewModel.successFeedbackLiveData.collectAsState()
     val feedbackSendSuccess = stringResource(id = R.string.settings_feedback_send_success)
     LaunchedEffect(successFeedbackState.value) {
         successFeedbackState.value?.let {

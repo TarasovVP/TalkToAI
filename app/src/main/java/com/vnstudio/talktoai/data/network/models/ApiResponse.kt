@@ -1,4 +1,4 @@
-package com.vnstudio.talktoai.domain
+package com.vnstudio.talktoai.data.network.models
 
 
 import com.vnstudio.talktoai.domain.models.Choice

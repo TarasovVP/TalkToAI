@@ -8,7 +8,6 @@ import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -29,7 +28,7 @@ fun SettingsThemeScreen(infoMessageState: MutableState<InfoMessage?>) {
     LaunchedEffect(Unit) {
         viewModel.getAppTheme()
     }
-    val appTheme = viewModel.appThemeLiveData.observeAsState()
+    val appTheme = viewModel.appThemeLiveData.collectAsState()
     LaunchedEffect(appTheme.value) {
         appThemeState.value = appTheme.value
     }

@@ -12,8 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-
-
 class SignUpViewModel(
     private val application: Application,
     private val signUpUseCase: SignUpUseCase,
@@ -35,13 +33,13 @@ class SignUpViewModel(
                         else -> updateUIState(SignUpUIState(createGoogleAccount = idToken))
                     }
                     is Result.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.postValue(it)
+                        exceptionLiveData.value = it
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
+            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
         }
     }
 
@@ -52,15 +50,14 @@ class SignUpViewModel(
                 when (operationResult) {
                     is Result.Success -> updateUIState(SignUpUIState(successSignUp = true))
                     is Result.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.postValue(
+                        exceptionLiveData.value = 
                             it
-                        )
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
+            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
         }
     }
 
@@ -71,15 +68,14 @@ class SignUpViewModel(
                 when (operationResult) {
                     is Result.Success -> updateUIState(SignUpUIState(successSignUp = true))
                     is Result.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.postValue(
+                        exceptionLiveData.value = 
                             it
-                        )
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
+            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
         }
     }
 
@@ -90,15 +86,14 @@ class SignUpViewModel(
                 when (operationResult) {
                     is Result.Success ->updateUIState(SignUpUIState(createCurrentUser = true))
                     is Result.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.postValue(
+                        exceptionLiveData.value = 
                             it
-                        )
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
+            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
         }
     }
 

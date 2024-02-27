@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.lifecycle.MutableLiveData
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -36,15 +34,16 @@ import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.presentation.theme.Primary300
 import com.vnstudio.talktoai.presentation.theme.Primary700
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 @Composable
 fun ExceptionMessageHandler(
     messageState: MutableState<InfoMessage?>,
-    exceptionLiveData: MutableLiveData<String>,
+    exceptionLiveData: MutableStateFlow<String?>,
 ) {
-    val exceptionState = exceptionLiveData.observeAsState()
+    val exceptionState = exceptionLiveData.collectAsState()
     LaunchedEffect(exceptionState.value) {
         exceptionState.value.takeIf { exceptionState.value.isNullOrEmpty().not() }?.let {
             messageState.value = InfoMessage(
@@ -59,18 +58,12 @@ fun ExceptionMessageHandler(
 @Composable
 fun ProgressVisibilityHandler(
     progressVisibilityState: MutableState<Boolean>,
-    progressVisibilityLiveData: MutableLiveData<Boolean>,
+    progressVisibilityLiveData: MutableStateFlow<Boolean>,
 ) {
-    val progressProcessState = progressVisibilityLiveData.observeAsState()
+    val progressProcessState = progressVisibilityLiveData.collectAsState()
     LaunchedEffect(progressProcessState.value) {
-        progressProcessState.value?.let {
-            progressVisibilityState.value = it
-        }
+        progressVisibilityState.value = progressProcessState.value
     }
-    Log.e(
-        "progressTAG",
-        "Common ProgressVisibilityHandler progressVisibilityState ${progressVisibilityState.value} progressVisibilityLiveData ${progressVisibilityLiveData.value}"
-    )
 }
 
 @Composable

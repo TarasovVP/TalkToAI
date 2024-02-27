@@ -5,7 +5,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -35,39 +34,39 @@ fun LoginScreen(
     val showAccountExistDialog = remember { mutableStateOf(false) }
     val showUnauthorizedEnterDialog = remember { mutableStateOf(false) }
 
-    val accountExistState = viewModel.accountExistLiveData.observeAsState()
+    val accountExistState = viewModel.accountExistLiveData.collectAsState()
     LaunchedEffect(accountExistState.value) {
-        accountExistState.value?.let {
+        accountExistState.value.let {
             viewModel.googleSignInClient.signOut()
             showAccountExistDialog.value = true
-            viewModel.accountExistLiveData.value = null
+            viewModel.accountExistLiveData.value = Unit
         }
     }
-    val isEmailAccountExistState = viewModel.isEmailAccountExistLiveData.observeAsState()
+    val isEmailAccountExistState = viewModel.isEmailAccountExistLiveData.collectAsState()
     LaunchedEffect(isEmailAccountExistState.value) {
-        isEmailAccountExistState.value?.let {
+        isEmailAccountExistState.value.let {
             viewModel.signInWithEmailAndPassword(
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
             )
         }
     }
-    val isGoogleAccountExistState = viewModel.isGoogleAccountExistLiveData.observeAsState()
+    val isGoogleAccountExistState = viewModel.isGoogleAccountExistLiveData.collectAsState()
     LaunchedEffect(isGoogleAccountExistState.value) {
-        isGoogleAccountExistState.value?.let { idToken ->
+        isGoogleAccountExistState.value.let { idToken ->
             viewModel.signInAuthWithGoogle(idToken)
         }
     }
     val resetPasswordText = stringResource(id = R.string.authorization_password_reset_success)
-    val successPasswordResetState = viewModel.successPasswordResetLiveData.observeAsState()
+    val successPasswordResetState = viewModel.successPasswordResetLiveData.collectAsState()
     LaunchedEffect(successPasswordResetState.value) {
-        successPasswordResetState.value?.let {
+        successPasswordResetState.value.let {
             infoMessageState.value = InfoMessage(resetPasswordText)
         }
     }
-    val successSignInState = viewModel.successSignInLiveData.observeAsState()
+    val successSignInState = viewModel.successSignInLiveData.collectAsState()
     LaunchedEffect(successSignInState.value) {
-        successSignInState.value?.let {
+        successSignInState.value.let {
             onNextScreen.invoke("${DESTINATION_CHAT_SCREEN}/$DEFAULT_CHAT_ID")
         }
     }
@@ -80,7 +79,7 @@ fun LoginScreen(
                 account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
             } catch (e: ApiException) {
                 viewModel.googleSignInClient.signOut()
-                viewModel.exceptionLiveData.postValue(e.getStatusCodeText())
+                viewModel.exceptionLiveData.value = e.getStatusCodeText()
             }
         }
 

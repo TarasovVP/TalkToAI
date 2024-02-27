@@ -2,27 +2,27 @@ package com.vnstudio.talktoai.presentation.screens.chat
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.data.database.db_entities.Chat
-import com.vnstudio.talktoai.domain.ApiRequest
+import com.vnstudio.talktoai.data.network.models.ApiRequest
 import com.vnstudio.talktoai.domain.enums.MessageStatus
+import com.vnstudio.talktoai.domain.mappers.MessageUIMapper
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.ChatUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
-
-
 
 class ChatViewModel(
     application: Application,
     private val chatUseCase: ChatUseCase,
+    private val messageUIMapper: MessageUIMapper
 ) : BaseViewModel(application) {
 
-    val currentChatLiveData = MutableLiveData<Chat?>()
-    val messagesLiveData = MutableLiveData<List<MessageUIModel>>()
+    val currentChatLiveData = MutableStateFlow<Chat?>(null)
+    val messagesLiveData = MutableStateFlow<List<MessageUIModel>>(listOf())
 
     private var messagesFlowSubscription: Job? = null
 
@@ -36,7 +36,7 @@ class ChatViewModel(
 
                         }
                         is Result.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.postValue(it)
+                            exceptionLiveData.value = it
                         }
                     }
                     hideProgress()
@@ -56,9 +56,9 @@ class ChatViewModel(
                 hideProgress()
             }.collect { chat ->
                 if (chat.isNull()) {
-                    currentChatLiveData.postValue(Chat())
+                    currentChatLiveData.value = Chat()
                 } else {
-                    currentChatLiveData.postValue(chat)
+                    currentChatLiveData.value = chat
                 }
                 hideProgress()
             }
@@ -70,7 +70,7 @@ class ChatViewModel(
         messagesFlowSubscription?.cancel()
         Log.e(
             "messagesTAG",
-            "ChatViewModel getMessagesFromChat before messagesLiveData ${messagesLiveData.value?.map { it.message }}"
+            "ChatViewModel getMessagesFromChat before messagesLiveData ${messagesLiveData.value.map { it.message }}"
         )
         messagesFlowSubscription = launch {
            chatUseCase.getMessagesFromChat(chatId).catch {
@@ -88,7 +88,7 @@ class ChatViewModel(
                     "messagesTAG",
                     "ChatViewModel getMessagesFromChat after messagesLiveData ${messagesLiveData.value?.map { it.message }}"
                 )
-               messagesLiveData.postValue(result)
+               messagesLiveData.value = messageUIMapper.mapToUIModelList(result)
                hideProgress()
             }
         }
@@ -137,13 +137,13 @@ class ChatViewModel(
         if (chatUseCase.isAuthorisedUser()) {
             checkNetworkAvailable {
                 showProgress()
-                chatUseCase.insertRemoteMessage(message) { authResult ->
+                chatUseCase.insertRemoteMessage(messageUIMapper.mapFromUIModel(message)) { authResult ->
                     when (authResult) {
                         is Result.Success -> {
 
                         }
                         is Result.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.postValue(it)
+                            exceptionLiveData.value = it
                         }
                     }
                     hideProgress()
@@ -151,7 +151,7 @@ class ChatViewModel(
             }
         } else {
             launch {
-                chatUseCase.insertMessage(message)
+                chatUseCase.insertMessage(messageUIMapper.mapFromUIModel(message))
             }
         }
     }
@@ -161,13 +161,13 @@ class ChatViewModel(
         if (chatUseCase.isAuthorisedUser()) {
             checkNetworkAvailable {
                 showProgress()
-                chatUseCase.insertRemoteMessage(message) { authResult ->
+                chatUseCase.insertRemoteMessage(messageUIMapper.mapFromUIModel(message)) { authResult ->
                     when (authResult) {
                         is Result.Success -> {
 
                         }
                         is Result.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.postValue(it)
+                            exceptionLiveData.value = it
                         }
                     }
                     hideProgress()
@@ -175,7 +175,7 @@ class ChatViewModel(
             }
         } else {
             launch {
-                chatUseCase.insertMessage(message)
+                chatUseCase.insertMessage(messageUIMapper.mapFromUIModel(message))
             }
         }
     }
@@ -192,7 +192,7 @@ class ChatViewModel(
 
                         }
                         is Result.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.postValue(it)
+                            exceptionLiveData.value = it
                         }
                     }
                     hideProgress()

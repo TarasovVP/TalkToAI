@@ -2,21 +2,21 @@ package com.vnstudio.talktoai.presentation.screens.settings.settings_theme
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.lifecycle.MutableLiveData
 import com.vnstudio.talktoai.domain.usecases.SettingsThemeUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class SettingsThemeViewModel(
     application: Application,
     private val settingsThemeUseCase: SettingsThemeUseCase,
 ) : BaseViewModel(application) {
 
-    val appThemeLiveData = MutableLiveData<Int>()
+    val appThemeLiveData = MutableStateFlow(0)
 
     fun getAppTheme() {
         launch {
             settingsThemeUseCase.getAppTheme().collect { appTheme ->
-                appThemeLiveData.postValue(appTheme ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                appThemeLiveData.value = appTheme ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
             }
         }
     }
@@ -24,7 +24,7 @@ class SettingsThemeViewModel(
     fun setAppTheme(appTheme: Int) {
         launch {
             settingsThemeUseCase.setAppTheme(appTheme)
-            appThemeLiveData.postValue(appTheme)
+            appThemeLiveData.value = appTheme
         }
     }
 }

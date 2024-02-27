@@ -178,8 +178,7 @@ val appModule = module {
             chatRepository = get(),
             messageRepository = get(),
             authRepository = get(),
-            realDataBaseRepository = get(),
-            messageUIMapper = get()
+            realDataBaseRepository = get()
         )
     }
     single<MainUseCase> {
@@ -258,7 +257,8 @@ val appModule = module {
     viewModel {
         ChatViewModel(
             application = androidApplication(),
-            chatUseCase = get()
+            chatUseCase = get(),
+            messageUIMapper = get()
         )
     }
     viewModel {
