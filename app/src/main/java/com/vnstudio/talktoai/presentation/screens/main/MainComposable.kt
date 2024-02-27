@@ -9,7 +9,7 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -57,9 +57,9 @@ fun AppContent() {
 
     val currentRouteState = navController.currentBackStackEntryAsState().value?.destination?.route
     val startDestinationState = remember { mutableStateOf<String?>(null) }
-    val onBoardingSeenState = viewModel.onBoardingSeenLiveData.observeAsState()
-    val authState = viewModel.authStateLiveData.observeAsState()
-    val chatsState = viewModel.chatsLiveData.observeAsState()
+    val onBoardingSeenState = viewModel.onBoardingSeenLiveData.collectAsState()
+    val authState = viewModel.authStateLiveData.collectAsState()
+    val chatsState = viewModel.chatsLiveData.collectAsState()
     Log.e("compareChatTAG", "AppContent chatsState.value ${chatsState.value}")
     val isSettingsDrawerModeState = remember { mutableStateOf<Boolean?>(null) }
     val isMessageDeleteModeState = remember { mutableStateOf<Boolean?>(null) }

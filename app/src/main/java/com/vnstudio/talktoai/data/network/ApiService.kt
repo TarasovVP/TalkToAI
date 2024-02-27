@@ -1,6 +1,6 @@
 package com.vnstudio.talktoai.data.network
 
-import com.vnstudio.talktoai.domain.ApiRequest
+import com.vnstudio.talktoai.data.network.models.ApiRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody

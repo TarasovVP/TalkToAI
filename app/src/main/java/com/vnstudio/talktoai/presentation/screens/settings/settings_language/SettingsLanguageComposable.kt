@@ -9,7 +9,6 @@ import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -39,7 +38,7 @@ fun SettingsLanguageScreen(
     LaunchedEffect(Unit) {
         viewModel.getAppLanguage()
     }
-    val appLanguage = viewModel.appLanguageLiveData.observeAsState()
+    val appLanguage = viewModel.appLanguageLiveData.collectAsState()
     LaunchedEffect(appLanguage.value) {
         appLanguageState.value = appLanguage.value
     }

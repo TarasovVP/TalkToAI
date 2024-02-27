@@ -1,27 +1,26 @@
 package com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_policy
 
 import android.app.Application
-import androidx.lifecycle.MutableLiveData
+import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsPrivacyPolicyUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.*
-
-
 
 class SettingsPrivacyPolicyViewModel(
     private val application: Application,
     private val settingsPrivacyPolicyUseCase: SettingsPrivacyPolicyUseCase,
 ) : BaseViewModel(application) {
 
-    val appLanguageLiveData = MutableLiveData<String>()
-    val privacyPolicyLiveData = MutableLiveData<String>()
+    val appLanguageLiveData = MutableStateFlow(String.EMPTY)
+    val privacyPolicyLiveData = MutableStateFlow(String.EMPTY)
 
     fun getAppLanguage() {
         launch {
             settingsPrivacyPolicyUseCase.getAppLanguage().collect { appLang ->
-                appLanguageLiveData.postValue(appLang ?: Locale.getDefault().language)
+                appLanguageLiveData.value = appLang ?: Locale.getDefault().language
             }
         }
     }
@@ -31,12 +30,11 @@ class SettingsPrivacyPolicyViewModel(
         launch {
             settingsPrivacyPolicyUseCase.getPrivacyPolicy(appLang) { operationResult ->
                 when (operationResult) {
-                    is Result.Success -> privacyPolicyLiveData.postValue(
+                    is Result.Success -> privacyPolicyLiveData.value = 
                         operationResult.data ?: application.getString(
                             R.string.privacy_policy
                         )
-                    )
-                    is Result.Failure -> exceptionLiveData.postValue(operationResult.errorMessage.orEmpty())
+                    is Result.Failure -> exceptionLiveData.value = operationResult.errorMessage.orEmpty()
                 }
             }
             hideProgress()

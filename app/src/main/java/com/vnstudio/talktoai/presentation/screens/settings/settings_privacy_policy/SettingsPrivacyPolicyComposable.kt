@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import org.koin.androidx.compose.koinViewModel
@@ -22,13 +21,13 @@ fun SettingsPrivacyPolicyScreen(progressVisibilityState: MutableState<Boolean>) 
         progressVisibilityState.value = true
         viewModel.getAppLanguage()
     }
-    val appLanguageState = viewModel.appLanguageLiveData.observeAsState()
+    val appLanguageState = viewModel.appLanguageLiveData.collectAsState()
     LaunchedEffect(appLanguageState.value) {
         appLanguageState.value?.let { lang ->
             viewModel.getPrivacyPolicy(lang)
         }
     }
-    val privacyPolicyState = viewModel.privacyPolicyLiveData.observeAsState()
+    val privacyPolicyState = viewModel.privacyPolicyLiveData.collectAsState()
     LaunchedEffect(privacyPolicyState.value) {
         privacyPolicyState.value?.let { url ->
             privacyPolicyUrlState.value = url

@@ -1,8 +1,8 @@
 package com.vnstudio.talktoai.domain.repositories
 
 import com.vnstudio.talktoai.data.database.db_entities.Message
-import com.vnstudio.talktoai.domain.ApiRequest
-import com.vnstudio.talktoai.domain.ApiResponse
+import com.vnstudio.talktoai.data.network.models.ApiRequest
+import com.vnstudio.talktoai.data.network.models.ApiResponse
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import kotlinx.coroutines.flow.Flow
 

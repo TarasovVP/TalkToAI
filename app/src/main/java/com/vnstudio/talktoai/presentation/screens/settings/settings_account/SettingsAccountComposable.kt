@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,24 +48,24 @@ fun SettingsAccountScreen(
         authState.value = viewModel.getAuthState()
     }
 
-    val reAuthenticateState = viewModel.reAuthenticateLiveData.observeAsState()
+    val reAuthenticateState = viewModel.reAuthenticateLiveData.collectAsState()
     LaunchedEffect(reAuthenticateState.value) {
-        reAuthenticateState.value?.let {
+        reAuthenticateState.value.let {
             viewModel.deleteUser()
         }
     }
 
     val successChangePasswordMessage = InfoMessage(stringResource(id = R.string.settings_account_change_password_succeed))
-    val successChangePasswordState = viewModel.successChangePasswordLiveData.observeAsState()
+    val successChangePasswordState = viewModel.successChangePasswordLiveData.collectAsState()
     LaunchedEffect(successChangePasswordState.value) {
-        successChangePasswordState.value?.let {
+        successChangePasswordState.value.let {
             infoMessageState.value = successChangePasswordMessage
         }
     }
 
-    val successState = viewModel.successLiveData.observeAsState()
+    val successState = viewModel.successLiveData.collectAsState()
     LaunchedEffect(successState.value) {
-        successState.value?.let {
+        successState.value.let {
             viewModel.clearDataByKeys(listOf())
             viewModel.clearDataBase()
             onNextScreen.invoke(NavigationScreen.LoginScreen().route)
@@ -84,7 +83,7 @@ fun SettingsAccountScreen(
                 }
             } catch (e: ApiException) {
                 viewModel.googleSignInClient.signOut()
-                viewModel.exceptionLiveData.postValue(CommonStatusCodes.getStatusCodeString(e.statusCode))
+                viewModel.exceptionLiveData.value = CommonStatusCodes.getStatusCodeString(e.statusCode)
             }
         }
 

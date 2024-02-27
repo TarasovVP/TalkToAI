@@ -32,8 +32,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -66,7 +66,7 @@ import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.clearCheckToAction
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.dateToMilliseconds
-import com.vnstudio.talktoai.domain.ApiRequest
+import com.vnstudio.talktoai.data.network.models.ApiRequest
 import com.vnstudio.talktoai.domain.enums.MessageStatus
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.MessageApi
@@ -101,8 +101,8 @@ fun ChatScreen(
 ) {
     val viewModel: ChatViewModel = koinViewModel()
     val showCreateChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val currentChatState = viewModel.currentChatLiveData.observeAsState()
-    val messagesState = viewModel.messagesLiveData.observeAsState()
+    val currentChatState = viewModel.currentChatLiveData.collectAsState()
+    val messagesState = viewModel.messagesLiveData.collectAsState()
     val messageActionState: MutableState<String> =
         rememberSaveable { mutableStateOf(MessageAction.Cancel().value) }
     val showMessageActionDialog: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }

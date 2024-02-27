@@ -2,7 +2,6 @@ package com.vnstudio.talktoai.presentation.screens.main
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -18,6 +17,7 @@ import com.vnstudio.talktoai.domain.usecases.MainUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
@@ -28,9 +28,9 @@ class MainViewModel(
     application: Application,
 ) : BaseViewModel(application) {
 
-    val onBoardingSeenLiveData = MutableLiveData<Boolean>()
-    val chatsLiveData = MutableLiveData<List<Chat>?>()
-    val authStateLiveData = MutableLiveData<AuthState>()
+    val onBoardingSeenLiveData = MutableStateFlow(false)
+    val chatsLiveData = MutableStateFlow<List<Chat>?>(listOf())
+    val authStateLiveData = MutableStateFlow<AuthState?>(null)
 
     private var remoteChatListener: ValueEventListener? = null
     private var remoteMessageListener: ValueEventListener? = null
@@ -40,7 +40,7 @@ class MainViewModel(
     fun getOnBoardingSeen() {
         launch {
             mainUseCase.getOnBoardingSeen().collect { isOnBoardingSeen ->
-                onBoardingSeenLiveData.postValue(isOnBoardingSeen.isTrue())
+                onBoardingSeenLiveData.value = isOnBoardingSeen.isTrue()
             }
         }
     }
@@ -57,7 +57,7 @@ class MainViewModel(
                     AuthState.UNAUTHORISED
                 }
             }
-            authStateLiveData.postValue(authState)
+            authStateLiveData.value = authState
             Log.e("authTAG", "MainViewModel addAuthStateListener authStateListener user.isNotNull() ${user.isNotNull()} user?.email ${user?.email} user?.isAnonymous ${user?.isAnonymous} ")
 
         }
@@ -87,7 +87,7 @@ class MainViewModel(
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                exceptionLiveData.postValue(databaseError.message)
+                exceptionLiveData.value = databaseError.message
             }
         }
         remoteChatListener?.let { mainUseCase.addRemoteChatListener(it) }
@@ -108,7 +108,7 @@ class MainViewModel(
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                exceptionLiveData.postValue(databaseError.message)
+                exceptionLiveData.value = databaseError.message
             }
         }
         remoteMessageListener?.let { mainUseCase.addRemoteMessageListener(it) }
@@ -128,7 +128,7 @@ class MainViewModel(
                 viewModelScope.launch(Dispatchers.Main) {
                     chatsLiveData.value = null
                 }
-                chatsLiveData.postValue(chats)
+                chatsLiveData.value = chats
                 hideProgress()
             }
         }
@@ -145,7 +145,7 @@ class MainViewModel(
 
                             }
                             is Result.Failure -> authResult.errorMessage?.let {
-                                exceptionLiveData.postValue(it)
+                                exceptionLiveData.value = it
                             }
                         }
                         hideProgress()
@@ -169,7 +169,7 @@ class MainViewModel(
 
                         }
                         is Result.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.postValue(it)
+                            exceptionLiveData.value = it
                         }
                     }
                     hideProgress()
@@ -192,7 +192,7 @@ class MainViewModel(
 
                         }
                         is Result.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.postValue(it)
+                            exceptionLiveData.value = it
                         }
                     }
                     hideProgress()
@@ -215,7 +215,7 @@ class MainViewModel(
 
                         }
                         is Result.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.postValue(it)
+                            exceptionLiveData.value = it
                         }
                     }
                     hideProgress()

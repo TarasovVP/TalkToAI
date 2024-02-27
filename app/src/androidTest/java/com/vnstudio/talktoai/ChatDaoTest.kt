@@ -1,6 +1,5 @@
 package com.vnstudio.talktoai
 
-import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.vnstudio.talktoai.data.database.dao.ChatDao
@@ -25,10 +24,7 @@ class ChatDaoTest {
 
     @Before
     fun createDb() {
-        database = Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), AppDatabase::class.java)
-            .allowMainThreadQueries()
-            .build()
-        chatDao = database.chatDao()
+
     }
 
     @Test
@@ -64,11 +60,5 @@ class ChatDaoTest {
         chatDao.deleteChat(chat1)
         chatDao.deleteChat(chat2)
         assertTrue(allChats.firstOrNull().isNullOrEmpty())
-    }
-
-    @After
-    @Throws(IOException::class)
-    fun closeDb() {
-        database.close()
     }
 }

@@ -2,7 +2,6 @@ package com.vnstudio.talktoai.presentation.screens.settings.settings_account
 
 import android.app.Application
 import androidx.datastore.preferences.core.Preferences
-import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.AuthCredential
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
@@ -11,7 +10,7 @@ import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsAccountUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
-
+import kotlinx.coroutines.flow.MutableStateFlow
 
 
 class SettingsAccountViewModel(
@@ -20,9 +19,9 @@ class SettingsAccountViewModel(
     val googleSignInClient: GoogleSignInClient
 ) : BaseViewModel(application) {
 
-    val reAuthenticateLiveData = MutableLiveData<Unit>()
-    val successLiveData = MutableLiveData<Unit>()
-    val successChangePasswordLiveData = MutableLiveData<Unit>()
+    val reAuthenticateLiveData = MutableStateFlow(Unit)
+    val successLiveData = MutableStateFlow(Unit)
+    val successChangePasswordLiveData = MutableStateFlow(Unit)
 
     fun getAuthState(): AuthState {
         return when {
@@ -41,13 +40,13 @@ class SettingsAccountViewModel(
             showProgress()
             settingsAccountUseCase.signOut { result ->
                 when (result) {
-                    is Result.Success -> successLiveData.postValue(Unit)
-                    is Result.Failure -> exceptionLiveData.postValue(result.errorMessage.orEmpty())
+                    is Result.Success -> successLiveData.value = Unit
+                    is Result.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
                 }
             }
             hideProgress()
         } else {
-            exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
+            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
         }
     }
 
@@ -56,13 +55,13 @@ class SettingsAccountViewModel(
             showProgress()
             settingsAccountUseCase.changePassword(currentPassword, newPassword) { result ->
                 when (result) {
-                    is Result.Success -> successChangePasswordLiveData.postValue(Unit)
-                    is Result.Failure -> exceptionLiveData.postValue(result.errorMessage.orEmpty())
+                    is Result.Success -> successChangePasswordLiveData.value = Unit
+                    is Result.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
+            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
         }
     }
 
@@ -71,13 +70,13 @@ class SettingsAccountViewModel(
             showProgress()
             settingsAccountUseCase.reAuthenticate(authCredential) { result ->
                 when (result) {
-                    is Result.Success -> reAuthenticateLiveData.postValue(Unit)
-                    is Result.Failure -> exceptionLiveData.postValue(result.errorMessage.orEmpty())
+                    is Result.Success -> reAuthenticateLiveData.value = Unit
+                    is Result.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
+            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
         }
     }
 
@@ -86,13 +85,13 @@ class SettingsAccountViewModel(
             showProgress()
             settingsAccountUseCase.deleteUser { result ->
                 when (result) {
-                    is Result.Success -> successLiveData.postValue(Unit)
-                    is Result.Failure -> exceptionLiveData.postValue(result.errorMessage.orEmpty())
+                    is Result.Success -> successLiveData.value = Unit
+                    is Result.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.postValue(application.getString(R.string.app_network_unavailable_repeat))
+            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
         }
     }
 

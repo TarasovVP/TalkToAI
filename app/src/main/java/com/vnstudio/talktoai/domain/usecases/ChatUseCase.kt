@@ -1,10 +1,10 @@
 package com.vnstudio.talktoai.domain.usecases
 
 import com.vnstudio.talktoai.data.database.db_entities.Chat
-import com.vnstudio.talktoai.domain.ApiRequest
-import com.vnstudio.talktoai.domain.ApiResponse
+import com.vnstudio.talktoai.data.database.db_entities.Message
+import com.vnstudio.talktoai.data.network.models.ApiRequest
+import com.vnstudio.talktoai.data.network.models.ApiResponse
 import com.vnstudio.talktoai.domain.sealed_classes.Result
-import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
 import kotlinx.coroutines.flow.Flow
 
 interface ChatUseCase {
@@ -17,15 +17,15 @@ interface ChatUseCase {
 
     fun insertRemoteChat(chat: Chat, result: (Result<Unit>) -> Unit)
 
-    suspend fun insertMessage(messageUIModel: MessageUIModel)
+    suspend fun insertMessage(message: Message)
 
-    fun insertRemoteMessage(messageUIModel: MessageUIModel, result: (Result<Unit>) -> Unit)
+    fun insertRemoteMessage(message: Message, result: (Result<Unit>) -> Unit)
 
     suspend fun deleteMessages(messageIds: List<Long>)
 
     fun deleteRemoteMessages(messageIds: List<Long>, result: (Result<Unit>) -> Unit)
 
-    suspend fun getMessagesFromChat(chatId: Long): Flow<List<MessageUIModel>>
+    suspend fun getMessagesFromChat(chatId: Long): Flow<List<Message>>
 
     suspend fun sendRequest(apiRequest: ApiRequest): Flow<Result<ApiResponse>>
 }

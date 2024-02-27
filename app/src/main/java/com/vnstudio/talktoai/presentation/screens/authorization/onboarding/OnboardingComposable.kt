@@ -7,7 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -27,9 +27,9 @@ fun OnboardingScreen(onNextScreen: () -> Unit) {
     val pageState = remember {
         mutableStateOf(0)
     }
-    val onBoardingSeenState = viewModel.onBoardingSeenLiveData.observeAsState()
+    val onBoardingSeenState = viewModel.onBoardingSeenLiveData.collectAsState()
     LaunchedEffect(onBoardingSeenState.value) {
-        onBoardingSeenState.value?.let {
+        onBoardingSeenState.value.let {
             onNextScreen.invoke()
         }
     }
