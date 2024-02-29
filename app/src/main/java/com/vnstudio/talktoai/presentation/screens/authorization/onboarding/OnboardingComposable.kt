@@ -11,13 +11,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
-import com.vnstudio.talktoai.R
+
 import com.vnstudio.talktoai.presentation.components.PrimaryButton
+import com.vnstudio.talktoai.presentation.components.painterRes
+import com.vnstudio.talktoai.presentation.components.stringRes
 import com.vnstudio.talktoai.presentation.theme.Neutral50
 import com.vnstudio.talktoai.presentation.theme.Primary500
 
@@ -66,7 +67,7 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
             )
         }
         Image(
-            painter = painterResource(id = R.drawable.onboarding_intro),
+            painter = painterRes("onboarding_intro"),
             contentDescription = "Onboarding icon",
             modifier = Modifier
                 .fillMaxWidth()
@@ -74,20 +75,18 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
                 .padding(top = 16.dp)
         )
         Image(
-            painter = painterResource(
-                id = when (page) {
-                    1 -> R.drawable.ic_tab_two
-                    2 -> R.drawable.ic_tab_three
-                    3 -> R.drawable.ic_tab_four
-                    else -> R.drawable.ic_tab_one
+            painter = painterRes(
+                when (page) {
+                    1 -> "ic_tab_two"
+                    2 -> "ic_tab_three"
+                    3 -> "ic_tab_four"
+                    else -> "ic_tab_one"
                 }
             ), contentDescription = "Onboarding tab $page", modifier = Modifier
                 .fillMaxWidth()
         )
         PrimaryButton(
-            text = if (page == 3) stringResource(id = R.string.authorization_enter) else stringResource(
-                id = R.string.button_next
-            ), modifier = Modifier
+            text = if (page == 3) stringRes().AUTHORIZATION_ENTER else stringRes().BUTTON_NEXT, modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 40.dp), onClick = onClick
         )

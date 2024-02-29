@@ -2,10 +2,11 @@ package com.vnstudio.talktoai.presentation.screens.settings.settings_feedback
 
 import android.app.Application
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
-import com.vnstudio.talktoai.R
+
 import com.vnstudio.talktoai.domain.models.Feedback
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsListUseCase
+import com.vnstudio.talktoai.infrastructure.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -32,7 +33,7 @@ class SettingsFeedbackViewModel(
             }
             hideProgress()
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 }

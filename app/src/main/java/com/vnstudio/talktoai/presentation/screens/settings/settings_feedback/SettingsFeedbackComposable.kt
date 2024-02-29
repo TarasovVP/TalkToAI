@@ -16,11 +16,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
-import com.vnstudio.talktoai.R
+
 import com.vnstudio.talktoai.domain.models.Feedback
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.components.PrimaryButton
+import com.vnstudio.talktoai.presentation.components.stringRes
+import kotlinx.datetime.Clock
 import java.util.*
 
 @Composable
@@ -33,7 +35,7 @@ fun SettingsFeedbackScreen(
     val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }
 
     val successFeedbackState = viewModel.successFeedbackLiveData.collectAsState()
-    val feedbackSendSuccess = stringResource(id = R.string.settings_feedback_send_success)
+    val feedbackSendSuccess = stringRes().SETTINGS_FEEDBACK_SEND_SUCCESS
     LaunchedEffect(successFeedbackState.value) {
         successFeedbackState.value?.let {
             infoMessageState.value = InfoMessage(message = feedbackSendSuccess)
@@ -45,7 +47,7 @@ fun SettingsFeedbackScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            text = stringResource(id = R.string.settings_feedback_title),
+            text = stringRes().SETTINGS_FEEDBACK_TITLE,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -54,7 +56,7 @@ fun SettingsFeedbackScreen(
         OutlinedTextField(
             value = inputValue.value,
             onValueChange = { inputValue.value = it },
-            placeholder = { Text(text = stringResource(id = R.string.settings_feedback_hint)) },
+            placeholder = { Text(text = stringRes().SETTINGS_FEEDBACK_HINT) },
             colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
             modifier = Modifier
                 .fillMaxWidth()
@@ -63,7 +65,7 @@ fun SettingsFeedbackScreen(
             minLines = 6
         )
         PrimaryButton(
-            text = stringResource(id = R.string.settings_feedback_send_button),
+            text = stringRes().SETTINGS_FEEDBACK_SEND_BUTTON,
             isEnabled = inputValue.value.text.isNotEmpty(),
             modifier = Modifier
         ) {
@@ -71,7 +73,7 @@ fun SettingsFeedbackScreen(
                 Feedback(
                     viewModel.currentUserEmail(),
                     inputValue.value.text,
-                    Date().time
+                    Clock.System.now().toEpochMilliseconds()
                 )
             )
             inputValue.value = TextFieldValue(String.EMPTY)

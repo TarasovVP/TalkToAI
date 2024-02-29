@@ -2,9 +2,10 @@ package com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_pol
 
 import android.app.Application
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
-import com.vnstudio.talktoai.R
+
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsPrivacyPolicyUseCase
+import com.vnstudio.talktoai.infrastructure.Constants.PRIVACY_POLICY
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.*
@@ -31,9 +32,7 @@ class SettingsPrivacyPolicyViewModel(
             settingsPrivacyPolicyUseCase.getPrivacyPolicy(appLang) { operationResult ->
                 when (operationResult) {
                     is Result.Success -> privacyPolicyLiveData.value = 
-                        operationResult.data ?: application.getString(
-                            R.string.privacy_policy
-                        )
+                        operationResult.data ?: PRIVACY_POLICY
                     is Result.Failure -> exceptionLiveData.value = operationResult.errorMessage.orEmpty()
                 }
             }

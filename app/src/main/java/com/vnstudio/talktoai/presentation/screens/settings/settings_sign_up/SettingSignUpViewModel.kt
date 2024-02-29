@@ -4,10 +4,11 @@ import android.app.Application
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
-import com.vnstudio.talktoai.R
+
 import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsSignUpUseCase
+import com.vnstudio.talktoai.infrastructure.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -45,7 +46,7 @@ class SettingSignUpViewModel(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -63,7 +64,7 @@ class SettingSignUpViewModel(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -84,7 +85,7 @@ class SettingSignUpViewModel(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -102,7 +103,7 @@ class SettingSignUpViewModel(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -134,7 +135,7 @@ class SettingSignUpViewModel(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -152,7 +153,7 @@ class SettingSignUpViewModel(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 }

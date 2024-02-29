@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -22,9 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
@@ -32,10 +29,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
-import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.presentation.theme.Neutral600
 import com.vnstudio.talktoai.presentation.theme.Primary500
 import com.vnstudio.talktoai.presentation.theme.Primary900
+import com.vnstudio.talktoai.resources.LocalDefaultTextSize
 
 @Composable
 fun PrimaryTextField(
@@ -113,7 +110,7 @@ fun PasswordTextField(inputValue: MutableState<TextFieldValue>, placeHolder: Str
                 onClick = { passwordVisible.value = passwordVisible.value.not() }
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = if (passwordVisible.value) R.drawable.ic_toggle_password_enabled else R.drawable.ic_toggle_password_disabled),
+                    painter = painterRes(if (passwordVisible.value) "ic_toggle_password_enabled" else "ic_toggle_password_disabled"),
                     contentDescription = if (passwordVisible.value) "Hide password" else "Show password"
                 )
             }
@@ -177,7 +174,7 @@ fun TextFieldWithButton(
                 )
             }) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_message_send),
+                    painter = painterRes("ic_message_send"),
                     contentDescription = "Send message button",
                     tint = if (isEnabled) Primary900 else Neutral600
                 )
@@ -197,7 +194,7 @@ fun TruncatableText(
         .wrapContentSize()) {
         Text(
             text = message,
-            fontSize = getDimensionResource(resId = R.dimen.default_text_size).value.sp,
+            fontSize = LocalDefaultTextSize.current.textSize,
             color = Color.White,
             maxLines = if (isTruncated.value) 1 else Int.MAX_VALUE,
             overflow = TextOverflow.Ellipsis

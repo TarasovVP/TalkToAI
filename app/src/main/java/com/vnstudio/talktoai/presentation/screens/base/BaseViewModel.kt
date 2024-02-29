@@ -6,7 +6,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
-import com.vnstudio.talktoai.R
+import com.vnstudio.talktoai.infrastructure.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
+
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -27,7 +28,7 @@ open class BaseViewModel(private val application: Application) : AndroidViewMode
         if (application.isNetworkAvailable()) {
             networkAvailableResult.invoke()
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 

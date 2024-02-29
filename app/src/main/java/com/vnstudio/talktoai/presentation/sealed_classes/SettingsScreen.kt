@@ -1,42 +1,42 @@
 package com.vnstudio.talktoai.presentation.sealed_classes
 
-import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
+import com.vnstudio.talktoai.resources.StringResources
 
-sealed class SettingsScreen(val name: Int, val icon: Int, val route: String) {
+sealed class SettingsScreen(val name: String, val icon: String, val route: String) {
     class ChatScreen : SettingsScreen(
-        R.string.settings_chat,
-        R.drawable.ic_settings_chat,
+        "settings_chat",
+        "ic_settings_chat",
         NavigationScreen.SettingsChatScreen().route
     )
 
     class AccountScreen : SettingsScreen(
-        R.string.settings_account,
-        R.drawable.ic_settings_account,
+        "settings_account",
+        "ic_settings_account",
         NavigationScreen.SettingsAccountScreen().route
     )
 
     class LanguageScreen : SettingsScreen(
-        R.string.settings_language,
-        R.drawable.ic_settings_language,
+        "settings_language",
+        "ic_settings_language",
         NavigationScreen.SettingsLanguageScreen().route
     )
 
     class ThemeScreen : SettingsScreen(
-        R.string.settings_theme,
-        R.drawable.ic_settings_theme,
+        "settings_theme",
+        "ic_settings_theme",
         NavigationScreen.SettingsThemeScreen().route
     )
 
     class FeedbackScreen : SettingsScreen(
-        R.string.settings_feedback,
-        R.drawable.ic_settings_feedback,
+        "settings_feedback",
+        "ic_settings_feedback",
         NavigationScreen.SettingsFeedbackScreen().route
     )
 
     class PrivacyPolicyScreen : SettingsScreen(
-        R.string.settings_privacy_policy,
-        R.drawable.ic_settings_privacy,
+        "settings_privacy_policy",
+        "ic_settings_privacy",
         NavigationScreen.SettingsPrivacyPolicyScreen().route
     )
 
@@ -52,7 +52,16 @@ sealed class SettingsScreen(val name: Int, val icon: Int, val route: String) {
 
         fun isSettingsScreen(route: String?) = allSettingsScreens.map { it.route }.contains(route)
 
-        fun settingsScreenNameByRoute(route: String?) =
-            allSettingsScreens.find { it.route == route }?.name ?: R.string.app_name
+        fun settingsScreenNameByRoute(route: String?, stringRes: StringResources): String {
+            return when(route) {
+                NavigationScreen.SettingsChatScreen().route -> return stringRes.SETTINGS_CHAT
+                NavigationScreen.SettingsAccountScreen().route -> return stringRes.SETTINGS_ACCOUNT
+                NavigationScreen.SettingsLanguageScreen().route -> return stringRes.SETTINGS_LANGUAGE
+                NavigationScreen.SettingsThemeScreen().route -> return stringRes.SETTINGS_THEME
+                NavigationScreen.SettingsFeedbackScreen().route -> return stringRes.SETTINGS_FEEDBACK
+                NavigationScreen.SettingsPrivacyPolicyScreen().route -> return stringRes.SETTINGS_PRIVACY_POLICY
+                else -> stringRes.APP_NAME
+            }
+        }
     }
 }

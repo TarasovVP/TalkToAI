@@ -8,6 +8,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.vnstudio.talktoai.R
 
+
 // Set of Material typography styles to start with
 val Typography = Typography(
     body1 = TextStyle(

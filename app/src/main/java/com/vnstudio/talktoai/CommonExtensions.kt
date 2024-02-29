@@ -26,6 +26,11 @@ import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -129,28 +134,28 @@ fun Context.isDarkMode(): Boolean {
     }
 }
 
-fun LocaleList.flagDrawable(): Int {
+fun LocaleList.flagDrawable(): String {
     return when (if (isEmpty) Locale.getDefault().language else get(0).language) {
-        Constants.APP_LANG_UK -> R.drawable.ic_flag_ua
-        Constants.APP_LANG_RU -> R.drawable.ic_flag_ru
-        else -> R.drawable.ic_flag_en
+        Constants.APP_LANG_UK -> "ic_flag_ua"
+        Constants.APP_LANG_RU -> "ic_flag_ru"
+        else -> "ic_flag_en"
     }
 }
 
-fun Date.isDefineSecondsLater(seconds: Int, updated: Long): Boolean {
-    Log.e(
-        "dateTAG",
-        "CommonExtensions isDefineSecondsLater time + (seconds * 1000) ${(time + (seconds * 1000)).millsSecondsToDateTime()} (updated * 1000) ${(updated * 1000).millsSecondsToDateTime()}"
-    )
-    return time + (seconds * 1000) < (updated * 1000)
+fun Instant.dateToMilliseconds(): Long {
+    return toEpochMilliseconds() / 1000
 }
 
 fun Long.millsSecondsToDateTime(): String {
-    return SimpleDateFormat("dd-MM-yyyy, HH:mm:ss", Locale.getDefault()).format(Date(this))
+    val instant = Instant.fromEpochMilliseconds(this)
+    val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+    return "${localDateTime.dayOfMonth.toString().padStart(2, '0')}-${localDateTime.monthNumber.toString().padStart(2, '0')}-${localDateTime.year}, ${localDateTime.hour.toString().padStart(2, '0')}:${localDateTime.minute.toString().padStart(2, '0')}:${localDateTime.second.toString().padStart(2, '0')}"
 }
 
-fun Date.dateToMilliseconds(): Long {
-    return time / 1000
+fun Instant.isDefineSecondsLater(seconds: Int, updated: Long): Boolean {
+    val targetTime = this.plus(seconds, kotlinx.datetime.DateTimeUnit.SECOND, TimeZone.UTC)
+    val updatedTime = Instant.fromEpochSeconds(updated)
+    return targetTime < updatedTime
 }
 
 fun ApiException.getStatusCodeText(): String {
