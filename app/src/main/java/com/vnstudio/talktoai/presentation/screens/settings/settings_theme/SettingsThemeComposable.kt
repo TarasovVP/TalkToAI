@@ -13,9 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
-import com.vnstudio.talktoai.R
+
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
+import com.vnstudio.talktoai.presentation.components.stringRes
 import com.vnstudio.talktoai.presentation.theme.Neutral500
 import com.vnstudio.talktoai.presentation.theme.Primary700
 
@@ -40,21 +41,21 @@ fun SettingsThemeScreen(infoMessageState: MutableState<InfoMessage?>) {
         verticalArrangement = Arrangement.Top
     ) {
         SettingsThemeItem(
-            stringResource(id = R.string.settings_theme_day),
+            stringRes().SETTINGS_THEME_DAY,
             AppCompatDelegate.MODE_NIGHT_NO == appThemeState.value
         ) {
             viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_NO)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
         SettingsThemeItem(
-            stringResource(id = R.string.settings_theme_night),
+            stringRes().SETTINGS_THEME_NIGHT,
             AppCompatDelegate.MODE_NIGHT_YES == appThemeState.value
         ) {
             viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_YES)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
         SettingsThemeItem(
-            stringResource(id = R.string.settings_theme_auto),
+            stringRes().SETTINGS_THEME_AUTO,
             AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM == appThemeState.value
         ) {
             viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)

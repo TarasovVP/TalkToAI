@@ -12,15 +12,11 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.presentation.theme.*
 
 @Composable
@@ -77,8 +73,8 @@ fun SubmitButtons(
             .padding(8.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        SecondaryButton(text = stringResource(id = R.string.button_cancel), false, Modifier.weight(1f), onClick = onDismiss)
-        PrimaryButton(text = stringResource(id = R.string.button_ok), isEnabled, Modifier.weight(1f)) {
+        SecondaryButton(text = stringRes().BUTTON_CANCEL, false, Modifier.weight(1f), onClick = onDismiss)
+        PrimaryButton(text = stringRes().BUTTON_OK, isEnabled, Modifier.weight(1f)) {
             onConfirmationClick.invoke()
         }
     }
@@ -94,7 +90,7 @@ fun GoogleButton(title: String, modifier: Modifier, onClick: () -> Unit) {
             onClick.invoke()
         }) {
         Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_logo_google),
+            painter = painterRes("ic_logo_google"),
             contentDescription = "Google button",
             modifier = Modifier
                 .padding(top = 8.dp, start = 16.dp, bottom = 8.dp)
@@ -117,7 +113,7 @@ fun LinkButton(text: String, modifier: Modifier, textAlign: TextAlign? = null,  
 }
 
 @Composable
-fun TextIconButton(text: String, icon: Int, modifier: Modifier, onClick: () -> Unit) {
+fun TextIconButton(text: String, icon: String, modifier: Modifier, onClick: () -> Unit) {
     IconButton(onClick = onClick) {
         Row(
             modifier = modifier
@@ -125,7 +121,7 @@ fun TextIconButton(text: String, icon: Int, modifier: Modifier, onClick: () -> U
                 .background(color = Primary700, shape = RoundedCornerShape(16.dp))
         ) {
             Image(
-                imageVector = ImageVector.vectorResource(id = icon),
+                painter = painterRes(icon),
                 contentDescription = "Add chat button",
                 modifier = Modifier
                     .padding(8.dp)

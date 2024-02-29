@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
-import com.vnstudio.talktoai.R
+
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
@@ -78,17 +78,17 @@ fun SignUpScreen(
     ) {
         Spacer(modifier = Modifier.height(40.dp))
         Text(
-            text = stringResource(id = R.string.authorization_sign_up), modifier = Modifier
+            text = stringRes().AUTHORIZATION_SIGN_UP, modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp), textAlign = TextAlign.Center
         )
         Text(
-            text = stringResource(id = R.string.authorization_with_google_account),
+            text = stringRes().AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
         GoogleButton(
-            stringResource(id = R.string.authorization_signing_up),
+            stringRes().AUTHORIZATION_SIGNING_UP,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
@@ -97,16 +97,16 @@ fun SignUpScreen(
         }
         OrDivider(modifier = Modifier)
         PrimaryTextField(
-            stringResource(id = R.string.authorization_email), emailInputValue)
-        PasswordTextField(passwordInputValue, stringResource(id = R.string.authorization_password))
+            stringRes().AUTHORIZATION_EMAIL, emailInputValue)
+        PasswordTextField(passwordInputValue, stringRes().AUTHORIZATION_PASSWORD)
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = stringResource(id = R.string.authorization_entrance_title), modifier = Modifier.padding(start = 16.dp))
-            LinkButton(text = stringResource(id = R.string.authorization_entrance), modifier = Modifier.wrapContentSize()) {
+            Text(text = stringRes().AUTHORIZATION_ENTRANCE_TITLE, modifier = Modifier.padding(start = 16.dp))
+            LinkButton(text = stringRes().AUTHORIZATION_ENTRANCE, modifier = Modifier.wrapContentSize()) {
                 onNextScreen.invoke(NavigationScreen.LoginScreen().route)
             }
         }
         PrimaryButton(
-            text = stringResource(id = R.string.authorization_signing_up),
+            text = stringRes().AUTHORIZATION_SIGNING_UP,
             emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
             modifier = Modifier
         ) {
@@ -114,7 +114,7 @@ fun SignUpScreen(
         }
     }
     ConfirmationDialog(
-        stringResource(id = R.string.authorization_account_exist),
+        stringRes().AUTHORIZATION_ACCOUNT_EXIST,
         showAccountExistDialog,
         onDismiss = {
             showAccountExistDialog.value = false

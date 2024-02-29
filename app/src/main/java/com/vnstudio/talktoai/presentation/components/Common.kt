@@ -13,18 +13,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -32,25 +30,29 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.infrastructure.Constants
+import com.vnstudio.talktoai.infrastructure.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
 import com.vnstudio.talktoai.presentation.theme.Primary300
 import com.vnstudio.talktoai.presentation.theme.Primary700
+import com.vnstudio.talktoai.resources.StringResources
+import com.vnstudio.talktoai.resources.getStringResourcesByLocale
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import kotlin.math.ceil
-import kotlin.math.roundToInt
 
 @Composable
 fun ExceptionMessageHandler(
     messageState: MutableState<InfoMessage?>,
-    exceptionLiveData: MutableStateFlow<String?>,
+    exceptionStateFlow: MutableStateFlow<String?>,
 ) {
-    val exceptionState = exceptionLiveData.collectAsState()
+    val exceptionState = exceptionStateFlow.collectAsState()
+    val stringRes = stringRes()
     LaunchedEffect(exceptionState.value) {
         exceptionState.value.takeIf { exceptionState.value.isNullOrEmpty().not() }?.let {
             messageState.value = InfoMessage(
-                exceptionState.value.orEmpty(),
+                if (exceptionState.value == APP_NETWORK_UNAVAILABLE_REPEAT) stringRes.APP_NETWORK_UNAVAILABLE_REPEAT else exceptionState.value.orEmpty(),
                 Constants.ERROR_MESSAGE
             )
-            exceptionLiveData.value = null
+            exceptionStateFlow.value = null
         }
     }
 }
@@ -58,9 +60,9 @@ fun ExceptionMessageHandler(
 @Composable
 fun ProgressVisibilityHandler(
     progressVisibilityState: MutableState<Boolean>,
-    progressVisibilityLiveData: MutableStateFlow<Boolean>,
+    progressVisibilityStateFlow: MutableStateFlow<Boolean>,
 ) {
-    val progressProcessState = progressVisibilityLiveData.collectAsState()
+    val progressProcessState = progressVisibilityStateFlow.collectAsState()
     LaunchedEffect(progressProcessState.value) {
         progressVisibilityState.value = progressProcessState.value
     }
@@ -100,20 +102,17 @@ fun OrDivider(modifier: Modifier) {
 }
 
 @Composable
-fun ShapeableImage(modifier: Modifier, drawableResId: Int, contentDescription: String) {
-    ContextCompat.getDrawable(LocalContext.current, drawableResId)?.toBitmap()?.asImageBitmap()
-        ?.let { painterResource(id = drawableResId) }?.let {
-        Image(
-            painter = it,
-            contentDescription = contentDescription,
-            modifier = modifier
-                .fillMaxSize()
-                .aspectRatio(1f)
-                .clip(CircleShape)
-                .background(Primary700),
-            contentScale = ContentScale.Inside
-        )
-    }
+fun ShapeableImage(modifier: Modifier, drawableResId: String, contentDescription: String) {
+    Image(
+        painter = painterRes(drawableResId),
+        contentDescription = contentDescription,
+        modifier = modifier
+            .fillMaxSize()
+            .aspectRatio(1f)
+            .clip(CircleShape)
+            .background(Primary700),
+        contentScale = ContentScale.Inside
+    )
 }
 
 @Composable
@@ -131,7 +130,7 @@ fun EmptyState(text: String, modifier: Modifier) {
                 .padding(16.dp)
         )
         Image(
-            painter = painterResource(id = R.drawable.empty_state),
+            painter = painterRes("empty_state"),
             contentDescription = "Empty state",
             modifier = Modifier
                 .fillMaxWidth()
@@ -202,4 +201,15 @@ fun getDimensionResource(resId: Int): Dp {
     val density = LocalDensity.current.density
     val sizeInPixels = resources.getDimension(resId)
     return (sizeInPixels / density).dp
+}
+
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+fun painterRes(resId: String): Painter {
+    return org.jetbrains.compose.resources.painterResource("drawable/${resId}.xml")
+}
+
+@Composable
+fun stringRes(): StringResources {
+    return getStringResourcesByLocale(Locale.current.language)
 }

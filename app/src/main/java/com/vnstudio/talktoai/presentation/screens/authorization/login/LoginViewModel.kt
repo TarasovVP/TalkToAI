@@ -4,9 +4,9 @@ import android.app.Application
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
-import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.LoginUseCase
+import com.vnstudio.talktoai.infrastructure.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -36,7 +36,7 @@ class LoginViewModel(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -58,7 +58,7 @@ class LoginViewModel(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -76,7 +76,7 @@ class LoginViewModel(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -94,7 +94,7 @@ class LoginViewModel(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -112,7 +112,7 @@ class LoginViewModel(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 }

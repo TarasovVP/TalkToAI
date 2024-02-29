@@ -10,6 +10,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import org.koin.androidx.compose.koinViewModel
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.initWebView
+import com.vnstudio.talktoai.infrastructure.Constants
+import com.vnstudio.talktoai.infrastructure.Constants.PRIVACY_POLICY
+import com.vnstudio.talktoai.presentation.components.stringRes
 
 @Composable
 fun SettingsPrivacyPolicyScreen(progressVisibilityState: MutableState<Boolean>) {
@@ -28,12 +31,13 @@ fun SettingsPrivacyPolicyScreen(progressVisibilityState: MutableState<Boolean>) 
         }
     }
     val privacyPolicyState = viewModel.privacyPolicyLiveData.collectAsState()
+    val stringRes = stringRes()
     LaunchedEffect(privacyPolicyState.value) {
         privacyPolicyState.value?.let { url ->
-            privacyPolicyUrlState.value = url
+            privacyPolicyUrlState.value = if (url == PRIVACY_POLICY) stringRes.PRIVACY_POLICY else url
         }
     }
-    privacyPolicyState.value.takeIf { it.isNullOrEmpty().not() }?.let { url ->
+    privacyPolicyState.value.takeIf { it.isNotEmpty() }?.let { url ->
         AppWebView(url, progressVisibilityState)
     }
 }

@@ -18,7 +18,7 @@ import org.koin.androidx.compose.koinViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
-import com.vnstudio.talktoai.R
+
 import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
@@ -111,12 +111,12 @@ fun SettingsSignUpScreen(
     ) {
         Spacer(modifier = Modifier.height(40.dp))
         Text(
-            text = stringResource(id = R.string.authorization_with_google_account),
+            text = stringRes().AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
         GoogleButton(
-            stringResource(id = R.string.authorization_signing_up),
+            stringRes().AUTHORIZATION_SIGNING_UP,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
@@ -124,10 +124,10 @@ fun SettingsSignUpScreen(
             launcher.launch(viewModel.googleSignInClient.signInIntent)
         }
         OrDivider(modifier = Modifier)
-        PrimaryTextField(stringResource(id = R.string.authorization_email), emailInputValue)
-        PasswordTextField(passwordInputValue, stringResource(id = R.string.authorization_password))
+        PrimaryTextField(stringRes().AUTHORIZATION_EMAIL, emailInputValue)
+        PasswordTextField(passwordInputValue, stringRes().AUTHORIZATION_PASSWORD)
         PrimaryButton(
-            text = stringResource(id = R.string.authorization_sign_up),
+            text = stringRes().AUTHORIZATION_SIGN_UP,
             emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
             modifier = Modifier
         ) {
@@ -136,7 +136,7 @@ fun SettingsSignUpScreen(
         TransferDataCard(transferDataState)
     }
     ConfirmationDialog(
-        stringResource(id = R.string.settings_account_exist),
+        stringRes().SETTINGS_ACCOUNT_EXIST,
         showAccountExistDialog,
         onDismiss = {
             viewModel.googleSignInClient.signOut()
@@ -165,7 +165,7 @@ fun TransferDataCard(transferDataState: MutableState<Boolean>) {
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = stringResource(id = R.string.settings_account_transfer_data_title),
+                    text = stringRes().SETTINGS_ACCOUNT_TRANSFER_DATA_TITLE,
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 8.dp)
@@ -181,7 +181,7 @@ fun TransferDataCard(transferDataState: MutableState<Boolean>) {
                     .background(Primary300)
             )
             Text(
-                text = if (transferDataState.value) stringResource(id = R.string.settings_account_transfer_data_turn_on) else stringResource(id = R.string.settings_account_transfer_data_turn_off),
+                text = if (transferDataState.value) stringRes().SETTINGS_ACCOUNT_TRANSFER_DATA_TURN_ON else stringRes().SETTINGS_ACCOUNT_TRANSFER_DATA_TURN_OFF,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)

@@ -38,11 +38,12 @@ import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.components.MainProgress
 import com.vnstudio.talktoai.presentation.components.PrimaryTopBar
 import com.vnstudio.talktoai.presentation.components.SecondaryTopBar
+import com.vnstudio.talktoai.presentation.components.stringRes
 import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen.Companion.isSettingsScreen
 import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen.Companion.settingsScreenNameByRoute
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import org.koin.androidx.compose.koinViewModel
-import java.util.Date
 
 @Composable
 fun AppContent() {
@@ -119,18 +120,14 @@ fun AppContent() {
             when {
                 isMessageDeleteModeState.value.isTrue() -> DeleteModeTopBar("Выбрано")
                 currentRouteState == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
-                    stringResource(id = settingsScreenNameByRoute(currentRouteState))
+                    settingsScreenNameByRoute(currentRouteState, stringRes())
                 ) {
                     navController.navigateUp()
                 }
 
                 isSettingsScreen(currentRouteState) || currentRouteState == NavigationScreen.ChatScreen().route -> PrimaryTopBar(
                     title = if (currentRouteState == NavigationScreen.ChatScreen().route) currentChatState.value?.name
-                        ?: stringResource(id = com.vnstudio.talktoai.R.string.app_name) else stringResource(
-                        id = settingsScreenNameByRoute(
-                            currentRouteState
-                        )
-                    ),
+                        ?: stringRes().APP_NAME else settingsScreenNameByRoute(currentRouteState, stringRes()),
                     onNavigationIconClick = {
                         scope.launch {
                             if (scaffoldState.drawerState.isClosed) {
@@ -241,9 +238,9 @@ fun AppContent() {
                     }) { newChatName ->
                     viewModel.insertChat(
                         Chat(
-                            id = Date().dateToMilliseconds(),
+                            id = Clock.System.now().dateToMilliseconds(),
                             name = newChatName,
-                            updated = Date().dateToMilliseconds(),
+                            updated = Clock.System.now().dateToMilliseconds(),
                             listOrder = chatsState.value.orEmpty().size + 1
                         )
                     )

@@ -13,7 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
-import com.vnstudio.talktoai.R
+
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.getStatusCodeText
@@ -57,7 +57,7 @@ fun LoginScreen(
             viewModel.signInAuthWithGoogle(idToken)
         }
     }
-    val resetPasswordText = stringResource(id = R.string.authorization_password_reset_success)
+    val resetPasswordText = stringRes().AUTHORIZATION_PASSWORD_RESET_SUCCESS
     val successPasswordResetState = viewModel.successPasswordResetLiveData.collectAsState()
     LaunchedEffect(successPasswordResetState.value) {
         successPasswordResetState.value.let {
@@ -91,17 +91,17 @@ fun LoginScreen(
     ) {
         Spacer(modifier = Modifier.height(40.dp))
         Text(
-            text = stringResource(id = R.string.authorization_entrance), modifier = Modifier
+            text = stringRes().AUTHORIZATION_ENTRANCE, modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp), textAlign = TextAlign.Center
         )
         Text(
-            text = stringResource(id = R.string.authorization_with_google_account),
+            text = stringRes().AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
         GoogleButton(
-            stringResource(id = R.string.authorization_entrance),
+            stringRes().AUTHORIZATION_ENTRANCE,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
@@ -109,39 +109,39 @@ fun LoginScreen(
             launcher.launch(viewModel.googleSignInClient.signInIntent)
         }
         OrDivider(modifier = Modifier)
-        PrimaryTextField(stringResource(id = R.string.authorization_email), emailInputValue)
-        PasswordTextField(passwordInputValue, stringResource(id = R.string.authorization_password))
+        PrimaryTextField(stringRes().AUTHORIZATION_EMAIL, emailInputValue)
+        PasswordTextField(passwordInputValue, stringRes().AUTHORIZATION_PASSWORD)
         Row(
             modifier = Modifier.fillMaxWidth()
         )  {
-            LinkButton(text = stringResource(id = R.string.authorization_sign_up), textAlign = TextAlign.Start, modifier = Modifier
+            LinkButton(text = stringRes().AUTHORIZATION_SIGN_UP, textAlign = TextAlign.Start, modifier = Modifier
                 .wrapContentSize()
                 .padding(start = 16.dp)) {
                 onNextScreen.invoke(NavigationScreen.SignUpScreen().route)
             }
             Spacer(modifier = Modifier.weight(0.5f))
-            LinkButton(text = stringResource(id = R.string.authorization_forgot_password), textAlign = TextAlign.End, modifier = Modifier
+            LinkButton(text = stringRes().AUTHORIZATION_FORGOT_PASSWORD, textAlign = TextAlign.End, modifier = Modifier
                 .wrapContentSize()
                 .padding(end = 16.dp)) {
                 showForgotPasswordDialog.value = true
             }
         }
         PrimaryButton(
-            text = stringResource(id = R.string.authorization_enter),
+            text = stringRes().AUTHORIZATION_ENTER,
             emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
             modifier = Modifier
         ) {
             viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
         }
         OrDivider(modifier = Modifier)
-        SecondaryButton(text = stringResource(id = R.string.authorization_continue_without_account), false, modifier = Modifier) {
+        SecondaryButton(text = stringRes().AUTHORIZATION_CONTINUE_WITHOUT_ACCOUNT, false, modifier = Modifier) {
             showUnauthorizedEnterDialog.value = true
         }
     }
 
     DataEditDialog(
-        stringResource(id = R.string.authorization_forgot_password_title),
-        stringResource(id = R.string.authorization_email),
+        stringRes().AUTHORIZATION_FORGOT_PASSWORD_TITLE,
+        stringRes().AUTHORIZATION_EMAIL,
         emailInputValue,
         showForgotPasswordDialog,
         onDismiss = {
@@ -152,7 +152,7 @@ fun LoginScreen(
     }
 
     ConfirmationDialog(
-        stringResource(id = R.string.authorization_account_not_exist),
+        stringRes().AUTHORIZATION_ACCOUNT_NOT_EXIST,
         showAccountExistDialog,
         onDismiss = {
             showAccountExistDialog.value = false
@@ -162,7 +162,7 @@ fun LoginScreen(
     }
 
     ConfirmationDialog(
-        stringResource(id = R.string.authorization_unauthorized_enter),
+        stringRes().AUTHORIZATION_UNAUTHORIZED_ENTER,
         showUnauthorizedEnterDialog,
         onDismiss = {
             showUnauthorizedEnterDialog.value = false

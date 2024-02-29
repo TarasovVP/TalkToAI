@@ -5,10 +5,11 @@ import androidx.datastore.preferences.core.Preferences
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.AuthCredential
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
-import com.vnstudio.talktoai.R
+
 import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsAccountUseCase
+import com.vnstudio.talktoai.infrastructure.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -46,7 +47,7 @@ class SettingsAccountViewModel(
             }
             hideProgress()
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -61,7 +62,7 @@ class SettingsAccountViewModel(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -76,7 +77,7 @@ class SettingsAccountViewModel(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -91,7 +92,7 @@ class SettingsAccountViewModel(
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = application.getString(R.string.app_network_unavailable_repeat)
+            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 

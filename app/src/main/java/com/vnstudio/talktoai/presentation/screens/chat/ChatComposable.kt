@@ -45,7 +45,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
@@ -63,6 +62,7 @@ import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.R
+
 import com.vnstudio.talktoai.clearCheckToAction
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.dateToMilliseconds
@@ -83,13 +83,20 @@ import com.vnstudio.talktoai.presentation.components.TextIconButton
 import com.vnstudio.talktoai.presentation.components.TruncatableText
 import com.vnstudio.talktoai.presentation.components.draggable.UpdateViewConfiguration
 import com.vnstudio.talktoai.presentation.components.getDimensionResource
+import com.vnstudio.talktoai.presentation.components.painterRes
+import com.vnstudio.talktoai.presentation.components.stringRes
 import com.vnstudio.talktoai.presentation.components.textLinesCount
 import com.vnstudio.talktoai.presentation.theme.Neutral50
 import com.vnstudio.talktoai.presentation.theme.Primary500
 import com.vnstudio.talktoai.presentation.theme.Primary600
 import com.vnstudio.talktoai.presentation.theme.Primary900
 import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
+import com.vnstudio.talktoai.resources.LocalAvatarSize
+import com.vnstudio.talktoai.resources.LocalDefaultTextSize
+import com.vnstudio.talktoai.resources.LocalLargePadding
+import com.vnstudio.talktoai.resources.LocalSmallPadding
 import com.vnstudio.talktoai.textToAction
+import kotlinx.datetime.Clock
 import java.util.Date
 
 @Composable
@@ -227,20 +234,20 @@ fun ChatScreen(
 
                         viewModel.insertMessage(
                             MessageUIModel(
-                                id = Date().time,
+                                id = Clock.System.now().toEpochMilliseconds(),
                                 chatId = currentChatState.value?.id ?: 0,
                                 author = "me",
                                 message = messageText,
-                                updatedAt = Date().dateToMilliseconds(),
+                                updatedAt = Clock.System.now().dateToMilliseconds(),
                                 status = MessageStatus.SUCCESS
                             )
                         )
                         val temporaryMessage = MessageUIModel(
-                            id = Date().time + 1,
+                            id = Clock.System.now().toEpochMilliseconds() + 1,
                             chatId = currentChatState.value?.id ?: 0,
                             author = "gpt-3.5-turbo",
                             message = String.EMPTY,
-                            updatedAt = Date().dateToMilliseconds() + 1,
+                            updatedAt = Clock.System.now().dateToMilliseconds() + 1,
                             status = MessageStatus.REQUESTING
                         )
                         viewModel.insertMessage(temporaryMessage)
@@ -270,9 +277,9 @@ fun ChatScreen(
         }) { newChatName ->
         viewModel.insertChat(
             Chat(
-                id = Date().dateToMilliseconds(),
+                id = Clock.System.now().dateToMilliseconds(),
                 name = newChatName,
-                updated = Date().dateToMilliseconds()
+                updated = Clock.System.now().dateToMilliseconds()
             )
         )
         showCreateChatDialog.value = false
@@ -407,11 +414,7 @@ fun Message(
     }
 
     val paddings =
-        getDimensionResource(resId = R.dimen.large_padding).value + getDimensionResource(resId = if (isUserAuthor) R.dimen.large_padding else R.dimen.small_padding).value + getDimensionResource(
-            resId = R.dimen.default_text_size
-        ).value * 2 + getDimensionResource(resId = R.dimen.default_text_size).value * 2 + if (isUserAuthor) 0f else getDimensionResource(
-            resId = R.dimen.avatar_size
-        ).value
+        LocalLargePadding.current.margin.value + (if (isUserAuthor) LocalLargePadding.current.margin else LocalSmallPadding.current.margin).value + (LocalDefaultTextSize.current.textSize * 2).value + (LocalDefaultTextSize.current.textSize * 2).value + if (isUserAuthor) 0f else (LocalAvatarSize.current.margin * 2).value
     val linesCount = textLinesCount(
         message.message,
         paddings,
@@ -465,14 +468,15 @@ fun Message(
                         .padding(2.dp)
                 )
             } else if (isUserAuthor.not()) {
-                AsyncImage(
+                //TODO uncomment
+                /*AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(R.drawable.avatar_ai)
+                        .data(painterRes(resId = "avatar_ai"))
                         .crossfade(true)
                         .build(),
                     contentDescription = "AI avatar",
                     contentScale = ContentScale.Crop
-                )
+                )*/
             }
         }
         Row(
@@ -506,7 +510,7 @@ fun Message(
                             .wrapContentSize()
                     )
 
-                    message.status == MessageStatus.REQUESTING && Date().isDefineSecondsLater(
+                    message.status == MessageStatus.REQUESTING && Clock.System.now().isDefineSecondsLater(
                         20,
                         message.updatedAt
                     ) -> Text(
@@ -539,7 +543,7 @@ fun CreateChatScreen(onClick: () -> Unit) {
     ) {
         TextIconButton(
             "Новый чат",
-            R.drawable.ic_chat_add,
+            "ic_chat_add",
             Modifier,
             onClick
         )
@@ -556,24 +560,24 @@ fun MessageActionField(
             .height(TextFieldDefaults.MinHeight)
     ) {
         TextButton(onClick = { messageActionState.value = MessageAction.Cancel().value }) {
-            Text(text = stringResource(id = R.string.button_cancel), color = Neutral50)
+            Text(text = stringRes().BUTTON_CANCEL, color = Neutral50)
         }
         Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = { messageActionState.value = MessageAction.Copy().value }) {
             Image(
-                painter = painterResource(id = R.drawable.ic_copy),
+                painter = painterRes("ic_copy"),
                 contentDescription = "Message copy button"
             )
         }
         IconButton(onClick = { messageActionState.value = MessageAction.Delete().value }) {
             Image(
-                painter = painterResource(id = R.drawable.ic_delete),
+                painter = painterRes("ic_delete"),
                 contentDescription = "Message delete button"
             )
         }
         IconButton(onClick = { messageActionState.value = MessageAction.Share().value }) {
             Image(
-                painter = painterResource(id = R.drawable.ic_share),
+                painter = painterRes("ic_share"),
                 contentDescription = "Message share button"
             )
         }

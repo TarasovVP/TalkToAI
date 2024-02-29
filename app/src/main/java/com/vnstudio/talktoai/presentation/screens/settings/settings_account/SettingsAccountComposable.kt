@@ -12,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -23,7 +22,6 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
-import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
@@ -55,7 +53,7 @@ fun SettingsAccountScreen(
         }
     }
 
-    val successChangePasswordMessage = InfoMessage(stringResource(id = R.string.settings_account_change_password_succeed))
+    val successChangePasswordMessage = InfoMessage(stringRes().SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED)
     val successChangePasswordState = viewModel.successChangePasswordLiveData.collectAsState()
     LaunchedEffect(successChangePasswordState.value) {
         successChangePasswordState.value.let {
@@ -97,12 +95,12 @@ fun SettingsAccountScreen(
             showLogOutDialog.value = true
         }
         if (authState.value == AuthState.AUTHORISED_EMAIL) {
-            PrimaryButton(text = stringResource(id = R.string.settings_account_change_password_title), modifier = Modifier) {
+            PrimaryButton(text = stringRes().SETTINGS_ACCOUNT_CHANGE_PASSWORD_TITLE, modifier = Modifier) {
                 showChangePasswordDialog.value = true
             }
         }
         if (authState.value == AuthState.AUTHORISED_EMAIL || authState.value == AuthState.AUTHORISED_GOOGLE) {
-            SecondaryButton(text = stringResource(id = R.string.settings_account_delete_title), true, modifier = Modifier) {
+            SecondaryButton(text = stringRes().SETTINGS_ACCOUNT_DELETE_TITLE, true, modifier = Modifier) {
                 if (authState.value == AuthState.AUTHORISED_GOOGLE) {
                     showDeleteGoogleAccountDialog.value = true
                 } else {
@@ -110,11 +108,11 @@ fun SettingsAccountScreen(
                 }
             }
         } else {
-            PrimaryButton(text = stringResource(id = R.string.authorization_signing_up), modifier = Modifier) {
+            PrimaryButton(text = stringRes().AUTHORIZATION_SIGNING_UP, modifier = Modifier) {
                 onNextScreen.invoke(NavigationScreen.SettingsSignUpScreen().route)
             }
             EmptyState(
-                text = stringResource(id = R.string.empty_state_account),
+                text = stringRes().EMPTY_STATE_ACCOUNT,
                 modifier = Modifier
             )
         }
@@ -126,8 +124,8 @@ fun SettingsAccountScreen(
 
     ConfirmationDialog(
         when (authState.value) {
-            AuthState.AUTHORISED_ANONYMOUSLY -> stringResource(id = R.string.settings_account_unauthorised_log_out)
-            else -> stringResource(id = R.string.settings_account_log_out)
+            AuthState.AUTHORISED_ANONYMOUSLY -> stringRes().SETTINGS_ACCOUNT_UNAUTHORISED_LOG_OUT
+            else -> stringRes().SETTINGS_ACCOUNT_LOG_OUT
         }, showLogOutDialog, onDismiss = {
         showLogOutDialog.value = false
     }) {
@@ -136,7 +134,7 @@ fun SettingsAccountScreen(
     }
 
     ConfirmationDialog(
-        stringResource(id = R.string.settings_account_google_delete),
+        stringRes().SETTINGS_ACCOUNT_GOOGLE_DELETE,
         showDeleteGoogleAccountDialog,
         onDismiss = {
             showDeleteGoogleAccountDialog.value = false
@@ -146,8 +144,8 @@ fun SettingsAccountScreen(
     }
 
     DataEditDialog(
-        stringResource(id = R.string.settings_account_email_delete),
-        placeHolder = stringResource(id = R.string.settings_account_enter_current_password),
+        stringRes().SETTINGS_ACCOUNT_EMAIL_DELETE,
+        placeHolder = stringRes().SETTINGS_ACCOUNT_ENTER_CURRENT_PASSWORD,
         remember {
             mutableStateOf(TextFieldValue())
         },
@@ -175,9 +173,9 @@ fun AccountCard(authState: AuthState?, email: String, onClick: () -> Unit) {
             ShapeableImage(
                 modifier = Modifier.size(50.dp),
                 drawableResId = when (authState) {
-                    AuthState.AUTHORISED_GOOGLE -> R.drawable.ic_avatar_google
-                    AuthState.AUTHORISED_EMAIL -> R.drawable.ic_avatar_email
-                    else -> R.drawable.ic_avatar_anonymous
+                    AuthState.AUTHORISED_GOOGLE -> "ic_avatar_google"
+                    AuthState.AUTHORISED_EMAIL -> "ic_avatar_email"
+                    else -> "ic_avatar_anonymous"
                 },
                 contentDescription = "Account avatar"
             )
@@ -186,12 +184,12 @@ fun AccountCard(authState: AuthState?, email: String, onClick: () -> Unit) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) email else stringResource(id = R.string.settings_account_unauthorised), modifier = Modifier
+                    text = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) email else stringRes().SETTINGS_ACCOUNT_UNAUTHORISED, modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 8.dp, top = 8.dp)
                 )
                 LinkButton(
-                    text = stringResource(id = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) R.string.settings_account_log_out_title else R.string.settings_account_unauthorised_log_out_title), modifier = Modifier
+                    text = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) stringRes().SETTINGS_ACCOUNT_LOG_OUT_TITLE else stringRes().SETTINGS_ACCOUNT_UNAUTHORISED_LOG_OUT_TITLE, modifier = Modifier
                         .wrapContentSize(), onClick = onClick
                 )
             }
@@ -225,14 +223,14 @@ fun ChangePasswordDialog(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = stringResource(id = R.string.settings_account_change_password_title),
+                            text = stringRes().SETTINGS_ACCOUNT_CHANGE_PASSWORD_TITLE,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp),
                             textAlign = TextAlign.Center,
                         )
-                        PasswordTextField(currentPasswordInputValue, stringResource(id = R.string.settings_account_enter_current_password))
-                        PasswordTextField(newPasswordInputValue, stringResource(id = R.string.settings_account_enter_new_password))
+                        PasswordTextField(currentPasswordInputValue, stringRes().SETTINGS_ACCOUNT_ENTER_CURRENT_PASSWORD)
+                        PasswordTextField(newPasswordInputValue, stringRes().SETTINGS_ACCOUNT_ENTER_NEW_PASSWORD)
                         SubmitButtons(currentPasswordInputValue.value.text.isNotEmpty() && newPasswordInputValue.value.text.isNotEmpty(), {
                             showDialog.value = false
                         }, {

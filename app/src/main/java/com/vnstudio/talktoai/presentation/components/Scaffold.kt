@@ -13,11 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,7 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.vnstudio.talktoai.CommonExtensions.isTrue
-import com.vnstudio.talktoai.R
+
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
@@ -66,7 +62,7 @@ fun PrimaryTopBar(
         navigationIcon = {
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_navigation),
+                    painter = painterRes("ic_navigation"),
                     contentDescription = "Navigation icon",
                     tint = Primary100
                 )
@@ -78,7 +74,7 @@ fun PrimaryTopBar(
                     onClick = onActionIconClick
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_edit),
+                        painter = painterRes("ic_edit"),
                         contentDescription = "Edit title",
                         tint = Primary100
                     )
@@ -97,7 +93,7 @@ fun SecondaryTopBar(title: String, onNavigationIconClick: () -> Unit) {
         navigationIcon = {
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_back),
+                    painter = painterRes("ic_arrow_back"),
                     contentDescription = "Navigation icon"
                 )
             }
@@ -144,7 +140,7 @@ fun AppDrawer(
             ) {
                 SettingsScreen.allSettingsScreens.forEach { settingsScreen ->
                     DrawerItem(
-                        name = stringResource(id = settingsScreen.name),
+                        name = settingsScreen.name,
                         mainIcon = settingsScreen.icon,
                         isCurrent = currentRouteState == settingsScreen.route,
                         secondaryIcon = if (settingsScreen.route == NavigationScreen.SettingsLanguageScreen().route) LocalConfiguration.current.locales.flagDrawable() else null
@@ -156,7 +152,7 @@ fun AppDrawer(
         } else {
             if (chats.value.isNullOrEmpty()) {
                 Image(
-                    painter = painterResource(id = R.drawable.empty_state),
+                    painter = painterRes("empty_state"),
                     contentDescription = "Empty state",
                     modifier = Modifier
                         .fillMaxWidth()
@@ -175,9 +171,9 @@ fun AppDrawer(
                     val elevation = animateDpAsState(if (isDragging) 4.dp else 1.dp)
                     DrawerItem(
                         name = chat.name,
-                        mainIcon = R.drawable.ic_chat,
+                        mainIcon = "ic_chat",
                         isCurrent = chat.id == currentChatId,
-                        secondaryIcon = if (isDragging) R.drawable.ic_drag_handle else R.drawable.ic_delete,
+                        secondaryIcon = if (isDragging) "ic_drag_handle" else "ic_delete",
                         elevation = elevation.value,
                         isIconClick = true,
                         onIconClick = {
@@ -188,7 +184,7 @@ fun AppDrawer(
             }
             TextIconButton(
                 "Новый чат",
-                R.drawable.ic_chat_add,
+                "ic_chat_add",
                 Modifier.padding(bottom = 40.dp, start = 16.dp, end = 16.dp),
                 onCreateChatClick
             )
@@ -205,7 +201,7 @@ fun DrawerHeader(isSettingsDrawerMode: Boolean, onDrawerModeClick: (Boolean) -> 
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Image(
-                imageVector = ImageVector.vectorResource(id = if (isSettingsDrawerMode) R.drawable.ic_settings else R.drawable.avatar_ai),
+                painter = painterRes(if (isSettingsDrawerMode) "ic_settings" else "avatar_ai"),
                 contentDescription = "Settings item icon",
                 modifier = Modifier
                     .padding(start = 16.dp, top = 16.dp)
@@ -223,7 +219,7 @@ fun DrawerHeader(isSettingsDrawerMode: Boolean, onDrawerModeClick: (Boolean) -> 
             onDrawerModeClick.invoke(isSettingsDrawerMode.not())
         }) {
             Image(
-                imageVector = ImageVector.vectorResource(id = if (isSettingsDrawerMode) R.drawable.ic_chat else R.drawable.ic_settings),
+                painter = painterRes(if (isSettingsDrawerMode) "ic_chat" else "ic_settings"),
                 contentDescription = "Drawer item icon",
                 modifier = Modifier
                     .padding(end = 16.dp, top = 16.dp)
@@ -236,9 +232,9 @@ fun DrawerHeader(isSettingsDrawerMode: Boolean, onDrawerModeClick: (Boolean) -> 
 @Composable
 fun DrawerItem(
     name: String,
-    mainIcon: Int,
+    mainIcon: String,
     isCurrent: Boolean,
-    secondaryIcon: Int? = null,
+    secondaryIcon: String? = null,
     elevation: Dp? = null,
     isIconClick: Boolean? = false,
     onIconClick: () -> Unit = {},
@@ -265,7 +261,7 @@ fun DrawerItem(
                 .fillMaxWidth()
         ) {
             Image(
-                imageVector = ImageVector.vectorResource(id = mainIcon), contentDescription = name,
+                painter = painterRes(mainIcon), contentDescription = name,
                 modifier = Modifier
                     .padding(8.dp)
             )
@@ -277,7 +273,7 @@ fun DrawerItem(
                     .padding(vertical = 8.dp)
             )
             secondaryIcon?.let { icon ->
-                Image(imageVector = ImageVector.vectorResource(id = icon),
+                Image(painter = painterRes(icon),
                     contentDescription = name,
                     modifier = Modifier
                         .padding(8.dp).let {
