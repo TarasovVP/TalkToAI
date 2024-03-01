@@ -11,7 +11,6 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.LocaleList
-import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.google.android.gms.common.api.ApiException
@@ -26,12 +25,10 @@ import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
-import java.text.SimpleDateFormat
 import java.util.*
 
 object CommonExtensions {

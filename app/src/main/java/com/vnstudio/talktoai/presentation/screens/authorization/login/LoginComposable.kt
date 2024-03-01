@@ -2,24 +2,47 @@ package com.vnstudio.talktoai.presentation.screens.authorization.login
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
-
+import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.getStatusCodeText
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
-import com.vnstudio.talktoai.presentation.components.*
+import com.vnstudio.talktoai.presentation.components.ConfirmationDialog
+import com.vnstudio.talktoai.presentation.components.DataEditDialog
+import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
+import com.vnstudio.talktoai.presentation.components.GoogleButton
+import com.vnstudio.talktoai.presentation.components.LinkButton
+import com.vnstudio.talktoai.presentation.components.OrDivider
+import com.vnstudio.talktoai.presentation.components.PasswordTextField
+import com.vnstudio.talktoai.presentation.components.PrimaryButton
+import com.vnstudio.talktoai.presentation.components.PrimaryTextField
+import com.vnstudio.talktoai.presentation.components.ProgressVisibilityHandler
+import com.vnstudio.talktoai.presentation.components.SecondaryButton
+import com.vnstudio.talktoai.presentation.components.stringRes
 
 @Composable
 fun LoginScreen(
@@ -36,7 +59,7 @@ fun LoginScreen(
 
     val accountExistState = viewModel.accountExistLiveData.collectAsState()
     LaunchedEffect(accountExistState.value) {
-        if (accountExistState.value) {
+        if (accountExistState.value.isTrue()) {
             viewModel.googleSignInClient.signOut()
             showAccountExistDialog.value = true
             viewModel.accountExistLiveData.value = false
@@ -44,7 +67,7 @@ fun LoginScreen(
     }
     val isEmailAccountExistState = viewModel.isEmailAccountExistLiveData.collectAsState()
     LaunchedEffect(isEmailAccountExistState.value) {
-        if (isEmailAccountExistState.value) {
+        if (isEmailAccountExistState.value.isTrue()) {
             viewModel.signInWithEmailAndPassword(
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
@@ -53,20 +76,20 @@ fun LoginScreen(
     }
     val isGoogleAccountExistState = viewModel.isGoogleAccountExistLiveData.collectAsState()
     LaunchedEffect(isGoogleAccountExistState.value) {
-        isGoogleAccountExistState.value.let { idToken ->
+        isGoogleAccountExistState.value.takeIf { it.isNotEmpty() }?.let { idToken ->
             viewModel.signInAuthWithGoogle(idToken)
         }
     }
     val resetPasswordText = stringRes().AUTHORIZATION_PASSWORD_RESET_SUCCESS
     val successPasswordResetState = viewModel.successPasswordResetLiveData.collectAsState()
     LaunchedEffect(successPasswordResetState.value) {
-        if (successPasswordResetState.value) {
+        if (successPasswordResetState.value.isTrue()) {
             infoMessageState.value = InfoMessage(resetPasswordText)
         }
     }
     val successSignInState = viewModel.successSignInLiveData.collectAsState()
     LaunchedEffect(successSignInState.value) {
-        if (successSignInState.value) {
+        if (successSignInState.value.isTrue()) {
             onNextScreen.invoke("${DESTINATION_CHAT_SCREEN}/$DEFAULT_CHAT_ID")
         }
     }

@@ -4,11 +4,23 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,7 +28,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import org.koin.androidx.compose.koinViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
@@ -25,8 +36,20 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
-import com.vnstudio.talktoai.presentation.components.*
+import com.vnstudio.talktoai.presentation.components.ConfirmationDialog
+import com.vnstudio.talktoai.presentation.components.DataEditDialog
+import com.vnstudio.talktoai.presentation.components.EmptyState
+import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
+import com.vnstudio.talktoai.presentation.components.LinkButton
+import com.vnstudio.talktoai.presentation.components.PasswordTextField
+import com.vnstudio.talktoai.presentation.components.PrimaryButton
+import com.vnstudio.talktoai.presentation.components.ProgressVisibilityHandler
+import com.vnstudio.talktoai.presentation.components.SecondaryButton
+import com.vnstudio.talktoai.presentation.components.ShapeableImage
+import com.vnstudio.talktoai.presentation.components.SubmitButtons
+import com.vnstudio.talktoai.presentation.components.stringRes
 import com.vnstudio.talktoai.presentation.theme.Primary500
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsAccountScreen(

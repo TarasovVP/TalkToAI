@@ -7,9 +7,26 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,21 +40,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.vnstudio.talktoai.CommonExtensions.isTrue
-
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
+import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen.Companion.isSettingsScreen
+import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen.Companion.settingScreens
+import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen.Companion.settingsScreenNameByRoute
 import com.vnstudio.talktoai.flagDrawable
 import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.infrastructure.Constants.CURRENT_CHAT_ID
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.presentation.components.draggable.DragDropColumn
-import com.vnstudio.talktoai.presentation.screens.chat.ChatScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.login.LoginScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.onboarding.OnboardingScreen
 import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpScreen
-import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen
-import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen.Companion.isSettingsScreen
+import com.vnstudio.talktoai.presentation.screens.chat.ChatScreen
 import com.vnstudio.talktoai.presentation.screens.settings.settings_account.SettingsAccountScreen
 import com.vnstudio.talktoai.presentation.screens.settings.settings_chat.SettingsChatScreen
 import com.vnstudio.talktoai.presentation.screens.settings.settings_feedback.SettingsFeedbackScreen
@@ -45,7 +62,11 @@ import com.vnstudio.talktoai.presentation.screens.settings.settings_language.Set
 import com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyScreen
 import com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpScreen
 import com.vnstudio.talktoai.presentation.screens.settings.settings_theme.SettingsThemeScreen
-import com.vnstudio.talktoai.presentation.theme.*
+import com.vnstudio.talktoai.presentation.theme.Neutral50
+import com.vnstudio.talktoai.presentation.theme.Primary100
+import com.vnstudio.talktoai.presentation.theme.Primary700
+import com.vnstudio.talktoai.presentation.theme.Primary800
+import com.vnstudio.talktoai.presentation.theme.Primary900
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -138,9 +159,9 @@ fun AppDrawer(
                     .weight(1f)
                     .padding(horizontal = 16.dp, vertical = 24.dp)
             ) {
-                SettingsScreen.allSettingsScreens.forEach { settingsScreen ->
+                settingScreens.forEach { settingsScreen ->
                     DrawerItem(
-                        name = settingsScreen.name,
+                        name = settingsScreenNameByRoute(settingsScreen.route, stringRes()),
                         mainIcon = settingsScreen.icon,
                         isCurrent = currentRouteState == settingsScreen.route,
                         secondaryIcon = if (settingsScreen.route == NavigationScreen.SettingsLanguageScreen().route) LocalConfiguration.current.locales.flagDrawable() else null

@@ -7,8 +7,8 @@ import com.vnstudio.talktoai.domain.repositories.AuthRepository
 import com.vnstudio.talktoai.domain.repositories.ChatRepository
 import com.vnstudio.talktoai.domain.repositories.MessageRepository
 import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
-import com.vnstudio.talktoai.domain.usecases.ChatUseCase
 import com.vnstudio.talktoai.domain.sealed_classes.Result
+import com.vnstudio.talktoai.domain.usecases.ChatUseCase
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import kotlinx.coroutines.flow.Flow
 

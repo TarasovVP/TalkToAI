@@ -7,10 +7,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import org.koin.androidx.compose.koinViewModel
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.components.PrimaryButton
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsChatScreen(

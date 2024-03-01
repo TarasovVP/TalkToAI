@@ -16,11 +16,11 @@ class LoginViewModel(
     val googleSignInClient: GoogleSignInClient,
 ) : BaseViewModel(application) {
 
-    val accountExistLiveData = MutableStateFlow(false)
-    val isEmailAccountExistLiveData = MutableStateFlow(false)
+    val accountExistLiveData = MutableStateFlow<Boolean?>(null)
+    val isEmailAccountExistLiveData = MutableStateFlow<Boolean?>(null)
     val isGoogleAccountExistLiveData = MutableStateFlow(String.EMPTY)
-    val successPasswordResetLiveData = MutableStateFlow(false)
-    val successSignInLiveData = MutableStateFlow(false)
+    val successPasswordResetLiveData = MutableStateFlow<Boolean?>(null)
+    val successSignInLiveData = MutableStateFlow<Boolean?>(null)
 
     fun sendPasswordResetEmail(email: String) {
         if (application.isNetworkAvailable()) {

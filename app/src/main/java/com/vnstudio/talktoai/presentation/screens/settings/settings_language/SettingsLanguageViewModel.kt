@@ -5,7 +5,7 @@ import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.domain.usecases.SettingsLanguageUseCase
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.util.*
+import java.util.Locale
 
 class SettingsLanguageViewModel(
     application: Application,

@@ -1,15 +1,18 @@
 package com.vnstudio.talktoai.presentation.screens.base
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
 import com.vnstudio.talktoai.infrastructure.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
-
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 open class BaseViewModel(private val application: Application) : AndroidViewModel(application) {
 
@@ -46,7 +49,6 @@ open class BaseViewModel(private val application: Application) : AndroidViewMode
     protected open fun onError(throwable: Throwable, block: suspend CoroutineScope.() -> Unit) {
         hideProgress()
         throwable.printStackTrace()
-        Log.e("exceptionTAG", "BaseViewModel onError throwable ${throwable.localizedMessage}")
         exceptionLiveData.value = throwable.localizedMessage
     }
 }

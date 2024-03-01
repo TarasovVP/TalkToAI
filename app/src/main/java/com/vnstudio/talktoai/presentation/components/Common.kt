@@ -2,7 +2,6 @@ package com.vnstudio.talktoai.presentation.components
 
 import android.annotation.SuppressLint
 import android.text.TextPaint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -143,10 +142,7 @@ fun EmptyState(text: String, modifier: Modifier) {
 
 @Composable
 fun MainProgress(progressVisibilityState: MutableState<Boolean>) {
-    Log.e(
-        "progressTAG",
-        "Common MainProgress progressVisibilityState ${progressVisibilityState.value}"
-    )
+
     if (progressVisibilityState.value) {
         /*Box(modifier = Modifier.fillMaxSize(), Alignment.Center) {
             CircularProgressIndicator(

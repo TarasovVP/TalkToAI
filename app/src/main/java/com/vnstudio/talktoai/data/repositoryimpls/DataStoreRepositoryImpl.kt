@@ -1,7 +1,11 @@
 package com.vnstudio.talktoai.data.repositoryimpls
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
 import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG
 import com.vnstudio.talktoai.infrastructure.Constants.APP_THEME

@@ -1,7 +1,10 @@
 package com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up
 
 import com.vnstudio.talktoai.domain.models.RemoteUser
-import com.vnstudio.talktoai.domain.repositories.*
+import com.vnstudio.talktoai.domain.repositories.AuthRepository
+import com.vnstudio.talktoai.domain.repositories.ChatRepository
+import com.vnstudio.talktoai.domain.repositories.MessageRepository
+import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsSignUpUseCase
 
