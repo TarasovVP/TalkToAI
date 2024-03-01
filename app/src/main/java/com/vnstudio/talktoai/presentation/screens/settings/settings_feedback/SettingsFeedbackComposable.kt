@@ -37,7 +37,7 @@ fun SettingsFeedbackScreen(
     val successFeedbackState = viewModel.successFeedbackLiveData.collectAsState()
     val feedbackSendSuccess = stringRes().SETTINGS_FEEDBACK_SEND_SUCCESS
     LaunchedEffect(successFeedbackState.value) {
-        successFeedbackState.value?.let {
+        if (successFeedbackState.value) {
             infoMessageState.value = InfoMessage(message = feedbackSendSuccess)
         }
     }

@@ -48,7 +48,7 @@ fun SettingsAccountScreen(
 
     val reAuthenticateState = viewModel.reAuthenticateLiveData.collectAsState()
     LaunchedEffect(reAuthenticateState.value) {
-        reAuthenticateState.value.let {
+        if (reAuthenticateState.value) {
             viewModel.deleteUser()
         }
     }
@@ -56,14 +56,14 @@ fun SettingsAccountScreen(
     val successChangePasswordMessage = InfoMessage(stringRes().SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED)
     val successChangePasswordState = viewModel.successChangePasswordLiveData.collectAsState()
     LaunchedEffect(successChangePasswordState.value) {
-        successChangePasswordState.value.let {
+        if (successChangePasswordState.value) {
             infoMessageState.value = successChangePasswordMessage
         }
     }
 
     val successState = viewModel.successLiveData.collectAsState()
     LaunchedEffect(successState.value) {
-        successState.value.let {
+        if (successState.value) {
             viewModel.clearDataByKeys(listOf())
             viewModel.clearDataBase()
             onNextScreen.invoke(NavigationScreen.LoginScreen().route)

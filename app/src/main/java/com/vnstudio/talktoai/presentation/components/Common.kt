@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai.presentation.components
 
+import android.annotation.SuppressLint
 import android.text.TextPaint
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -18,6 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -36,7 +38,6 @@ import com.vnstudio.talktoai.presentation.theme.Primary700
 import com.vnstudio.talktoai.resources.StringResources
 import com.vnstudio.talktoai.resources.getStringResourcesByLocale
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import kotlin.math.ceil
 
 @Composable
@@ -203,10 +204,12 @@ fun getDimensionResource(resId: Int): Dp {
     return (sizeInPixels / density).dp
 }
 
-@OptIn(ExperimentalResourceApi::class)
+@SuppressLint("DiscouragedApi")
 @Composable
 fun painterRes(resId: String): Painter {
-    return org.jetbrains.compose.resources.painterResource("drawable/${resId}.xml")
+    val context = LocalContext.current
+    val resourceId = context.resources.getIdentifier(resId, "drawable", context.packageName)
+    return painterResource(resourceId)
 }
 
 @Composable

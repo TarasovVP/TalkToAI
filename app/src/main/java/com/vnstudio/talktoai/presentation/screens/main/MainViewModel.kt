@@ -28,7 +28,7 @@ class MainViewModel(
     application: Application,
 ) : BaseViewModel(application) {
 
-    val onBoardingSeenLiveData = MutableStateFlow(false)
+    val onBoardingSeenLiveData = MutableStateFlow<Boolean?>(null)
     val chatsLiveData = MutableStateFlow<List<Chat>?>(listOf())
     val authStateLiveData = MutableStateFlow<AuthState?>(null)
 

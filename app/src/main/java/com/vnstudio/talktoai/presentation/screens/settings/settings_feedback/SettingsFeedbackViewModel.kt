@@ -16,7 +16,7 @@ class SettingsFeedbackViewModel(
     private val settingsListUseCase: SettingsListUseCase,
 ) : BaseViewModel(application) {
 
-    val successFeedbackLiveData = MutableStateFlow(Unit)
+    val successFeedbackLiveData = MutableStateFlow(false)
 
     fun currentUserEmail(): String {
         return settingsListUseCase.currentUserEmail()
@@ -27,7 +27,7 @@ class SettingsFeedbackViewModel(
             showProgress()
             settingsListUseCase.insertFeedback(feedback) { result ->
                 when (result) {
-                    is Result.Success -> successFeedbackLiveData.value = Unit
+                    is Result.Success -> successFeedbackLiveData.value = true
                     is Result.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
                 }
             }

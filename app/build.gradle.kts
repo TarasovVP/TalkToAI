@@ -143,6 +143,5 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     //KMM
-    implementation("org.jetbrains.compose.components:components-resources:1.5.12")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
 }

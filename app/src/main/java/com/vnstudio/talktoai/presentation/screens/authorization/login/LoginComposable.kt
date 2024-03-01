@@ -36,15 +36,15 @@ fun LoginScreen(
 
     val accountExistState = viewModel.accountExistLiveData.collectAsState()
     LaunchedEffect(accountExistState.value) {
-        accountExistState.value.let {
+        if (accountExistState.value) {
             viewModel.googleSignInClient.signOut()
             showAccountExistDialog.value = true
-            viewModel.accountExistLiveData.value = Unit
+            viewModel.accountExistLiveData.value = false
         }
     }
     val isEmailAccountExistState = viewModel.isEmailAccountExistLiveData.collectAsState()
     LaunchedEffect(isEmailAccountExistState.value) {
-        isEmailAccountExistState.value.let {
+        if (isEmailAccountExistState.value) {
             viewModel.signInWithEmailAndPassword(
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
@@ -60,13 +60,13 @@ fun LoginScreen(
     val resetPasswordText = stringRes().AUTHORIZATION_PASSWORD_RESET_SUCCESS
     val successPasswordResetState = viewModel.successPasswordResetLiveData.collectAsState()
     LaunchedEffect(successPasswordResetState.value) {
-        successPasswordResetState.value.let {
+        if (successPasswordResetState.value) {
             infoMessageState.value = InfoMessage(resetPasswordText)
         }
     }
     val successSignInState = viewModel.successSignInLiveData.collectAsState()
     LaunchedEffect(successSignInState.value) {
-        successSignInState.value.let {
+        if (successSignInState.value) {
             onNextScreen.invoke("${DESTINATION_CHAT_SCREEN}/$DEFAULT_CHAT_ID")
         }
     }

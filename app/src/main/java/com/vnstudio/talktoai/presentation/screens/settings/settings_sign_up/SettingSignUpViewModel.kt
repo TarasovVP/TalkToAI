@@ -20,11 +20,11 @@ class SettingSignUpViewModel(
 ) : BaseViewModel(application) {
 
     val accountExistLiveData = MutableStateFlow(String.EMPTY)
-    val createEmailAccountLiveData = MutableStateFlow(Unit)
+    val createEmailAccountLiveData = MutableStateFlow(false)
     val createGoogleAccountLiveData = MutableStateFlow(String.EMPTY)
     val successAuthorisationLiveData = MutableStateFlow(false)
     val remoteUserLiveData = MutableStateFlow<Pair<Boolean, RemoteUser?>>(Pair(false, null))
-    val successRemoteUserLiveData = MutableStateFlow(Unit)
+    val successRemoteUserLiveData = MutableStateFlow(false)
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
         if (application.isNetworkAvailable()) {
@@ -35,7 +35,7 @@ class SettingSignUpViewModel(
                         authResult.data.isNullOrEmpty().not() -> {
                             accountExistLiveData.value = idToken.orEmpty()
                         }
-                        idToken.isNullOrEmpty() -> createEmailAccountLiveData.value = Unit
+                        idToken.isNullOrEmpty() -> createEmailAccountLiveData.value = true
                         else -> idToken.let { createGoogleAccountLiveData.value = it }
                     }
                     is Result.Failure -> authResult.errorMessage?.let {
@@ -126,7 +126,7 @@ class SettingSignUpViewModel(
             showProgress()
             settingsSignUpUseCase.insertRemoteCurrentUser(remoteUser) { operationResult ->
                 when (operationResult) {
-                    is Result.Success -> successRemoteUserLiveData.value = Unit
+                    is Result.Success -> successRemoteUserLiveData.value = true
                     is Result.Failure -> operationResult.errorMessage?.let {
                         exceptionLiveData.value = 
                             it
@@ -144,7 +144,7 @@ class SettingSignUpViewModel(
             showProgress()
             settingsSignUpUseCase.updateRemoteCurrentUser(remoteUser) { operationResult ->
                 when (operationResult) {
-                    is Result.Success -> successRemoteUserLiveData.value = Unit
+                    is Result.Success -> successRemoteUserLiveData.value = true
                     is Result.Failure -> operationResult.errorMessage?.let {
                         exceptionLiveData.value = 
                             it

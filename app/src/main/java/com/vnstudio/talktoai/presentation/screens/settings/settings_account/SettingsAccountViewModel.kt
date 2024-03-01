@@ -13,16 +13,15 @@ import com.vnstudio.talktoai.infrastructure.Constants.APP_NETWORK_UNAVAILABLE_RE
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 
-
 class SettingsAccountViewModel(
     private val application: Application,
     private val settingsAccountUseCase: SettingsAccountUseCase,
     val googleSignInClient: GoogleSignInClient
 ) : BaseViewModel(application) {
 
-    val reAuthenticateLiveData = MutableStateFlow(Unit)
-    val successLiveData = MutableStateFlow(Unit)
-    val successChangePasswordLiveData = MutableStateFlow(Unit)
+    val reAuthenticateLiveData = MutableStateFlow(false)
+    val successLiveData = MutableStateFlow(false)
+    val successChangePasswordLiveData = MutableStateFlow(false)
 
     fun getAuthState(): AuthState {
         return when {
@@ -41,7 +40,7 @@ class SettingsAccountViewModel(
             showProgress()
             settingsAccountUseCase.signOut { result ->
                 when (result) {
-                    is Result.Success -> successLiveData.value = Unit
+                    is Result.Success -> successLiveData.value = true
                     is Result.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
                 }
             }
@@ -56,7 +55,7 @@ class SettingsAccountViewModel(
             showProgress()
             settingsAccountUseCase.changePassword(currentPassword, newPassword) { result ->
                 when (result) {
-                    is Result.Success -> successChangePasswordLiveData.value = Unit
+                    is Result.Success -> successChangePasswordLiveData.value = true
                     is Result.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
                 }
                 hideProgress()
@@ -71,7 +70,7 @@ class SettingsAccountViewModel(
             showProgress()
             settingsAccountUseCase.reAuthenticate(authCredential) { result ->
                 when (result) {
-                    is Result.Success -> reAuthenticateLiveData.value = Unit
+                    is Result.Success -> reAuthenticateLiveData.value = true
                     is Result.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
                 }
                 hideProgress()
@@ -86,7 +85,7 @@ class SettingsAccountViewModel(
             showProgress()
             settingsAccountUseCase.deleteUser { result ->
                 when (result) {
-                    is Result.Success -> successLiveData.value = Unit
+                    is Result.Success -> successLiveData.value = true
                     is Result.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
                 }
                 hideProgress()

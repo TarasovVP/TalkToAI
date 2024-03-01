@@ -16,11 +16,11 @@ class LoginViewModel(
     val googleSignInClient: GoogleSignInClient,
 ) : BaseViewModel(application) {
 
-    val accountExistLiveData = MutableStateFlow(Unit)
-    val isEmailAccountExistLiveData = MutableStateFlow(Unit)
+    val accountExistLiveData = MutableStateFlow(false)
+    val isEmailAccountExistLiveData = MutableStateFlow(false)
     val isGoogleAccountExistLiveData = MutableStateFlow(String.EMPTY)
     val successPasswordResetLiveData = MutableStateFlow(false)
-    val successSignInLiveData = MutableStateFlow(Unit)
+    val successSignInLiveData = MutableStateFlow(false)
 
     fun sendPasswordResetEmail(email: String) {
         if (application.isNetworkAvailable()) {
@@ -46,8 +46,8 @@ class LoginViewModel(
             loginUseCase.fetchSignInMethodsForEmail(email) { authResult ->
                 when (authResult) {
                     is Result.Success -> when {
-                        authResult.data.isNullOrEmpty() -> accountExistLiveData.value = Unit
-                        idToken.isNullOrEmpty() -> isEmailAccountExistLiveData.value = Unit
+                        authResult.data.isNullOrEmpty() -> accountExistLiveData.value = true
+                        idToken.isNullOrEmpty() -> isEmailAccountExistLiveData.value = true
                         else -> idToken.let { isGoogleAccountExistLiveData.value = it }
                     }
                     is Result.Failure -> authResult.errorMessage?.let {
@@ -67,7 +67,7 @@ class LoginViewModel(
             showProgress()
             loginUseCase.signInWithEmailAndPassword(email, password) { authResult ->
                 when (authResult) {
-                    is Result.Success -> successSignInLiveData.value = Unit
+                    is Result.Success -> successSignInLiveData.value = true
                     is Result.Failure -> authResult.errorMessage?.let {
                         exceptionLiveData.value = 
                             it
@@ -85,7 +85,7 @@ class LoginViewModel(
             showProgress()
             loginUseCase.signInAuthWithGoogle(idToken) { operationResult ->
                 when (operationResult) {
-                    is Result.Success -> successSignInLiveData.value = Unit
+                    is Result.Success -> successSignInLiveData.value = true
                     is Result.Failure -> operationResult.errorMessage?.let {
                         exceptionLiveData.value = 
                             it
@@ -103,7 +103,7 @@ class LoginViewModel(
             showProgress()
             loginUseCase.signInAnonymously { authResult ->
                 when (authResult) {
-                    is Result.Success -> successSignInLiveData.value = Unit
+                    is Result.Success -> successSignInLiveData.value = true
                     is Result.Failure -> authResult.errorMessage?.let {
                         exceptionLiveData.value = 
                             it
