@@ -8,10 +8,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
@@ -26,11 +25,11 @@ import com.vnstudio.talktoai.presentation.theme.Primary500
 fun OnboardingScreen(onNextScreen: () -> Unit) {
     val viewModel: OnBoardingViewModel = koinViewModel()
     val pageState = remember {
-        mutableStateOf(0)
+        mutableIntStateOf(0)
     }
     val onBoardingSeenState = viewModel.onBoardingSeenLiveData.collectAsState()
     LaunchedEffect(onBoardingSeenState.value) {
-        onBoardingSeenState.value.let {
+        if (onBoardingSeenState.value) {
             onNextScreen.invoke()
         }
     }

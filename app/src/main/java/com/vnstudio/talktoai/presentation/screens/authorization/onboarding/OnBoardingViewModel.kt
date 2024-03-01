@@ -10,12 +10,12 @@ class OnBoardingViewModel(
     private val onBoardingUseCase: OnBoardingUseCase,
 ) : BaseViewModel(application) {
 
-    val onBoardingSeenLiveData = MutableStateFlow(Unit)
+    val onBoardingSeenLiveData = MutableStateFlow(false)
 
     fun setOnBoardingSeen() {
         launch {
             onBoardingUseCase.setOnBoardingSeen(true)
-            onBoardingSeenLiveData.value = Unit
+            onBoardingSeenLiveData.value = true
         }
     }
 }
