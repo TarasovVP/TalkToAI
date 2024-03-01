@@ -4,7 +4,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -17,7 +21,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vnstudio.talktoai.presentation.theme.*
+import com.vnstudio.talktoai.presentation.theme.Blue
+import com.vnstudio.talktoai.presentation.theme.Neutral400
+import com.vnstudio.talktoai.presentation.theme.Neutral50
+import com.vnstudio.talktoai.presentation.theme.Neutral700
+import com.vnstudio.talktoai.presentation.theme.Primary300
+import com.vnstudio.talktoai.presentation.theme.Primary400
+import com.vnstudio.talktoai.presentation.theme.Primary500
+import com.vnstudio.talktoai.presentation.theme.Primary700
 
 @Composable
 fun PrimaryButton(

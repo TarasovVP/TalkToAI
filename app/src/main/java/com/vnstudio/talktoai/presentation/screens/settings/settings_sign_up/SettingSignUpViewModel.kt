@@ -4,7 +4,6 @@ import android.app.Application
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
-
 import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsSignUpUseCase
@@ -22,8 +21,8 @@ class SettingSignUpViewModel(
     val accountExistLiveData = MutableStateFlow(String.EMPTY)
     val createEmailAccountLiveData = MutableStateFlow(false)
     val createGoogleAccountLiveData = MutableStateFlow(String.EMPTY)
-    val successAuthorisationLiveData = MutableStateFlow(false)
-    val remoteUserLiveData = MutableStateFlow<Pair<Boolean, RemoteUser?>>(Pair(false, null))
+    val successAuthorisationLiveData = MutableStateFlow<Boolean?>(null)
+    val remoteUserLiveData = MutableStateFlow<Pair<Boolean, RemoteUser?>?>(null)
     val successRemoteUserLiveData = MutableStateFlow(false)
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {

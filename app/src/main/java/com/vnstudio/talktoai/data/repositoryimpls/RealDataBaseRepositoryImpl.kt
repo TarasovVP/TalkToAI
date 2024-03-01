@@ -1,6 +1,5 @@
 package com.vnstudio.talktoai.data.repositoryimpls
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
@@ -16,7 +15,6 @@ import com.vnstudio.talktoai.infrastructure.Constants.MESSAGES
 import com.vnstudio.talktoai.infrastructure.Constants.PRIVACY_POLICY
 import com.vnstudio.talktoai.infrastructure.Constants.REVIEW_VOTE
 import com.vnstudio.talktoai.infrastructure.Constants.USERS
-
 
 
 class RealDataBaseRepositoryImpl(
@@ -38,7 +36,6 @@ class RealDataBaseRepositoryImpl(
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
-                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl insertRemoteUser exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -56,7 +53,6 @@ class RealDataBaseRepositoryImpl(
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
-                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl updateRemoteUser exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -71,7 +67,6 @@ class RealDataBaseRepositoryImpl(
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
-                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl updateRemoteUser exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -82,7 +77,6 @@ class RealDataBaseRepositoryImpl(
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
-                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl deleteRemoteUser exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -109,7 +103,6 @@ class RealDataBaseRepositoryImpl(
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
-                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl insertChat exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -120,7 +113,6 @@ class RealDataBaseRepositoryImpl(
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
-                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl updateChat exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -131,7 +123,6 @@ class RealDataBaseRepositoryImpl(
             .addOnCompleteListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
-                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl deleteChat exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -142,7 +133,6 @@ class RealDataBaseRepositoryImpl(
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
-                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl insertMessage exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -158,7 +148,6 @@ class RealDataBaseRepositoryImpl(
                     result.invoke(Result.Success())
                 }
             }.addOnFailureListener { exception ->
-                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl deleteMessageList exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -174,7 +163,6 @@ class RealDataBaseRepositoryImpl(
                     result.invoke(Result.Success())
                 }
             }.addOnFailureListener { exception ->
-                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl deleteMessageList exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -185,7 +173,6 @@ class RealDataBaseRepositoryImpl(
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
-                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl setReviewVoted exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -195,7 +182,6 @@ class RealDataBaseRepositoryImpl(
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) result.invoke(Result.Success(task.result.value as? String))
             }.addOnFailureListener { exception ->
-                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl getPrivacyPolicy exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }
@@ -206,7 +192,6 @@ class RealDataBaseRepositoryImpl(
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->
-                Log.e("exceptionTAG", "RealDataBaseRepositoryImpl insertFeedback exception ${exception.localizedMessage}")
                 result.invoke(Result.Failure(exception.localizedMessage))
             }
     }

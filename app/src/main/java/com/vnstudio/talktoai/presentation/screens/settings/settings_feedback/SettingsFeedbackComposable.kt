@@ -7,23 +7,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.koinViewModel
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
-
 import com.vnstudio.talktoai.domain.models.Feedback
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.components.PrimaryButton
 import com.vnstudio.talktoai.presentation.components.stringRes
 import kotlinx.datetime.Clock
-import java.util.*
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsFeedbackScreen(

@@ -1,7 +1,6 @@
 package com.vnstudio.talktoai.presentation.screens.chat
 
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -45,12 +44,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.koin.androidx.compose.koinViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.airbnb.lottie.compose.LottieAnimation
@@ -62,11 +59,10 @@ import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.R
-
 import com.vnstudio.talktoai.clearCheckToAction
 import com.vnstudio.talktoai.data.database.db_entities.Chat
-import com.vnstudio.talktoai.dateToMilliseconds
 import com.vnstudio.talktoai.data.network.models.ApiRequest
+import com.vnstudio.talktoai.dateToMilliseconds
 import com.vnstudio.talktoai.domain.enums.MessageStatus
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.MessageApi
@@ -97,7 +93,7 @@ import com.vnstudio.talktoai.resources.LocalLargePadding
 import com.vnstudio.talktoai.resources.LocalSmallPadding
 import com.vnstudio.talktoai.textToAction
 import kotlinx.datetime.Clock
-import java.util.Date
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ChatScreen(
@@ -113,13 +109,8 @@ fun ChatScreen(
     val messageActionState: MutableState<String> =
         rememberSaveable { mutableStateOf(MessageAction.Cancel().value) }
     val showMessageActionDialog: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
-    Log.e(
-        "apiTAG",
-        "ChatScreen showMessageActionDialog ${showMessageActionDialog.value} messageActionState ${messageActionState.value}"
-    )
 
     LaunchedEffect(Unit) {
-        Log.e("apiTAG", "ChatScreen getCurrentChat currentChatId $currentChatId")
         viewModel.getCurrentChat(currentChatId)
     }
 
@@ -138,23 +129,11 @@ fun ChatScreen(
     val shareIntentLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
             infoMessageState.value = InfoMessage("Отправлено")
-            Log.e(
-                "apiTAG",
-                "ChatScreen MessageDeleteField onShareClick shareIntentLauncher onComplete"
-            )
         }
     LaunchedEffect(messageActionState.value) {
         when (messageActionState.value) {
             MessageAction.Delete().value -> {
-                Log.e(
-                    "apiTAG",
-                    "ChatScreen is MessageAction.Delete before showMessageActionDialog ${showMessageActionDialog.value}"
-                )
                 showMessageActionDialog.value = true
-                Log.e(
-                    "apiTAG",
-                    "ChatScreen is MessageAction.Delete after showMessageActionDialog ${showMessageActionDialog.value}"
-                )
             }
 
             MessageAction.Copy().value -> {
@@ -211,7 +190,6 @@ fun ChatScreen(
                     viewModel.updateMessage(message)
                 }
             }
-            Log.e("apiTAG", "ChatScreen Column currentChatState.value ${currentChatState.value}")
         }
         Box(
             modifier = Modifier
@@ -395,19 +373,7 @@ fun Message(
     onMessageChange: (MessageUIModel) -> Unit = {},
 ) {
     val isTruncatedState = rememberSaveable { mutableStateOf(message.isTruncated) }
-    Log.e(
-        "truncateTAG",
-        "ChatComposable Message before LaunchedEffect message.message ${
-            message.message.takeIf { it.length > 6 }?.substring(0, 6)
-        } message.isTruncated ${message.isTruncated} isTruncatedState.value ${isTruncatedState.value}"
-    )
     LaunchedEffect(isTruncatedState.value) {
-        Log.e(
-            "truncateTAG",
-            "ChatComposable Message LaunchedEffect(isTruncatedState.value) message.message ${
-                message.message.takeIf { it.length > 6 }?.substring(0, 6)
-            } message.isTruncated ${message.isTruncated} isTruncatedState.value ${isTruncatedState.value}"
-        )
         if (isTruncatedState.value != message.isTruncated) {
             onMessageChange(message.copy(isTruncated = isTruncatedState.value))
         }
@@ -420,23 +386,11 @@ fun Message(
         paddings,
         getDimensionResource(resId = R.dimen.default_text_size).value
     )
-    Log.e(
-        "charWidthTAG",
-        "ChatComposable: message.message ${
-            message.message.takeIf { it.length > 6 }?.substring(0, 6)
-        } message.length ${message.message.length}"
-    )
     Row(
         verticalAlignment = Alignment.Top,
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            /*.animateContentSize(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = Spring.StiffnessMedium
-                )
-            )*/
             .pointerInput(isMessageDeleteModeState.value) {
                 if (isMessageDeleteModeState.value.isTrue()) {
                     detectTapGestures(onTap = {

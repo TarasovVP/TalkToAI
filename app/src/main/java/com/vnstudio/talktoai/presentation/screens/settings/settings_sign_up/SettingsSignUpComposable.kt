@@ -3,28 +3,47 @@ package com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.koinViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
-
-import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.models.InfoMessage
+import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
-import com.vnstudio.talktoai.presentation.components.*
+import com.vnstudio.talktoai.presentation.components.ConfirmationDialog
+import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
+import com.vnstudio.talktoai.presentation.components.GoogleButton
+import com.vnstudio.talktoai.presentation.components.OrDivider
+import com.vnstudio.talktoai.presentation.components.PasswordTextField
+import com.vnstudio.talktoai.presentation.components.PrimaryButton
+import com.vnstudio.talktoai.presentation.components.PrimaryTextField
+import com.vnstudio.talktoai.presentation.components.ProgressVisibilityHandler
+import com.vnstudio.talktoai.presentation.components.stringRes
 import com.vnstudio.talktoai.presentation.theme.Primary300
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsSignUpScreen(
@@ -41,14 +60,14 @@ fun SettingsSignUpScreen(
 
     val accountExistState = viewModel.accountExistLiveData.collectAsState()
     LaunchedEffect(accountExistState.value) {
-        accountExistState.value.let {
+        accountExistState.value.takeIf { it.isNotEmpty() }?.let {
             viewModel.googleSignInClient.signOut()
             showAccountExistDialog.value = true
         }
     }
     val isEmailAccountExistState = viewModel.createEmailAccountLiveData.collectAsState()
     LaunchedEffect(isEmailAccountExistState.value) {
-        isEmailAccountExistState.value.let {
+        if (isEmailAccountExistState.value) {
             viewModel.createUserWithEmailAndPassword(
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
@@ -57,14 +76,14 @@ fun SettingsSignUpScreen(
     }
     val isGoogleAccountExistState = viewModel.createGoogleAccountLiveData.collectAsState()
     LaunchedEffect(isGoogleAccountExistState.value) {
-        isGoogleAccountExistState.value.let { idToken ->
+        isGoogleAccountExistState.value.takeIf { it.isNotEmpty() }?.let { idToken ->
             viewModel.createUserWithGoogle(idToken, false)
         }
     }
 
     val successAuthorisationState = viewModel.successAuthorisationLiveData.collectAsState()
     LaunchedEffect(successAuthorisationState.value) {
-        successAuthorisationState.value.let { isExistUser ->
+        successAuthorisationState.value?.let { isExistUser ->
             if (transferDataState.value) {
                 viewModel.createRemoteUser(isExistUser)
             } else {
@@ -75,7 +94,7 @@ fun SettingsSignUpScreen(
 
     val localUserState = viewModel.remoteUserLiveData.collectAsState()
     LaunchedEffect(localUserState.value) {
-        localUserState.value.let { userState ->
+        localUserState.value?.let { userState ->
             if (userState.first) {
                 userState.second?.let { it -> viewModel.updateRemoteCurrentUser(it) }
             } else {
@@ -86,7 +105,7 @@ fun SettingsSignUpScreen(
 
     val successRemoteUserState = viewModel.successRemoteUserLiveData.collectAsState()
     LaunchedEffect(successRemoteUserState.value) {
-        successRemoteUserState.value.let {
+        if (successRemoteUserState.value) {
             onNextScreen.invoke("${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}")
         }
     }

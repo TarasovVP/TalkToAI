@@ -1,7 +1,6 @@
 package com.vnstudio.talktoai.presentation.screens.main
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -20,7 +19,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-
 
 
 class MainViewModel(
@@ -46,7 +44,6 @@ class MainViewModel(
     }
 
     fun addAuthStateListener() {
-        Log.e("authTAG", "MainViewModel addAuthStateListener")
         authStateListener  = FirebaseAuth.AuthStateListener { firebaseAuth ->
             val user = firebaseAuth.currentUser
             val authState = when {
@@ -58,8 +55,6 @@ class MainViewModel(
                 }
             }
             authStateLiveData.value = authState
-            Log.e("authTAG", "MainViewModel addAuthStateListener authStateListener user.isNotNull() ${user.isNotNull()} user?.email ${user?.email} user?.isAnonymous ${user?.isAnonymous} ")
-
         }
         authStateListener?.let { mainUseCase.addAuthStateListener(it) }
     }
@@ -83,7 +78,6 @@ class MainViewModel(
                 launch {
                     mainUseCase.updateChats(chats)
                 }
-                Log.e("changeDBTAG", "RealDataBaseRepositoryImpl listenRemoteChatChanges onDataChange chats $chats")
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -104,7 +98,6 @@ class MainViewModel(
                 launch {
                     mainUseCase.updateMessages(messages)
                 }
-                Log.e("changeDBTAG", "RealDataBaseRepositoryImpl listenRemoteMessageChanges onDataChange messages $messages")
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -120,10 +113,7 @@ class MainViewModel(
         chatsFlowSubscription = launch {
             mainUseCase.getChats().catch {
                 hideProgress()
-                Log.e(
-                    "apiTAG",
-                    "MainViewModel getChats catch localizedMessage ${it.localizedMessage}"
-                )
+
             }.collect { chats ->
                 viewModelScope.launch(Dispatchers.Main) {
                     chatsLiveData.value = null
@@ -239,7 +229,6 @@ class MainViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        Log.e("changeDBTAG", "RealDataBaseRepositoryImpl onCleared")
         removeRemoteUserListeners()
         removeAuthStateListener()
         chatsFlowSubscription?.cancel()

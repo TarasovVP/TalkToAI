@@ -2,7 +2,12 @@ package com.vnstudio.talktoai.presentation.screens.authorization.onboarding
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -13,13 +18,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.koinViewModel
-
 import com.vnstudio.talktoai.presentation.components.PrimaryButton
 import com.vnstudio.talktoai.presentation.components.painterRes
 import com.vnstudio.talktoai.presentation.components.stringRes
 import com.vnstudio.talktoai.presentation.theme.Neutral50
 import com.vnstudio.talktoai.presentation.theme.Primary500
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun OnboardingScreen(onNextScreen: () -> Unit) {

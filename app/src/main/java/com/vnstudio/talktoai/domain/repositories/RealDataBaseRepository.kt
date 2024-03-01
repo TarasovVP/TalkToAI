@@ -3,8 +3,8 @@ package com.vnstudio.talktoai.domain.repositories
 import com.google.firebase.database.ValueEventListener
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.database.db_entities.Message
-import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.models.Feedback
+import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 
 interface RealDataBaseRepository {

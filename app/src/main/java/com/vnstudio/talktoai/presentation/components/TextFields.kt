@@ -1,6 +1,5 @@
 package com.vnstudio.talktoai.presentation.components
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -131,13 +130,7 @@ fun TextFieldWithButton(
     val focusManager = LocalFocusManager.current
     LaunchedEffect(inputValue.value) {
         if (inputValue.value.text.isEmpty()) focusManager.clearFocus()
-        Log.e(
-            "inputValueTAG",
-            "TextFields TextFieldWithButton LaunchedEffect inputValue ${inputValue.value.text}"
-        )
     }
-
-    Log.e("inputValueTAG", "TextFields TextFieldWithButton inputValue ${inputValue.value.text}")
 
     TextField(value = inputValue.value,
         onValueChange = { newValue ->
@@ -168,10 +161,6 @@ fun TextFieldWithButton(
             IconButton(enabled = isEnabled && inputValue.value.text.isNotBlank(), onClick = {
                 onSendClick.invoke(inputValue.value.text.trim())
                 inputValue.value = TextFieldValue(String.EMPTY)
-                Log.e(
-                    "inputValueTAG",
-                    "TextFields TextFieldWithButton onClick inputValue ${inputValue.value.text}"
-                )
             }) {
                 Icon(
                     painter = painterRes("ic_message_send"),

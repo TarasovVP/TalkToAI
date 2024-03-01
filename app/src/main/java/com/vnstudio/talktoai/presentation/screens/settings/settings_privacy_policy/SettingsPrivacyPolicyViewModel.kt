@@ -2,16 +2,15 @@ package com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_pol
 
 import android.app.Application
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
-
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsPrivacyPolicyUseCase
 import com.vnstudio.talktoai.infrastructure.Constants.PRIVACY_POLICY
 import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.util.*
+import java.util.Locale
 
 class SettingsPrivacyPolicyViewModel(
-    private val application: Application,
+    application: Application,
     private val settingsPrivacyPolicyUseCase: SettingsPrivacyPolicyUseCase,
 ) : BaseViewModel(application) {
 

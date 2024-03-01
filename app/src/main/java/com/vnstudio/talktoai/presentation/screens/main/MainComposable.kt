@@ -1,6 +1,5 @@
 package com.vnstudio.talktoai.presentation.screens.main
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
@@ -14,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -26,6 +24,8 @@ import com.vnstudio.talktoai.dateToMilliseconds
 import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
+import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen.Companion.isSettingsScreen
+import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen.Companion.settingsScreenNameByRoute
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
 import com.vnstudio.talktoai.presentation.components.AppDrawer
@@ -39,8 +39,6 @@ import com.vnstudio.talktoai.presentation.components.MainProgress
 import com.vnstudio.talktoai.presentation.components.PrimaryTopBar
 import com.vnstudio.talktoai.presentation.components.SecondaryTopBar
 import com.vnstudio.talktoai.presentation.components.stringRes
-import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen.Companion.isSettingsScreen
-import com.vnstudio.talktoai.presentation.sealed_classes.SettingsScreen.Companion.settingsScreenNameByRoute
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import org.koin.androidx.compose.koinViewModel
@@ -61,7 +59,7 @@ fun AppContent() {
     val onBoardingSeenState = viewModel.onBoardingSeenLiveData.collectAsState()
     val authState = viewModel.authStateLiveData.collectAsState()
     val chatsState = viewModel.chatsLiveData.collectAsState()
-    Log.e("compareChatTAG", "AppContent chatsState.value ${chatsState.value}")
+
     val isSettingsDrawerModeState = remember { mutableStateOf<Boolean?>(null) }
     val isMessageDeleteModeState = remember { mutableStateOf<Boolean?>(null) }
 
@@ -76,7 +74,6 @@ fun AppContent() {
         viewModel.addAuthStateListener()
     }
 
-    Log.e("changeDBTAG", "AppContent chatsState ${chatsState.value}")
     LaunchedEffect(onBoardingSeenState.value) {
         onBoardingSeenState.value?.let { isOnboardingSeen ->
             startDestinationState.value = when {
@@ -181,10 +178,6 @@ fun AppContent() {
                     deleteChatState.value = chat
                 },
                 onSwap = { firstIndex, secondIndex ->
-                    Log.e(
-                        "swapTAG",
-                        "MainComposable onSwap firstIndex $firstIndex secondIndex $secondIndex"
-                    )
                     viewModel.swapChats(firstIndex, secondIndex)
                 },
                 onDragEnd = {
