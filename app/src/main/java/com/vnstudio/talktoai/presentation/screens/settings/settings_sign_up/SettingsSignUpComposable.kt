@@ -46,7 +46,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary300
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsSignUpScreen(
+fun SettingsSignUpContent(
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,
     onNextScreen: (String) -> Unit,

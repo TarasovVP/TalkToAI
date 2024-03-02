@@ -44,7 +44,7 @@ import com.vnstudio.talktoai.presentation.components.ProgressVisibilityHandler
 import com.vnstudio.talktoai.presentation.components.stringRes
 
 @Composable
-fun SignUpScreen(
+fun SignUpContent(
     viewModel: SignUpViewModel,
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,

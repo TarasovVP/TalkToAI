@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.navigator.Navigator
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -211,4 +212,13 @@ fun painterRes(resId: String): Painter {
 @Composable
 fun stringRes(): StringResources {
     return getStringResourcesByLocale(Locale.current.language)
+}
+
+val LocalAppNavigator: ProvidableCompositionLocal<Navigator?> = staticCompositionLocalOf { null }
+
+@Composable
+fun ProvideAppNavigator(navigator: Navigator, content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalAppNavigator provides navigator) {
+        content()
+    }
 }

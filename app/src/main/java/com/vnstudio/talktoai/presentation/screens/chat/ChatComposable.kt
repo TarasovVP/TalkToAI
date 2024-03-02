@@ -96,7 +96,7 @@ import kotlinx.datetime.Clock
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ChatScreen(
+fun ChatContent(
     currentChatId: Long,
     isMessageActionModeState: MutableState<Boolean?>,
     infoMessageState: MutableState<InfoMessage?>,

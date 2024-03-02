@@ -52,7 +52,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary500
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsAccountScreen(
+fun SettingsAccountContent(
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,
     onNextScreen: (String) -> Unit,

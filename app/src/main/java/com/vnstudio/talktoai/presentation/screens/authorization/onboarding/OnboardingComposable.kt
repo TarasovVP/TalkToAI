@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.components.PrimaryButton
 import com.vnstudio.talktoai.presentation.components.painterRes
 import com.vnstudio.talktoai.presentation.components.stringRes
@@ -26,7 +27,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary500
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun OnboardingScreen(onNextScreen: () -> Unit) {
+fun OnboardingContent(onNextScreen: (String) -> Unit) {
     val viewModel: OnBoardingViewModel = koinViewModel()
     val pageState = remember {
         mutableIntStateOf(0)
@@ -34,7 +35,8 @@ fun OnboardingScreen(onNextScreen: () -> Unit) {
     val onBoardingSeenState = viewModel.onBoardingSeenLiveData.collectAsState()
     LaunchedEffect(onBoardingSeenState.value) {
         if (onBoardingSeenState.value) {
-            onNextScreen.invoke()
+            onNextScreen.invoke(NavigationScreen.LoginScreen().route)
+            viewModel.onBoardingSeenLiveData.value = false
         }
     }
     OnboardingPage(pageState.value) {

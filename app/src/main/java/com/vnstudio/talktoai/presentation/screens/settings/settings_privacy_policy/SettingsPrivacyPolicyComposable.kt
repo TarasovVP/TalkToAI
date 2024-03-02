@@ -19,7 +19,7 @@ import com.vnstudio.talktoai.presentation.components.stringRes
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsPrivacyPolicyScreen(progressVisibilityState: MutableState<Boolean>) {
+fun SettingsPrivacyPolicyContent(progressVisibilityState: MutableState<Boolean>) {
 
     val viewModel: SettingsPrivacyPolicyViewModel = koinViewModel()
     val privacyPolicyUrlState = remember { mutableStateOf(String.EMPTY) }

@@ -45,7 +45,7 @@ import com.vnstudio.talktoai.presentation.components.SecondaryButton
 import com.vnstudio.talktoai.presentation.components.stringRes
 
 @Composable
-fun LoginScreen(
+fun LoginContent(
     viewModel: LoginViewModel,
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,
