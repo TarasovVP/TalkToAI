@@ -28,7 +28,7 @@ import kotlinx.datetime.Clock
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsFeedbackScreen(
+fun SettingsFeedbackContent(
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>
 ) {

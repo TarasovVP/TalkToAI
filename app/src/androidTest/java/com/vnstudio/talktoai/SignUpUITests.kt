@@ -17,7 +17,7 @@ import com.vnstudio.talktoai.di.appModule
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.domain.usecases.SignUpUseCase
-import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpScreen
+import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpContent
 import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpViewModel
 import org.junit.Before
 import org.junit.Rule
@@ -54,7 +54,7 @@ class SignUpUITests {
             modules(appModule)
         }
         composeTestRule.setContent {
-            SignUpScreen(
+            SignUpContent(
                 SignUpViewModel(application, signUpUseCase, googleSignInClient),
                 infoMessageState = infoMessageState,
                 progressVisibilityState = progressVisibilityState,

@@ -35,7 +35,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary700
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsLanguageScreen(
+fun SettingsLanguageContent(
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>
 ) {

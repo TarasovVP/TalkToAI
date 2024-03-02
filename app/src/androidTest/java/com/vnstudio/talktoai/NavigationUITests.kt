@@ -8,8 +8,6 @@ import androidx.navigation.testing.TestNavHostController
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.components.AppNavHost
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -31,7 +29,14 @@ class NavigationUITests {
             navController = TestNavHostController(LocalContext.current).apply {
                 navigatorProvider.addNavigator(ComposeNavigator())
             }
-            AppNavHost(navController = navController, String.EMPTY, mutableStateOf(null), mutableStateOf(null), mutableStateOf(null), mutableStateOf(false))
+            AppNavHost(
+                navController = navController,
+                String.EMPTY,
+                mutableStateOf(null),
+                mutableStateOf(null),
+                mutableStateOf(null),
+                mutableStateOf(false)
+            )
         }
     }
 

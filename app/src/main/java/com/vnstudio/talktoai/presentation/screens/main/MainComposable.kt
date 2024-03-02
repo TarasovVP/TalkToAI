@@ -210,7 +210,7 @@ fun AppContent() {
                 startDestinationState.value?.let { startDestination ->
                     AppNavHost(
                         navController,
-                        startDestination,
+                        startDestinationState,
                         isSettingsDrawerModeState,
                         isMessageDeleteModeState,
                         infoMessageState,

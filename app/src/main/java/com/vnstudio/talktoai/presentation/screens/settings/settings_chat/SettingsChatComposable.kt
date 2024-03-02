@@ -13,7 +13,7 @@ import com.vnstudio.talktoai.presentation.components.PrimaryButton
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsChatScreen(
+fun SettingsChatContent(
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,
     onClick: () -> Unit

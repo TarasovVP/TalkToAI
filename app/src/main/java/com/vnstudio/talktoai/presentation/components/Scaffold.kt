@@ -1,8 +1,5 @@
 package com.vnstudio.talktoai.presentation.components
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,8 +22,11 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,10 +35,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.transitions.SlideTransition
+import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.domain.models.InfoMessage
@@ -48,26 +47,23 @@ import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen.Companion.se
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen.Companion.settingsScreenNameByRoute
 import com.vnstudio.talktoai.flagDrawable
 import com.vnstudio.talktoai.infrastructure.Constants
-import com.vnstudio.talktoai.infrastructure.Constants.CURRENT_CHAT_ID
-import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.presentation.components.draggable.DragDropColumn
-import com.vnstudio.talktoai.presentation.screens.authorization.login.LoginScreen
-import com.vnstudio.talktoai.presentation.screens.authorization.onboarding.OnboardingScreen
-import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpScreen
-import com.vnstudio.talktoai.presentation.screens.chat.ChatScreen
-import com.vnstudio.talktoai.presentation.screens.settings.settings_account.SettingsAccountScreen
-import com.vnstudio.talktoai.presentation.screens.settings.settings_chat.SettingsChatScreen
-import com.vnstudio.talktoai.presentation.screens.settings.settings_feedback.SettingsFeedbackScreen
-import com.vnstudio.talktoai.presentation.screens.settings.settings_language.SettingsLanguageScreen
-import com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyScreen
-import com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpScreen
-import com.vnstudio.talktoai.presentation.screens.settings.settings_theme.SettingsThemeScreen
+import com.vnstudio.talktoai.presentation.screens.authorization.login.LoginContent
+import com.vnstudio.talktoai.presentation.screens.authorization.onboarding.OnboardingContent
+import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpContent
+import com.vnstudio.talktoai.presentation.screens.chat.ChatContent
+import com.vnstudio.talktoai.presentation.screens.settings.settings_account.SettingsAccountContent
+import com.vnstudio.talktoai.presentation.screens.settings.settings_chat.SettingsChatContent
+import com.vnstudio.talktoai.presentation.screens.settings.settings_feedback.SettingsFeedbackContent
+import com.vnstudio.talktoai.presentation.screens.settings.settings_language.SettingsLanguageContent
+import com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyContent
+import com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpContent
+import com.vnstudio.talktoai.presentation.screens.settings.settings_theme.SettingsThemeContent
 import com.vnstudio.talktoai.presentation.theme.Neutral50
 import com.vnstudio.talktoai.presentation.theme.Primary100
 import com.vnstudio.talktoai.presentation.theme.Primary700
 import com.vnstudio.talktoai.presentation.theme.Primary800
 import com.vnstudio.talktoai.presentation.theme.Primary900
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun PrimaryTopBar(
@@ -126,7 +122,8 @@ fun DeleteModeTopBar(title: String) {
     TopAppBar(
         title = { Text(title) },
         backgroundColor = Primary900,
-        contentColor = Neutral50)
+        contentColor = Neutral50
+    )
 }
 
 @Composable
@@ -188,7 +185,7 @@ fun AppDrawer(
                     items = chats.value.orEmpty(),
                     onSwap = onSwap,
                     onDragEnd = onDragEnd
-                ) {chat, isDragging ->
+                ) { chat, isDragging ->
                     val elevation = animateDpAsState(if (isDragging) 4.dp else 1.dp)
                     DrawerItem(
                         name = chat.name,
@@ -297,7 +294,8 @@ fun DrawerItem(
                 Image(painter = painterRes(icon),
                     contentDescription = name,
                     modifier = Modifier
-                        .padding(8.dp).let {
+                        .padding(8.dp)
+                        .let {
                             if (isIconClick.isTrue()) {
                                 it.clickable {
                                     onIconClick.invoke()
@@ -332,16 +330,36 @@ fun AppSnackBar(snackBarHostState: SnackbarHostState) {
 @Composable
 fun AppNavHost(
     navController: NavHostController,
-    startDestination: String,
+    startDestination: MutableState<String?>,
     isSettingsDrawerMode: MutableState<Boolean?>,
     isMessageDeleteModeState: MutableState<Boolean?>,
     infoMessageState: MutableState<InfoMessage?>,
     progressVisibilityState: MutableState<Boolean>,
 ) {
-    NavHost(navController, startDestination = startDestination.takeIf { it.isNotEmpty() } ?: NavigationScreen.OnboardingScreen().route,
+    var navigator_: Navigator? = null
+    val onNextScreen: (String) -> Unit = { route ->
+        startDestination.value = route
+    }
+    val navigationScreen = NavigationScreen.fromRoute(startDestination.value, onNextScreen)
+
+    Navigator(
+        screen = navigationScreen,
+        content = { navigator ->
+            navigator_ = navigator
+            ProvideAppNavigator(
+                navigator = navigator,
+                content = { SlideTransition(navigator = navigator) },
+            )
+        },
+    )
+    /*NavHost(
+        navController,
+        startDestination = startDestination.takeIf { it.isNotEmpty() }
+            ?: NavigationScreen.OnboardingScreen().route,
         enterTransition = {
             EnterTransition.None
-        }, exitTransition = {
+        },
+        exitTransition = {
             ExitTransition.None
         }) {
         composable(
@@ -354,14 +372,14 @@ fun AppNavHost(
         composable(
             route = NavigationScreen.LoginScreen().route
         ) {
-            LoginScreen(koinViewModel(), infoMessageState, progressVisibilityState) { route ->
+            LoginContent(koinViewModel(), infoMessageState, progressVisibilityState) { route ->
                 navController.navigate(route)
             }
         }
         composable(
             route = NavigationScreen.SignUpScreen().route
         ) {
-            SignUpScreen(koinViewModel(), infoMessageState, progressVisibilityState) { route ->
+            SignUpContent(koinViewModel(), infoMessageState, progressVisibilityState) { route ->
                 navController.navigate(route)
             }
         }
@@ -372,8 +390,14 @@ fun AppNavHost(
                 defaultValue = DEFAULT_CHAT_ID
             })
         ) { backStackEntry ->
-            val currentChatId = backStackEntry.arguments?.getLong(CURRENT_CHAT_ID) ?: DEFAULT_CHAT_ID
-            ChatScreen(currentChatId, isMessageDeleteModeState, infoMessageState, progressVisibilityState)
+            val currentChatId =
+                backStackEntry.arguments?.getLong(CURRENT_CHAT_ID) ?: DEFAULT_CHAT_ID
+            ChatContent(
+                currentChatId,
+                isMessageDeleteModeState,
+                infoMessageState,
+                progressVisibilityState
+            )
             BackHandler(true) {
 
             }
@@ -381,14 +405,14 @@ fun AppNavHost(
         composable(
             route = NavigationScreen.SettingsChatScreen().route
         ) {
-            SettingsChatScreen(infoMessageState, progressVisibilityState) {
+            SettingsChatContent(infoMessageState, progressVisibilityState) {
 
             }
         }
         composable(
             route = NavigationScreen.SettingsAccountScreen().route
         ) {
-            SettingsAccountScreen(infoMessageState, progressVisibilityState) { route ->
+            SettingsAccountContent(infoMessageState, progressVisibilityState) { route ->
                 isSettingsDrawerMode.value = null
                 navController.navigate(route)
             }
@@ -396,7 +420,7 @@ fun AppNavHost(
         composable(
             route = NavigationScreen.SettingsSignUpScreen().route
         ) {
-            SettingsSignUpScreen(infoMessageState, progressVisibilityState) { route ->
+            SettingsSignUpContent(infoMessageState, progressVisibilityState) { route ->
                 isSettingsDrawerMode.value = null
                 navController.navigate(route)
             }
@@ -404,22 +428,22 @@ fun AppNavHost(
         composable(
             route = NavigationScreen.SettingsLanguageScreen().route
         ) {
-            SettingsLanguageScreen(infoMessageState, progressVisibilityState)
+            SettingsLanguageContent(infoMessageState, progressVisibilityState)
         }
         composable(
             route = NavigationScreen.SettingsThemeScreen().route
         ) {
-            SettingsThemeScreen(infoMessageState)
+            SettingsThemeContent(infoMessageState)
         }
         composable(
             route = NavigationScreen.SettingsFeedbackScreen().route
         ) {
-            SettingsFeedbackScreen(infoMessageState, progressVisibilityState)
+            SettingsFeedbackContent(infoMessageState, progressVisibilityState)
         }
         composable(
             route = NavigationScreen.SettingsPrivacyPolicyScreen().route
         ) {
-            SettingsPrivacyPolicyScreen(progressVisibilityState)
+            SettingsPrivacyPolicyContent(progressVisibilityState)
         }
-    }
+    }*/
 }

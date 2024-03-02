@@ -29,7 +29,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary700
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsThemeScreen(infoMessageState: MutableState<InfoMessage?>) {
+fun SettingsThemeContent(infoMessageState: MutableState<InfoMessage?>) {
 
     val viewModel: SettingsThemeViewModel = koinViewModel()
     val appThemeState = remember { mutableStateOf<Int?>(null) }
