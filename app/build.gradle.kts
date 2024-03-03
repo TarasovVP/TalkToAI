@@ -144,8 +144,11 @@ dependencies {
     //DataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-    //KMM
+    //DateTime
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
+
+    //Voyager
     implementation("cafe.adriel.voyager:voyager-navigator:1.0.0")
     implementation("cafe.adriel.voyager:voyager-transitions:1.0.0")
+    implementation("cafe.adriel.voyager:voyager-koin:1.0.0")
 }

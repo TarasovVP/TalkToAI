@@ -13,8 +13,10 @@ import android.net.NetworkRequest
 import android.os.LocaleList
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import cafe.adriel.voyager.navigator.Navigator
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes.getStatusCodeString
+import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.infrastructure.Constants.DARK_MODE_TEXT
@@ -168,4 +170,8 @@ fun List<MessageUIModel>?.clearCheckToAction() {
 fun List<MessageUIModel>?.textToAction(): String {
     return this?.filter { it.isCheckedToDelete.value }
         ?.joinToString { "${it.author}: ${it.message} \n" }.orEmpty()
+}
+
+fun Navigator.getCurrentScreenRoute(): String {
+    return (lastItem as? NavigationScreen)?.route.orEmpty()
 }

@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
-import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.RemoteUser
+import com.vnstudio.talktoai.domain.models.ScreenState
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
 import com.vnstudio.talktoai.presentation.components.ConfirmationDialog
@@ -47,9 +47,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsSignUpContent(
-    infoMessageState: MutableState<InfoMessage?>,
-    progressVisibilityState: MutableState<Boolean>,
-    onNextScreen: (String) -> Unit,
+    screenState: ScreenState
 ) {
 
     val viewModel: SettingSignUpViewModel = koinViewModel()
@@ -106,7 +104,7 @@ fun SettingsSignUpContent(
     val successRemoteUserState = viewModel.successRemoteUserLiveData.collectAsState()
     LaunchedEffect(successRemoteUserState.value) {
         if (successRemoteUserState.value) {
-            onNextScreen.invoke("${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}")
+            screenState.nextScreenState.value = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"
         }
     }
 
@@ -161,7 +159,7 @@ fun SettingsSignUpContent(
             viewModel.googleSignInClient.signOut()
             showAccountExistDialog.value = false
         }) {
-        viewModel.accountExistLiveData.value.takeIf { it.isNullOrEmpty().not() }?.let { idToken ->
+        viewModel.accountExistLiveData.value.takeIf { it.isNotEmpty() }?.let { idToken ->
             viewModel.createUserWithGoogle(idToken, true)
         } ?: viewModel.signInWithEmailAndPassword(
             emailInputValue.value.text,
@@ -169,8 +167,8 @@ fun SettingsSignUpContent(
         )
         showAccountExistDialog.value = false
     }
-    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(progressVisibilityState, viewModel.progressVisibilityLiveData)
+    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
+    ProgressVisibilityHandler(screenState.progressVisibilityState, viewModel.progressVisibilityLiveData)
 }
 
 @Composable

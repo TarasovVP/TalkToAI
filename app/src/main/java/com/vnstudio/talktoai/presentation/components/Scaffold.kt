@@ -22,11 +22,8 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,13 +31,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.transitions.SlideTransition
-import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
-import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen.Companion.isSettingsScreen
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen.Companion.settingScreens
@@ -48,17 +40,6 @@ import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen.Companion.se
 import com.vnstudio.talktoai.flagDrawable
 import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.presentation.components.draggable.DragDropColumn
-import com.vnstudio.talktoai.presentation.screens.authorization.login.LoginContent
-import com.vnstudio.talktoai.presentation.screens.authorization.onboarding.OnboardingContent
-import com.vnstudio.talktoai.presentation.screens.authorization.signup.SignUpContent
-import com.vnstudio.talktoai.presentation.screens.chat.ChatContent
-import com.vnstudio.talktoai.presentation.screens.settings.settings_account.SettingsAccountContent
-import com.vnstudio.talktoai.presentation.screens.settings.settings_chat.SettingsChatContent
-import com.vnstudio.talktoai.presentation.screens.settings.settings_feedback.SettingsFeedbackContent
-import com.vnstudio.talktoai.presentation.screens.settings.settings_language.SettingsLanguageContent
-import com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyContent
-import com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpContent
-import com.vnstudio.talktoai.presentation.screens.settings.settings_theme.SettingsThemeContent
 import com.vnstudio.talktoai.presentation.theme.Neutral50
 import com.vnstudio.talktoai.presentation.theme.Primary100
 import com.vnstudio.talktoai.presentation.theme.Primary700
@@ -325,125 +306,4 @@ fun AppSnackBar(snackBarHostState: SnackbarHostState) {
             }
         }
     )
-}
-
-@Composable
-fun AppNavHost(
-    navController: NavHostController,
-    startDestination: MutableState<String?>,
-    isSettingsDrawerMode: MutableState<Boolean?>,
-    isMessageDeleteModeState: MutableState<Boolean?>,
-    infoMessageState: MutableState<InfoMessage?>,
-    progressVisibilityState: MutableState<Boolean>,
-) {
-    var navigator_: Navigator? = null
-    val onNextScreen: (String) -> Unit = { route ->
-        startDestination.value = route
-    }
-    val navigationScreen = NavigationScreen.fromRoute(startDestination.value, onNextScreen)
-
-    Navigator(
-        screen = navigationScreen,
-        content = { navigator ->
-            navigator_ = navigator
-            ProvideAppNavigator(
-                navigator = navigator,
-                content = { SlideTransition(navigator = navigator) },
-            )
-        },
-    )
-    /*NavHost(
-        navController,
-        startDestination = startDestination.takeIf { it.isNotEmpty() }
-            ?: NavigationScreen.OnboardingScreen().route,
-        enterTransition = {
-            EnterTransition.None
-        },
-        exitTransition = {
-            ExitTransition.None
-        }) {
-        composable(
-            route = NavigationScreen.OnboardingScreen().route
-        ) {
-            OnboardingScreen {
-                navController.navigate(NavigationScreen.LoginScreen().route)
-            }
-        }
-        composable(
-            route = NavigationScreen.LoginScreen().route
-        ) {
-            LoginContent(koinViewModel(), infoMessageState, progressVisibilityState) { route ->
-                navController.navigate(route)
-            }
-        }
-        composable(
-            route = NavigationScreen.SignUpScreen().route
-        ) {
-            SignUpContent(koinViewModel(), infoMessageState, progressVisibilityState) { route ->
-                navController.navigate(route)
-            }
-        }
-        composable(
-            route = NavigationScreen.ChatScreen().route,
-            arguments = listOf(navArgument(CURRENT_CHAT_ID) {
-                type = NavType.LongType
-                defaultValue = DEFAULT_CHAT_ID
-            })
-        ) { backStackEntry ->
-            val currentChatId =
-                backStackEntry.arguments?.getLong(CURRENT_CHAT_ID) ?: DEFAULT_CHAT_ID
-            ChatContent(
-                currentChatId,
-                isMessageDeleteModeState,
-                infoMessageState,
-                progressVisibilityState
-            )
-            BackHandler(true) {
-
-            }
-        }
-        composable(
-            route = NavigationScreen.SettingsChatScreen().route
-        ) {
-            SettingsChatContent(infoMessageState, progressVisibilityState) {
-
-            }
-        }
-        composable(
-            route = NavigationScreen.SettingsAccountScreen().route
-        ) {
-            SettingsAccountContent(infoMessageState, progressVisibilityState) { route ->
-                isSettingsDrawerMode.value = null
-                navController.navigate(route)
-            }
-        }
-        composable(
-            route = NavigationScreen.SettingsSignUpScreen().route
-        ) {
-            SettingsSignUpContent(infoMessageState, progressVisibilityState) { route ->
-                isSettingsDrawerMode.value = null
-                navController.navigate(route)
-            }
-        }
-        composable(
-            route = NavigationScreen.SettingsLanguageScreen().route
-        ) {
-            SettingsLanguageContent(infoMessageState, progressVisibilityState)
-        }
-        composable(
-            route = NavigationScreen.SettingsThemeScreen().route
-        ) {
-            SettingsThemeContent(infoMessageState)
-        }
-        composable(
-            route = NavigationScreen.SettingsFeedbackScreen().route
-        ) {
-            SettingsFeedbackContent(infoMessageState, progressVisibilityState)
-        }
-        composable(
-            route = NavigationScreen.SettingsPrivacyPolicyScreen().route
-        ) {
-            SettingsPrivacyPolicyContent(progressVisibilityState)
-        }
-    }*/
 }

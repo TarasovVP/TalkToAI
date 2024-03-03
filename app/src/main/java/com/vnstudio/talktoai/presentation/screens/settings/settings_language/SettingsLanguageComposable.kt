@@ -15,7 +15,6 @@ import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,7 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
-import com.vnstudio.talktoai.domain.models.InfoMessage
+import com.vnstudio.talktoai.domain.models.ScreenState
 import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG_EN
 import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG_RU
 import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG_UK
@@ -36,8 +35,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsLanguageContent(
-    infoMessageState: MutableState<InfoMessage?>,
-    progressVisibilityState: MutableState<Boolean>
+    screenState: ScreenState
 ) {
 
     val viewModel: SettingsLanguageViewModel = koinViewModel()
@@ -82,7 +80,7 @@ fun SettingsLanguageContent(
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(APP_LANG_RU))
         }
     }
-    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
+    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
 }
 
 @Composable

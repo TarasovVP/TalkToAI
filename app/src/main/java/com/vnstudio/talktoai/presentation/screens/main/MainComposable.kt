@@ -14,22 +14,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.transitions.SlideTransition
 import com.vnstudio.talktoai.CommonExtensions.isNotTrue
 import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.dateToMilliseconds
 import com.vnstudio.talktoai.domain.enums.AuthState
-import com.vnstudio.talktoai.domain.models.InfoMessage
+import com.vnstudio.talktoai.domain.models.ScreenState
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen.Companion.isSettingsScreen
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen.Companion.settingsScreenNameByRoute
+import com.vnstudio.talktoai.getCurrentScreenRoute
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
 import com.vnstudio.talktoai.presentation.components.AppDrawer
-import com.vnstudio.talktoai.presentation.components.AppNavHost
 import com.vnstudio.talktoai.presentation.components.AppSnackBar
 import com.vnstudio.talktoai.presentation.components.ConfirmationDialog
 import com.vnstudio.talktoai.presentation.components.DataEditDialog
@@ -37,6 +37,7 @@ import com.vnstudio.talktoai.presentation.components.DeleteModeTopBar
 import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.components.MainProgress
 import com.vnstudio.talktoai.presentation.components.PrimaryTopBar
+import com.vnstudio.talktoai.presentation.components.ProvideAppNavigator
 import com.vnstudio.talktoai.presentation.components.SecondaryTopBar
 import com.vnstudio.talktoai.presentation.components.stringRes
 import kotlinx.coroutines.launch
@@ -47,14 +48,14 @@ import org.koin.androidx.compose.koinViewModel
 fun AppContent() {
 
     val viewModel: MainViewModel = koinViewModel()
-    val navController = rememberNavController()
+
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
 
-    val infoMessageState = remember { mutableStateOf<InfoMessage?>(null) }
-    val progressVisibilityState = remember { mutableStateOf(false) }
+    val screenState = remember { mutableStateOf(ScreenState()) }
+    val appNavigator = remember { mutableStateOf<Navigator?>(null) }
 
-    val currentRouteState = navController.currentBackStackEntryAsState().value?.destination?.route
+    val currentRouteState = remember { mutableStateOf<String?>(null) }
     val startDestinationState = remember { mutableStateOf<String?>(null) }
     val onBoardingSeenState = viewModel.onBoardingSeenLiveData.collectAsState()
     val authState = viewModel.authStateLiveData.collectAsState()
@@ -105,9 +106,17 @@ fun AppContent() {
                 currentChatState.value.isNull() -> currentChatState.value = chatsState.firstOrNull()
                 chatsState.contains(currentChatState.value).not() -> {
                     currentChatState.value = chatsState.firstOrNull()
-                    navController.navigate("$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id ?: DEFAULT_CHAT_ID}")
+                    screenState.value.nextScreenState.value =
+                        "$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id ?: DEFAULT_CHAT_ID}"
                 }
             }
+        }
+    }
+
+    LaunchedEffect(screenState.value.nextScreenState.value) {
+        val navigationScreen = NavigationScreen.fromRoute(screenState.value)
+        if ((navigationScreen as? NavigationScreen)?.route != (appNavigator.value?.getCurrentScreenRoute())) {
+            appNavigator.value?.push(navigationScreen)
         }
     }
 
@@ -116,15 +125,18 @@ fun AppContent() {
         topBar = {
             when {
                 isMessageDeleteModeState.value.isTrue() -> DeleteModeTopBar("Выбрано")
-                currentRouteState == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
-                    settingsScreenNameByRoute(currentRouteState, stringRes())
+                currentRouteState.value == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
+                    settingsScreenNameByRoute(currentRouteState.value, stringRes())
                 ) {
-                    navController.navigateUp()
+                    appNavigator.value?.pop()
                 }
 
-                isSettingsScreen(currentRouteState) || currentRouteState == NavigationScreen.ChatScreen().route -> PrimaryTopBar(
-                    title = if (currentRouteState == NavigationScreen.ChatScreen().route) currentChatState.value?.name
-                        ?: stringRes().APP_NAME else settingsScreenNameByRoute(currentRouteState, stringRes()),
+                isSettingsScreen(currentRouteState.value) || currentRouteState.value == NavigationScreen.ChatScreen().route -> PrimaryTopBar(
+                    title = if (currentRouteState.value == NavigationScreen.ChatScreen().route) currentChatState.value?.name
+                        ?: stringRes().APP_NAME else settingsScreenNameByRoute(
+                        currentRouteState.value,
+                        stringRes()
+                    ),
                     onNavigationIconClick = {
                         scope.launch {
                             if (scaffoldState.drawerState.isClosed) {
@@ -134,7 +146,7 @@ fun AppContent() {
                             }
                         }
                     },
-                    isActionVisible = currentRouteState == NavigationScreen.ChatScreen().route && chatsState.value.orEmpty()
+                    isActionVisible = currentRouteState.value == NavigationScreen.ChatScreen().route && chatsState.value.orEmpty()
                         .isNotEmpty()
                 ) {
                     showEditChatDialog.value = true
@@ -143,8 +155,8 @@ fun AppContent() {
         },
         snackbarHost = { snackBarHostState ->
             AppSnackBar(snackBarHostState)
-            LaunchedEffect(infoMessageState.value) {
-                infoMessageState.value?.let { infoMessage ->
+            LaunchedEffect(screenState.value.infoMessageState.value) {
+                screenState.value.infoMessageState.value?.let { infoMessage ->
                     scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar(
                             message = infoMessage.message,
@@ -156,11 +168,11 @@ fun AppContent() {
             }
 
         },
-        drawerGesturesEnabled = isSettingsScreen(currentRouteState) || (currentRouteState == NavigationScreen.ChatScreen().route && isMessageDeleteModeState.value.isNotTrue()),
+        drawerGesturesEnabled = isSettingsScreen(currentRouteState.value) || (currentRouteState.value == NavigationScreen.ChatScreen().route && isMessageDeleteModeState.value.isNotTrue()),
         drawerContent = {
             AppDrawer(
                 isSettingsDrawerModeState,
-                currentRouteState,
+                currentRouteState.value,
                 currentChatState.value?.id,
                 chats = chatsState,
                 onCreateChatClick = {
@@ -168,7 +180,8 @@ fun AppContent() {
                 },
                 onChatClick = { chat ->
                     currentChatState.value = chat
-                    navController.navigate("$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id}")
+                    screenState.value.nextScreenState.value =
+                        "$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id}"
                     scope.launch {
                         scaffoldState.drawerState.close()
                     }
@@ -184,7 +197,9 @@ fun AppContent() {
                     viewModel.updateChats(chatsState.value.orEmpty())
                 }
             ) { route ->
-                navController.navigate(route)
+                //TODO
+                //navController.navigate(route)
+                screenState.value.nextScreenState.value = route
                 scope.launch {
                     scaffoldState.drawerState.close()
                 }
@@ -193,31 +208,40 @@ fun AppContent() {
                 isSettingsDrawerModeState.value?.let { isSettingsDrawerMode ->
                     if (isSettingsDrawerMode) {
                         viewModel.removeRemoteUserListeners()
-                        startDestinationState.value = NavigationScreen.SettingsChatScreen().route
-                        navController.navigate(NavigationScreen.SettingsChatScreen().route)
+                        startDestinationState.value =
+                            NavigationScreen.SettingsChatScreen().route
+                        //TODO
+                        //navController.navigate(NavigationScreen.SettingsChatScreen().route)
                     } else {
                         viewModel.addRemoteChatListener()
                         viewModel.addRemoteMessageListener()
-                        if (navController.popBackStack(NavigationScreen.ChatScreen().route, false)
+                        //TODO
+                        /*if (navController.popBackStack(
+                                NavigationScreen.ChatScreen().route,
+                                false
+                            )
                                 .not()
-                        ) navController.navigate(NavigationScreen.ChatScreen().route)
+                        ) navController.navigate(NavigationScreen.ChatScreen().route)*/
                     }
                 }
             }
         },
         content = { paddingValues ->
             Box(modifier = Modifier.padding(paddingValues)) {
-                startDestinationState.value?.let { startDestination ->
-                    AppNavHost(
-                        navController,
-                        startDestinationState,
-                        isSettingsDrawerModeState,
-                        isMessageDeleteModeState,
-                        infoMessageState,
-                        progressVisibilityState
-                    )
-                }
-                ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
+                Navigator(
+                    screen = NavigationScreen.fromRoute(screenState.value),
+                    content = { navigator ->
+                        appNavigator.value = navigator
+                        ProvideAppNavigator(
+                            navigator = navigator,
+                            content = { SlideTransition(navigator = navigator) },
+                        )
+                    },
+                )
+                ExceptionMessageHandler(
+                    screenState.value.infoMessageState,
+                    viewModel.exceptionLiveData
+                )
 
                 DataEditDialog(
                     "Создать новый чат?",
@@ -268,7 +292,7 @@ fun AppContent() {
                     deleteChatState.value = null
                 }
 
-                MainProgress(progressVisibilityState)
+                MainProgress(screenState.value.progressVisibilityState)
             }
         })
 }

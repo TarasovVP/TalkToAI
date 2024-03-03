@@ -14,14 +14,13 @@ import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.vnstudio.talktoai.domain.models.InfoMessage
+import com.vnstudio.talktoai.domain.models.ScreenState
 import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.components.stringRes
 import com.vnstudio.talktoai.presentation.theme.Neutral500
@@ -29,7 +28,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary700
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsThemeContent(infoMessageState: MutableState<InfoMessage?>) {
+fun SettingsThemeContent(screenState: ScreenState) {
 
     val viewModel: SettingsThemeViewModel = koinViewModel()
     val appThemeState = remember { mutableStateOf<Int?>(null) }
@@ -70,7 +69,7 @@ fun SettingsThemeContent(infoMessageState: MutableState<InfoMessage?>) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
     }
-    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
+    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
 }
 
 @Composable
