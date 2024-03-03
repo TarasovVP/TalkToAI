@@ -5,18 +5,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import com.vnstudio.talktoai.domain.models.InfoMessage
+import com.vnstudio.talktoai.domain.models.ScreenState
 import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.components.PrimaryButton
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsChatContent(
-    infoMessageState: MutableState<InfoMessage?>,
-    progressVisibilityState: MutableState<Boolean>,
-    onClick: () -> Unit
+    screenState: ScreenState,
 ) {
 
     val viewModel: SettingsChatViewModel = koinViewModel()
@@ -26,7 +23,7 @@ fun SettingsChatContent(
         verticalArrangement = Arrangement.Center
     ) {
         Text(text = "SettingsChatScreen")
-        PrimaryButton(text = "Click", modifier = Modifier, onClick = onClick)
+        PrimaryButton(text = "Click", modifier = Modifier, onClick = {})
     }
-    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
+    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
 }

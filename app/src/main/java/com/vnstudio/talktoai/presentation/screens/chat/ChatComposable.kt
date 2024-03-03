@@ -66,6 +66,7 @@ import com.vnstudio.talktoai.dateToMilliseconds
 import com.vnstudio.talktoai.domain.enums.MessageStatus
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.MessageApi
+import com.vnstudio.talktoai.domain.models.ScreenState
 import com.vnstudio.talktoai.domain.sealed_classes.MessageAction
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.isDefineSecondsLater
@@ -97,10 +98,9 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ChatContent(
-    currentChatId: Long,
-    isMessageActionModeState: MutableState<Boolean?>,
-    infoMessageState: MutableState<InfoMessage?>,
-    progressVisibilityState: MutableState<Boolean>,
+    currentChatId: Long = 0,
+    isMessageActionModeState: MutableState<Boolean?> = mutableStateOf(false),
+    screenState: ScreenState
 ) {
     val viewModel: ChatViewModel = koinViewModel()
     val showCreateChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -128,7 +128,7 @@ fun ChatContent(
     val clipboardManager = LocalClipboardManager.current
     val shareIntentLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
-            infoMessageState.value = InfoMessage("Отправлено")
+            screenState.infoMessageState.value = InfoMessage("Отправлено")
         }
     LaunchedEffect(messageActionState.value) {
         when (messageActionState.value) {
@@ -144,7 +144,7 @@ fun ChatContent(
                     isMessageActionModeState,
                     showMessageActionDialog
                 )
-                infoMessageState.value = InfoMessage("Скопировано")
+                screenState.infoMessageState.value = InfoMessage("Скопировано")
             }
 
             MessageAction.Share().value -> {
@@ -281,7 +281,7 @@ fun ChatContent(
                         isMessageActionModeState,
                         showMessageActionDialog
                     )
-                    infoMessageState.value = InfoMessage("Удалено")
+                    screenState.infoMessageState.value = InfoMessage("Удалено")
                 }
 
                 MessageAction.Transfer().value -> {
@@ -292,7 +292,7 @@ fun ChatContent(
                         isMessageActionModeState,
                         showMessageActionDialog
                     )
-                    infoMessageState.value = InfoMessage("Перенесено")
+                    screenState.infoMessageState.value = InfoMessage("Перенесено")
                 }
 
                 else -> {
@@ -306,8 +306,8 @@ fun ChatContent(
             }
         })
 
-    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(progressVisibilityState, viewModel.progressVisibilityLiveData)
+    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
+    ProgressVisibilityHandler(screenState.progressVisibilityState, viewModel.progressVisibilityLiveData)
 }
 
 private fun resetMessageActionState(

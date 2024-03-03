@@ -35,6 +35,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.models.InfoMessage
+import com.vnstudio.talktoai.domain.models.ScreenState
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.presentation.components.ConfirmationDialog
 import com.vnstudio.talktoai.presentation.components.DataEditDialog
@@ -53,9 +54,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsAccountContent(
-    infoMessageState: MutableState<InfoMessage?>,
-    progressVisibilityState: MutableState<Boolean>,
-    onNextScreen: (String) -> Unit,
+    screenState: ScreenState
 ) {
 
     val viewModel: SettingsAccountViewModel = koinViewModel()
@@ -80,7 +79,7 @@ fun SettingsAccountContent(
     val successChangePasswordState = viewModel.successChangePasswordLiveData.collectAsState()
     LaunchedEffect(successChangePasswordState.value) {
         if (successChangePasswordState.value) {
-            infoMessageState.value = successChangePasswordMessage
+            screenState.infoMessageState.value = successChangePasswordMessage
         }
     }
 
@@ -89,7 +88,7 @@ fun SettingsAccountContent(
         if (successState.value) {
             viewModel.clearDataByKeys(listOf())
             viewModel.clearDataBase()
-            onNextScreen.invoke(NavigationScreen.LoginScreen().route)
+            screenState.nextScreenState.value = NavigationScreen.LoginScreen().route
         }
     }
 
@@ -132,7 +131,7 @@ fun SettingsAccountContent(
             }
         } else {
             PrimaryButton(text = stringRes().AUTHORIZATION_SIGNING_UP, modifier = Modifier) {
-                onNextScreen.invoke(NavigationScreen.SettingsSignUpScreen().route)
+                screenState.nextScreenState.value =  NavigationScreen.SettingsSignUpScreen().route
             }
             EmptyState(
                 text = stringRes().EMPTY_STATE_ACCOUNT,
@@ -181,8 +180,8 @@ fun SettingsAccountContent(
         showDeleteEmailAccountDialog.value = false
     }
 
-    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(progressVisibilityState, viewModel.progressVisibilityLiveData)
+    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
+    ProgressVisibilityHandler(screenState.progressVisibilityState, viewModel.progressVisibilityLiveData)
 }
 
 @Composable

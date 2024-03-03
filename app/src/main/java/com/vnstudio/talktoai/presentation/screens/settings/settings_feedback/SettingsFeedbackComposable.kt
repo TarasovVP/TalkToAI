@@ -9,7 +9,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.domain.models.Feedback
 import com.vnstudio.talktoai.domain.models.InfoMessage
+import com.vnstudio.talktoai.domain.models.ScreenState
 import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.components.PrimaryButton
 import com.vnstudio.talktoai.presentation.components.stringRes
@@ -29,8 +29,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsFeedbackContent(
-    infoMessageState: MutableState<InfoMessage?>,
-    progressVisibilityState: MutableState<Boolean>
+    screenState: ScreenState
 ) {
 
     val viewModel: SettingsFeedbackViewModel = koinViewModel()
@@ -40,7 +39,7 @@ fun SettingsFeedbackContent(
     val feedbackSendSuccess = stringRes().SETTINGS_FEEDBACK_SEND_SUCCESS
     LaunchedEffect(successFeedbackState.value) {
         if (successFeedbackState.value) {
-            infoMessageState.value = InfoMessage(message = feedbackSendSuccess)
+            screenState.infoMessageState.value = InfoMessage(message = feedbackSendSuccess)
         }
     }
     Column(
@@ -81,5 +80,5 @@ fun SettingsFeedbackContent(
             inputValue.value = TextFieldValue(String.EMPTY)
         }
     }
-    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
+    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
 }

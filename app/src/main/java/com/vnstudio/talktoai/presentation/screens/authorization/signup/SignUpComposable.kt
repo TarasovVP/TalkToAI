@@ -29,6 +29,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.RemoteUser
+import com.vnstudio.talktoai.domain.models.ScreenState
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
@@ -42,14 +43,13 @@ import com.vnstudio.talktoai.presentation.components.PrimaryButton
 import com.vnstudio.talktoai.presentation.components.PrimaryTextField
 import com.vnstudio.talktoai.presentation.components.ProgressVisibilityHandler
 import com.vnstudio.talktoai.presentation.components.stringRes
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SignUpContent(
-    viewModel: SignUpViewModel,
-    infoMessageState: MutableState<InfoMessage?>,
-    progressVisibilityState: MutableState<Boolean>,
-    onNextScreen: (String) -> Unit
+    screenState: ScreenState
 ) {
+    val viewModel = koinViewModel<SignUpViewModel>()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
     val showAccountExistDialog = remember { mutableStateOf(false) }
@@ -75,7 +75,7 @@ fun SignUpContent(
             viewModel.insertRemoteUser(RemoteUser())
         }
         signUpUiState.createCurrentUser?.let {
-            onNextScreen.invoke("${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}")
+            screenState.nextScreenState.value = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"
         }
     }
 
@@ -123,7 +123,7 @@ fun SignUpContent(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringRes().AUTHORIZATION_ENTRANCE_TITLE, modifier = Modifier.padding(start = 16.dp))
             LinkButton(text = stringRes().AUTHORIZATION_ENTRANCE, modifier = Modifier.wrapContentSize()) {
-                onNextScreen.invoke(NavigationScreen.LoginScreen().route)
+                screenState.nextScreenState.value = NavigationScreen.LoginScreen().route
             }
         }
         PrimaryButton(
@@ -141,8 +141,8 @@ fun SignUpContent(
             showAccountExistDialog.value = false
         }) {
         showAccountExistDialog.value = false
-        onNextScreen.invoke(NavigationScreen.LoginScreen().route)
+        screenState.nextScreenState.value = NavigationScreen.LoginScreen().route
     }
-    ExceptionMessageHandler(infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(progressVisibilityState, viewModel.progressVisibilityLiveData)
+    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
+    ProgressVisibilityHandler(screenState.progressVisibilityState, viewModel.progressVisibilityLiveData)
 }
