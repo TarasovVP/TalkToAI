@@ -48,6 +48,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.airbnb.lottie.compose.LottieAnimation
@@ -98,7 +99,6 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ChatContent(
-    currentChatId: Long = 0,
     isMessageActionModeState: MutableState<Boolean?> = mutableStateOf(false),
     screenState: ScreenState
 ) {
@@ -109,9 +109,10 @@ fun ChatContent(
     val messageActionState: MutableState<String> =
         rememberSaveable { mutableStateOf(MessageAction.Cancel().value) }
     val showMessageActionDialog: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
-
+    val current = screenState.nextScreenState.value?.split("/")?.last()
+    val currentChatId = if( current?.isDigitsOnly().isTrue()) current?.toLong() else -1L
     LaunchedEffect(Unit) {
-        viewModel.getCurrentChat(currentChatId)
+        viewModel.getCurrentChat(currentChatId ?: -1L)
     }
 
     LaunchedEffect(currentChatState.value) {

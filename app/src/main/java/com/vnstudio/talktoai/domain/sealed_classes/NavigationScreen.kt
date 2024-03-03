@@ -126,14 +126,13 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
                 OnboardingScreen().route -> OnboardingScreen(screenState)
                 LoginScreen().route -> LoginScreen(screenState)
                 SignUpScreen().route -> SignUpScreen(screenState)
-                ChatScreen().route -> ChatScreen()
                 SettingsChatScreen().route -> SettingsChatScreen(screenState)
                 SettingsAccountScreen().route -> SettingsAccountScreen(screenState)
                 SettingsLanguageScreen().route -> SettingsLanguageScreen(screenState)
                 SettingsThemeScreen().route -> SettingsThemeScreen(screenState)
                 SettingsFeedbackScreen().route -> SettingsFeedbackScreen(screenState)
                 SettingsPrivacyPolicyScreen().route -> SettingsPrivacyPolicyScreen(screenState)
-                else -> OnboardingScreen(screenState)
+                else -> ChatScreen(screenState)
             }
         }
     }

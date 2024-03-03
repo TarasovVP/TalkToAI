@@ -1,7 +1,4 @@
 buildscript {
-    extra.apply {
-        set("navigationVersion", "2.7.0")
-    }
 
     dependencies {
         classpath("com.google.gms:google-services:4.4.1")
