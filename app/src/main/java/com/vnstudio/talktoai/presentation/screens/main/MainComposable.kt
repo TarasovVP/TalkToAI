@@ -14,7 +14,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
+import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.transitions.FadeTransition
 import cafe.adriel.voyager.transitions.SlideTransition
 import com.vnstudio.talktoai.CommonExtensions.isNotTrue
 import com.vnstudio.talktoai.CommonExtensions.isNull
@@ -55,8 +57,6 @@ fun AppContent() {
     val screenState = remember { mutableStateOf(ScreenState()) }
     val appNavigator = remember { mutableStateOf<Navigator?>(null) }
 
-    val currentRouteState = remember { mutableStateOf<String?>(null) }
-    val startDestinationState = remember { mutableStateOf<String?>(null) }
     val onBoardingSeenState = viewModel.onBoardingSeenLiveData.collectAsState()
     val authState = viewModel.authStateLiveData.collectAsState()
     val chatsState = viewModel.chatsLiveData.collectAsState()
@@ -77,7 +77,7 @@ fun AppContent() {
 
     LaunchedEffect(onBoardingSeenState.value) {
         onBoardingSeenState.value?.let { isOnboardingSeen ->
-            startDestinationState.value = when {
+            screenState.value.nextScreenState.value = when {
                 isOnboardingSeen.not() -> NavigationScreen.OnboardingScreen().route
                 viewModel.isLoggedInUser().not() -> NavigationScreen.LoginScreen().route
                 isSettingsDrawerModeState.value.isTrue() -> NavigationScreen.SettingsChatScreen().route
@@ -125,16 +125,16 @@ fun AppContent() {
         topBar = {
             when {
                 isMessageDeleteModeState.value.isTrue() -> DeleteModeTopBar("Выбрано")
-                currentRouteState.value == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
-                    settingsScreenNameByRoute(currentRouteState.value, stringRes())
+                appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
+                    settingsScreenNameByRoute(appNavigator.value?.getCurrentScreenRoute(), stringRes())
                 ) {
                     appNavigator.value?.pop()
                 }
 
-                isSettingsScreen(currentRouteState.value) || currentRouteState.value == NavigationScreen.ChatScreen().route -> PrimaryTopBar(
-                    title = if (currentRouteState.value == NavigationScreen.ChatScreen().route) currentChatState.value?.name
+                isSettingsScreen(appNavigator.value?.getCurrentScreenRoute()) || appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.ChatScreen().route -> PrimaryTopBar(
+                    title = if (appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.ChatScreen().route) currentChatState.value?.name
                         ?: stringRes().APP_NAME else settingsScreenNameByRoute(
-                        currentRouteState.value,
+                        appNavigator.value?.getCurrentScreenRoute(),
                         stringRes()
                     ),
                     onNavigationIconClick = {
@@ -146,7 +146,7 @@ fun AppContent() {
                             }
                         }
                     },
-                    isActionVisible = currentRouteState.value == NavigationScreen.ChatScreen().route && chatsState.value.orEmpty()
+                    isActionVisible = appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.ChatScreen().route && chatsState.value.orEmpty()
                         .isNotEmpty()
                 ) {
                     showEditChatDialog.value = true
@@ -168,11 +168,11 @@ fun AppContent() {
             }
 
         },
-        drawerGesturesEnabled = isSettingsScreen(currentRouteState.value) || (currentRouteState.value == NavigationScreen.ChatScreen().route && isMessageDeleteModeState.value.isNotTrue()),
+        drawerGesturesEnabled = isSettingsScreen(appNavigator.value?.getCurrentScreenRoute()) || (appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.ChatScreen().route && isMessageDeleteModeState.value.isNotTrue()),
         drawerContent = {
             AppDrawer(
                 isSettingsDrawerModeState,
-                currentRouteState.value,
+                appNavigator.value?.getCurrentScreenRoute(),
                 currentChatState.value?.id,
                 chats = chatsState,
                 onCreateChatClick = {
@@ -197,8 +197,6 @@ fun AppContent() {
                     viewModel.updateChats(chatsState.value.orEmpty())
                 }
             ) { route ->
-                //TODO
-                //navController.navigate(route)
                 screenState.value.nextScreenState.value = route
                 scope.launch {
                     scaffoldState.drawerState.close()
@@ -208,20 +206,12 @@ fun AppContent() {
                 isSettingsDrawerModeState.value?.let { isSettingsDrawerMode ->
                     if (isSettingsDrawerMode) {
                         viewModel.removeRemoteUserListeners()
-                        startDestinationState.value =
+                        screenState.value.nextScreenState.value =
                             NavigationScreen.SettingsChatScreen().route
-                        //TODO
-                        //navController.navigate(NavigationScreen.SettingsChatScreen().route)
                     } else {
                         viewModel.addRemoteChatListener()
                         viewModel.addRemoteMessageListener()
-                        //TODO
-                        /*if (navController.popBackStack(
-                                NavigationScreen.ChatScreen().route,
-                                false
-                            )
-                                .not()
-                        ) navController.navigate(NavigationScreen.ChatScreen().route)*/
+                        appNavigator.value?.popAll()
                     }
                 }
             }
@@ -234,7 +224,7 @@ fun AppContent() {
                         appNavigator.value = navigator
                         ProvideAppNavigator(
                             navigator = navigator,
-                            content = { SlideTransition(navigator = navigator) },
+                            content = { CurrentScreen() },
                         )
                     },
                 )

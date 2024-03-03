@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("com.android.application")
@@ -70,8 +69,6 @@ sqldelight {
 
 dependencies {
 
-    val navigationVersion = rootProject.extra.get("navigationVersion")
-
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
@@ -104,9 +101,6 @@ dependencies {
     implementation("androidx.compose.material:material")
     implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.compose.runtime:runtime")
-
-    //Navigation
-    implementation("androidx.navigation:navigation-compose:$navigationVersion")
 
     //Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.0.0"))
