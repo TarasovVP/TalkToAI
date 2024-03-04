@@ -1,6 +1,7 @@
 package com.vnstudio.talktoai.presentation.screens.main
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -17,18 +18,21 @@ import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-
 
 class MainViewModel(
     private val mainUseCase: MainUseCase,
     application: Application,
 ) : BaseViewModel(application) {
 
-    val onBoardingSeenLiveData = MutableStateFlow<Boolean?>(null)
-    val chatsLiveData = MutableStateFlow<List<Chat>?>(listOf())
-    val authStateLiveData = MutableStateFlow<AuthState?>(null)
+    private val _onBoardingSeen = MutableStateFlow<Boolean?>(null)
+    val onBoardingSeen = _onBoardingSeen.asStateFlow()
+    private val _chatsList = MutableStateFlow<List<Chat>?>(null)
+    val chatsList = _chatsList.asStateFlow()
+    private val _authState = MutableStateFlow<AuthState?>(null)
+    val authState = _authState.asStateFlow()
 
     private var remoteChatListener: ValueEventListener? = null
     private var remoteMessageListener: ValueEventListener? = null
@@ -38,7 +42,7 @@ class MainViewModel(
     fun getOnBoardingSeen() {
         launch {
             mainUseCase.getOnBoardingSeen().collect { isOnBoardingSeen ->
-                onBoardingSeenLiveData.value = isOnBoardingSeen.isTrue()
+                _onBoardingSeen.value = isOnBoardingSeen.isTrue()
             }
         }
     }
@@ -54,7 +58,7 @@ class MainViewModel(
                     AuthState.UNAUTHORISED
                 }
             }
-            authStateLiveData.value = authState
+            _authState.value = authState
         }
         authStateListener?.let { mainUseCase.addAuthStateListener(it) }
     }
@@ -115,10 +119,8 @@ class MainViewModel(
                 hideProgress()
 
             }.collect { chats ->
-                viewModelScope.launch(Dispatchers.Main) {
-                    chatsLiveData.value = null
-                }
-                chatsLiveData.value = chats
+                Log.e("AppDrawerTAG", "getChats chats.size ${chats.size}")
+                _chatsList.value = chats
                 hideProgress()
             }
         }
@@ -143,7 +145,7 @@ class MainViewModel(
                 }
             } else {
                 launch {
-                    mainUseCase.updateChats(chatsLiveData.value.orEmpty())
+                    mainUseCase.updateChats(_chatsList.value.orEmpty())
                 }
             }
         }
@@ -235,16 +237,16 @@ class MainViewModel(
     }
 
     fun swapChats(firstIndex: Int, secondIndex: Int) {
-        val fromItem = chatsLiveData.value?.get(firstIndex)
-        val toItem = chatsLiveData.value?.get(secondIndex)
-        val newList = chatsLiveData.value.orEmpty().toMutableList()
+        val fromItem = _chatsList.value?.get(firstIndex)
+        val toItem = _chatsList.value?.get(secondIndex)
+        val newList = _chatsList.value.orEmpty().toMutableList()
         toItem?.let { newList[firstIndex] = it.apply {
-            listOrder = chatsLiveData.value.orEmpty().size - firstIndex
+            listOrder = _chatsList.value.orEmpty().size - firstIndex
         } }
         fromItem?.let { newList[secondIndex] = it.apply {
-            listOrder = chatsLiveData.value.orEmpty().size - secondIndex
+            listOrder = _chatsList.value.orEmpty().size - secondIndex
         } }
-        chatsLiveData.value = null
-        chatsLiveData.value = newList
+        _chatsList.value = null
+        _chatsList.value = newList
     }
 }

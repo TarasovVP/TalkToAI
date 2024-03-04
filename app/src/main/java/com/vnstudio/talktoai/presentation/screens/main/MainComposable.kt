@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai.presentation.screens.main
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
@@ -16,8 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.transitions.FadeTransition
-import cafe.adriel.voyager.transitions.SlideTransition
 import com.vnstudio.talktoai.CommonExtensions.isNotTrue
 import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
@@ -57,12 +56,13 @@ fun AppContent() {
     val screenState = remember { mutableStateOf(ScreenState()) }
     val appNavigator = remember { mutableStateOf<Navigator?>(null) }
 
-    val onBoardingSeenState = viewModel.onBoardingSeenLiveData.collectAsState()
-    val authState = viewModel.authStateLiveData.collectAsState()
-    val chatsState = viewModel.chatsLiveData.collectAsState()
+    val onBoardingSeenState = viewModel.onBoardingSeen.collectAsState()
+    val authState = viewModel.authState.collectAsState()
+    val chatsState = viewModel.chatsList.collectAsState()
+    Log.e("AppDrawerTAG", "AppContent chats.size ${chatsState.value?.size}")
 
-    val isSettingsDrawerModeState = remember { mutableStateOf<Boolean?>(null) }
-    val isMessageDeleteModeState = remember { mutableStateOf<Boolean?>(null) }
+    val isSettingsDrawerModeState = remember { mutableStateOf<Boolean>(false) }
+    val isMessageActionModeState = remember { mutableStateOf<Boolean?>(null) }
 
     val showCreateChatDialog = remember { mutableStateOf(false) }
     val showEditChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
@@ -81,13 +81,14 @@ fun AppContent() {
                 isOnboardingSeen.not() -> NavigationScreen.OnboardingScreen().route
                 viewModel.isLoggedInUser().not() -> NavigationScreen.LoginScreen().route
                 isSettingsDrawerModeState.value.isTrue() -> NavigationScreen.SettingsChatScreen().route
-                else -> NavigationScreen.ChatScreen().route
+                else -> NavigationScreen.ChatScreen(isMessageActionModeState = isMessageActionModeState).route
             }
         }
     }
 
     LaunchedEffect(authState.value) {
         authState.value?.let { authStateValue ->
+            Log.e("AppDrawerTAG", "authState.value ${authState.value} chats.size ${chatsState.value?.size}")
             when (authStateValue) {
                 AuthState.UNAUTHORISED -> viewModel.removeRemoteUserListeners()
                 AuthState.AUTHORISED_ANONYMOUSLY -> viewModel.getChats()
@@ -101,11 +102,13 @@ fun AppContent() {
     }
 
     LaunchedEffect(chatsState.value) {
-        chatsState.value?.let { chatsState ->
+        Log.e("AppDrawerTAG", "LaunchedEffect before chats.size ${chatsState.value?.size}")
+        chatsState.value?.let { chats ->
+            Log.e("AppDrawerTAG", "LaunchedEffect after chats.size ${chats.size}")
             when {
-                currentChatState.value.isNull() -> currentChatState.value = chatsState.firstOrNull()
-                chatsState.contains(currentChatState.value).not() -> {
-                    currentChatState.value = chatsState.firstOrNull()
+                currentChatState.value.isNull() -> currentChatState.value = chats.firstOrNull()
+                chats.contains(currentChatState.value).not() -> {
+                    currentChatState.value = chats.firstOrNull()
                     screenState.value.nextScreenState.value =
                         "$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id ?: DEFAULT_CHAT_ID}"
                 }
@@ -114,7 +117,10 @@ fun AppContent() {
     }
 
     LaunchedEffect(screenState.value.nextScreenState.value) {
-        val navigationScreen = NavigationScreen.fromRoute(screenState.value)
+        val navigationScreen = NavigationScreen.fromRoute(
+            screenState.value,
+            isMessageActionModeState
+        )
         if ((navigationScreen as? NavigationScreen)?.route != (appNavigator.value?.getCurrentScreenRoute())) {
             appNavigator.value?.push(navigationScreen)
         }
@@ -124,15 +130,19 @@ fun AppContent() {
         scaffoldState = scaffoldState,
         topBar = {
             when {
-                isMessageDeleteModeState.value.isTrue() -> DeleteModeTopBar("Выбрано")
+                isMessageActionModeState.value.isTrue() -> DeleteModeTopBar("Выбрано")
                 appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
                     settingsScreenNameByRoute(appNavigator.value?.getCurrentScreenRoute(), stringRes())
                 ) {
                     appNavigator.value?.pop()
                 }
 
-                isSettingsScreen(appNavigator.value?.getCurrentScreenRoute()) || appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.ChatScreen().route -> PrimaryTopBar(
-                    title = if (appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.ChatScreen().route) currentChatState.value?.name
+                isSettingsScreen(appNavigator.value?.getCurrentScreenRoute()) || appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.ChatScreen(
+                    isMessageActionModeState = isMessageActionModeState
+                ).route -> PrimaryTopBar(
+                    title = if (appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.ChatScreen(
+                            isMessageActionModeState = isMessageActionModeState
+                        ).route) currentChatState.value?.name
                         ?: stringRes().APP_NAME else settingsScreenNameByRoute(
                         appNavigator.value?.getCurrentScreenRoute(),
                         stringRes()
@@ -146,7 +156,9 @@ fun AppContent() {
                             }
                         }
                     },
-                    isActionVisible = appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.ChatScreen().route && chatsState.value.orEmpty()
+                    isActionVisible = appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.ChatScreen(
+                        isMessageActionModeState = isMessageActionModeState
+                    ).route && chatsState.value.orEmpty()
                         .isNotEmpty()
                 ) {
                     showEditChatDialog.value = true
@@ -168,7 +180,9 @@ fun AppContent() {
             }
 
         },
-        drawerGesturesEnabled = isSettingsScreen(appNavigator.value?.getCurrentScreenRoute()) || (appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.ChatScreen().route && isMessageDeleteModeState.value.isNotTrue()),
+        drawerGesturesEnabled = isSettingsScreen(appNavigator.value?.getCurrentScreenRoute()) || (appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.ChatScreen(
+            isMessageActionModeState = isMessageActionModeState
+        ).route && isMessageActionModeState.value.isNotTrue()),
         drawerContent = {
             AppDrawer(
                 isSettingsDrawerModeState,
@@ -219,7 +233,7 @@ fun AppContent() {
         content = { paddingValues ->
             Box(modifier = Modifier.padding(paddingValues)) {
                 Navigator(
-                    screen = NavigationScreen.fromRoute(screenState.value),
+                    screen = NavigationScreen.fromRoute(screenState.value, isMessageActionModeState),
                     content = { navigator ->
                         appNavigator.value = navigator
                         ProvideAppNavigator(

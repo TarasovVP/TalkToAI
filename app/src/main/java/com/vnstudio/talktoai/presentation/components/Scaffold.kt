@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai.presentation.components
 
+import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -109,7 +110,7 @@ fun DeleteModeTopBar(title: String) {
 
 @Composable
 fun AppDrawer(
-    isSettingsDrawerMode: MutableState<Boolean?>,
+    isSettingsDrawerMode: MutableState<Boolean>,
     currentRouteState: String?,
     currentChatId: Long?,
     chats: State<List<Chat>?>,
@@ -120,6 +121,7 @@ fun AppDrawer(
     onDragEnd: () -> Unit,
     onNextScreen: (String) -> Unit,
 ) {
+    Log.e("AppDrawerTAG", "AppDrawer isSettingsDrawerMode: ${isSettingsDrawerMode.value} chats ${chats.value?.size}")
     Column(
         modifier = Modifier
             .fillMaxSize()

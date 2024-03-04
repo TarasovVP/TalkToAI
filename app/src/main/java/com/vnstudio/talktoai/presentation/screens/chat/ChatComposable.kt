@@ -1,6 +1,7 @@
 package com.vnstudio.talktoai.presentation.screens.chat
 
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -109,9 +110,10 @@ fun ChatContent(
     val messageActionState: MutableState<String> =
         rememberSaveable { mutableStateOf(MessageAction.Cancel().value) }
     val showMessageActionDialog: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
+    Log.e("ChatTAG", "ChatContent screenState.nextScreenState.value ${screenState.nextScreenState.value}")
     val current = screenState.nextScreenState.value?.split("/")?.last()
     val currentChatId = if( current?.isDigitsOnly().isTrue()) current?.toLong() else -1L
-    LaunchedEffect(Unit) {
+    LaunchedEffect(screenState.nextScreenState.value) {
         viewModel.getCurrentChat(currentChatId ?: -1L)
     }
 
