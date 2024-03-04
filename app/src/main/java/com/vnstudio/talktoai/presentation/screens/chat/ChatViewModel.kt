@@ -1,6 +1,7 @@
 package com.vnstudio.talktoai.presentation.screens.chat
 
 import android.app.Application
+import android.util.Log
 import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.network.models.ApiRequest
@@ -66,11 +67,14 @@ class ChatViewModel(
 
     fun getMessagesFromChat(chatId: Long) {
         showProgress()
+        Log.e("ChatTAG", "ChatViewModel getMessagesFromChat chatId $chatId")
         messagesFlowSubscription?.cancel()
         messagesFlowSubscription = launch {
            chatUseCase.getMessagesFromChat(chatId).catch {
                 hideProgress()
+               Log.e("ChatTAG", "ChatViewModel getMessagesFromChat chatId $chatId error ${it.message}")
             }.collect { result ->
+               Log.e("ChatTAG", "ChatViewModel getMessagesFromChat chatId $chatId result $result")
                messagesLiveData.value = messageUIMapper.mapToUIModelList(result)
                hideProgress()
             }
