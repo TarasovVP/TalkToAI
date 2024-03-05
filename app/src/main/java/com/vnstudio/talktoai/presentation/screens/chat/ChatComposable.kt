@@ -35,7 +35,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,10 +45,8 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.text.isDigitsOnly
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.airbnb.lottie.compose.LottieAnimation
@@ -62,7 +59,6 @@ import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
 import com.vnstudio.talktoai.R
 import com.vnstudio.talktoai.clearCheckToAction
-import com.vnstudio.talktoai.data.database.db_entities.Chat
 import com.vnstudio.talktoai.data.network.models.ApiRequest
 import com.vnstudio.talktoai.dateToMilliseconds
 import com.vnstudio.talktoai.domain.enums.MessageStatus
@@ -71,9 +67,11 @@ import com.vnstudio.talktoai.domain.models.MessageApi
 import com.vnstudio.talktoai.domain.models.ScreenState
 import com.vnstudio.talktoai.domain.sealed_classes.MessageAction
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
+import com.vnstudio.talktoai.infrastructure.Constants.MESSAGE_ROLE_CHAT_GPT
+import com.vnstudio.talktoai.infrastructure.Constants.MESSAGE_ROLE_ME
+import com.vnstudio.talktoai.infrastructure.Constants.MESSAGE_ROLE_USER
 import com.vnstudio.talktoai.isDefineSecondsLater
 import com.vnstudio.talktoai.presentation.components.ConfirmationDialog
-import com.vnstudio.talktoai.presentation.components.DataEditDialog
 import com.vnstudio.talktoai.presentation.components.EmptyState
 import com.vnstudio.talktoai.presentation.components.ExceptionMessageHandler
 import com.vnstudio.talktoai.presentation.components.ProgressVisibilityHandler
@@ -100,21 +98,21 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ChatContent(
+    chatId: Long,
+    showCreateChatDialog: MutableState<Boolean>,
     isMessageActionModeState: MutableState<Boolean?> = mutableStateOf(false),
     screenState: ScreenState
 ) {
     val viewModel: ChatViewModel = koinViewModel()
-    val showCreateChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
     val currentChatState = viewModel.currentChatLiveData.collectAsState()
     val messagesState = viewModel.messagesLiveData.collectAsState()
     val messageActionState: MutableState<String> =
         rememberSaveable { mutableStateOf(MessageAction.Cancel().value) }
     val showMessageActionDialog: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
-    Log.e("ChatTAG", "ChatContent screenState.nextScreenState.value ${screenState.nextScreenState.value}")
-    val current = screenState.nextScreenState.value?.split("/")?.last()
-    val currentChatId = if( current?.isDigitsOnly().isTrue()) current?.toLong() else -1L
-    LaunchedEffect(screenState.nextScreenState.value) {
-        viewModel.getCurrentChat(currentChatId ?: -1L)
+    Log.e("ChatTAG", "ChatContent screenState.nextScreenState.value ${screenState.currentScreenState.value}")
+
+    LaunchedEffect(screenState.currentScreenState.value) {
+        viewModel.getCurrentChat(chatId)
     }
 
     LaunchedEffect(currentChatState.value) {
@@ -123,15 +121,17 @@ fun ChatContent(
         }
     }
 
-    LaunchedEffect(isMessageActionModeState.value.isTrue() && messagesState.value?.none { it.isCheckedToDelete.value }
-        .isTrue()) {
+    LaunchedEffect(isMessageActionModeState.value.isTrue() && messagesState.value.none { it.isCheckedToDelete.value }) {
         isMessageActionModeState.value = false
     }
 
     val clipboardManager = LocalClipboardManager.current
+    val messageSent = stringRes().MESSAGE_ACTION_SEND
+    val messageCopy = stringRes().MESSAGE_ACTION_COPY
+    val messageShare = stringRes().MESSAGE_ACTION_SHARE
     val shareIntentLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
-            screenState.infoMessageState.value = InfoMessage("Отправлено")
+            screenState.infoMessageState.value = InfoMessage(messageSent)
         }
     LaunchedEffect(messageActionState.value) {
         when (messageActionState.value) {
@@ -147,7 +147,7 @@ fun ChatContent(
                     isMessageActionModeState,
                     showMessageActionDialog
                 )
-                screenState.infoMessageState.value = InfoMessage("Скопировано")
+                screenState.infoMessageState.value = InfoMessage(messageCopy)
             }
 
             MessageAction.Share().value -> {
@@ -155,7 +155,7 @@ fun ChatContent(
                     type = "text/plain"
                     putExtra(Intent.EXTRA_TEXT, messagesState.value.textToAction())
 
-                    val chooser = Intent.createChooser(this, "Share Text")
+                    val chooser = Intent.createChooser(this, messageShare)
                     shareIntentLauncher.launch(chooser)
                 }
                 resetMessageActionState(
@@ -217,7 +217,7 @@ fun ChatContent(
                             MessageUIModel(
                                 id = Clock.System.now().toEpochMilliseconds(),
                                 chatId = currentChatState.value?.id ?: 0,
-                                author = "me",
+                                author = MESSAGE_ROLE_ME,
                                 message = messageText,
                                 updatedAt = Clock.System.now().dateToMilliseconds(),
                                 status = MessageStatus.SUCCESS
@@ -226,7 +226,7 @@ fun ChatContent(
                         val temporaryMessage = MessageUIModel(
                             id = Clock.System.now().toEpochMilliseconds() + 1,
                             chatId = currentChatState.value?.id ?: 0,
-                            author = "gpt-3.5-turbo",
+                            author = MESSAGE_ROLE_CHAT_GPT,
                             message = String.EMPTY,
                             updatedAt = Clock.System.now().dateToMilliseconds() + 1,
                             status = MessageStatus.REQUESTING
@@ -235,8 +235,8 @@ fun ChatContent(
                         viewModel.sendRequest(
                             temporaryMessage,
                             ApiRequest(
-                                model = "gpt-3.5-turbo", temperature = 0.7f, messages = listOf(
-                                    MessageApi(role = "user", content = messageText)
+                                model = MESSAGE_ROLE_CHAT_GPT, temperature = 0.7f, messages = listOf(
+                                    MessageApi(role = MESSAGE_ROLE_USER, content = messageText)
                                 )
                             )
                         )
@@ -246,68 +246,50 @@ fun ChatContent(
         }
     }
 
-    DataEditDialog(
-        "Создать новый чат?",
-        "Название чата",
-        remember {
-            mutableStateOf(TextFieldValue())
-        },
-        showCreateChatDialog,
-        onDismiss = {
-            showCreateChatDialog.value = false
-        }) { newChatName ->
-        viewModel.insertChat(
-            Chat(
-                id = Clock.System.now().dateToMilliseconds(),
-                name = newChatName,
-                updated = Clock.System.now().dateToMilliseconds()
-            )
-        )
-        showCreateChatDialog.value = false
-    }
+    val messageDelete = stringRes().MESSAGE_ACTION_DELETE
+    val messageTransfer = stringRes().MESSAGE_ACTION_TRANSFER
     ConfirmationDialog(
         title = when (messageActionState.value) {
-            MessageAction.Delete().value -> "Are you sure to delete?"
-            MessageAction.Delete().value -> "Are you sure to transfer?"
+            MessageAction.Delete().value -> stringRes().MESSAGE_DELETE_CONFIRMATION
+            MessageAction.Transfer().value -> stringRes().MESSAGE_TRANSFER_CONFIRMATION
             else -> String.EMPTY
         },
         showDialog = showMessageActionDialog,
-        onDismiss = { showMessageActionDialog.value = false },
-        onConfirmationClick = {
-            when (messageActionState.value) {
-                MessageAction.Delete().value -> {
-                    viewModel.deleteMessages(messagesState.value?.filter { it.isCheckedToDelete.value }
-                        ?.map { it.id } ?: listOf())
-                    resetMessageActionState(
-                        messagesState,
-                        messageActionState,
-                        isMessageActionModeState,
-                        showMessageActionDialog
-                    )
-                    screenState.infoMessageState.value = InfoMessage("Удалено")
-                }
-
-                MessageAction.Transfer().value -> {
-                    //TODO
-                    resetMessageActionState(
-                        messagesState,
-                        messageActionState,
-                        isMessageActionModeState,
-                        showMessageActionDialog
-                    )
-                    screenState.infoMessageState.value = InfoMessage("Перенесено")
-                }
-
-                else -> {
-                    resetMessageActionState(
-                        messagesState,
-                        messageActionState,
-                        isMessageActionModeState,
-                        showMessageActionDialog
-                    )
-                }
+        onDismiss = { showMessageActionDialog.value = false }
+    ) {
+        when (messageActionState.value) {
+            MessageAction.Delete().value -> {
+                viewModel.deleteMessages(messagesState.value.filter { it.isCheckedToDelete.value }.map { it.id })
+                resetMessageActionState(
+                    messagesState,
+                    messageActionState,
+                    isMessageActionModeState,
+                    showMessageActionDialog
+                )
+                screenState.infoMessageState.value = InfoMessage(messageDelete)
             }
-        })
+
+            MessageAction.Transfer().value -> {
+                //TODO
+                resetMessageActionState(
+                    messagesState,
+                    messageActionState,
+                    isMessageActionModeState,
+                    showMessageActionDialog
+                )
+                screenState.infoMessageState.value = InfoMessage(messageTransfer)
+            }
+
+            else -> {
+                resetMessageActionState(
+                    messagesState,
+                    messageActionState,
+                    isMessageActionModeState,
+                    showMessageActionDialog
+                )
+            }
+        }
+    }
 
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
     ProgressVisibilityHandler(screenState.progressVisibilityState, viewModel.progressVisibilityLiveData)
@@ -334,7 +316,7 @@ fun MessagesList(
 ) {
     if (messages.isEmpty()) {
         EmptyState(
-            text = "Введите свой вопрос или воспользуйтесь микрофоном....",
+            text = stringRes().MESSAGE_EMPTY_STATE,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(45.dp)
@@ -356,7 +338,7 @@ fun MessagesList(
                 ) {
                     items(messages) { message ->
                         Message(
-                            isUserAuthor = message.author == "me",
+                            isUserAuthor = message.author == MESSAGE_ROLE_ME,
                             message = message,
                             isMessageDeleteModeState = isMessageActionModeState,
                             onMessageChange
@@ -419,19 +401,19 @@ fun Message(
                         .data(if (message.isCheckedToDelete.value) R.drawable.ic_checked_check_box else R.drawable.ic_empty_check_box)
                         .crossfade(true)
                         .build(),
-                    contentDescription = "Deleting message checkbox",
+                    contentDescription = stringRes().MESSAGE_DELETE_CONFIRMATION,
                     contentScale = ContentScale.Inside,
                     modifier = Modifier
                         .padding(2.dp)
                 )
             } else if (isUserAuthor.not()) {
-                //TODO uncomment
+                //TODO
                 /*AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(painterRes(resId = "avatar_ai"))
                         .crossfade(true)
                         .build(),
-                    contentDescription = "AI avatar",
+                    contentDescription = stringRes().AI_AVATAR,
                     contentScale = ContentScale.Crop
                 )*/
             }
@@ -471,7 +453,7 @@ fun Message(
                         20,
                         message.updatedAt
                     ) -> Text(
-                        text = "Неизвестная ошибка",
+                        text = stringRes().UNKNOWN_ERROR,
                         fontSize = 16.sp,
                         color = Color.Red,
                         modifier = Modifier
@@ -499,7 +481,7 @@ fun CreateChatScreen(onClick: () -> Unit) {
             .height(TextFieldDefaults.MinHeight)
     ) {
         TextIconButton(
-            "Новый чат",
+            stringRes().NEW_CHAT,
             "ic_chat_add",
             Modifier,
             onClick
@@ -523,19 +505,19 @@ fun MessageActionField(
         IconButton(onClick = { messageActionState.value = MessageAction.Copy().value }) {
             Image(
                 painter = painterRes("ic_copy"),
-                contentDescription = "Message copy button"
+                contentDescription = stringRes().MESSAGE_COPY_BUTTON
             )
         }
         IconButton(onClick = { messageActionState.value = MessageAction.Delete().value }) {
             Image(
                 painter = painterRes("ic_delete"),
-                contentDescription = "Message delete button"
+                contentDescription = stringRes().MESSAGE_DELETE_BUTTON
             )
         }
         IconButton(onClick = { messageActionState.value = MessageAction.Share().value }) {
             Image(
                 painter = painterRes("ic_share"),
-                contentDescription = "Message share button"
+                contentDescription = stringRes().MESSAGE_SHARE_BUTTON
             )
         }
     }

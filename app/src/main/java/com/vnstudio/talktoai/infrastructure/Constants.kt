@@ -43,4 +43,9 @@ object Constants {
     const val MESSAGE_ACTION_DELETE = "Delete"
     const val MESSAGE_ACTION_TRANSFER = "Transfer"
     const val MESSAGE_ACTION_SHARE = "Share"
+
+    //Message roles
+    const val MESSAGE_ROLE_ME = "me"
+    const val MESSAGE_ROLE_USER = "user"
+    const val MESSAGE_ROLE_CHAT_GPT = "gpt-3.5-turbo"
 }

@@ -89,7 +89,7 @@ fun LoginContent(
     val successSignInState = viewModel.successSignInLiveData.collectAsState()
     LaunchedEffect(successSignInState.value) {
         if (successSignInState.value.isTrue()) {
-            screenState.nextScreenState.value = "${DESTINATION_CHAT_SCREEN}/$DEFAULT_CHAT_ID"
+            screenState.currentScreenState.value = "${DESTINATION_CHAT_SCREEN}/$DEFAULT_CHAT_ID"
         }
     }
 
@@ -139,7 +139,7 @@ fun LoginContent(
             LinkButton(text = stringRes().AUTHORIZATION_SIGN_UP, textAlign = TextAlign.Start, modifier = Modifier
                 .wrapContentSize()
                 .padding(start = 16.dp)) {
-                screenState.nextScreenState.value = NavigationScreen.SignUpScreen().route
+                screenState.currentScreenState.value = NavigationScreen.SignUpScreen().route
             }
             Spacer(modifier = Modifier.weight(0.5f))
             LinkButton(text = stringRes().AUTHORIZATION_FORGOT_PASSWORD, textAlign = TextAlign.End, modifier = Modifier
@@ -180,7 +180,7 @@ fun LoginContent(
             showAccountExistDialog.value = false
         }) {
         showAccountExistDialog.value = false
-        screenState.nextScreenState.value = NavigationScreen.SignUpScreen().route
+        screenState.currentScreenState.value = NavigationScreen.SignUpScreen().route
     }
 
     ConfirmationDialog(

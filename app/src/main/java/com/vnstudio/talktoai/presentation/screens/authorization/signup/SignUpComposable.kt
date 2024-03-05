@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
-import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.RemoteUser
 import com.vnstudio.talktoai.domain.models.ScreenState
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
@@ -75,7 +73,7 @@ fun SignUpContent(
             viewModel.insertRemoteUser(RemoteUser())
         }
         signUpUiState.createCurrentUser?.let {
-            screenState.nextScreenState.value = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"
+            screenState.currentScreenState.value = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"
         }
     }
 
@@ -123,7 +121,7 @@ fun SignUpContent(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringRes().AUTHORIZATION_ENTRANCE_TITLE, modifier = Modifier.padding(start = 16.dp))
             LinkButton(text = stringRes().AUTHORIZATION_ENTRANCE, modifier = Modifier.wrapContentSize()) {
-                screenState.nextScreenState.value = NavigationScreen.LoginScreen().route
+                screenState.currentScreenState.value = NavigationScreen.LoginScreen().route
             }
         }
         PrimaryButton(
@@ -141,7 +139,7 @@ fun SignUpContent(
             showAccountExistDialog.value = false
         }) {
         showAccountExistDialog.value = false
-        screenState.nextScreenState.value = NavigationScreen.LoginScreen().route
+        screenState.currentScreenState.value = NavigationScreen.LoginScreen().route
     }
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
     ProgressVisibilityHandler(screenState.progressVisibilityState, viewModel.progressVisibilityLiveData)

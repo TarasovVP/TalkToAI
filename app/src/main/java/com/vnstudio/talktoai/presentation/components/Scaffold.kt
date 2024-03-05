@@ -62,7 +62,7 @@ fun PrimaryTopBar(
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
                     painter = painterRes("ic_navigation"),
-                    contentDescription = "Navigation icon",
+                    contentDescription = stringRes().NAVIGATION_ICON,
                     tint = Primary100
                 )
             }
@@ -74,7 +74,7 @@ fun PrimaryTopBar(
                 ) {
                     Icon(
                         painter = painterRes("ic_edit"),
-                        contentDescription = "Edit title",
+                        contentDescription = stringRes().CHAT_EDIT_BUTTON,
                         tint = Primary100
                     )
                 }
@@ -93,7 +93,7 @@ fun SecondaryTopBar(title: String, onNavigationIconClick: () -> Unit) {
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
                     painter = painterRes("ic_arrow_back"),
-                    contentDescription = "Navigation icon"
+                    contentDescription = stringRes().NAVIGATION_ICON
                 )
             }
         })
@@ -154,7 +154,7 @@ fun AppDrawer(
             if (chats.value.isNullOrEmpty()) {
                 Image(
                     painter = painterRes("empty_state"),
-                    contentDescription = "Empty state",
+                    contentDescription = stringRes().CHAT_EMPTY_STATE,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
@@ -184,7 +184,7 @@ fun AppDrawer(
                 }
             }
             TextIconButton(
-                "Новый чат",
+                stringRes().NEW_CHAT,
                 "ic_chat_add",
                 Modifier.padding(bottom = 40.dp, start = 16.dp, end = 16.dp),
                 onCreateChatClick
@@ -203,13 +203,13 @@ fun DrawerHeader(isSettingsDrawerMode: Boolean, onDrawerModeClick: (Boolean) -> 
         Column(modifier = Modifier.weight(1f)) {
             Image(
                 painter = painterRes(if (isSettingsDrawerMode) "ic_settings" else "avatar_ai"),
-                contentDescription = "Settings item icon",
+                contentDescription = stringRes().SETTINGS,
                 modifier = Modifier
                     .padding(start = 16.dp, top = 16.dp)
                     .size(60.dp)
             )
             Text(
-                text = if (isSettingsDrawerMode) "Настройки" else "Искусcтвенный интеллект",
+                text = if (isSettingsDrawerMode) stringRes().SETTINGS else stringRes().APP_NAME,
                 fontSize = 16.sp,
                 color = Neutral50,
                 modifier = Modifier
@@ -221,7 +221,7 @@ fun DrawerHeader(isSettingsDrawerMode: Boolean, onDrawerModeClick: (Boolean) -> 
         }) {
             Image(
                 painter = painterRes(if (isSettingsDrawerMode) "ic_chat" else "ic_settings"),
-                contentDescription = "Drawer item icon",
+                contentDescription = stringRes().NAVIGATION_ICON,
                 modifier = Modifier
                     .padding(end = 16.dp, top = 16.dp)
                     .size(24.dp)

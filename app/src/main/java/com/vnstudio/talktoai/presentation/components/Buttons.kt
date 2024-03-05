@@ -44,7 +44,8 @@ fun PrimaryButton(
             .background(
                 color = if (isEnabled) Primary500 else Neutral400,
                 shape = RoundedCornerShape(16.dp)
-            ).testTag("sign_up_button"),
+            )
+            .testTag("sign_up_button"),
         onClick = {
             onClick.invoke()
         }
@@ -102,7 +103,7 @@ fun GoogleButton(title: String, modifier: Modifier, onClick: () -> Unit) {
         }) {
         Image(
             painter = painterRes("ic_logo_google"),
-            contentDescription = "Google button",
+            contentDescription = stringRes().AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
             modifier = Modifier
                 .padding(top = 8.dp, start = 16.dp, bottom = 8.dp)
         )
@@ -133,7 +134,7 @@ fun TextIconButton(text: String, icon: String, modifier: Modifier, onClick: () -
         ) {
             Image(
                 painter = painterRes(icon),
-                contentDescription = "Add chat button",
+                contentDescription = stringRes().CHAT_CREATE_BUTTON,
                 modifier = Modifier
                     .padding(8.dp)
             )

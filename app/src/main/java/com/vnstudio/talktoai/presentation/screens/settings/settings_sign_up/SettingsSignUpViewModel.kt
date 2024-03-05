@@ -12,7 +12,7 @@ import com.vnstudio.talktoai.presentation.screens.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 
-class SettingSignUpViewModel(
+class SettingsSignUpViewModel(
     private val application: Application,
     private val settingsSignUpUseCase: SettingsSignUpUseCase,
     val googleSignInClient: GoogleSignInClient,

@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
+import com.vnstudio.talktoai.CommonExtensions.isNotNull
 import com.vnstudio.talktoai.CommonExtensions.isNotTrue
 import com.vnstudio.talktoai.CommonExtensions.isNull
 import com.vnstudio.talktoai.CommonExtensions.isTrue
@@ -77,7 +78,7 @@ fun AppContent() {
 
     LaunchedEffect(onBoardingSeenState.value) {
         onBoardingSeenState.value?.let { isOnboardingSeen ->
-            screenState.value.nextScreenState.value = when {
+            screenState.value.currentScreenState.value = when {
                 isOnboardingSeen.not() -> NavigationScreen.OnboardingScreen().route
                 viewModel.isLoggedInUser().not() -> NavigationScreen.LoginScreen().route
                 isSettingsDrawerModeState.value.isTrue() -> NavigationScreen.SettingsChatScreen().route
@@ -88,7 +89,10 @@ fun AppContent() {
 
     LaunchedEffect(authState.value) {
         authState.value?.let { authStateValue ->
-            Log.e("AppDrawerTAG", "authState.value ${authState.value} chats.size ${chatsState.value?.size}")
+            Log.e(
+                "AppDrawerTAG",
+                "authState.value ${authState.value} chats.size ${chatsState.value?.size}"
+            )
             when (authStateValue) {
                 AuthState.UNAUTHORISED -> viewModel.removeRemoteUserListeners()
                 AuthState.AUTHORISED_ANONYMOUSLY -> viewModel.getChats()
@@ -109,18 +113,24 @@ fun AppContent() {
                 currentChatState.value.isNull() -> currentChatState.value = chats.firstOrNull()
                 chats.contains(currentChatState.value).not() -> {
                     currentChatState.value = chats.firstOrNull()
-                    screenState.value.nextScreenState.value =
+                    screenState.value.currentScreenState.value =
                         "$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id ?: DEFAULT_CHAT_ID}"
                 }
             }
         }
     }
 
-    LaunchedEffect(screenState.value.nextScreenState.value) {
-        val navigationScreen = NavigationScreen.fromRoute(
-            screenState.value,
-            isMessageActionModeState
-        )
+    LaunchedEffect(screenState.value.currentScreenState.value) {
+        val navigationScreen = when {
+            NavigationScreen.isChatScreen(screenState.value.currentScreenState.value) -> NavigationScreen.ChatScreen(
+                currentChatState.value?.id ?: -1L,
+                showCreateChatDialog,
+                isMessageActionModeState,
+                screenState.value
+            )
+
+            else -> NavigationScreen.fromRoute(screenState.value)
+        }
         if ((navigationScreen as? NavigationScreen)?.route != (appNavigator.value?.getCurrentScreenRoute())) {
             appNavigator.value?.push(navigationScreen)
         }
@@ -130,9 +140,12 @@ fun AppContent() {
         scaffoldState = scaffoldState,
         topBar = {
             when {
-                isMessageActionModeState.value.isTrue() -> DeleteModeTopBar("Выбрано")
+                isMessageActionModeState.value.isTrue() -> DeleteModeTopBar(stringRes().MESSAGE_ACTION_SELECTED)
                 appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
-                    settingsScreenNameByRoute(appNavigator.value?.getCurrentScreenRoute(), stringRes())
+                    settingsScreenNameByRoute(
+                        appNavigator.value?.getCurrentScreenRoute(),
+                        stringRes()
+                    )
                 ) {
                     appNavigator.value?.pop()
                 }
@@ -142,7 +155,8 @@ fun AppContent() {
                 ).route -> PrimaryTopBar(
                     title = if (appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.ChatScreen(
                             isMessageActionModeState = isMessageActionModeState
-                        ).route) currentChatState.value?.name
+                        ).route
+                    ) currentChatState.value?.name
                         ?: stringRes().APP_NAME else settingsScreenNameByRoute(
                         appNavigator.value?.getCurrentScreenRoute(),
                         stringRes()
@@ -194,7 +208,7 @@ fun AppContent() {
                 },
                 onChatClick = { chat ->
                     currentChatState.value = chat
-                    screenState.value.nextScreenState.value =
+                    screenState.value.currentScreenState.value =
                         "$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id}"
                     scope.launch {
                         scaffoldState.drawerState.close()
@@ -211,16 +225,16 @@ fun AppContent() {
                     viewModel.updateChats(chatsState.value.orEmpty())
                 }
             ) { route ->
-                screenState.value.nextScreenState.value = route
+                screenState.value.currentScreenState.value = route
                 scope.launch {
                     scaffoldState.drawerState.close()
                 }
             }
             LaunchedEffect(isSettingsDrawerModeState.value) {
-                isSettingsDrawerModeState.value?.let { isSettingsDrawerMode ->
+                isSettingsDrawerModeState.value.let { isSettingsDrawerMode ->
                     if (isSettingsDrawerMode) {
                         viewModel.removeRemoteUserListeners()
-                        screenState.value.nextScreenState.value =
+                        screenState.value.currentScreenState.value =
                             NavigationScreen.SettingsChatScreen().route
                     } else {
                         viewModel.addRemoteChatListener()
@@ -232,24 +246,36 @@ fun AppContent() {
         },
         content = { paddingValues ->
             Box(modifier = Modifier.padding(paddingValues)) {
-                Navigator(
-                    screen = NavigationScreen.fromRoute(screenState.value, isMessageActionModeState),
-                    content = { navigator ->
-                        appNavigator.value = navigator
-                        ProvideAppNavigator(
-                            navigator = navigator,
-                            content = { CurrentScreen() },
+                screenState.value.takeIf { it.currentScreenState.value.isNotNull() }
+                    ?.let { currentScreen ->
+                        Navigator(
+                            screen = when {
+                                NavigationScreen.isChatScreen(currentScreen.currentScreenState.value) -> NavigationScreen.ChatScreen(
+                                    currentChatState.value?.id ?: -1L,
+                                    showCreateChatDialog,
+                                    isMessageActionModeState,
+                                    screenState.value
+                                )
+
+                                else -> NavigationScreen.fromRoute(screenState.value)
+                            },
+                            content = { navigator ->
+                                appNavigator.value = navigator
+                                ProvideAppNavigator(
+                                    navigator = navigator,
+                                    content = { CurrentScreen() },
+                                )
+                            },
                         )
-                    },
-                )
+                    }
                 ExceptionMessageHandler(
                     screenState.value.infoMessageState,
                     viewModel.exceptionLiveData
                 )
 
                 DataEditDialog(
-                    "Создать новый чат?",
-                    "Название чата",
+                    stringRes().CHAT_CREATE_TITLE,
+                    stringRes().CHAT_NAME,
                     remember {
                         mutableStateOf(TextFieldValue())
                     },
@@ -273,8 +299,8 @@ fun AppContent() {
                 }
 
                 DataEditDialog(
-                    "Изменить название чата?",
-                    "Название чата",
+                    stringRes().CHAT_RENAME_TITLE,
+                    stringRes().CHAT_NAME,
                     remember {
                         mutableStateOf(TextFieldValue(currentChatState.value?.name.orEmpty()))
                     },
@@ -288,9 +314,12 @@ fun AppContent() {
                     showEditChatDialog.value = false
                 }
 
-                ConfirmationDialog("Удалить чат?", showDeleteChatDialog, onDismiss = {
-                    showDeleteChatDialog.value = false
-                }) {
+                ConfirmationDialog(
+                    stringRes().CHAT_DELETE_TITLE,
+                    showDeleteChatDialog,
+                    onDismiss = {
+                        showDeleteChatDialog.value = false
+                    }) {
                     deleteChatState.value?.let { viewModel.deleteChat(it) }
                     showDeleteChatDialog.value = false
                     deleteChatState.value = null

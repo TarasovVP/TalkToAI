@@ -2,6 +2,7 @@ package com.vnstudio.talktoai.domain.sealed_classes
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.screen.Screen
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.domain.models.ScreenState
@@ -40,12 +41,14 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
         }
     }
     class ChatScreen(
-        private val screenState: ScreenState = ScreenState(),
-        private val isMessageActionModeState: MutableState<Boolean?>
+        private val chatId: Long = -1L,
+        private val showCreateChatDialogue: MutableState<Boolean> = mutableStateOf(false),
+        private val isMessageActionModeState: MutableState<Boolean?> = mutableStateOf(false),
+        private val screenState: ScreenState = ScreenState()
     ) : NavigationScreen("destination_chat_screen/{current_chat_id}", "ic_chat") {
         @Composable
         override fun Content() {
-            ChatContent(isMessageActionModeState, screenState)
+            ChatContent(chatId, showCreateChatDialogue, isMessageActionModeState, screenState)
         }
     }
     class SettingsChatScreen(private val screenState: ScreenState = ScreenState()) :
@@ -123,8 +126,10 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
             }
         }
 
-        fun fromRoute(screenState: ScreenState, isMessageActionModeState: MutableState<Boolean?>): Screen {
-            return when(screenState.nextScreenState.value) {
+        fun isChatScreen(route: String?) = route == ChatScreen().route
+
+        fun fromRoute(screenState: ScreenState): Screen {
+            return when(screenState.currentScreenState.value) {
                 OnboardingScreen().route -> OnboardingScreen(screenState)
                 LoginScreen().route -> LoginScreen(screenState)
                 SignUpScreen().route -> SignUpScreen(screenState)
@@ -134,7 +139,7 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
                 SettingsThemeScreen().route -> SettingsThemeScreen(screenState)
                 SettingsFeedbackScreen().route -> SettingsFeedbackScreen(screenState)
                 SettingsPrivacyPolicyScreen().route -> SettingsPrivacyPolicyScreen(screenState)
-                else -> ChatScreen(screenState, isMessageActionModeState)
+                else -> ChatScreen(screenState = screenState)
             }
         }
     }

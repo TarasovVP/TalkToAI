@@ -37,7 +37,7 @@ fun OnboardingContent(screenState: ScreenState) {
     val onBoardingSeenState = viewModel.onBoardingSeenLiveData.collectAsState()
     LaunchedEffect(onBoardingSeenState.value) {
         if (onBoardingSeenState.value) {
-            screenState.nextScreenState.value = NavigationScreen.LoginScreen().route
+            screenState.currentScreenState.value = NavigationScreen.LoginScreen().route
             viewModel.onBoardingSeenLiveData.value = false
         }
     }
@@ -65,7 +65,12 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
                 .background(color = Primary500, shape = RoundedCornerShape(16.dp))
         ) {
             Text(
-                text = "Привет, Я - Искусственный Интеллект. Page $page",
+                text = when (page) {
+                    1 -> stringRes().ONBOARDING_INTRO
+                    2 -> stringRes().ONBOARDING_FILTER_CONDITIONS
+                    3 -> stringRes().ONBOARDING_INFO
+                    else -> stringRes().ONBOARDING_PERMISSIONS
+                },
                 textAlign = TextAlign.Center,
                 color = Neutral50,
                 modifier = Modifier
@@ -75,7 +80,7 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
         }
         Image(
             painter = painterRes("onboarding_intro"),
-            contentDescription = "Onboarding icon",
+            contentDescription = stringRes().ONBOARDING_ICON,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
@@ -89,7 +94,7 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
                     3 -> "ic_tab_four"
                     else -> "ic_tab_one"
                 }
-            ), contentDescription = "Onboarding tab $page", modifier = Modifier
+            ), contentDescription = "${stringRes().ONBOARDING_SCREEN} $page", modifier = Modifier
                 .fillMaxWidth()
         )
         PrimaryButton(

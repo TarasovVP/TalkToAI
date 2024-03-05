@@ -31,14 +31,14 @@ fun SettingsPrivacyPolicyContent(screenState: ScreenState) {
     }
     val appLanguageState = viewModel.appLanguageLiveData.collectAsState()
     LaunchedEffect(appLanguageState.value) {
-        appLanguageState.value?.let { lang ->
+        appLanguageState.value.let { lang ->
             viewModel.getPrivacyPolicy(lang)
         }
     }
     val privacyPolicyState = viewModel.privacyPolicyLiveData.collectAsState()
     val stringRes = stringRes()
     LaunchedEffect(privacyPolicyState.value) {
-        privacyPolicyState.value?.let { url ->
+        privacyPolicyState.value.let { url ->
             privacyPolicyUrlState.value = if (url == PRIVACY_POLICY) stringRes.PRIVACY_POLICY else url
         }
     }

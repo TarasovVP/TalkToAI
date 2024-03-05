@@ -61,7 +61,7 @@ import com.vnstudio.talktoai.presentation.screens.settings.settings_language.Set
 import com.vnstudio.talktoai.presentation.screens.settings.settings_language.SettingsLanguageViewModel
 import com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyViewModel
-import com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up.SettingSignUpViewModel
+import com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpViewModel
 import com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_theme.SettingsThemeUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_theme.SettingsThemeViewModel
@@ -299,7 +299,7 @@ val appModule = module {
         )
     }
     viewModel {
-        SettingSignUpViewModel(
+        SettingsSignUpViewModel(
             application = androidApplication(),
             settingsSignUpUseCase = get(),
             googleSignInClient = get()

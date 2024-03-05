@@ -125,7 +125,7 @@ dependencies {
     implementation("io.insert-koin:koin-android:3.5.3")
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
 
-    //SQLDelight
+    //SQLDelight`
     implementation("com.squareup.sqldelight:android-driver:1.5.4")
     implementation("com.squareup.sqldelight:coroutines-extensions:1.5.4")
 
