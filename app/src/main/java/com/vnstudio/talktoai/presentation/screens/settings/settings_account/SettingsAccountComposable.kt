@@ -88,7 +88,7 @@ fun SettingsAccountContent(
         if (successState.value) {
             viewModel.clearDataByKeys(listOf())
             viewModel.clearDataBase()
-            screenState.nextScreenState.value = NavigationScreen.LoginScreen().route
+            screenState.currentScreenState.value = NavigationScreen.LoginScreen().route
         }
     }
 
@@ -131,7 +131,7 @@ fun SettingsAccountContent(
             }
         } else {
             PrimaryButton(text = stringRes().AUTHORIZATION_SIGNING_UP, modifier = Modifier) {
-                screenState.nextScreenState.value =  NavigationScreen.SettingsSignUpScreen().route
+                screenState.currentScreenState.value =  NavigationScreen.SettingsSignUpScreen().route
             }
             EmptyState(
                 text = stringRes().EMPTY_STATE_ACCOUNT,
@@ -199,7 +199,7 @@ fun AccountCard(authState: AuthState?, email: String, onClick: () -> Unit) {
                     AuthState.AUTHORISED_EMAIL -> "ic_avatar_email"
                     else -> "ic_avatar_anonymous"
                 },
-                contentDescription = "Account avatar"
+                contentDescription = stringRes().ACCOUNT_AVATAR
             )
             Column(
                 modifier = Modifier.wrapContentSize(),

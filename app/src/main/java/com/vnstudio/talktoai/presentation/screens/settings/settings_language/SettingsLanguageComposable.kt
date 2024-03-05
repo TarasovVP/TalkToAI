@@ -105,7 +105,7 @@ fun SettingsLanguageItem(name: String, isChecked: Boolean, icon: String, onLangu
             Text(text = name, modifier = Modifier.weight(1f))
             Image(
                 painter = painterRes(icon),
-                contentDescription = "App language $name"
+                contentDescription = "${stringRes().SETTINGS_LANGUAGE} $name"
             )
         }
     }

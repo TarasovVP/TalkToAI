@@ -50,7 +50,7 @@ fun SettingsSignUpContent(
     screenState: ScreenState
 ) {
 
-    val viewModel: SettingSignUpViewModel = koinViewModel()
+    val viewModel: SettingsSignUpViewModel = koinViewModel()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
     val showAccountExistDialog = remember { mutableStateOf(false) }
@@ -104,7 +104,7 @@ fun SettingsSignUpContent(
     val successRemoteUserState = viewModel.successRemoteUserLiveData.collectAsState()
     LaunchedEffect(successRemoteUserState.value) {
         if (successRemoteUserState.value) {
-            screenState.nextScreenState.value = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"
+            screenState.currentScreenState.value = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"
         }
     }
 

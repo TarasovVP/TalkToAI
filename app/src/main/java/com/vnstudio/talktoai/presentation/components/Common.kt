@@ -84,7 +84,7 @@ fun OrDivider(modifier: Modifier) {
                 .align(Alignment.CenterVertically)
         )
         Text(
-            text = "Или",
+            text = stringRes().AUTHORIZATION_OR,
             fontSize = 16.sp,
             modifier = Modifier
                 .weight(1f)
@@ -132,7 +132,7 @@ fun EmptyState(text: String, modifier: Modifier) {
         )
         Image(
             painter = painterRes("empty_state"),
-            contentDescription = "Empty state",
+            contentDescription = text,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
@@ -145,13 +145,13 @@ fun EmptyState(text: String, modifier: Modifier) {
 fun MainProgress(progressVisibilityState: MutableState<Boolean>) {
 
     if (progressVisibilityState.value) {
-        /*Box(modifier = Modifier.fillMaxSize(), Alignment.Center) {
-            CircularProgressIndicator(
+        Box(modifier = Modifier.fillMaxSize(), Alignment.Center) {
+           /* CircularProgressIndicator(
                 modifier = Modifier.size(100.dp),
                 color = Primary700,
                 strokeWidth = 5.dp
-            )
-        }*/
+            )*/
+        }
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.main_progress))
         Box(contentAlignment = Alignment.Center, modifier = Modifier
             .fillMaxSize()) {
