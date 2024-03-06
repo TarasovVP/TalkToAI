@@ -67,14 +67,11 @@ class ChatViewModel(
 
     fun getMessagesFromChat(chatId: Long) {
         showProgress()
-        Log.e("ChatTAG", "ChatViewModel getMessagesFromChat chatId $chatId")
         messagesFlowSubscription?.cancel()
         messagesFlowSubscription = launch {
            chatUseCase.getMessagesFromChat(chatId).catch {
-                hideProgress()
-               Log.e("ChatTAG", "ChatViewModel getMessagesFromChat chatId $chatId error ${it.message}")
+               hideProgress()
             }.collect { result ->
-               Log.e("ChatTAG", "ChatViewModel getMessagesFromChat chatId $chatId result $result")
                messagesLiveData.value = messageUIMapper.mapToUIModelList(result)
                hideProgress()
             }

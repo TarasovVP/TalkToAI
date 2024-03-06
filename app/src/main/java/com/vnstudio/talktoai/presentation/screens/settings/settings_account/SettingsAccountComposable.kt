@@ -50,6 +50,7 @@ import com.vnstudio.talktoai.presentation.components.ShapeableImage
 import com.vnstudio.talktoai.presentation.components.SubmitButtons
 import com.vnstudio.talktoai.presentation.components.stringRes
 import com.vnstudio.talktoai.presentation.theme.Primary500
+import com.vnstudio.talktoai.resources.DrawableResources
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -195,9 +196,9 @@ fun AccountCard(authState: AuthState?, email: String, onClick: () -> Unit) {
             ShapeableImage(
                 modifier = Modifier.size(50.dp),
                 drawableResId = when (authState) {
-                    AuthState.AUTHORISED_GOOGLE -> "ic_avatar_google"
-                    AuthState.AUTHORISED_EMAIL -> "ic_avatar_email"
-                    else -> "ic_avatar_anonymous"
+                    AuthState.AUTHORISED_GOOGLE -> DrawableResources.IC_AVATAR_GOOGLE
+                    AuthState.AUTHORISED_EMAIL -> DrawableResources.IC_AVATAR_EMAIL
+                    else -> DrawableResources.IC_AVATAR_ANONYMOUS
                 },
                 contentDescription = stringRes().ACCOUNT_AVATAR
             )

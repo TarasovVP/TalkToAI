@@ -35,6 +35,7 @@ import com.vnstudio.talktoai.infrastructure.Constants
 import com.vnstudio.talktoai.infrastructure.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
 import com.vnstudio.talktoai.presentation.theme.Primary300
 import com.vnstudio.talktoai.presentation.theme.Primary700
+import com.vnstudio.talktoai.resources.DrawableResources
 import com.vnstudio.talktoai.resources.StringResources
 import com.vnstudio.talktoai.resources.getStringResourcesByLocale
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -131,7 +132,7 @@ fun EmptyState(text: String, modifier: Modifier) {
                 .padding(16.dp)
         )
         Image(
-            painter = painterRes("empty_state"),
+            painter = painterRes(DrawableResources.EMPTY_STATE),
             contentDescription = text,
             modifier = Modifier
                 .fillMaxWidth()

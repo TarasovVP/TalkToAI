@@ -46,6 +46,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary100
 import com.vnstudio.talktoai.presentation.theme.Primary700
 import com.vnstudio.talktoai.presentation.theme.Primary800
 import com.vnstudio.talktoai.presentation.theme.Primary900
+import com.vnstudio.talktoai.resources.DrawableResources
 
 @Composable
 fun PrimaryTopBar(
@@ -61,7 +62,7 @@ fun PrimaryTopBar(
         navigationIcon = {
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
-                    painter = painterRes("ic_navigation"),
+                    painter = painterRes(DrawableResources.IC_NAVIGATION),
                     contentDescription = stringRes().NAVIGATION_ICON,
                     tint = Primary100
                 )
@@ -73,7 +74,7 @@ fun PrimaryTopBar(
                     onClick = onActionIconClick
                 ) {
                     Icon(
-                        painter = painterRes("ic_edit"),
+                        painter = painterRes(DrawableResources.IC_EDIT),
                         contentDescription = stringRes().CHAT_EDIT_BUTTON,
                         tint = Primary100
                     )
@@ -92,7 +93,7 @@ fun SecondaryTopBar(title: String, onNavigationIconClick: () -> Unit) {
         navigationIcon = {
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
-                    painter = painterRes("ic_arrow_back"),
+                    painter = painterRes(DrawableResources.IC_ARROW_BACK),
                     contentDescription = stringRes().NAVIGATION_ICON
                 )
             }
@@ -121,7 +122,6 @@ fun AppDrawer(
     onDragEnd: () -> Unit,
     onNextScreen: (String) -> Unit,
 ) {
-    Log.e("AppDrawerTAG", "AppDrawer isSettingsDrawerMode: ${isSettingsDrawerMode.value} chats ${chats.value?.size}")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -153,7 +153,7 @@ fun AppDrawer(
         } else {
             if (chats.value.isNullOrEmpty()) {
                 Image(
-                    painter = painterRes("empty_state"),
+                    painter = painterRes(DrawableResources.EMPTY_STATE),
                     contentDescription = stringRes().CHAT_EMPTY_STATE,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -172,9 +172,9 @@ fun AppDrawer(
                     val elevation = animateDpAsState(if (isDragging) 4.dp else 1.dp)
                     DrawerItem(
                         name = chat.name,
-                        mainIcon = "ic_chat",
+                        mainIcon = DrawableResources.IC_CHAT,
                         isCurrent = chat.id == currentChatId,
-                        secondaryIcon = if (isDragging) "ic_drag_handle" else "ic_delete",
+                        secondaryIcon = if (isDragging) DrawableResources.IC_DRAG_HANDLE else DrawableResources.IC_DELETE,
                         elevation = elevation.value,
                         isIconClick = true,
                         onIconClick = {
@@ -185,7 +185,7 @@ fun AppDrawer(
             }
             TextIconButton(
                 stringRes().NEW_CHAT,
-                "ic_chat_add",
+                DrawableResources.IC_CHAT_ADD,
                 Modifier.padding(bottom = 40.dp, start = 16.dp, end = 16.dp),
                 onCreateChatClick
             )
@@ -202,7 +202,7 @@ fun DrawerHeader(isSettingsDrawerMode: Boolean, onDrawerModeClick: (Boolean) -> 
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Image(
-                painter = painterRes(if (isSettingsDrawerMode) "ic_settings" else "avatar_ai"),
+                painter = painterRes(if (isSettingsDrawerMode) DrawableResources.IC_SETTINGS else DrawableResources.AVATAR_AI),
                 contentDescription = stringRes().SETTINGS,
                 modifier = Modifier
                     .padding(start = 16.dp, top = 16.dp)
@@ -220,7 +220,7 @@ fun DrawerHeader(isSettingsDrawerMode: Boolean, onDrawerModeClick: (Boolean) -> 
             onDrawerModeClick.invoke(isSettingsDrawerMode.not())
         }) {
             Image(
-                painter = painterRes(if (isSettingsDrawerMode) "ic_chat" else "ic_settings"),
+                painter = painterRes(if (isSettingsDrawerMode) DrawableResources.IC_CHAT else DrawableResources.IC_SETTINGS),
                 contentDescription = stringRes().NAVIGATION_ICON,
                 modifier = Modifier
                     .padding(end = 16.dp, top = 16.dp)

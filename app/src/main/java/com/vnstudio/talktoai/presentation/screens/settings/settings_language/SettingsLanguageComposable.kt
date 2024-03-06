@@ -31,6 +31,7 @@ import com.vnstudio.talktoai.presentation.components.painterRes
 import com.vnstudio.talktoai.presentation.components.stringRes
 import com.vnstudio.talktoai.presentation.theme.Neutral500
 import com.vnstudio.talktoai.presentation.theme.Primary700
+import com.vnstudio.talktoai.resources.DrawableResources
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -58,7 +59,7 @@ fun SettingsLanguageContent(
         SettingsLanguageItem(
             stringRes().SETTINGS_LANGUAGE_ENGLISH,
             APP_LANG_EN == appLanguageState.value,
-            "ic_flag_en"
+            DrawableResources.IC_FLAG_EN
         ) {
             viewModel.setAppLanguage(APP_LANG_EN)
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(APP_LANG_EN))
@@ -66,7 +67,7 @@ fun SettingsLanguageContent(
         SettingsLanguageItem(
             stringRes().SETTINGS_LANGUAGE_UKRAINIAN,
             APP_LANG_UK == appLanguageState.value,
-            "ic_flag_ua"
+            DrawableResources.IC_FLAG_UA
         ) {
             viewModel.setAppLanguage(APP_LANG_UK)
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(APP_LANG_UK))
@@ -74,7 +75,7 @@ fun SettingsLanguageContent(
         SettingsLanguageItem(
             stringRes().SETTINGS_LANGUAGE_RUSSIAN,
             APP_LANG_RU == appLanguageState.value,
-            "ic_flag_ru"
+            DrawableResources.IC_FLAG_RU
         ) {
             viewModel.setAppLanguage(APP_LANG_RU)
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(APP_LANG_RU))
