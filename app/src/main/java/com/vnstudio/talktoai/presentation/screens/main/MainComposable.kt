@@ -60,7 +60,6 @@ fun AppContent() {
     val onBoardingSeenState = viewModel.onBoardingSeen.collectAsState()
     val authState = viewModel.authState.collectAsState()
     val chatsState = viewModel.chatsList.collectAsState()
-    Log.e("AppDrawerTAG", "AppContent chats.size ${chatsState.value?.size}")
 
     val isSettingsDrawerModeState = remember { mutableStateOf<Boolean>(false) }
     val isMessageActionModeState = remember { mutableStateOf<Boolean?>(null) }
@@ -89,10 +88,6 @@ fun AppContent() {
 
     LaunchedEffect(authState.value) {
         authState.value?.let { authStateValue ->
-            Log.e(
-                "AppDrawerTAG",
-                "authState.value ${authState.value} chats.size ${chatsState.value?.size}"
-            )
             when (authStateValue) {
                 AuthState.UNAUTHORISED -> viewModel.removeRemoteUserListeners()
                 AuthState.AUTHORISED_ANONYMOUSLY -> viewModel.getChats()
@@ -106,9 +101,7 @@ fun AppContent() {
     }
 
     LaunchedEffect(chatsState.value) {
-        Log.e("AppDrawerTAG", "LaunchedEffect before chats.size ${chatsState.value?.size}")
         chatsState.value?.let { chats ->
-            Log.e("AppDrawerTAG", "LaunchedEffect after chats.size ${chats.size}")
             when {
                 currentChatState.value.isNull() -> currentChatState.value = chats.firstOrNull()
                 chats.contains(currentChatState.value).not() -> {

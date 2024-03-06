@@ -88,6 +88,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary500
 import com.vnstudio.talktoai.presentation.theme.Primary600
 import com.vnstudio.talktoai.presentation.theme.Primary900
 import com.vnstudio.talktoai.presentation.ui_models.MessageUIModel
+import com.vnstudio.talktoai.resources.DrawableResources
 import com.vnstudio.talktoai.resources.LocalAvatarSize
 import com.vnstudio.talktoai.resources.LocalDefaultTextSize
 import com.vnstudio.talktoai.resources.LocalLargePadding
@@ -109,7 +110,6 @@ fun ChatContent(
     val messageActionState: MutableState<String> =
         rememberSaveable { mutableStateOf(MessageAction.Cancel().value) }
     val showMessageActionDialog: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
-    Log.e("ChatTAG", "ChatContent screenState.nextScreenState.value ${screenState.currentScreenState.value}")
 
     LaunchedEffect(screenState.currentScreenState.value) {
         viewModel.getCurrentChat(chatId)
@@ -482,7 +482,7 @@ fun CreateChatScreen(onClick: () -> Unit) {
     ) {
         TextIconButton(
             stringRes().NEW_CHAT,
-            "ic_chat_add",
+            DrawableResources.IC_CHAT_ADD,
             Modifier,
             onClick
         )
@@ -504,19 +504,19 @@ fun MessageActionField(
         Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = { messageActionState.value = MessageAction.Copy().value }) {
             Image(
-                painter = painterRes("ic_copy"),
+                painter = painterRes(DrawableResources.IC_COPY),
                 contentDescription = stringRes().MESSAGE_COPY_BUTTON
             )
         }
         IconButton(onClick = { messageActionState.value = MessageAction.Delete().value }) {
             Image(
-                painter = painterRes("ic_delete"),
+                painter = painterRes(DrawableResources.IC_DELETE),
                 contentDescription = stringRes().MESSAGE_DELETE_BUTTON
             )
         }
         IconButton(onClick = { messageActionState.value = MessageAction.Share().value }) {
             Image(
-                painter = painterRes("ic_share"),
+                painter = painterRes(DrawableResources.IC_SHARE),
                 contentDescription = stringRes().MESSAGE_SHARE_BUTTON
             )
         }

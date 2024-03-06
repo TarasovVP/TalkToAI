@@ -31,6 +31,7 @@ import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.presentation.theme.Neutral600
 import com.vnstudio.talktoai.presentation.theme.Primary500
 import com.vnstudio.talktoai.presentation.theme.Primary900
+import com.vnstudio.talktoai.resources.DrawableResources
 import com.vnstudio.talktoai.resources.LocalDefaultTextSize
 
 @Composable
@@ -109,7 +110,7 @@ fun PasswordTextField(inputValue: MutableState<TextFieldValue>, placeHolder: Str
                 onClick = { passwordVisible.value = passwordVisible.value.not() }
             ) {
                 Icon(
-                    painter = painterRes(if (passwordVisible.value) "ic_toggle_password_enabled" else "ic_toggle_password_disabled"),
+                    painter = painterRes(if (passwordVisible.value) DrawableResources.IC_TOGGLE_PASSWORD_ENABLED else DrawableResources.IC_TOGGLE_PASSWORD_DISABLED),
                     contentDescription = stringRes().AUTHORIZATION_PASSWORD
                 )
             }
@@ -163,7 +164,7 @@ fun TextFieldWithButton(
                 inputValue.value = TextFieldValue(String.EMPTY)
             }) {
                 Icon(
-                    painter = painterRes("ic_message_send"),
+                    painter = painterRes(DrawableResources.IC_MESSAGE_SEND),
                     contentDescription = stringRes().MESSAGE_SEND_BUTTON,
                     tint = if (isEnabled) Primary900 else Neutral600
                 )

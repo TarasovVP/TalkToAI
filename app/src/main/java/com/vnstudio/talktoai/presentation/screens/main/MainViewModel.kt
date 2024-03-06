@@ -119,7 +119,6 @@ class MainViewModel(
                 hideProgress()
 
             }.collect { chats ->
-                Log.e("AppDrawerTAG", "getChats chats.size ${chats.size}")
                 _chatsList.value = chats
                 hideProgress()
             }

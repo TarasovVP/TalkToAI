@@ -29,6 +29,7 @@ import com.vnstudio.talktoai.presentation.theme.Primary300
 import com.vnstudio.talktoai.presentation.theme.Primary400
 import com.vnstudio.talktoai.presentation.theme.Primary500
 import com.vnstudio.talktoai.presentation.theme.Primary700
+import com.vnstudio.talktoai.resources.DrawableResources
 
 @Composable
 fun PrimaryButton(
@@ -102,7 +103,7 @@ fun GoogleButton(title: String, modifier: Modifier, onClick: () -> Unit) {
             onClick.invoke()
         }) {
         Image(
-            painter = painterRes("ic_logo_google"),
+            painter = painterRes(DrawableResources.IC_LOGO_GOOGLE),
             contentDescription = stringRes().AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
             modifier = Modifier
                 .padding(top = 8.dp, start = 16.dp, bottom = 8.dp)

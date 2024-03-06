@@ -25,6 +25,7 @@ import com.vnstudio.talktoai.presentation.components.painterRes
 import com.vnstudio.talktoai.presentation.components.stringRes
 import com.vnstudio.talktoai.presentation.theme.Neutral50
 import com.vnstudio.talktoai.presentation.theme.Primary500
+import com.vnstudio.talktoai.resources.DrawableResources
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -79,7 +80,7 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
             )
         }
         Image(
-            painter = painterRes("onboarding_intro"),
+            painter = painterRes(DrawableResources.ONBOARDING_INTRO),
             contentDescription = stringRes().ONBOARDING_ICON,
             modifier = Modifier
                 .fillMaxWidth()
@@ -89,10 +90,10 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
         Image(
             painter = painterRes(
                 when (page) {
-                    1 -> "ic_tab_two"
-                    2 -> "ic_tab_three"
-                    3 -> "ic_tab_four"
-                    else -> "ic_tab_one"
+                    1 -> DrawableResources.IC_TAB_TWO
+                    2 -> DrawableResources.IC_TAB_THREE
+                    3 -> DrawableResources.IC_TAB_FOUR
+                    else -> DrawableResources.IC_TAB_ONE
                 }
             ), contentDescription = "${stringRes().ONBOARDING_SCREEN} $page", modifier = Modifier
                 .fillMaxWidth()
