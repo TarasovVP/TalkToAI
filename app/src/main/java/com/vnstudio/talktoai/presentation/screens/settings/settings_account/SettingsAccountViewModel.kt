@@ -1,7 +1,6 @@
 package com.vnstudio.talktoai.presentation.screens.settings.settings_account
 
 import android.app.Application
-import androidx.datastore.preferences.core.Preferences
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.AuthCredential
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
@@ -95,7 +94,7 @@ class SettingsAccountViewModel(
         }
     }
 
-    fun clearDataByKeys(keys: List<Preferences.Key<*>>) {
+    fun clearDataByKeys(keys: List<String>) {
         launch {
             settingsAccountUseCase.clearDataByKeys(keys)
         }

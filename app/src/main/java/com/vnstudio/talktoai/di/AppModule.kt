@@ -1,14 +1,13 @@
 package com.vnstudio.talktoai.di
 
+import android.content.Context
 import android.util.Log
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStoreFile
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.SharedPreferencesSettings
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.vnstudio.talktoai.AppDatabase
 import com.vnstudio.talktoai.BuildConfig
@@ -16,6 +15,7 @@ import com.vnstudio.talktoai.data.database.dao.ChatDao
 import com.vnstudio.talktoai.data.database.dao.ChatDaoImpl
 import com.vnstudio.talktoai.data.database.dao.MessageDao
 import com.vnstudio.talktoai.data.database.dao.MessageDaoImpl
+import com.vnstudio.talktoai.data.local.PreferenceManager
 import com.vnstudio.talktoai.data.network.ApiService
 import com.vnstudio.talktoai.data.repositoryimpls.AuthRepositoryImpl
 import com.vnstudio.talktoai.data.repositoryimpls.ChatRepositoryImpl
@@ -61,8 +61,8 @@ import com.vnstudio.talktoai.presentation.screens.settings.settings_language.Set
 import com.vnstudio.talktoai.presentation.screens.settings.settings_language.SettingsLanguageViewModel
 import com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyViewModel
-import com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpViewModel
 import com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpUseCaseImpl
+import com.vnstudio.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpViewModel
 import com.vnstudio.talktoai.presentation.screens.settings.settings_theme.SettingsThemeUseCaseImpl
 import com.vnstudio.talktoai.presentation.screens.settings.settings_theme.SettingsThemeViewModel
 import io.ktor.client.HttpClient
@@ -80,11 +80,15 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
-    single<DataStore<Preferences>> {
-        PreferenceDataStoreFactory.create(produceFile = {
-            androidContext().preferencesDataStoreFile(androidContext().packageName)
-        })
+    single<Settings> {
+        SharedPreferencesSettings(
+            androidContext().getSharedPreferences(
+                androidContext().packageName,
+                Context.MODE_PRIVATE
+            )
+        )
     }
+    single { PreferenceManager(get()) }
     single<DataStoreRepository> { DataStoreRepositoryImpl(get()) }
     single { BuildConfig.BASE_URL }
     single { ApiService(get<String>(), get()) }

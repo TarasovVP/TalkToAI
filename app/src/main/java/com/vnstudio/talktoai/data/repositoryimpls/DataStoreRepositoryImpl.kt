@@ -1,79 +1,49 @@
 package com.vnstudio.talktoai.data.repositoryimpls
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
+import com.vnstudio.talktoai.data.local.PreferenceManager
 import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
 import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG
 import com.vnstudio.talktoai.infrastructure.Constants.APP_THEME
 import com.vnstudio.talktoai.infrastructure.Constants.ON_BOARDING_SEEN
 import com.vnstudio.talktoai.infrastructure.Constants.REVIEW_VOTE
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.take
 
-class DataStoreRepositoryImpl(private val dataStore: DataStore<Preferences>) : DataStoreRepository {
+class DataStoreRepositoryImpl(private val preferenceManager: PreferenceManager) :
+    DataStoreRepository {
 
     override suspend fun setOnBoardingSeen(isOnBoardingSeen: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[booleanPreferencesKey(ON_BOARDING_SEEN)] = isOnBoardingSeen
-        }
+        preferenceManager.setBoolean(ON_BOARDING_SEEN, isOnBoardingSeen)
     }
 
     override suspend fun onBoardingSeen(): Flow<Boolean?> {
-        return dataStore.data
-            .map { preferences ->
-                preferences[booleanPreferencesKey(ON_BOARDING_SEEN)]
-            }.take(1)
+        return preferenceManager.getBoolean(ON_BOARDING_SEEN)
     }
 
     override suspend fun setAppLang(appLang: String) {
-        dataStore.edit { preferences ->
-            preferences[stringPreferencesKey(APP_LANG)] = appLang
-        }
+        preferenceManager.setString(APP_LANG, appLang)
     }
 
     override suspend fun getAppLang(): Flow<String?> {
-        return dataStore.data
-            .map { preferences ->
-                preferences[stringPreferencesKey(APP_LANG)]
-            }.take(1)
+        return preferenceManager.getString(APP_LANG)
     }
 
     override suspend fun setAppTheme(appTheme: Int) {
-        dataStore.edit { preferences ->
-            preferences[intPreferencesKey(APP_THEME)] = appTheme
-        }
+        preferenceManager.setInt(APP_THEME, appTheme)
     }
 
     override suspend fun getAppTheme(): Flow<Int?> {
-        return dataStore.data
-            .map { preferences ->
-                preferences[intPreferencesKey(APP_THEME)]
-            }.take(1)
+        return preferenceManager.getInt(APP_THEME)
     }
 
     override suspend fun setReviewVoted(isReviewVoted: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[booleanPreferencesKey(REVIEW_VOTE)] = isReviewVoted
-        }
+        preferenceManager.setBoolean(REVIEW_VOTE, isReviewVoted)
     }
 
     override suspend fun reviewVoted(): Flow<Boolean?> {
-        return dataStore.data
-            .map { preferences ->
-                preferences[booleanPreferencesKey(REVIEW_VOTE)]
-            }.take(1)
+        return preferenceManager.getBoolean(REVIEW_VOTE)
     }
 
-    override suspend fun clearDataByKeys(keys: List<Preferences.Key<*>>) {
-        dataStore.edit { preferences ->
-            keys.forEach { key ->
-                preferences.remove(key)
-            }
-        }
+    override suspend fun clearDataByKeys(keys: List<String>) {
+        preferenceManager.clearPreferences(keys)
     }
 }

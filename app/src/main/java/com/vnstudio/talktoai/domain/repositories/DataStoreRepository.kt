@@ -1,6 +1,5 @@
 package com.vnstudio.talktoai.domain.repositories
 
-import androidx.datastore.preferences.core.Preferences
 import kotlinx.coroutines.flow.Flow
 
 interface DataStoreRepository {
@@ -21,5 +20,5 @@ interface DataStoreRepository {
 
     suspend fun reviewVoted(): Flow<Boolean?>
 
-    suspend fun clearDataByKeys(keys: List<Preferences.Key<*>>)
+    suspend fun clearDataByKeys(keys: List<String>)
 }
