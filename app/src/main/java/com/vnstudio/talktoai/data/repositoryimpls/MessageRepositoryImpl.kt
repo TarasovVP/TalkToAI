@@ -42,4 +42,6 @@ class MessageRepositoryImpl(
         val httpResponse = apiService.sendRequest(apiRequest)
         emit(httpResponse.handleResponse<ApiResponse>())
     }.flowOn(Dispatchers.IO)
+
+    override suspend fun clearMessages() = messageDao.clearMessages()
 }

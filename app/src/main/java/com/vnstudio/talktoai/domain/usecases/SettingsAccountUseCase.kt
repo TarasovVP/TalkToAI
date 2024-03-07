@@ -22,4 +22,6 @@ interface SettingsAccountUseCase {
     fun deleteUser(result: (Result<Unit>) -> Unit)
 
     suspend fun clearDataByKeys(keys: List<String>)
+
+    suspend fun clearDataInDB()
 }

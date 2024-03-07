@@ -2,7 +2,9 @@ package com.vnstudio.talktoai.presentation.screens.settings.settings_account
 
 import com.google.firebase.auth.AuthCredential
 import com.vnstudio.talktoai.domain.repositories.AuthRepository
+import com.vnstudio.talktoai.domain.repositories.ChatRepository
 import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
+import com.vnstudio.talktoai.domain.repositories.MessageRepository
 import com.vnstudio.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsAccountUseCase
@@ -12,6 +14,8 @@ class SettingsAccountUseCaseImpl(
     private val authRepository: AuthRepository,
     private val realDataBaseRepository: RealDataBaseRepository,
     private val dataStoreRepository: DataStoreRepository,
+    private val chatRepository: ChatRepository,
+    private val messageRepository: MessageRepository
 ) : SettingsAccountUseCase {
 
     override fun isLoggedInUser() = authRepository.isLoggedInUser()
@@ -46,4 +50,9 @@ class SettingsAccountUseCaseImpl(
 
     override suspend fun clearDataByKeys(keys: List<String>) =
         dataStoreRepository.clearDataByKeys(keys)
+
+    override suspend fun clearDataInDB() {
+        chatRepository.clearChats()
+        messageRepository.clearMessages()
+    }
 }

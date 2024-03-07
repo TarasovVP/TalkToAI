@@ -22,4 +22,6 @@ interface ChatDao {
     fun updateChats(chats: List<Chat>)
 
     fun deleteChat(chat: Chat)
+
+    fun clearChats()
 }
