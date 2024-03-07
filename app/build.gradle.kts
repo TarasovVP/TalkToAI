@@ -135,8 +135,9 @@ dependencies {
     //Lottie
     implementation("com.airbnb.android:lottie-compose:4.0.0")
 
-    //DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    //Multiplatform Settings
+    implementation("com.russhwolf:multiplatform-settings-no-arg:1.1.1")
+    implementation("com.russhwolf:multiplatform-settings-coroutines:1.1.1")
 
     //DateTime
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")

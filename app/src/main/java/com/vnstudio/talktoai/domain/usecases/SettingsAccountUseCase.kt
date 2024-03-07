@@ -1,6 +1,5 @@
 package com.vnstudio.talktoai.domain.usecases
 
-import androidx.datastore.preferences.core.Preferences
 import com.google.firebase.auth.AuthCredential
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 
@@ -22,5 +21,5 @@ interface SettingsAccountUseCase {
 
     fun deleteUser(result: (Result<Unit>) -> Unit)
 
-    suspend fun clearDataByKeys(keys: List<Preferences.Key<*>>)
+    suspend fun clearDataByKeys(keys: List<String>)
 }

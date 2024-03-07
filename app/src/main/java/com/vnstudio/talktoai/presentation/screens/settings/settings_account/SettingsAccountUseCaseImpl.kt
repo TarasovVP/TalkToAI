@@ -1,6 +1,5 @@
 package com.vnstudio.talktoai.presentation.screens.settings.settings_account
 
-import androidx.datastore.preferences.core.Preferences
 import com.google.firebase.auth.AuthCredential
 import com.vnstudio.talktoai.domain.repositories.AuthRepository
 import com.vnstudio.talktoai.domain.repositories.DataStoreRepository
@@ -45,6 +44,6 @@ class SettingsAccountUseCaseImpl(
             authRepository.deleteUser(result)
         }
 
-    override suspend fun clearDataByKeys(keys: List<Preferences.Key<*>>) =
+    override suspend fun clearDataByKeys(keys: List<String>) =
         dataStoreRepository.clearDataByKeys(keys)
 }

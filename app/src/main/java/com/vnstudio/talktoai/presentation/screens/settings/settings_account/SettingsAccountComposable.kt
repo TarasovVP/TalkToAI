@@ -37,6 +37,8 @@ import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.models.InfoMessage
 import com.vnstudio.talktoai.domain.models.ScreenState
 import com.vnstudio.talktoai.domain.sealed_classes.NavigationScreen
+import com.vnstudio.talktoai.infrastructure.Constants
+import com.vnstudio.talktoai.infrastructure.Constants.REVIEW_VOTE
 import com.vnstudio.talktoai.presentation.components.ConfirmationDialog
 import com.vnstudio.talktoai.presentation.components.DataEditDialog
 import com.vnstudio.talktoai.presentation.components.EmptyState
@@ -87,7 +89,7 @@ fun SettingsAccountContent(
     val successState = viewModel.successLiveData.collectAsState()
     LaunchedEffect(successState.value) {
         if (successState.value) {
-            viewModel.clearDataByKeys(listOf())
+            viewModel.clearDataByKeys(listOf(REVIEW_VOTE))
             viewModel.clearDataBase()
             screenState.currentScreenState.value = NavigationScreen.LoginScreen().route
         }
