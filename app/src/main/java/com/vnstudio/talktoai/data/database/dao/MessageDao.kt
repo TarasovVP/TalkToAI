@@ -18,4 +18,6 @@ interface MessageDao {
     fun deleteMessage(id: Long)
 
     fun deleteMessages(messageIds: List<Long>)
+
+    fun clearMessages()
 }

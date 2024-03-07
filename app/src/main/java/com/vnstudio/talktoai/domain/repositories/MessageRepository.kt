@@ -25,4 +25,6 @@ interface MessageRepository {
     suspend fun updateMessages(messages: List<Message>)
 
     suspend fun sendRequest(apiRequest: ApiRequest): Flow<Result<ApiResponse>>
+
+    suspend fun clearMessages()
 }

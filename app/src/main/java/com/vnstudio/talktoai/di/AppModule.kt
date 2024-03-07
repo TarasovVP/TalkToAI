@@ -211,7 +211,9 @@ val appModule = module {
         SettingsAccountUseCaseImpl(
             authRepository = get(),
             dataStoreRepository = get(),
-            realDataBaseRepository = get()
+            realDataBaseRepository = get(),
+            chatRepository = get(),
+            messageRepository = get()
         )
     }
     single<SettingsSignUpUseCase> {

@@ -26,4 +26,6 @@ class ChatRepositoryImpl(private val chatDao: ChatDao) : ChatRepository {
         chatDao.deleteChats(chats.map { it.id })
         chatDao.insertChats(chats)
     }
+
+    override suspend fun clearChats() = chatDao.clearChats()
 }

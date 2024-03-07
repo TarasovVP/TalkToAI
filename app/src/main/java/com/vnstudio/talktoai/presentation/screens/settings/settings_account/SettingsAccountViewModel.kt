@@ -4,7 +4,6 @@ import android.app.Application
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.AuthCredential
 import com.vnstudio.talktoai.CommonExtensions.isNetworkAvailable
-
 import com.vnstudio.talktoai.domain.enums.AuthState
 import com.vnstudio.talktoai.domain.sealed_classes.Result
 import com.vnstudio.talktoai.domain.usecases.SettingsAccountUseCase
@@ -101,7 +100,8 @@ class SettingsAccountViewModel(
     }
 
     fun clearDataBase() {
-        //TODO implement with sqlDelight
-        //AppDatabase.getDatabase(application).clearAllTables()
+        launch {
+            settingsAccountUseCase.clearDataInDB()
+        }
     }
 }

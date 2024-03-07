@@ -5,6 +5,9 @@ CREATE TABLE Chat (
     listOrder INTEGER NOT NULL
 );
 
+clearChatTable:
+DELETE FROM Chat;
+
 insertChats:
 INSERT OR REPLACE INTO Chat (id, name, updated, listOrder)
 VALUES (?, ?, ?, ?);
@@ -47,6 +50,9 @@ CREATE TABLE Message (
     truncated INTEGER,
     FOREIGN KEY (chatId) REFERENCES Chat(id)
 );
+
+clearMessageTable:
+DELETE FROM Message;
 
 insertMessages:
 INSERT OR REPLACE INTO Message (id, chatId, author, message, updatedAt, status, errorMessage, truncated)

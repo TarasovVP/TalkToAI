@@ -48,7 +48,11 @@ class MessageDaoImpl(private val appDatabaseQueries: AppDatabaseQueries): Messag
             }
         }
 
-        override fun getMessages(): Flow<List<Message>> {
+    override fun clearMessages() {
+        appDatabaseQueries.clearMessageTable()
+    }
+
+    override fun getMessages(): Flow<List<Message>> {
             return appDatabaseQueries.getMessages().asFlow().mapToList().map { messages ->
                 messages.map { message ->
                     Message(

@@ -104,4 +104,8 @@ class ChatDaoImpl(private val appDatabaseQueries: AppDatabaseQueries) : ChatDao 
     override fun deleteChat(chat: Chat) {
         appDatabaseQueries.deleteChat(chat.id)
     }
+
+    override fun clearChats() {
+        appDatabaseQueries.clearChatTable()
+    }
 }

@@ -20,4 +20,6 @@ interface ChatRepository {
     suspend fun deleteChat(chat: Chat)
 
     suspend fun updateChats(chats: List<Chat>)
+
+    suspend fun clearChats()
 }
