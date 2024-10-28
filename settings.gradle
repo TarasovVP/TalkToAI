@@ -14,3 +14,10 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Talk to AI"
 include ':app'
+
+include(":core")
+include(":composeUi")
+include(":composeApp")
+include(":composeWebApp")
+include(":server")
+include(":webApp")
