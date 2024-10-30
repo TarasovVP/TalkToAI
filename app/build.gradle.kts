@@ -1,13 +1,14 @@
 
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
-    id("kotlin-parcelize")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
-    id("kotlinx-serialization")
-    id("com.squareup.sqldelight")
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.sqlDelight)
+    //id("kotlin-parcelize")
+    //id("com.google.gms.google-services")
+    //id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -45,9 +46,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
     buildFeatures {
         compose = true
     }
@@ -62,8 +60,11 @@ android {
 }
 
 sqldelight {
-    database("AppDatabase") {
-        packageName = "com.vnstudio.talktoai"
+    databases {
+        create("AppDatabase") {
+            packageName.set("com.vnstudio.talktoai")
+            generateAsync.set(true)
+        }
     }
 }
 
