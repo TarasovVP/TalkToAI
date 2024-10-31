@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:app/src/main/java/com/vnstudio/talktoai/presentation/theme/Type.kt
 package com.vnstudio.talktoai.presentation.theme
-========
-package com.vnstudio.talktoai.ui.theme
->>>>>>>> 467a644 (Add firebase to project):app/src/main/java/com/vnstudio/talktoai/ui/theme/Type.kt
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
@@ -11,12 +7,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.vnstudio.talktoai.R
-<<<<<<<< HEAD:app/src/main/java/com/vnstudio/talktoai/presentation/theme/Type.kt
 
-========
->>>>>>>> 467a644 (Add firebase to project):app/src/main/java/com/vnstudio/talktoai/ui/theme/Type.kt
-
-// Set of Material typography styles to start with
 val Typography = Typography(
     body1 = TextStyle(
         fontFamily = FontFamily(

@@ -1,14 +1,12 @@
 package com.vnstudio.talktoai.presentation.ui_models
 
-import android.os.Parcelable
 import androidx.compose.runtime.mutableStateOf
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.domain.enums.MessageStatus
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
-import kotlinx.parcelize.IgnoredOnParcel
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
-@Parcelize
+@Serializable
 data class MessageUIModel(
     var id: Long = 0,
     var chatId: Long = DEFAULT_CHAT_ID,
@@ -18,7 +16,7 @@ data class MessageUIModel(
     var status: MessageStatus = MessageStatus.REQUESTING,
     var errorMessage: String = String.EMPTY,
     var isTruncated: Boolean = false
-) : Parcelable {
-    @IgnoredOnParcel
+) {
+
     var isCheckedToDelete = mutableStateOf(false)
 }

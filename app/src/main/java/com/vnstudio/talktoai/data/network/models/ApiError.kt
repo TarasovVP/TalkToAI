@@ -1,12 +1,11 @@
 package com.vnstudio.talktoai.data.network.models
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
-@Parcelize
+@Serializable
 data class ApiError(
     val message: String?,
     val type: String?,
     val param: String?,
     val code: String?
-) : Parcelable
+)

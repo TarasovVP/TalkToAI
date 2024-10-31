@@ -14,8 +14,8 @@ class TalkToAIApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        MobileAds.initialize(this)
-        FirebaseAnalytics.getInstance(this)
+        //MobileAds.initialize(this)
+        //FirebaseAnalytics.getInstance(this)
         registerForNetworkUpdates { isAvailable ->
             isNetworkAvailable = isAvailable
         }

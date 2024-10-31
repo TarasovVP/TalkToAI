@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:app/src/main/java/com/vnstudio/talktoai/presentation/theme/Color.kt
 package com.vnstudio.talktoai.presentation.theme
-========
-package com.vnstudio.talktoai.ui.theme
->>>>>>>> 467a644 (Add firebase to project):app/src/main/java/com/vnstudio/talktoai/ui/theme/Color.kt
 
 import androidx.compose.ui.graphics.Color
 

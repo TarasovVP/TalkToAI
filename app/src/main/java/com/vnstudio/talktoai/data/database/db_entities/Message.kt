@@ -1,11 +1,10 @@
 package com.vnstudio.talktoai.data.database.db_entities
 
-import android.os.Parcelable
 import com.vnstudio.talktoai.CommonExtensions.EMPTY
 import com.vnstudio.talktoai.domain.enums.MessageStatus
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
-@Parcelize
+@Serializable
 data class Message(
     var id: Long? = null,
     var chatId: Long? = null,
@@ -15,4 +14,4 @@ data class Message(
     var status: MessageStatus? = null,
     var errorMessage: String? = String.EMPTY,
     var truncated: Boolean = false
-) : Parcelable
+)
