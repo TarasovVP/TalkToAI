@@ -29,7 +29,6 @@ kotlin {
     jvm()
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":core"))
             implementation(compose.runtime)
             implementation(compose.ui)
             implementation(compose.foundation)
@@ -91,7 +90,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.vnteam.architecturetemplates.shared"
+    namespace = "com.vnteam.talktoai.shared"
     compileSdk = libs.versions.compileSdk.get().toInt()
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
     defaultConfig {
@@ -107,7 +106,7 @@ android {
 sqldelight {
     databases {
         create("AppDatabase") {
-            packageName.set("com.vnteam.architecturetemplates")
+            packageName.set("com.vnteam.talktoai")
             generateAsync.set(true)
             version = 2
         }

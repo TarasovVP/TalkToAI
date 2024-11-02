@@ -7,9 +7,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.vnteam.architecturetemplates.presentation.NavigationScreens
-import com.vnteam.architecturetemplates.presentation.resources.LocalStringResources
-import com.vnteam.architecturetemplates.presentation.states.screen.ScreenState
+import com.vnteam.talktoai.presentation.NavigationScreens
+import com.vnteam.talktoai.presentation.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.states.screen.ScreenState
 import presentation.create.CreateScreen
 import presentation.details.DetailsScreen
 import presentation.list.ListScreen

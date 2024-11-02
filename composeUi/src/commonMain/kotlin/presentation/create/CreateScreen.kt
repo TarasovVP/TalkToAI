@@ -7,14 +7,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import com.vnteam.architecturetemplates.data.generateUUID
-import com.vnteam.architecturetemplates.presentation.intents.CreateIntent
-import com.vnteam.architecturetemplates.presentation.resources.DrawableResources
-import com.vnteam.architecturetemplates.presentation.states.CreateViewState
-import com.vnteam.architecturetemplates.presentation.states.screen.ScreenState
-import com.vnteam.architecturetemplates.presentation.uimodels.DemoObjectUI
-import com.vnteam.architecturetemplates.presentation.uimodels.OwnerUI
-import com.vnteam.architecturetemplates.presentation.viewmodels.CreateViewModel
+import com.vnteam.talktoai.data.generateUUID
+import com.vnteam.talktoai.presentation.intents.CreateIntent
+import com.vnteam.talktoai.presentation.resources.DrawableResources
+import com.vnteam.talktoai.presentation.states.CreateViewState
+import com.vnteam.talktoai.presentation.states.screen.ScreenState
+import com.vnteam.talktoai.presentation.uimodels.DemoObjectUI
+import com.vnteam.talktoai.presentation.uimodels.OwnerUI
+import com.vnteam.talktoai.presentation.viewmodels.CreateViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.components.ChangeAvatarDialog
 

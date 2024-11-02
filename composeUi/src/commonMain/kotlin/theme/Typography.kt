@@ -5,10 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import com.vnteam.architecturetemplates.Res
-import com.vnteam.architecturetemplates.presentation.resources.default_text_size
-import com.vnteam.architecturetemplates.robotomono_italic
-import com.vnteam.architecturetemplates.robotomono_regular
+import com.vnteam.talktoai.Res
+import com.vnteam.talktoai.presentation.resources.default_text_size
+import com.vnteam.talktoai.robotomono_italic
+import com.vnteam.talktoai.robotomono_regular
 
 
 @Composable

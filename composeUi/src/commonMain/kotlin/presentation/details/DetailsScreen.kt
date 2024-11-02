@@ -4,10 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
-import com.vnteam.architecturetemplates.presentation.intents.DetailsIntent
-import com.vnteam.architecturetemplates.presentation.states.DetailsViewState
-import com.vnteam.architecturetemplates.presentation.states.screen.ScreenState
-import com.vnteam.architecturetemplates.presentation.viewmodels.DetailsViewModel
+import com.vnteam.talktoai.presentation.intents.DetailsIntent
+import com.vnteam.talktoai.presentation.states.DetailsViewState
+import com.vnteam.talktoai.presentation.states.screen.ScreenState
+import com.vnteam.talktoai.presentation.viewmodels.DetailsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

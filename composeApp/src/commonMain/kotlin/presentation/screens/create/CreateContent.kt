@@ -17,11 +17,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
-import com.vnteam.architecturetemplates.presentation.resources.LocalLargeAvatarSize
-import com.vnteam.architecturetemplates.presentation.resources.LocalDefaultPadding
-import com.vnteam.architecturetemplates.presentation.resources.LocalStringResources
-import com.vnteam.architecturetemplates.presentation.states.CreateViewState
-import com.vnteam.architecturetemplates.presentation.uimodels.DemoObjectUI
+import com.vnteam.talktoai.presentation.resources.LocalLargeAvatarSize
+import com.vnteam.talktoai.presentation.resources.LocalDefaultPadding
+import com.vnteam.talktoai.presentation.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.states.CreateViewState
+import com.vnteam.talktoai.presentation.uimodels.DemoObjectUI
 import presentation.components.AvatarImage
 import presentation.components.CommonTextField
 import presentation.components.HeaderText

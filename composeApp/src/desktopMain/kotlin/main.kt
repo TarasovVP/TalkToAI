@@ -1,8 +1,8 @@
 
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import com.vnteam.architecturetemplates.di_desktop.doInitKoin
-import com.vnteam.architecturetemplates.presentation.Constants.APP_NAME
+import com.vnteam.talktoai.di_desktop.doInitKoin
+import com.vnteam.talktoai.presentation.Constants.APP_NAME
 import org.koin.compose.koinInject
 import presentation.App
 

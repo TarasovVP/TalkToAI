@@ -1,21 +1,21 @@
 package presentation
 
 import androidx.compose.runtime.Composable
-import com.vnteam.architecturetemplates.Res
-import com.vnteam.architecturetemplates.ic_avatar_1
-import com.vnteam.architecturetemplates.ic_avatar_10
-import com.vnteam.architecturetemplates.ic_avatar_2
-import com.vnteam.architecturetemplates.ic_avatar_3
-import com.vnteam.architecturetemplates.ic_avatar_4
-import com.vnteam.architecturetemplates.ic_avatar_5
-import com.vnteam.architecturetemplates.ic_avatar_6
-import com.vnteam.architecturetemplates.ic_avatar_7
-import com.vnteam.architecturetemplates.ic_avatar_8
-import com.vnteam.architecturetemplates.ic_avatar_9
-import com.vnteam.architecturetemplates.ic_avatar_default
-import com.vnteam.architecturetemplates.ic_empty_state
-import com.vnteam.architecturetemplates.presentation.resources.DrawableResources
-import com.vnteam.architecturetemplates.presentation.resources.LocalStringResources
+import com.vnteam.talktoai.Res
+import com.vnteam.talktoai.ic_avatar_1
+import com.vnteam.talktoai.ic_avatar_10
+import com.vnteam.talktoai.ic_avatar_2
+import com.vnteam.talktoai.ic_avatar_3
+import com.vnteam.talktoai.ic_avatar_4
+import com.vnteam.talktoai.ic_avatar_5
+import com.vnteam.talktoai.ic_avatar_6
+import com.vnteam.talktoai.ic_avatar_7
+import com.vnteam.talktoai.ic_avatar_8
+import com.vnteam.talktoai.ic_avatar_9
+import com.vnteam.talktoai.ic_avatar_default
+import com.vnteam.talktoai.ic_empty_state
+import com.vnteam.talktoai.presentation.resources.DrawableResources
+import com.vnteam.talktoai.presentation.resources.LocalStringResources
 import org.jetbrains.compose.resources.DrawableResource
 
 @Composable
