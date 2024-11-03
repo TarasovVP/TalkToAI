@@ -11,7 +11,4 @@ val webModule = module {
     single {
         PreferencesFactory()
     }
-    single {
-        TextToSpeechHelper()
-    }
 }

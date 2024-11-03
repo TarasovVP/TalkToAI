@@ -2,8 +2,8 @@ package com.vnteam.talktoai.presentation.viewmodels
 
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.viewModelScope
+import com.vnteam.talktoai.domain.models.ScreenState
 import com.vnteam.talktoai.domain.usecase.AppUseCase
-import com.vnteam.talktoai.presentation.states.screen.ScreenState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 class AppViewModel(
     private val appUseCase: AppUseCase,
     screenState: MutableState<ScreenState>
-) : BaseViewModel(screenState) {
+) : BaseViewModel() {
 
     private val _isDarkTheme = MutableStateFlow<Boolean?>(null)
     val isDarkTheme: StateFlow<Boolean?> = _isDarkTheme.asStateFlow()
@@ -26,7 +26,7 @@ class AppViewModel(
     }
 
     private fun getIsDarkTheme() {
-        viewModelScope.launch(exceptionHandler) {
+        viewModelScope.launch {
             appUseCase.getIsDarkTheme().collect {
                 _isDarkTheme.value = it
             }
@@ -34,15 +34,15 @@ class AppViewModel(
     }
 
     fun setIsDarkTheme(isDarkTheme: Boolean) {
-        showProgress(true)
-        viewModelScope.launch(exceptionHandler) {
-            showProgress(false)
+        showProgress()
+        viewModelScope.launch {
+            hideProgress()
             appUseCase.setIsDarkTheme(isDarkTheme)
         }
     }
 
     private fun getLanguage() {
-        viewModelScope.launch(exceptionHandler) {
+        viewModelScope.launch {
             appUseCase.getLanguage().collect {
                 _language.value = it
             }
@@ -50,9 +50,9 @@ class AppViewModel(
     }
 
     fun setLanguage(language: String) {
-        showProgress(true)
-        viewModelScope.launch(exceptionHandler) {
-            showProgress(false)
+        showProgress()
+        viewModelScope.launch {
+            hideProgress()
             appUseCase.setLanguage(language)
         }
     }

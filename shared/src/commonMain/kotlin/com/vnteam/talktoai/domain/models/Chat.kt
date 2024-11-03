@@ -9,5 +9,5 @@ import kotlin.String
    val id: Long,
    val name: String,
    val updated: Long,
-   val listOrder: Long,
+   var listOrder: Long,
 )

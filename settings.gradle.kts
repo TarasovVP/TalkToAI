@@ -17,6 +17,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Talk_to_AI"
 //include(":app")
-include(":composeApp")
+//include(":composeApp")
 include(":shared")
-include(":composeUi")
+//include(":composeUi")

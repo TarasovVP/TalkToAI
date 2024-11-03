@@ -11,4 +11,12 @@ interface AppUseCase {
     suspend fun setLanguage(language: String)
 
     suspend fun getLanguage(): Flow<String?>
+
+    suspend fun setOnBoardingSeen(isOnBoardingSeen: Boolean)
+
+    suspend fun getIsBoardingSeen(): Flow<Boolean?>
+
+    suspend fun setReviewVoted(isReviewVoted: Boolean)
+
+    suspend fun reviewVoted(): Flow<Boolean?>
 }

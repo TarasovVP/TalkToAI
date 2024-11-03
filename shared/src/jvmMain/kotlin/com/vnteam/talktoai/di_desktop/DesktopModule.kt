@@ -11,7 +11,4 @@ val desktopModule = module {
     single {
         PreferencesFactory()
     }
-    single {
-        TextToSpeechHelper()
-    }
 }

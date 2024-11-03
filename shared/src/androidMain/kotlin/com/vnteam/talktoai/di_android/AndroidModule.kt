@@ -12,7 +12,4 @@ val androidModule = module {
     single {
         PreferencesFactory(androidContext())
     }
-    single {
-        TextToSpeechHelper(androidContext())
-    }
 }
