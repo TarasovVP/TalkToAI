@@ -79,7 +79,7 @@ fun LoginContent(
             viewModel.signInAuthWithGoogle(idToken)
         }
     }
-    val resetPasswordText = stringRes().AUTHORIZATION_PASSWORD_RESET_SUCCESS
+    val resetPasswordText = LocalStringResources.current.AUTHORIZATION_PASSWORD_RESET_SUCCESS
     val successPasswordResetState = viewModel.successPasswordResetLiveData.collectAsState()
     LaunchedEffect(successPasswordResetState.value) {
         if (successPasswordResetState.value.isTrue()) {
@@ -113,17 +113,17 @@ fun LoginContent(
     ) {
         Spacer(modifier = Modifier.height(40.dp))
         Text(
-            text = stringRes().AUTHORIZATION_ENTRANCE, modifier = Modifier
+            text = LocalStringResources.current.AUTHORIZATION_ENTRANCE, modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp), textAlign = TextAlign.Center
         )
         Text(
-            text = stringRes().AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
+            text = LocalStringResources.current.AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
         GoogleButton(
-            stringRes().AUTHORIZATION_ENTRANCE,
+            LocalStringResources.current.AUTHORIZATION_ENTRANCE,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
@@ -131,39 +131,39 @@ fun LoginContent(
             launcher.launch(viewModel.googleSignInClient.signInIntent)
         }
         OrDivider(modifier = Modifier)
-        PrimaryTextField(stringRes().AUTHORIZATION_EMAIL, emailInputValue)
-        PasswordTextField(passwordInputValue, stringRes().AUTHORIZATION_PASSWORD)
+        PrimaryTextField(LocalStringResources.current.AUTHORIZATION_EMAIL, emailInputValue)
+        PasswordTextField(passwordInputValue, LocalStringResources.current.AUTHORIZATION_PASSWORD)
         Row(
             modifier = Modifier.fillMaxWidth()
         )  {
-            LinkButton(text = stringRes().AUTHORIZATION_SIGN_UP, textAlign = TextAlign.Start, modifier = Modifier
+            LinkButton(text = LocalStringResources.current.AUTHORIZATION_SIGN_UP, textAlign = TextAlign.Start, modifier = Modifier
                 .wrapContentSize()
                 .padding(start = 16.dp)) {
                 screenState.currentScreenState.value = NavigationScreen.SignUpScreen().route
             }
             Spacer(modifier = Modifier.weight(0.5f))
-            LinkButton(text = stringRes().AUTHORIZATION_FORGOT_PASSWORD, textAlign = TextAlign.End, modifier = Modifier
+            LinkButton(text = LocalStringResources.current.AUTHORIZATION_FORGOT_PASSWORD, textAlign = TextAlign.End, modifier = Modifier
                 .wrapContentSize()
                 .padding(end = 16.dp)) {
                 showForgotPasswordDialog.value = true
             }
         }
         PrimaryButton(
-            text = stringRes().AUTHORIZATION_ENTER,
+            text = LocalStringResources.current.AUTHORIZATION_ENTER,
             emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
             modifier = Modifier
         ) {
             viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
         }
         OrDivider(modifier = Modifier)
-        SecondaryButton(text = stringRes().AUTHORIZATION_CONTINUE_WITHOUT_ACCOUNT, false, modifier = Modifier) {
+        SecondaryButton(text = LocalStringResources.current.AUTHORIZATION_CONTINUE_WITHOUT_ACCOUNT, false, modifier = Modifier) {
             showUnauthorizedEnterDialog.value = true
         }
     }
 
     DataEditDialog(
-        stringRes().AUTHORIZATION_FORGOT_PASSWORD_TITLE,
-        stringRes().AUTHORIZATION_EMAIL,
+        LocalStringResources.current.AUTHORIZATION_FORGOT_PASSWORD_TITLE,
+        LocalStringResources.current.AUTHORIZATION_EMAIL,
         emailInputValue,
         showForgotPasswordDialog,
         onDismiss = {
@@ -174,7 +174,7 @@ fun LoginContent(
     }
 
     ConfirmationDialog(
-        stringRes().AUTHORIZATION_ACCOUNT_NOT_EXIST,
+        LocalStringResources.current.AUTHORIZATION_ACCOUNT_NOT_EXIST,
         showAccountExistDialog,
         onDismiss = {
             showAccountExistDialog.value = false
@@ -184,7 +184,7 @@ fun LoginContent(
     }
 
     ConfirmationDialog(
-        stringRes().AUTHORIZATION_UNAUTHORIZED_ENTER,
+        LocalStringResources.current.AUTHORIZATION_UNAUTHORIZED_ENTER,
         showUnauthorizedEnterDialog,
         onDismiss = {
             showUnauthorizedEnterDialog.value = false

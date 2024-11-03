@@ -43,7 +43,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.vnteam.architecturetemplates.composeUi"
+    namespace = "com.vnteam.talktoai.composeUi"
     compileSdk = libs.versions.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
@@ -57,6 +57,6 @@ android {
 
 compose.resources {
     publicResClass = true
-    packageOfResClass = "com.vnteam.architecturetemplates"
+    packageOfResClass = "com.vnteam.talktoai"
     generateResClass = always
 }

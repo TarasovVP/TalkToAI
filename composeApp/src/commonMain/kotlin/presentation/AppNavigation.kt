@@ -8,14 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.vnteam.talktoai.presentation.NavigationScreens
-import com.vnteam.talktoai.presentation.resources.LocalStringResources
-import com.vnteam.talktoai.presentation.states.screen.ScreenState
-import presentation.create.CreateScreen
-import presentation.details.DetailsScreen
-import presentation.list.ListScreen
-import presentation.screens.create.CreateContent
-import presentation.screens.details.DetailsContent
-import presentation.screens.list.ListContent
+import resources.LocalStringResources
+import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 
 @Composable
 fun AppNavigation(navController: NavHostController, screenState: MutableState<ScreenState>) {
@@ -35,11 +29,7 @@ fun AppNavigation(navController: NavHostController, screenState: MutableState<Sc
                     }
                 )
             )
-            ListScreen(screenState, { demoObjectUI ->
-                navController.navigate("${NavigationScreens.DetailsScreen.route}${demoObjectUI.demoObjectId}/${demoObjectUI.name}")
-            }, { viewState, onItemClick ->
-                ListContent(viewState.value, onItemClick)
-            })
+
         }
         composable("${NavigationScreens.DetailsScreen.route}{demoObjectId}/{demoObjectName}", arguments = listOf(navArgument("demoObjectId") {
             type = NavType.StringType
@@ -66,9 +56,7 @@ fun AppNavigation(navController: NavHostController, screenState: MutableState<Sc
                     }
                 )
             )
-            DetailsScreen(demoObjectId, screenState) { viewState ->
-                DetailsContent(viewState)
-            }
+
         }
         composable("${NavigationScreens.CreateScreen.route}{demoObjectId}", arguments = listOf(navArgument("demoObjectId") {
             type = NavType.StringType
@@ -87,9 +75,7 @@ fun AppNavigation(navController: NavHostController, screenState: MutableState<Sc
                 floatingActionState = screenState.value.floatingActionState.copy(
                 floatingActionButtonVisible = false
             ))
-            CreateScreen(demoObjectId, screenState) { viewState, originDemoObject, onClick ->
-                CreateContent(viewState, originDemoObject, onClick)
-            }
+
         }
     }
 }

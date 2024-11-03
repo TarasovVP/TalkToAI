@@ -2,7 +2,7 @@ package com.vnteam.talktoai.presentation.viewmodels
 
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.viewModelScope
-import com.vnteam.talktoai.domain.models.ScreenState
+import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.domain.usecase.AppUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

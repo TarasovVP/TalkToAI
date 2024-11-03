@@ -2,9 +2,9 @@ package theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes
-import com.vnteam.talktoai.presentation.resources.default_padding
-import com.vnteam.talktoai.presentation.resources.medium_padding
-import com.vnteam.talktoai.presentation.resources.small_padding
+import resources.default_padding
+import resources.medium_padding
+import resources.small_padding
 
 val Shapes = Shapes(
     small = RoundedCornerShape(small_padding.size.value),

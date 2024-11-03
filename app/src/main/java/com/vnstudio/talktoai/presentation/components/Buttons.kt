@@ -86,8 +86,8 @@ fun SubmitButtons(
             .padding(8.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        SecondaryButton(text = stringRes().BUTTON_CANCEL, false, Modifier.weight(1f), onClick = onDismiss)
-        PrimaryButton(text = stringRes().BUTTON_OK, isEnabled, Modifier.weight(1f)) {
+        SecondaryButton(text = LocalStringResources.current.BUTTON_CANCEL, false, Modifier.weight(1f), onClick = onDismiss)
+        PrimaryButton(text = LocalStringResources.current.BUTTON_OK, isEnabled, Modifier.weight(1f)) {
             onConfirmationClick.invoke()
         }
     }
@@ -104,7 +104,7 @@ fun GoogleButton(title: String, modifier: Modifier, onClick: () -> Unit) {
         }) {
         Image(
             painter = painterRes(DrawableResources.IC_LOGO_GOOGLE),
-            contentDescription = stringRes().AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
+            contentDescription = LocalStringResources.current.AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
             modifier = Modifier
                 .padding(top = 8.dp, start = 16.dp, bottom = 8.dp)
         )
@@ -135,7 +135,7 @@ fun TextIconButton(text: String, icon: String, modifier: Modifier, onClick: () -
         ) {
             Image(
                 painter = painterRes(icon),
-                contentDescription = stringRes().CHAT_CREATE_BUTTON,
+                contentDescription = LocalStringResources.current.CHAT_CREATE_BUTTON,
                 modifier = Modifier
                     .padding(8.dp)
             )

@@ -128,12 +128,12 @@ fun SettingsSignUpContent(
     ) {
         Spacer(modifier = Modifier.height(40.dp))
         Text(
-            text = stringRes().AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
+            text = LocalStringResources.current.AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
         GoogleButton(
-            stringRes().AUTHORIZATION_SIGNING_UP,
+            LocalStringResources.current.AUTHORIZATION_SIGNING_UP,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
@@ -141,10 +141,10 @@ fun SettingsSignUpContent(
             launcher.launch(viewModel.googleSignInClient.signInIntent)
         }
         OrDivider(modifier = Modifier)
-        PrimaryTextField(stringRes().AUTHORIZATION_EMAIL, emailInputValue)
-        PasswordTextField(passwordInputValue, stringRes().AUTHORIZATION_PASSWORD)
+        PrimaryTextField(LocalStringResources.current.AUTHORIZATION_EMAIL, emailInputValue)
+        PasswordTextField(passwordInputValue, LocalStringResources.current.AUTHORIZATION_PASSWORD)
         PrimaryButton(
-            text = stringRes().AUTHORIZATION_SIGN_UP,
+            text = LocalStringResources.current.AUTHORIZATION_SIGN_UP,
             emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
             modifier = Modifier
         ) {
@@ -153,7 +153,7 @@ fun SettingsSignUpContent(
         TransferDataCard(transferDataState)
     }
     ConfirmationDialog(
-        stringRes().SETTINGS_ACCOUNT_EXIST,
+        LocalStringResources.current.SETTINGS_ACCOUNT_EXIST,
         showAccountExistDialog,
         onDismiss = {
             viewModel.googleSignInClient.signOut()
@@ -182,7 +182,7 @@ fun TransferDataCard(transferDataState: MutableState<Boolean>) {
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = stringRes().SETTINGS_ACCOUNT_TRANSFER_DATA_TITLE,
+                    text = LocalStringResources.current.SETTINGS_ACCOUNT_TRANSFER_DATA_TITLE,
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 8.dp)
@@ -198,7 +198,7 @@ fun TransferDataCard(transferDataState: MutableState<Boolean>) {
                     .background(Primary300)
             )
             Text(
-                text = if (transferDataState.value) stringRes().SETTINGS_ACCOUNT_TRANSFER_DATA_TURN_ON else stringRes().SETTINGS_ACCOUNT_TRANSFER_DATA_TURN_OFF,
+                text = if (transferDataState.value) LocalStringResources.current.SETTINGS_ACCOUNT_TRANSFER_DATA_TURN_ON else LocalStringResources.current.SETTINGS_ACCOUNT_TRANSFER_DATA_TURN_OFF,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)

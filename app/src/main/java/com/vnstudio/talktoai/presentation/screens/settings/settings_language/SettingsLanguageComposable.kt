@@ -57,7 +57,7 @@ fun SettingsLanguageContent(
         verticalArrangement = Arrangement.Top
     ) {
         SettingsLanguageItem(
-            stringRes().SETTINGS_LANGUAGE_ENGLISH,
+            LocalStringResources.current.SETTINGS_LANGUAGE_ENGLISH,
             APP_LANG_EN == appLanguageState.value,
             DrawableResources.IC_FLAG_EN
         ) {
@@ -65,7 +65,7 @@ fun SettingsLanguageContent(
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(APP_LANG_EN))
         }
         SettingsLanguageItem(
-            stringRes().SETTINGS_LANGUAGE_UKRAINIAN,
+            LocalStringResources.current.SETTINGS_LANGUAGE_UKRAINIAN,
             APP_LANG_UK == appLanguageState.value,
             DrawableResources.IC_FLAG_UA
         ) {
@@ -73,7 +73,7 @@ fun SettingsLanguageContent(
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(APP_LANG_UK))
         }
         SettingsLanguageItem(
-            stringRes().SETTINGS_LANGUAGE_RUSSIAN,
+            LocalStringResources.current.SETTINGS_LANGUAGE_RUSSIAN,
             APP_LANG_RU == appLanguageState.value,
             DrawableResources.IC_FLAG_RU
         ) {
@@ -106,7 +106,7 @@ fun SettingsLanguageItem(name: String, isChecked: Boolean, icon: String, onLangu
             Text(text = name, modifier = Modifier.weight(1f))
             Image(
                 painter = painterRes(icon),
-                contentDescription = "${stringRes().SETTINGS_LANGUAGE} $name"
+                contentDescription = "${LocalStringResources.current.SETTINGS_LANGUAGE} $name"
             )
         }
     }

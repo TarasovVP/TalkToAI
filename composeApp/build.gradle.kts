@@ -104,14 +104,14 @@ kotlin {
 }
 
 android {
-    namespace = "com.vnteam.architecturetemplates"
+    namespace = "com.vnteam.talktoai"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
 
     defaultConfig {
-        applicationId = "com.vnteam.architecturetemplates"
+        applicationId = "com.vnteam.talktoai"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
@@ -150,7 +150,7 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.vnteam.architecturetemplates"
+            packageName = "com.vnteam.talktoai"
             packageVersion = "1.0.0"
         }
     }

@@ -48,21 +48,21 @@ fun SettingsThemeContent(screenState: ScreenState) {
         verticalArrangement = Arrangement.Top
     ) {
         SettingsThemeItem(
-            stringRes().SETTINGS_THEME_DAY,
+            LocalStringResources.current.SETTINGS_THEME_DAY,
             AppCompatDelegate.MODE_NIGHT_NO == appThemeState.value
         ) {
             viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_NO)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
         SettingsThemeItem(
-            stringRes().SETTINGS_THEME_NIGHT,
+            LocalStringResources.current.SETTINGS_THEME_NIGHT,
             AppCompatDelegate.MODE_NIGHT_YES == appThemeState.value
         ) {
             viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_YES)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
         SettingsThemeItem(
-            stringRes().SETTINGS_THEME_AUTO,
+            LocalStringResources.current.SETTINGS_THEME_AUTO,
             AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM == appThemeState.value
         ) {
             viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)

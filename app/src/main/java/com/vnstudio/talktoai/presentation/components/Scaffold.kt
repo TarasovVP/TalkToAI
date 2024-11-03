@@ -63,7 +63,7 @@ fun PrimaryTopBar(
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
                     painter = painterRes(DrawableResources.IC_NAVIGATION),
-                    contentDescription = stringRes().NAVIGATION_ICON,
+                    contentDescription = LocalStringResources.current.NAVIGATION_ICON,
                     tint = Primary100
                 )
             }
@@ -75,7 +75,7 @@ fun PrimaryTopBar(
                 ) {
                     Icon(
                         painter = painterRes(DrawableResources.IC_EDIT),
-                        contentDescription = stringRes().CHAT_EDIT_BUTTON,
+                        contentDescription = LocalStringResources.current.CHAT_EDIT_BUTTON,
                         tint = Primary100
                     )
                 }
@@ -94,7 +94,7 @@ fun SecondaryTopBar(title: String, onNavigationIconClick: () -> Unit) {
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
                     painter = painterRes(DrawableResources.IC_ARROW_BACK),
-                    contentDescription = stringRes().NAVIGATION_ICON
+                    contentDescription = LocalStringResources.current.NAVIGATION_ICON
                 )
             }
         })
@@ -141,7 +141,7 @@ fun AppDrawer(
             ) {
                 settingScreens.forEach { settingsScreen ->
                     DrawerItem(
-                        name = settingsScreenNameByRoute(settingsScreen.route, stringRes()),
+                        name = settingsScreenNameByRoute(settingsScreen.route, LocalStringResources.current),
                         mainIcon = settingsScreen.icon,
                         isCurrent = currentRouteState == settingsScreen.route,
                         secondaryIcon = if (settingsScreen.route == NavigationScreen.SettingsLanguageScreen().route) LocalConfiguration.current.locales.flagDrawable() else null
@@ -154,7 +154,7 @@ fun AppDrawer(
             if (chats.value.isNullOrEmpty()) {
                 Image(
                     painter = painterRes(DrawableResources.EMPTY_STATE),
-                    contentDescription = stringRes().CHAT_EMPTY_STATE,
+                    contentDescription = LocalStringResources.current.CHAT_EMPTY_STATE,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
@@ -184,7 +184,7 @@ fun AppDrawer(
                 }
             }
             TextIconButton(
-                stringRes().NEW_CHAT,
+                LocalStringResources.current.NEW_CHAT,
                 DrawableResources.IC_CHAT_ADD,
                 Modifier.padding(bottom = 40.dp, start = 16.dp, end = 16.dp),
                 onCreateChatClick
@@ -203,13 +203,13 @@ fun DrawerHeader(isSettingsDrawerMode: Boolean, onDrawerModeClick: (Boolean) -> 
         Column(modifier = Modifier.weight(1f)) {
             Image(
                 painter = painterRes(if (isSettingsDrawerMode) DrawableResources.IC_SETTINGS else DrawableResources.AVATAR_AI),
-                contentDescription = stringRes().SETTINGS,
+                contentDescription = LocalStringResources.current.SETTINGS,
                 modifier = Modifier
                     .padding(start = 16.dp, top = 16.dp)
                     .size(60.dp)
             )
             Text(
-                text = if (isSettingsDrawerMode) stringRes().SETTINGS else stringRes().APP_NAME,
+                text = if (isSettingsDrawerMode) LocalStringResources.current.SETTINGS else LocalStringResources.current.APP_NAME,
                 fontSize = 16.sp,
                 color = Neutral50,
                 modifier = Modifier
@@ -221,7 +221,7 @@ fun DrawerHeader(isSettingsDrawerMode: Boolean, onDrawerModeClick: (Boolean) -> 
         }) {
             Image(
                 painter = painterRes(if (isSettingsDrawerMode) DrawableResources.IC_CHAT else DrawableResources.IC_SETTINGS),
-                contentDescription = stringRes().NAVIGATION_ICON,
+                contentDescription = LocalStringResources.current.NAVIGATION_ICON,
                 modifier = Modifier
                     .padding(end = 16.dp, top = 16.dp)
                     .size(24.dp)

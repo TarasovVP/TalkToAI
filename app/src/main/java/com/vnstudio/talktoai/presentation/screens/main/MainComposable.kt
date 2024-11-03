@@ -133,11 +133,11 @@ fun AppContent() {
         scaffoldState = scaffoldState,
         topBar = {
             when {
-                isMessageActionModeState.value.isTrue() -> DeleteModeTopBar(stringRes().MESSAGE_ACTION_SELECTED)
+                isMessageActionModeState.value.isTrue() -> DeleteModeTopBar(LocalStringResources.current.MESSAGE_ACTION_SELECTED)
                 appNavigator.value?.getCurrentScreenRoute() == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
                     settingsScreenNameByRoute(
                         appNavigator.value?.getCurrentScreenRoute(),
-                        stringRes()
+                        LocalStringResources.current
                     )
                 ) {
                     appNavigator.value?.pop()
@@ -150,9 +150,9 @@ fun AppContent() {
                             isMessageActionModeState = isMessageActionModeState
                         ).route
                     ) currentChatState.value?.name
-                        ?: stringRes().APP_NAME else settingsScreenNameByRoute(
+                        ?: LocalStringResources.current.APP_NAME else settingsScreenNameByRoute(
                         appNavigator.value?.getCurrentScreenRoute(),
-                        stringRes()
+                        LocalStringResources.current
                     ),
                     onNavigationIconClick = {
                         scope.launch {
@@ -267,8 +267,8 @@ fun AppContent() {
                 )
 
                 DataEditDialog(
-                    stringRes().CHAT_CREATE_TITLE,
-                    stringRes().CHAT_NAME,
+                    LocalStringResources.current.CHAT_CREATE_TITLE,
+                    LocalStringResources.current.CHAT_NAME,
                     remember {
                         mutableStateOf(TextFieldValue())
                     },
@@ -292,8 +292,8 @@ fun AppContent() {
                 }
 
                 DataEditDialog(
-                    stringRes().CHAT_RENAME_TITLE,
-                    stringRes().CHAT_NAME,
+                    LocalStringResources.current.CHAT_RENAME_TITLE,
+                    LocalStringResources.current.CHAT_NAME,
                     remember {
                         mutableStateOf(TextFieldValue(currentChatState.value?.name.orEmpty()))
                     },
@@ -308,7 +308,7 @@ fun AppContent() {
                 }
 
                 ConfirmationDialog(
-                    stringRes().CHAT_DELETE_TITLE,
+                    LocalStringResources.current.CHAT_DELETE_TITLE,
                     showDeleteChatDialog,
                     onDismiss = {
                         showDeleteChatDialog.value = false

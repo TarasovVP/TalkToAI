@@ -23,8 +23,8 @@ fun SettingsChatContent(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = stringRes().SETTINGS_CHAT)
-        PrimaryButton(text = stringRes().BUTTON_OK, modifier = Modifier, onClick = {})
+        Text(text = LocalStringResources.current.SETTINGS_CHAT)
+        PrimaryButton(text = LocalStringResources.current.BUTTON_OK, modifier = Modifier, onClick = {})
     }
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
 }

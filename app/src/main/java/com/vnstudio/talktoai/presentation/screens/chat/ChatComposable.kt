@@ -126,9 +126,9 @@ fun ChatContent(
     }
 
     val clipboardManager = LocalClipboardManager.current
-    val messageSent = stringRes().MESSAGE_ACTION_SEND
-    val messageCopy = stringRes().MESSAGE_ACTION_COPY
-    val messageShare = stringRes().MESSAGE_ACTION_SHARE
+    val messageSent = LocalStringResources.current.MESSAGE_ACTION_SEND
+    val messageCopy = LocalStringResources.current.MESSAGE_ACTION_COPY
+    val messageShare = LocalStringResources.current.MESSAGE_ACTION_SHARE
     val shareIntentLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
             screenState.infoMessageState.value = InfoMessage(messageSent)
@@ -246,12 +246,12 @@ fun ChatContent(
         }
     }
 
-    val messageDelete = stringRes().MESSAGE_ACTION_DELETE
-    val messageTransfer = stringRes().MESSAGE_ACTION_TRANSFER
+    val messageDelete = LocalStringResources.current.MESSAGE_ACTION_DELETE
+    val messageTransfer = LocalStringResources.current.MESSAGE_ACTION_TRANSFER
     ConfirmationDialog(
         title = when (messageActionState.value) {
-            MessageAction.Delete().value -> stringRes().MESSAGE_DELETE_CONFIRMATION
-            MessageAction.Transfer().value -> stringRes().MESSAGE_TRANSFER_CONFIRMATION
+            MessageAction.Delete().value -> LocalStringResources.current.MESSAGE_DELETE_CONFIRMATION
+            MessageAction.Transfer().value -> LocalStringResources.current.MESSAGE_TRANSFER_CONFIRMATION
             else -> String.EMPTY
         },
         showDialog = showMessageActionDialog,
@@ -316,7 +316,7 @@ fun MessagesList(
 ) {
     if (messages.isEmpty()) {
         EmptyState(
-            text = stringRes().MESSAGE_EMPTY_STATE,
+            text = LocalStringResources.current.MESSAGE_EMPTY_STATE,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(45.dp)
@@ -401,7 +401,7 @@ fun Message(
                         .data(if (message.isCheckedToDelete.value) R.drawable.ic_checked_check_box else R.drawable.ic_empty_check_box)
                         .crossfade(true)
                         .build(),
-                    contentDescription = stringRes().MESSAGE_DELETE_CONFIRMATION,
+                    contentDescription = LocalStringResources.current.MESSAGE_DELETE_CONFIRMATION,
                     contentScale = ContentScale.Inside,
                     modifier = Modifier
                         .padding(2.dp)
@@ -413,7 +413,7 @@ fun Message(
                         .data(painterRes(resId = "avatar_ai"))
                         .crossfade(true)
                         .build(),
-                    contentDescription = stringRes().AI_AVATAR,
+                    contentDescription = LocalStringResources.current.AI_AVATAR,
                     contentScale = ContentScale.Crop
                 )*/
             }
@@ -453,7 +453,7 @@ fun Message(
                         20,
                         message.updatedAt
                     ) -> Text(
-                        text = stringRes().UNKNOWN_ERROR,
+                        text = LocalStringResources.current.UNKNOWN_ERROR,
                         fontSize = 16.sp,
                         color = Color.Red,
                         modifier = Modifier
@@ -481,7 +481,7 @@ fun CreateChatScreen(onClick: () -> Unit) {
             .height(TextFieldDefaults.MinHeight)
     ) {
         TextIconButton(
-            stringRes().NEW_CHAT,
+            LocalStringResources.current.NEW_CHAT,
             DrawableResources.IC_CHAT_ADD,
             Modifier,
             onClick
@@ -499,25 +499,25 @@ fun MessageActionField(
             .height(TextFieldDefaults.MinHeight)
     ) {
         TextButton(onClick = { messageActionState.value = MessageAction.Cancel().value }) {
-            Text(text = stringRes().BUTTON_CANCEL, color = Neutral50)
+            Text(text = LocalStringResources.current.BUTTON_CANCEL, color = Neutral50)
         }
         Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = { messageActionState.value = MessageAction.Copy().value }) {
             Image(
                 painter = painterRes(DrawableResources.IC_COPY),
-                contentDescription = stringRes().MESSAGE_COPY_BUTTON
+                contentDescription = LocalStringResources.current.MESSAGE_COPY_BUTTON
             )
         }
         IconButton(onClick = { messageActionState.value = MessageAction.Delete().value }) {
             Image(
                 painter = painterRes(DrawableResources.IC_DELETE),
-                contentDescription = stringRes().MESSAGE_DELETE_BUTTON
+                contentDescription = LocalStringResources.current.MESSAGE_DELETE_BUTTON
             )
         }
         IconButton(onClick = { messageActionState.value = MessageAction.Share().value }) {
             Image(
                 painter = painterRes(DrawableResources.IC_SHARE),
-                contentDescription = stringRes().MESSAGE_SHARE_BUTTON
+                contentDescription = LocalStringResources.current.MESSAGE_SHARE_BUTTON
             )
         }
     }

@@ -36,7 +36,7 @@ fun SettingsFeedbackContent(
     val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }
 
     val successFeedbackState = viewModel.successFeedbackLiveData.collectAsState()
-    val feedbackSendSuccess = stringRes().SETTINGS_FEEDBACK_SEND_SUCCESS
+    val feedbackSendSuccess = LocalStringResources.current.SETTINGS_FEEDBACK_SEND_SUCCESS
     LaunchedEffect(successFeedbackState.value) {
         if (successFeedbackState.value) {
             screenState.infoMessageState.value = InfoMessage(message = feedbackSendSuccess)
@@ -48,7 +48,7 @@ fun SettingsFeedbackContent(
         verticalArrangement = Arrangement.Top
     ) {
         Text(
-            text = stringRes().SETTINGS_FEEDBACK_TITLE,
+            text = LocalStringResources.current.SETTINGS_FEEDBACK_TITLE,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -57,7 +57,7 @@ fun SettingsFeedbackContent(
         OutlinedTextField(
             value = inputValue.value,
             onValueChange = { inputValue.value = it },
-            placeholder = { Text(text = stringRes().SETTINGS_FEEDBACK_HINT) },
+            placeholder = { Text(text = LocalStringResources.current.SETTINGS_FEEDBACK_HINT) },
             colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
             modifier = Modifier
                 .fillMaxWidth()
@@ -66,7 +66,7 @@ fun SettingsFeedbackContent(
             minLines = 6
         )
         PrimaryButton(
-            text = stringRes().SETTINGS_FEEDBACK_SEND_BUTTON,
+            text = LocalStringResources.current.SETTINGS_FEEDBACK_SEND_BUTTON,
             isEnabled = inputValue.value.text.isNotEmpty(),
             modifier = Modifier
         ) {

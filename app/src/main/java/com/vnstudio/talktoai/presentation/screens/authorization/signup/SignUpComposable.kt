@@ -97,17 +97,17 @@ fun SignUpContent(
     ) {
         Spacer(modifier = Modifier.height(40.dp))
         Text(
-            text = stringRes().AUTHORIZATION_SIGN_UP, modifier = Modifier
+            text = LocalStringResources.current.AUTHORIZATION_SIGN_UP, modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp), textAlign = TextAlign.Center
         )
         Text(
-            text = stringRes().AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
+            text = LocalStringResources.current.AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
         GoogleButton(
-            stringRes().AUTHORIZATION_SIGNING_UP,
+            LocalStringResources.current.AUTHORIZATION_SIGNING_UP,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
@@ -116,16 +116,16 @@ fun SignUpContent(
         }
         OrDivider(modifier = Modifier)
         PrimaryTextField(
-            stringRes().AUTHORIZATION_EMAIL, emailInputValue)
-        PasswordTextField(passwordInputValue, stringRes().AUTHORIZATION_PASSWORD)
+            LocalStringResources.current.AUTHORIZATION_EMAIL, emailInputValue)
+        PasswordTextField(passwordInputValue, LocalStringResources.current.AUTHORIZATION_PASSWORD)
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = stringRes().AUTHORIZATION_ENTRANCE_TITLE, modifier = Modifier.padding(start = 16.dp))
-            LinkButton(text = stringRes().AUTHORIZATION_ENTRANCE, modifier = Modifier.wrapContentSize()) {
+            Text(text = LocalStringResources.current.AUTHORIZATION_ENTRANCE_TITLE, modifier = Modifier.padding(start = 16.dp))
+            LinkButton(text = LocalStringResources.current.AUTHORIZATION_ENTRANCE, modifier = Modifier.wrapContentSize()) {
                 screenState.currentScreenState.value = NavigationScreen.LoginScreen().route
             }
         }
         PrimaryButton(
-            text = stringRes().AUTHORIZATION_SIGNING_UP,
+            text = LocalStringResources.current.AUTHORIZATION_SIGNING_UP,
             emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
             modifier = Modifier
         ) {
@@ -133,7 +133,7 @@ fun SignUpContent(
         }
     }
     ConfirmationDialog(
-        stringRes().AUTHORIZATION_ACCOUNT_EXIST,
+        LocalStringResources.current.AUTHORIZATION_ACCOUNT_EXIST,
         showAccountExistDialog,
         onDismiss = {
             showAccountExistDialog.value = false

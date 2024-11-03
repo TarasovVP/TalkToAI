@@ -34,10 +34,10 @@ import com.vnteam.talktoai.data.APP_LANG_EN
 import com.vnteam.talktoai.data.APP_LANG_UK
 import com.vnteam.talktoai.ic_dark_mode
 import com.vnteam.talktoai.ic_light_mode
-import com.vnteam.talktoai.presentation.resources.LocalSmallPadding
-import com.vnteam.talktoai.presentation.resources.LocalStringResources
-import com.vnteam.talktoai.presentation.resources.getStringResourcesByLocale
-import com.vnteam.talktoai.presentation.states.screen.ScreenState
+import resources.LocalSmallPadding
+import resources.LocalStringResources
+import resources.getStringResourcesByLocale
+import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject

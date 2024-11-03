@@ -47,7 +47,7 @@ fun ExceptionMessageHandler(
     exceptionStateFlow: MutableStateFlow<String?>,
 ) {
     val exceptionState = exceptionStateFlow.collectAsState()
-    val stringRes = stringRes()
+    val stringRes = LocalStringResources.current
     LaunchedEffect(exceptionState.value) {
         exceptionState.value.takeIf { exceptionState.value.isNullOrEmpty().not() }?.let {
             messageState.value = InfoMessage(
@@ -85,7 +85,7 @@ fun OrDivider(modifier: Modifier) {
                 .align(Alignment.CenterVertically)
         )
         Text(
-            text = stringRes().AUTHORIZATION_OR,
+            text = LocalStringResources.current.AUTHORIZATION_OR,
             fontSize = 16.sp,
             modifier = Modifier
                 .weight(1f)
@@ -211,7 +211,7 @@ fun painterRes(resId: String): Painter {
 }
 
 @Composable
-fun stringRes(): StringResources {
+fun LocalStringResources.current: StringResources {
     return getStringResourcesByLocale(Locale.current.language)
 }
 

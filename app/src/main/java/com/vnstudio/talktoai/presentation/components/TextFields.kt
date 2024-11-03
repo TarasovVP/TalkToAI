@@ -111,7 +111,7 @@ fun PasswordTextField(inputValue: MutableState<TextFieldValue>, placeHolder: Str
             ) {
                 Icon(
                     painter = painterRes(if (passwordVisible.value) DrawableResources.IC_TOGGLE_PASSWORD_ENABLED else DrawableResources.IC_TOGGLE_PASSWORD_DISABLED),
-                    contentDescription = stringRes().AUTHORIZATION_PASSWORD
+                    contentDescription = LocalStringResources.current.AUTHORIZATION_PASSWORD
                 )
             }
         }
@@ -136,7 +136,7 @@ fun TextFieldWithButton(
     TextField(value = inputValue.value,
         onValueChange = { newValue ->
             inputValue.value = newValue
-        }, placeholder = { Text(text = stringRes().MESSAGE_ENTER_REQUEST) },
+        }, placeholder = { Text(text = LocalStringResources.current.MESSAGE_ENTER_REQUEST) },
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = Color.White,
             focusedIndicatorColor = Color.Transparent,
@@ -165,7 +165,7 @@ fun TextFieldWithButton(
             }) {
                 Icon(
                     painter = painterRes(DrawableResources.IC_MESSAGE_SEND),
-                    contentDescription = stringRes().MESSAGE_SEND_BUTTON,
+                    contentDescription = LocalStringResources.current.MESSAGE_SEND_BUTTON,
                     tint = if (isEnabled) Primary900 else Neutral600
                 )
             }
@@ -190,7 +190,7 @@ fun TruncatableText(
             overflow = TextOverflow.Ellipsis
         )
         if (linesCount > 2) {
-            Text(text = if (isTruncated.value) stringRes().MESSAGE_MORE else stringRes().MESSAGE_HIDE,
+            Text(text = if (isTruncated.value) LocalStringResources.current.MESSAGE_MORE else LocalStringResources.current.MESSAGE_HIDE,
                 color = Color.LightGray,
                 fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
                 fontSize = 12.sp,

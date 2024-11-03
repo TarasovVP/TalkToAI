@@ -11,7 +11,4 @@ val iosModule = module {
     single {
         PreferencesFactory()
     }
-    single {
-        TextToSpeechHelper()
-    }
 }

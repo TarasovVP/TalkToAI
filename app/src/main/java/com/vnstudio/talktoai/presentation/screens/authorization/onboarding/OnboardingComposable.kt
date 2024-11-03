@@ -67,10 +67,10 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
         ) {
             Text(
                 text = when (page) {
-                    1 -> stringRes().ONBOARDING_INTRO
-                    2 -> stringRes().ONBOARDING_FILTER_CONDITIONS
-                    3 -> stringRes().ONBOARDING_INFO
-                    else -> stringRes().ONBOARDING_PERMISSIONS
+                    1 -> LocalStringResources.current.ONBOARDING_INTRO
+                    2 -> LocalStringResources.current.ONBOARDING_FILTER_CONDITIONS
+                    3 -> LocalStringResources.current.ONBOARDING_INFO
+                    else -> LocalStringResources.current.ONBOARDING_PERMISSIONS
                 },
                 textAlign = TextAlign.Center,
                 color = Neutral50,
@@ -81,7 +81,7 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
         }
         Image(
             painter = painterRes(DrawableResources.ONBOARDING_INTRO),
-            contentDescription = stringRes().ONBOARDING_ICON,
+            contentDescription = LocalStringResources.current.ONBOARDING_ICON,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
@@ -95,11 +95,11 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
                     3 -> DrawableResources.IC_TAB_FOUR
                     else -> DrawableResources.IC_TAB_ONE
                 }
-            ), contentDescription = "${stringRes().ONBOARDING_SCREEN} $page", modifier = Modifier
+            ), contentDescription = "${LocalStringResources.current.ONBOARDING_SCREEN} $page", modifier = Modifier
                 .fillMaxWidth()
         )
         PrimaryButton(
-            text = if (page == 3) stringRes().AUTHORIZATION_ENTER else stringRes().BUTTON_NEXT, modifier = Modifier
+            text = if (page == 3) LocalStringResources.current.AUTHORIZATION_ENTER else LocalStringResources.current.BUTTON_NEXT, modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 40.dp), onClick = onClick
         )
