@@ -2,6 +2,7 @@
 compileSdk = "34"
 datastorePreferences = "1.1.1"
 freetts = "1.2.2"
+kotlinxDatetime = "0.5.0"
 minSdk = "24"
 targetSdk = "34"
 
@@ -34,6 +35,7 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
 freetts = { module = "net.sf.sociaal:freetts", version.ref = "freetts" }
 hikari-cp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }

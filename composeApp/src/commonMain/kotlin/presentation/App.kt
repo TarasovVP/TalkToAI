@@ -41,7 +41,6 @@ import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
-import presentation.components.SplashScreen
 import theme.AppTheme
 
 @Composable
@@ -56,6 +55,11 @@ fun App(appViewModel: AppViewModel) {
             }
         } ?: SplashScreen()
     }
+}
+
+@Composable
+fun SplashScreen() {
+    // TODO implement splash screen
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,7 +90,7 @@ fun ScaffoldContent(screenState: MutableState<ScreenState>, appViewModel: AppVie
                             Icon(
                                 tint = Color.White,
                                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                                contentDescription = LocalStringResources.current.BACK
+                                contentDescription = LocalStringResources.current.CHAT_NAME
                             )
                         }
                     }

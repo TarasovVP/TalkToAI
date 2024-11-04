@@ -15,6 +15,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.ceil
 import com.vnstudio.talktoai.infrastructure.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
@@ -23,6 +24,8 @@ import com.vnteam.talktoai.ic_empty_state
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import resources.LocalMediumTextSize
+import resources.LocalSmallPadding
 import resources.LocalStringResources
 import theme.Primary300
 import theme.Primary700
@@ -152,7 +155,7 @@ fun MainProgress(progressVisibilityState: MutableState<Boolean>) {
     }*/
 }
 
-/*@Composable
+@Composable
 fun textLinesCount(text: String, paddings: Float, textSize: Float) : Int {
     val charsInLine = charsInLine(paddings, textSize)
     return charsInLine.takeIf { it > 0 }?.let { ceil((text.length / it).toDouble()).toInt() } ?: 1
@@ -167,15 +170,19 @@ fun charsInLine(paddings: Float, textSize: Float) : Float {
 
 @Composable
 fun measureScreenWidth(): Float {
-    val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
-    return screenWidthDp.value
+    // TODO
+    /*val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
+    return screenWidthDp.value*/
+    return LocalSmallPadding.current.size.value
 }
 
 @Composable
 fun measureCharWidth(textSize: Float): Float {
-    val density = LocalDensity.current.density
+    // TODO
+    /*val density = LocalDensity.current.density
     val textPaint = TextPaint().apply {
         this.textSize = textSize * density
     }
-    return textPaint.measureText(" ")
-}*/
+    return textPaint.measureText(" ")*/
+    return LocalMediumTextSize.current.textSize.value
+}

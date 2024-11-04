@@ -64,12 +64,14 @@ kotlin {
             //Koin
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
             //Coil
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
             //Navigation
             implementation(libs.navigation.compose)
-
+            //DateTime
+            implementation(libs.kotlinx.datetime)
         }
         androidMain.dependencies {
             implementation(libs.androidx.multidex)
