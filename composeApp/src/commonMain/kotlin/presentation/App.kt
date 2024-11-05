@@ -29,11 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import com.vnteam.talktoai.Res
-import com.vnteam.talktoai.data.APP_LANG_EN
-import com.vnteam.talktoai.data.APP_LANG_UK
-import com.vnteam.talktoai.ic_dark_mode
-import com.vnteam.talktoai.ic_light_mode
 import resources.LocalSmallPadding
 import resources.LocalStringResources
 import resources.getStringResourcesByLocale
@@ -42,10 +37,12 @@ import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import theme.AppTheme
+import androidx.compose.runtime.mutableStateOf
+import presentation.screens.ChatContent
 
 @Composable
-fun App(appViewModel: AppViewModel) {
-
+fun App() {
+    /*val appViewModel = koinInject<AppViewModel>()
     val isDarkTheme = appViewModel.isDarkTheme.collectAsState()
     val language = appViewModel.language.collectAsState()
     CompositionLocalProvider(LocalStringResources provides getStringResourcesByLocale(language.value.orEmpty())) {
@@ -54,7 +51,11 @@ fun App(appViewModel: AppViewModel) {
                 ScaffoldContent(koinInject(), appViewModel)
             }
         } ?: SplashScreen()
+    }*/
+    CompositionLocalProvider(LocalStringResources provides getStringResourcesByLocale("en")) {
+        ChatContent(1L, mutableStateOf(false), mutableStateOf(false), ScreenState())
     }
+    //ScaffoldContent(/*koinInject()*/)
 }
 
 @Composable
@@ -64,7 +65,8 @@ fun SplashScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScaffoldContent(screenState: MutableState<ScreenState>, appViewModel: AppViewModel) {
+fun ScaffoldContent(/*screenState: MutableState<ScreenState>*/) {
+    val screenState = mutableStateOf(ScreenState())
     val snackbarHostState = remember { SnackbarHostState() }
     val navController = rememberNavController()
     LaunchedEffect(screenState.value.appMessageState.messageVisible) {
@@ -96,7 +98,7 @@ fun ScaffoldContent(screenState: MutableState<ScreenState>, appViewModel: AppVie
                     }
                 },
                 actions = {
-                    if (!screenState.value.appBarState.topAppBarActionVisible) {
+                    /*if (!screenState.value.appBarState.topAppBarActionVisible) {
                         IconButton(onClick = {
                             appViewModel.setLanguage(if (appViewModel.language.value == APP_LANG_EN) APP_LANG_UK else APP_LANG_EN)
                         }) {
@@ -111,7 +113,7 @@ fun ScaffoldContent(screenState: MutableState<ScreenState>, appViewModel: AppVie
                                 tint = Color.White
                             )
                         }
-                    }
+                    }*/
                 })
         },
         snackbarHost = {

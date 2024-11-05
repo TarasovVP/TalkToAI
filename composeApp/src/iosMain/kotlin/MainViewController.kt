@@ -5,6 +5,6 @@ import presentation.App
 
 fun MainViewController(): UIViewController {
     return ComposeUIViewController {
-        App(koinInject())
+        App(/*koinInject()*/)
     }
 }

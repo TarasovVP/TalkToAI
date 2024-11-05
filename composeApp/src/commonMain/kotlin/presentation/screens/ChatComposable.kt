@@ -53,10 +53,8 @@ import com.vnteam.talktoai.domain.MessageStatus
 import com.vnteam.talktoai.domain.models.InfoMessage
 import com.vnteam.talktoai.domain.sealed_classes.MessageAction
 import com.vnteam.talktoai.ic_chat_add
-import com.vnteam.talktoai.ic_checked_check_box
 import com.vnteam.talktoai.ic_copy
 import com.vnteam.talktoai.ic_delete
-import com.vnteam.talktoai.ic_empty_check_box
 import com.vnteam.talktoai.ic_share
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
@@ -78,7 +76,6 @@ import org.koin.compose.viewmodel.koinViewModel
 import resources.LocalDefaultTextSize
 import resources.LocalLargePadding
 import resources.LocalMediumAvatarSize
-import resources.LocalMediumTextSize
 import resources.LocalSmallPadding
 import resources.LocalStringResources
 import textToAction
