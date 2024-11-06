@@ -36,6 +36,7 @@ import org.koin.dsl.module
 import com.vnteam.talktoai.presentation.usecaseimpl.AppUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.ChatUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.MainUseCaseImpl
+import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
 import com.vnteam.talktoai.presentation.viewmodels.ChatViewModel
 import com.vnteam.talktoai.presentation.viewmodels.MainViewModel
 import io.ktor.client.plugins.logging.DEFAULT
@@ -101,9 +102,9 @@ val appModule = module {
 
     single<MainUseCase> { MainUseCaseImpl(get(), get(), get(), get(), get()) }
 
-    /*viewModel {
+    viewModel {
         AppViewModel(get())
-    }*/
+    }
     viewModel {
         MainViewModel(get())
     }

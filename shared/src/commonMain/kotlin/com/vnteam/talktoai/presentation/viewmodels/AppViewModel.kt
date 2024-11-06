@@ -2,14 +2,18 @@ package com.vnteam.talktoai.presentation.viewmodels
 
 import androidx.lifecycle.viewModelScope
 import com.vnteam.talktoai.domain.usecase.AppUseCase
+import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.mutableStateOf
 
 class AppViewModel(
     private val appUseCase: AppUseCase
 ) : BaseViewModel() {
+
+    val screenState = mutableStateOf(ScreenState())
 
     private val _isDarkTheme = MutableStateFlow<Boolean?>(null)
     val isDarkTheme: StateFlow<Boolean?> = _isDarkTheme.asStateFlow()

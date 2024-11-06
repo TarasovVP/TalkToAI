@@ -38,24 +38,24 @@ import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import theme.AppTheme
 import androidx.compose.runtime.mutableStateOf
+import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG_EN
+import com.vnteam.talktoai.Constants.APP_LANG_UK
+import com.vnteam.talktoai.Res
+import com.vnteam.talktoai.ic_dark_mode
+import com.vnteam.talktoai.ic_light_mode
 import presentation.screens.ChatContent
 
 @Composable
-fun App() {
-    /*val appViewModel = koinInject<AppViewModel>()
+fun App(appViewModel: AppViewModel) {
     val isDarkTheme = appViewModel.isDarkTheme.collectAsState()
     val language = appViewModel.language.collectAsState()
     CompositionLocalProvider(LocalStringResources provides getStringResourcesByLocale(language.value.orEmpty())) {
         isDarkTheme.value?.let {
             AppTheme(it) {
-                ScaffoldContent(koinInject(), appViewModel)
+                ScaffoldContent(appViewModel)
             }
         } ?: SplashScreen()
-    }*/
-    CompositionLocalProvider(LocalStringResources provides getStringResourcesByLocale("en")) {
-        ChatContent(1L, mutableStateOf(false), mutableStateOf(false), ScreenState())
     }
-    //ScaffoldContent(/*koinInject()*/)
 }
 
 @Composable
@@ -65,7 +65,7 @@ fun SplashScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScaffoldContent(/*screenState: MutableState<ScreenState>*/) {
+fun ScaffoldContent(appViewModel: AppViewModel) {
     val screenState = mutableStateOf(ScreenState())
     val snackbarHostState = remember { SnackbarHostState() }
     val navController = rememberNavController()
@@ -98,7 +98,7 @@ fun ScaffoldContent(/*screenState: MutableState<ScreenState>*/) {
                     }
                 },
                 actions = {
-                    /*if (!screenState.value.appBarState.topAppBarActionVisible) {
+                    if (!screenState.value.appBarState.topAppBarActionVisible) {
                         IconButton(onClick = {
                             appViewModel.setLanguage(if (appViewModel.language.value == APP_LANG_EN) APP_LANG_UK else APP_LANG_EN)
                         }) {
@@ -113,7 +113,7 @@ fun ScaffoldContent(/*screenState: MutableState<ScreenState>*/) {
                                 tint = Color.White
                             )
                         }
-                    }*/
+                    }
                 })
         },
         snackbarHost = {
@@ -138,7 +138,7 @@ fun ScaffoldContent(/*screenState: MutableState<ScreenState>*/) {
         },
         content = { paddingValues ->
             Box(modifier = Modifier.padding(paddingValues)) {
-                AppNavigation(navController, koinInject())
+                AppNavigation(navController, appViewModel.screenState)
                 if (screenState.value.isProgressVisible) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }

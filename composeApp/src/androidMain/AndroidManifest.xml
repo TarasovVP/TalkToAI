@@ -10,7 +10,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:name=".AppApplication"
         android:icon="@mipmap/ic_launcher"
-        android:label="Architecture Templates"
+        android:label="Talk to AI"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar"
