@@ -2,6 +2,7 @@ package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.usecase.MainUseCase
 import kotlinx.coroutines.Job
@@ -18,10 +19,10 @@ class MainViewModel(
     val onBoardingSeen = _onBoardingSeen.asStateFlow()
     private val _chatsList = MutableStateFlow<List<Chat>?>(null)
     val chatsList = _chatsList.asStateFlow()
-    /*private val _authState = MutableStateFlow<AuthState?>(null)
+    private val _authState = MutableStateFlow<AuthState?>(null)
     val authState = _authState.asStateFlow()
 
-    private var remoteChatListener: ValueEventListener? = null
+    /*private var remoteChatListener: ValueEventListener? = null
     private var remoteMessageListener: ValueEventListener? = null
     private var authStateListener: FirebaseAuth.AuthStateListener? = null*/
     private var chatsFlowSubscription: Job? = null

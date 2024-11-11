@@ -3,7 +3,7 @@ package com.vnteam.talktoai.presentation.uimodels
 import androidx.compose.runtime.mutableStateOf
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
-import com.vnteam.talktoai.domain.MessageStatus
+import com.vnteam.talktoai.domain.enums.MessageStatus
 import kotlinx.serialization.Serializable
 
 @Serializable

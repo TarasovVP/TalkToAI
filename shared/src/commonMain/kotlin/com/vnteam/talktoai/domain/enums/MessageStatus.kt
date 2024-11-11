@@ -1,4 +1,4 @@
-package com.vnteam.talktoai.domain
+package com.vnteam.talktoai.domain.enums
 
 enum class MessageStatus {
     REQUESTING,

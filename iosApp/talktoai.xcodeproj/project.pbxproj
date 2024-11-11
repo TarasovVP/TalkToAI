@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C87F05BB2BCBB0A200087FCB /* architecturetemplatesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87F05BA2BCBB0A200087FCB /* architecturetemplatesApp.swift */; };
+		C87F05BB2BCBB0A200087FCB /* talktoaiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87F05BA2BCBB0A200087FCB /* talktoaiApp.swift */; };
 		C87F05BD2BCBB0A200087FCB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87F05BC2BCBB0A200087FCB /* ContentView.swift */; };
 		C87F05BF2BCBB0A500087FCB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C87F05BE2BCBB0A500087FCB /* Assets.xcassets */; };
 		C87F05C32BCBB0A500087FCB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C87F05C22BCBB0A500087FCB /* Preview Assets.xcassets */; };
-		C87F05CD2BCBB0A500087FCB /* architecturetemplatesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87F05CC2BCBB0A500087FCB /* architecturetemplatesTests.swift */; };
-		C87F05D72BCBB0A500087FCB /* architecturetemplatesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87F05D62BCBB0A500087FCB /* architecturetemplatesUITests.swift */; };
-		C87F05D92BCBB0A500087FCB /* architecturetemplatesUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87F05D82BCBB0A500087FCB /* architecturetemplatesUITestsLaunchTests.swift */; };
+		C87F05CD2BCBB0A500087FCB /* talktoaiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87F05CC2BCBB0A500087FCB /* talktoaiTests.swift */; };
+		C87F05D72BCBB0A500087FCB /* talktoaiUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87F05D62BCBB0A500087FCB /* talktoaiUITests.swift */; };
+		C87F05D92BCBB0A500087FCB /* talktoaiUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87F05D82BCBB0A500087FCB /* talktoaiUITestsLaunchTests.swift */; };
 		C8E5ADB32BD2BBD00098101A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C8E5ADB22BD2BBD00098101A /* libsqlite3.tbd */; };
 /* End PBXBuildFile section */
 
@@ -23,29 +23,29 @@
 			containerPortal = C87F05AF2BCBB0A200087FCB /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = C87F05B62BCBB0A200087FCB;
-			remoteInfo = architecturetemplates;
+			remoteInfo = talktoai;
 		};
 		C87F05D32BCBB0A500087FCB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C87F05AF2BCBB0A200087FCB /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = C87F05B62BCBB0A200087FCB;
-			remoteInfo = architecturetemplates;
+			remoteInfo = talktoai;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		C87F05B72BCBB0A200087FCB /* architecturetemplates.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = architecturetemplates.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C87F05BA2BCBB0A200087FCB /* architecturetemplatesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = architecturetemplatesApp.swift; sourceTree = "<group>"; };
+		C87F05B72BCBB0A200087FCB /* talktoai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = talktoai.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C87F05BA2BCBB0A200087FCB /* talktoaiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = talktoaiApp.swift; sourceTree = "<group>"; };
 		C87F05BC2BCBB0A200087FCB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C87F05BE2BCBB0A500087FCB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		C87F05C02BCBB0A500087FCB /* architecturetemplates.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = architecturetemplates.entitlements; sourceTree = "<group>"; };
+		C87F05C02BCBB0A500087FCB /* talktoai.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = talktoai.entitlements; sourceTree = "<group>"; };
 		C87F05C22BCBB0A500087FCB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		C87F05C82BCBB0A500087FCB /* architecturetemplatesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = architecturetemplatesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C87F05CC2BCBB0A500087FCB /* architecturetemplatesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = architecturetemplatesTests.swift; sourceTree = "<group>"; };
-		C87F05D22BCBB0A500087FCB /* architecturetemplatesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = architecturetemplatesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C87F05D62BCBB0A500087FCB /* architecturetemplatesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = architecturetemplatesUITests.swift; sourceTree = "<group>"; };
-		C87F05D82BCBB0A500087FCB /* architecturetemplatesUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = architecturetemplatesUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		C87F05C82BCBB0A500087FCB /* talktoaiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = talktoaiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C87F05CC2BCBB0A500087FCB /* talktoaiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = talktoaiTests.swift; sourceTree = "<group>"; };
+		C87F05D22BCBB0A500087FCB /* talktoaiUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = talktoaiUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C87F05D62BCBB0A500087FCB /* talktoaiUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = talktoaiUITests.swift; sourceTree = "<group>"; };
+		C87F05D82BCBB0A500087FCB /* talktoaiUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = talktoaiUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		C8E5ADB22BD2BBD00098101A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
@@ -78,9 +78,9 @@
 		C87F05AE2BCBB0A200087FCB = {
 			isa = PBXGroup;
 			children = (
-				C87F05B92BCBB0A200087FCB /* architecturetemplates */,
-				C87F05CB2BCBB0A500087FCB /* architecturetemplatesTests */,
-				C87F05D52BCBB0A500087FCB /* architecturetemplatesUITests */,
+				C87F05B92BCBB0A200087FCB /* talktoai */,
+				C87F05CB2BCBB0A500087FCB /* talktoaiTests */,
+				C87F05D52BCBB0A500087FCB /* talktoaiUITests */,
 				C87F05B82BCBB0A200087FCB /* Products */,
 				C8E5ADB12BD2BBD00098101A /* Frameworks */,
 			);
@@ -89,23 +89,23 @@
 		C87F05B82BCBB0A200087FCB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C87F05B72BCBB0A200087FCB /* architecturetemplates.app */,
-				C87F05C82BCBB0A500087FCB /* architecturetemplatesTests.xctest */,
-				C87F05D22BCBB0A500087FCB /* architecturetemplatesUITests.xctest */,
+				C87F05B72BCBB0A200087FCB /* talktoai.app */,
+				C87F05C82BCBB0A500087FCB /* talktoaiTests.xctest */,
+				C87F05D22BCBB0A500087FCB /* talktoaiUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		C87F05B92BCBB0A200087FCB /* architecturetemplates */ = {
+		C87F05B92BCBB0A200087FCB /* talktoai */ = {
 			isa = PBXGroup;
 			children = (
-				C87F05BA2BCBB0A200087FCB /* architecturetemplatesApp.swift */,
+				C87F05BA2BCBB0A200087FCB /* talktoaiApp.swift */,
 				C87F05BC2BCBB0A200087FCB /* ContentView.swift */,
 				C87F05BE2BCBB0A500087FCB /* Assets.xcassets */,
-				C87F05C02BCBB0A500087FCB /* architecturetemplates.entitlements */,
+				C87F05C02BCBB0A500087FCB /* talktoai.entitlements */,
 				C87F05C12BCBB0A500087FCB /* Preview Content */,
 			);
-			path = architecturetemplates;
+			path = talktoai;
 			sourceTree = "<group>";
 		};
 		C87F05C12BCBB0A500087FCB /* Preview Content */ = {
@@ -116,21 +116,21 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		C87F05CB2BCBB0A500087FCB /* architecturetemplatesTests */ = {
+		C87F05CB2BCBB0A500087FCB /* talktoaiTests */ = {
 			isa = PBXGroup;
 			children = (
-				C87F05CC2BCBB0A500087FCB /* architecturetemplatesTests.swift */,
+				C87F05CC2BCBB0A500087FCB /* talktoaiTests.swift */,
 			);
-			path = architecturetemplatesTests;
+			path = talktoaiTests;
 			sourceTree = "<group>";
 		};
-		C87F05D52BCBB0A500087FCB /* architecturetemplatesUITests */ = {
+		C87F05D52BCBB0A500087FCB /* talktoaiUITests */ = {
 			isa = PBXGroup;
 			children = (
-				C87F05D62BCBB0A500087FCB /* architecturetemplatesUITests.swift */,
-				C87F05D82BCBB0A500087FCB /* architecturetemplatesUITestsLaunchTests.swift */,
+				C87F05D62BCBB0A500087FCB /* talktoaiUITests.swift */,
+				C87F05D82BCBB0A500087FCB /* talktoaiUITestsLaunchTests.swift */,
 			);
-			path = architecturetemplatesUITests;
+			path = talktoaiUITests;
 			sourceTree = "<group>";
 		};
 		C8E5ADB12BD2BBD00098101A /* Frameworks */ = {
@@ -144,9 +144,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C87F05B62BCBB0A200087FCB /* architecturetemplates */ = {
+		C87F05B62BCBB0A200087FCB /* talktoai */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C87F05DC2BCBB0A500087FCB /* Build configuration list for PBXNativeTarget "architecturetemplates" */;
+			buildConfigurationList = C87F05DC2BCBB0A500087FCB /* Build configuration list for PBXNativeTarget "talktoai" */;
 			buildPhases = (
 				C87F05E52BCBB3AE00087FCB /* ShellScript */,
 				C87F05B32BCBB0A200087FCB /* Sources */,
@@ -157,14 +157,14 @@
 			);
 			dependencies = (
 			);
-			name = architecturetemplates;
-			productName = architecturetemplates;
-			productReference = C87F05B72BCBB0A200087FCB /* architecturetemplates.app */;
+			name = talktoai;
+			productName = talktoai;
+			productReference = C87F05B72BCBB0A200087FCB /* talktoai.app */;
 			productType = "com.apple.product-type.application";
 		};
-		C87F05C72BCBB0A500087FCB /* architecturetemplatesTests */ = {
+		C87F05C72BCBB0A500087FCB /* talktoaiTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C87F05DF2BCBB0A500087FCB /* Build configuration list for PBXNativeTarget "architecturetemplatesTests" */;
+			buildConfigurationList = C87F05DF2BCBB0A500087FCB /* Build configuration list for PBXNativeTarget "talktoaiTests" */;
 			buildPhases = (
 				C87F05C42BCBB0A500087FCB /* Sources */,
 				C87F05C52BCBB0A500087FCB /* Frameworks */,
@@ -175,14 +175,14 @@
 			dependencies = (
 				C87F05CA2BCBB0A500087FCB /* PBXTargetDependency */,
 			);
-			name = architecturetemplatesTests;
-			productName = architecturetemplatesTests;
-			productReference = C87F05C82BCBB0A500087FCB /* architecturetemplatesTests.xctest */;
+			name = talktoaiTests;
+			productName = talktoaiTests;
+			productReference = C87F05C82BCBB0A500087FCB /* talktoaiTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		C87F05D12BCBB0A500087FCB /* architecturetemplatesUITests */ = {
+		C87F05D12BCBB0A500087FCB /* talktoaiUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C87F05E22BCBB0A500087FCB /* Build configuration list for PBXNativeTarget "architecturetemplatesUITests" */;
+			buildConfigurationList = C87F05E22BCBB0A500087FCB /* Build configuration list for PBXNativeTarget "talktoaiUITests" */;
 			buildPhases = (
 				C87F05CE2BCBB0A500087FCB /* Sources */,
 				C87F05CF2BCBB0A500087FCB /* Frameworks */,
@@ -193,9 +193,9 @@
 			dependencies = (
 				C87F05D42BCBB0A500087FCB /* PBXTargetDependency */,
 			);
-			name = architecturetemplatesUITests;
-			productName = architecturetemplatesUITests;
-			productReference = C87F05D22BCBB0A500087FCB /* architecturetemplatesUITests.xctest */;
+			name = talktoaiUITests;
+			productName = talktoaiUITests;
+			productReference = C87F05D22BCBB0A500087FCB /* talktoaiUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -221,7 +221,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C87F05B22BCBB0A200087FCB /* Build configuration list for PBXProject "architecturetemplates" */;
+			buildConfigurationList = C87F05B22BCBB0A200087FCB /* Build configuration list for PBXProject "talktoai" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -234,9 +234,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C87F05B62BCBB0A200087FCB /* architecturetemplates */,
-				C87F05C72BCBB0A500087FCB /* architecturetemplatesTests */,
-				C87F05D12BCBB0A500087FCB /* architecturetemplatesUITests */,
+				C87F05B62BCBB0A200087FCB /* talktoai */,
+				C87F05C72BCBB0A500087FCB /* talktoaiTests */,
+				C87F05D12BCBB0A500087FCB /* talktoaiUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -293,7 +293,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C87F05BD2BCBB0A200087FCB /* ContentView.swift in Sources */,
-				C87F05BB2BCBB0A200087FCB /* architecturetemplatesApp.swift in Sources */,
+				C87F05BB2BCBB0A200087FCB /* talktoaiApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,7 +301,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C87F05CD2BCBB0A500087FCB /* architecturetemplatesTests.swift in Sources */,
+				C87F05CD2BCBB0A500087FCB /* talktoaiTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,8 +309,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C87F05D72BCBB0A500087FCB /* architecturetemplatesUITests.swift in Sources */,
-				C87F05D92BCBB0A500087FCB /* architecturetemplatesUITestsLaunchTests.swift in Sources */,
+				C87F05D72BCBB0A500087FCB /* talktoaiUITests.swift in Sources */,
+				C87F05D92BCBB0A500087FCB /* talktoaiUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,12 +319,12 @@
 /* Begin PBXTargetDependency section */
 		C87F05CA2BCBB0A500087FCB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C87F05B62BCBB0A200087FCB /* architecturetemplates */;
+			target = C87F05B62BCBB0A200087FCB /* talktoai */;
 			targetProxy = C87F05C92BCBB0A500087FCB /* PBXContainerItemProxy */;
 		};
 		C87F05D42BCBB0A500087FCB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C87F05B62BCBB0A200087FCB /* architecturetemplates */;
+			target = C87F05B62BCBB0A200087FCB /* talktoai */;
 			targetProxy = C87F05D32BCBB0A500087FCB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -449,10 +449,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = architecturetemplates/architecturetemplates.entitlements;
+				CODE_SIGN_ENTITLEMENTS = talktoai/talktoai.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"architecturetemplates/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"talktoai/Preview Content\"";
 				DEVELOPMENT_TEAM = 37VPN352DG;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -474,7 +474,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = vnteam.architecturetemplates;
+				PRODUCT_BUNDLE_IDENTIFIER = vnteam.talktoai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -489,10 +489,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = architecturetemplates/architecturetemplates.entitlements;
+				CODE_SIGN_ENTITLEMENTS = talktoai/talktoai.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"architecturetemplates/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"talktoai/Preview Content\"";
 				DEVELOPMENT_TEAM = 37VPN352DG;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -514,7 +514,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = vnteam.architecturetemplates;
+				PRODUCT_BUNDLE_IDENTIFIER = vnteam.talktoai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -536,14 +536,14 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = vnteam.architecturetemplatesTests;
+				PRODUCT_BUNDLE_IDENTIFIER = vnteam.talktoaiTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/architecturetemplates.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/architecturetemplates";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/talktoai.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/talktoai";
 			};
 			name = Debug;
 		};
@@ -559,14 +559,14 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = vnteam.architecturetemplatesTests;
+				PRODUCT_BUNDLE_IDENTIFIER = vnteam.talktoaiTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/architecturetemplates.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/architecturetemplates";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/talktoai.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/talktoai";
 			};
 			name = Release;
 		};
@@ -581,14 +581,14 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = vnteam.architecturetemplatesUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = vnteam.talktoaiUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = architecturetemplates;
+				TEST_TARGET_NAME = talktoai;
 			};
 			name = Debug;
 		};
@@ -603,21 +603,21 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				MACOSX_DEPLOYMENT_TARGET = 14.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = vnteam.architecturetemplatesUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = vnteam.talktoaiUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = architecturetemplates;
+				TEST_TARGET_NAME = talktoai;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C87F05B22BCBB0A200087FCB /* Build configuration list for PBXProject "architecturetemplates" */ = {
+		C87F05B22BCBB0A200087FCB /* Build configuration list for PBXProject "talktoai" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C87F05DA2BCBB0A500087FCB /* Debug */,
@@ -626,7 +626,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C87F05DC2BCBB0A500087FCB /* Build configuration list for PBXNativeTarget "architecturetemplates" */ = {
+		C87F05DC2BCBB0A500087FCB /* Build configuration list for PBXNativeTarget "talktoai" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C87F05DD2BCBB0A500087FCB /* Debug */,
@@ -635,7 +635,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C87F05DF2BCBB0A500087FCB /* Build configuration list for PBXNativeTarget "architecturetemplatesTests" */ = {
+		C87F05DF2BCBB0A500087FCB /* Build configuration list for PBXNativeTarget "talktoaiTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C87F05E02BCBB0A500087FCB /* Debug */,
@@ -644,7 +644,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C87F05E22BCBB0A500087FCB /* Build configuration list for PBXNativeTarget "architecturetemplatesUITests" */ = {
+		C87F05E22BCBB0A500087FCB /* Build configuration list for PBXNativeTarget "talktoaiUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C87F05E32BCBB0A500087FCB /* Debug */,

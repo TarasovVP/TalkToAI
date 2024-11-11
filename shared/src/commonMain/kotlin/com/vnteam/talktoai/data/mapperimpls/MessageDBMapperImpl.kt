@@ -2,7 +2,7 @@ package com.vnteam.talktoai.data.mapperimpls
 
 import com.vnteam.talktoai.CommonExtensions.orZero
 import com.vnteam.talktoai.MessageDB
-import com.vnteam.talktoai.domain.MessageStatus
+import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.mappers.MessageDBMapper
 import com.vnteam.talktoai.domain.models.Message
 

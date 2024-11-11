@@ -1,7 +1,7 @@
 package com.vnteam.talktoai.presentation.mapperimpls
 
 import com.vnteam.talktoai.CommonExtensions.orZero
-import com.vnteam.talktoai.domain.MessageStatus
+import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.mappers.MessageUIMapper
 import com.vnteam.talktoai.domain.models.Message
 import com.vnteam.talktoai.presentation.uimodels.MessageUI

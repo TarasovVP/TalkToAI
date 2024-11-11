@@ -1,7 +1,7 @@
 package com.vnteam.talktoai.domain.models
 
 import com.vnteam.talktoai.CommonExtensions.EMPTY
-import com.vnteam.talktoai.domain.MessageStatus
+import com.vnteam.talktoai.domain.enums.MessageStatus
 import kotlinx.serialization.Serializable
 
 @Serializable

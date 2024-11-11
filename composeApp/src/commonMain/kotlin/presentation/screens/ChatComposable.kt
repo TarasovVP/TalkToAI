@@ -49,7 +49,7 @@ import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.data.network.request.ApiRequest
 import com.vnteam.talktoai.data.network.request.MessageApi
-import com.vnteam.talktoai.domain.MessageStatus
+import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.models.InfoMessage
 import com.vnteam.talktoai.domain.sealed_classes.MessageAction
 import com.vnteam.talktoai.ic_chat_add
