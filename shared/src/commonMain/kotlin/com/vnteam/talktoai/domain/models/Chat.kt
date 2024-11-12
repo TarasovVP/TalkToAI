@@ -7,7 +7,7 @@ import kotlin.String
 @Serializable
  data class Chat(
    val id: Long,
-   val name: String,
+   var name: String,
    val updated: Long,
    var listOrder: Long,
 )

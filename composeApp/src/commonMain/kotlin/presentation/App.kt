@@ -21,7 +21,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,7 +34,6 @@ import resources.getStringResourcesByLocale
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
 import org.jetbrains.compose.resources.painterResource
-import org.koin.compose.koinInject
 import theme.AppTheme
 import androidx.compose.runtime.mutableStateOf
 import com.vnstudio.talktoai.infrastructure.Constants.APP_LANG_EN
@@ -43,7 +41,6 @@ import com.vnteam.talktoai.Constants.APP_LANG_UK
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.ic_dark_mode
 import com.vnteam.talktoai.ic_light_mode
-import presentation.screens.ChatContent
 
 @Composable
 fun App(appViewModel: AppViewModel) {
