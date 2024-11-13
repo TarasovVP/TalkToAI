@@ -41,6 +41,7 @@ import com.vnteam.talktoai.Constants.APP_LANG_UK
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.ic_dark_mode
 import com.vnteam.talktoai.ic_light_mode
+import presentation.screens.main.AppContent
 
 @Composable
 fun App(appViewModel: AppViewModel) {
@@ -49,7 +50,8 @@ fun App(appViewModel: AppViewModel) {
     CompositionLocalProvider(LocalStringResources provides getStringResourcesByLocale(language.value.orEmpty())) {
         isDarkTheme.value?.let {
             AppTheme(it) {
-                ScaffoldContent(appViewModel)
+                //ScaffoldContent(appViewModel)
+                AppContent()
             }
         } ?: SplashScreen()
     }

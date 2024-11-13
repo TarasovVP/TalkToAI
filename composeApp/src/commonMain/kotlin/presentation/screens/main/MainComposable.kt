@@ -142,7 +142,7 @@ fun AppContent() {
         }*/
     }
 
-    val isDrawerGesturesEnabled = isSettingsScreen(navController.currentBackStackEntry?.destination?.route) ||
+    /*val isDrawerGesturesEnabled = isSettingsScreen(navController.currentBackStackEntry?.destination?.route) ||
             (navController.currentBackStackEntry?.destination?.route == NavigationScreen.ChatScreen(
                 isMessageActionModeState = isMessageActionModeState
             ).route && isMessageActionModeState.value.isNotTrue())
@@ -159,11 +159,11 @@ fun AppContent() {
                 navController.popBackStack()
             }
         }
-    }
+    }*/
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = isDrawerGesturesEnabled,
+        //gesturesEnabled = isDrawerGesturesEnabled,
         drawerContent = {
             AppDrawer(
                 isSettingsDrawerModeState,

@@ -1,4 +1,4 @@
-package presentation.screens
+package presentation.screens.chat
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
