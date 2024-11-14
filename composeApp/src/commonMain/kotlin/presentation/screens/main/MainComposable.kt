@@ -2,6 +2,7 @@ package presentation.screens.main
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -142,11 +143,7 @@ fun AppContent() {
         }*/
     }
 
-    /*val isDrawerGesturesEnabled = isSettingsScreen(navController.currentBackStackEntry?.destination?.route) ||
-            (navController.currentBackStackEntry?.destination?.route == NavigationScreen.ChatScreen(
-                isMessageActionModeState = isMessageActionModeState
-            ).route && isMessageActionModeState.value.isNotTrue())
-
+    /*
     LaunchedEffect(isSettingsDrawerModeState.value) {
         isSettingsDrawerModeState.value.let { isSettingsDrawerMode ->
             if (isSettingsDrawerMode) {
@@ -161,40 +158,48 @@ fun AppContent() {
         }
     }*/
 
+    val isDrawerGesturesEnabled = isSettingsScreen(navController.currentBackStackEntry?.destination?.route) ||
+            (navController.currentBackStackEntry?.destination?.route == NavigationScreen.ChatScreen(
+                isMessageActionModeState = isMessageActionModeState
+            ).route && isMessageActionModeState.value.isNotTrue())
+
     ModalNavigationDrawer(
         drawerState = drawerState,
-        //gesturesEnabled = isDrawerGesturesEnabled,
+        gesturesEnabled = isDrawerGesturesEnabled,
         drawerContent = {
-            AppDrawer(
-                isSettingsDrawerModeState,
-                navController.currentBackStackEntry?.destination?.route,
-                currentChatState.value?.id,
-                chats = chatsState,
-                onCreateChatClick = {
-                    showCreateChatDialog.value = true
-                },
-                onChatClick = { chat ->
-                    currentChatState.value = chat
-                    screenState.value.currentScreenState.value =
-                        "$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id}"
+            ModalDrawerSheet {
+
+                AppDrawer(
+                    isSettingsDrawerModeState,
+                    navController.currentBackStackEntry?.destination?.route,
+                    currentChatState.value?.id,
+                    chats = chatsState,
+                    onCreateChatClick = {
+                        showCreateChatDialog.value = true
+                    },
+                    onChatClick = { chat ->
+                        currentChatState.value = chat
+                        screenState.value.currentScreenState.value =
+                            "$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id}"
+                        scope.launch {
+                            drawerState.close()
+                        }
+                    },
+                    onDeleteChatClick = { chat ->
+                        showDeleteChatDialog.value = true
+                        deleteChatState.value = chat
+                    },
+                    onSwap = { firstIndex, secondIndex ->
+                        viewModel.swapChats(firstIndex, secondIndex)
+                    },
+                    onDragEnd = {
+                        viewModel.updateChats(chatsState.value.orEmpty())
+                    }
+                ) { route ->
+                    screenState.value.currentScreenState.value = route
                     scope.launch {
                         drawerState.close()
                     }
-                },
-                onDeleteChatClick = { chat ->
-                    showDeleteChatDialog.value = true
-                    deleteChatState.value = chat
-                },
-                onSwap = { firstIndex, secondIndex ->
-                    viewModel.swapChats(firstIndex, secondIndex)
-                },
-                onDragEnd = {
-                    viewModel.updateChats(chatsState.value.orEmpty())
-                }
-            ) { route ->
-                screenState.value.currentScreenState.value = route
-                scope.launch {
-                    drawerState.close()
                 }
             }
         }
@@ -304,7 +309,7 @@ fun AppContent() {
                     deleteChatState.value = null
                 }
 
-                MainProgress(mutableStateOf( screenState.value.isProgressVisible))
+                MainProgress(mutableStateOf(screenState.value.isProgressVisible))
             }
         }
     }

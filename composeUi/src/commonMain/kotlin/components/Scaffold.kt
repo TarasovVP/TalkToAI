@@ -1,5 +1,6 @@
 package com.vnstudio.talktoai.infrastructure.components
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,6 +18,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -29,19 +31,31 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vnstudio.talktoai.infrastructure.flagDrawable
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.avatar_ai
 import com.vnteam.talktoai.domain.models.Chat
+import com.vnteam.talktoai.empty_state
 import com.vnteam.talktoai.ic_arrow_back
 import com.vnteam.talktoai.ic_chat
+import com.vnteam.talktoai.ic_chat_add
+import com.vnteam.talktoai.ic_delete
+import com.vnteam.talktoai.ic_drag_handle
 import com.vnteam.talktoai.ic_edit
 import com.vnteam.talktoai.ic_navigation
 import com.vnteam.talktoai.ic_settings
+import com.vnteam.talktoai.presentation.NavigationScreen
+import com.vnteam.talktoai.presentation.NavigationScreen.Companion.isSettingsScreen
+import com.vnteam.talktoai.presentation.NavigationScreen.Companion.settingScreens
+import com.vnteam.talktoai.presentation.NavigationScreen.Companion.settingsScreenNameByRoute
+import components.TextIconButton
+import components.draggable.DragDropColumn
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import resources.LocalStringResources
@@ -140,7 +154,7 @@ fun AppDrawer(
             .background(Primary900),
         Arrangement.Top
     ) {
-        /*DrawerHeader(
+        DrawerHeader(
             isSettingsDrawerMode.value.isTrue() || isSettingsScreen(currentRouteState)
         ) { settingsDrawerMode ->
             isSettingsDrawerMode.value = settingsDrawerMode
@@ -153,10 +167,10 @@ fun AppDrawer(
             ) {
                 settingScreens.forEach { settingsScreen ->
                     DrawerItem(
-                        name = settingsScreenNameByRoute(settingsScreen.route, LocalStringResources.current),
-                        mainIcon = settingsScreen.icon,
+                        name = settingsScreenNameByRoute(settingsScreen.route, com.vnteam.talktoai.presentation.StringResources),
+                        mainIcon = Res.drawable.ic_settings/* settingsScreen.icon*/,
                         isCurrent = currentRouteState == settingsScreen.route,
-                        secondaryIcon = if (settingsScreen.route == NavigationScreen.SettingsLanguageScreen().route) LocalConfiguration.current.locales.flagDrawable() else null
+                        secondaryIcon = null/*if (settingsScreen.route == NavigationScreen.SettingsLanguageScreen().route) LocaleList.current.flagDrawable() else null*/
                     ) {
                         onNextScreen.invoke(settingsScreen.route)
                     }
@@ -201,7 +215,7 @@ fun AppDrawer(
                 Modifier.padding(bottom = 40.dp, start = 16.dp, end = 16.dp),
                 onCreateChatClick
             )
-        }*/
+        }
     }
 }
 
