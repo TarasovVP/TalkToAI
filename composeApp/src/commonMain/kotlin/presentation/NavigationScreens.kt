@@ -1,14 +1,19 @@
-package com.vnteam.talktoai.presentation
+package presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
-import kotlinx.serialization.Serializable
 import org.koin.core.component.KoinComponent
+import presentation.screens.settings.settings_account.SettingsAccountContent
+import presentation.screens.settings.settings_chat.SettingsChatContent
+import presentation.screens.settings.settings_feedback.SettingsFeedbackContent
+import presentation.screens.settings.settings_language.SettingsLanguageContent
+import presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyContent
+import presentation.screens.settings.settings_sign_up.SettingsSignUpContent
+import presentation.screens.settings.settings_theme.SettingsThemeContent
 
-@Serializable
 sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY): Screen,
     KoinComponent {
     class OnboardingScreen(private val screenState: ScreenState = ScreenState()) :
@@ -24,7 +29,9 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
             //LoginContent(screenState)
         }
     }
-    class SignUpScreen(private val screenState: ScreenState = ScreenState()) : NavigationScreen(SIGN_UP_SCREEN) {
+    class SignUpScreen(private val screenState: ScreenState = ScreenState()) : NavigationScreen(
+        SIGN_UP_SCREEN
+    ) {
         @Composable
         override fun Content() {
             //SignUpContent(screenState)
@@ -45,49 +52,49 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
         NavigationScreen(SETTINGS_CHAT_SCREEN, DrawableResources.IC_SETTINGS_CHAT) {
         @Composable
         override fun Content() {
-            //SettingsChatContent(screenState)
+            SettingsChatContent(screenState)
         }
     }
     class SettingsAccountScreen(private val screenState: ScreenState = ScreenState()) :
         NavigationScreen(SETTINGS_ACCOUNT_SCREEN, DrawableResources.IC_SETTINGS_ACCOUNT) {
         @Composable
         override fun Content() {
-            //SettingsAccountContent(screenState)
+            SettingsAccountContent(screenState)
         }
     }
     class SettingsSignUpScreen(private val screenState: ScreenState = ScreenState()) :
         NavigationScreen(SETTINGS_SIGN_UP_SCREEN) {
         @Composable
         override fun Content() {
-            //SettingsSignUpContent(screenState)
+            SettingsSignUpContent(screenState)
         }
     }
     class SettingsLanguageScreen(private val screenState: ScreenState = ScreenState()) :
         NavigationScreen(SETTINGS_LANGUAGE_SCREEN, DrawableResources.IC_SETTINGS_LANGUAGE) {
         @Composable
         override fun Content() {
-            //SettingsLanguageContent(screenState)
+            SettingsLanguageContent(screenState)
         }
     }
     class SettingsThemeScreen(private val screenState: ScreenState = ScreenState()) :
         NavigationScreen(SETTINGS_THEME_SCREEN, DrawableResources.IC_SETTINGS_THEME) {
         @Composable
         override fun Content() {
-            //SettingsThemeContent(screenState)
+            SettingsThemeContent(screenState)
         }
     }
     class SettingsFeedbackScreen(private val screenState: ScreenState = ScreenState()) :
         NavigationScreen(SETTINGS_FEEDBACK_SCREEN, DrawableResources.IC_SETTINGS_FEEDBACK) {
         @Composable
         override fun Content() {
-            //SettingsFeedbackContent(screenState)
+            SettingsFeedbackContent(screenState)
         }
     }
     class SettingsPrivacyPolicyScreen(private val screenState: ScreenState = ScreenState()) :
         NavigationScreen( SETTINGS_PRIVACY_POLICY_SCREEN, DrawableResources.IC_SETTINGS_PRIVACY) {
         @Composable
         override fun Content() {
-            //SettingsPrivacyPolicyContent(screenState)
+            SettingsPrivacyPolicyContent(screenState)
         }
     }
 
@@ -118,13 +125,13 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
         }
         fun settingsScreenNameByRoute(route: String?, stringRes: StringResources): String {
             return when(route) {
-                SettingsChatScreen().route -> return stringRes.SETTINGS_CHAT
-                SettingsAccountScreen().route -> return stringRes.SETTINGS_ACCOUNT
-                SettingsLanguageScreen().route -> return stringRes.SETTINGS_LANGUAGE
-                SettingsThemeScreen().route -> return stringRes.SETTINGS_THEME
-                SettingsFeedbackScreen().route -> return stringRes.SETTINGS_FEEDBACK
-                SettingsPrivacyPolicyScreen().route -> return stringRes.SETTINGS_PRIVACY_POLICY
-                else -> stringRes.APP_NAME
+                SettingsChatScreen().route -> return StringResources.SETTINGS_CHAT
+                SettingsAccountScreen().route -> return StringResources.SETTINGS_ACCOUNT
+                SettingsLanguageScreen().route -> return StringResources.SETTINGS_LANGUAGE
+                SettingsThemeScreen().route -> return StringResources.SETTINGS_THEME
+                SettingsFeedbackScreen().route -> return StringResources.SETTINGS_FEEDBACK
+                SettingsPrivacyPolicyScreen().route -> return StringResources.SETTINGS_PRIVACY_POLICY
+                else -> StringResources.APP_NAME
             }
         }
 

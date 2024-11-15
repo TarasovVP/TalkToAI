@@ -1,6 +1,7 @@
 package com.vnteam.talktoai.data.repositoryimpl
 
 import com.vnteam.talktoai.CommonExtensions.EMPTY
+import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 
 class AuthRepositoryImpl(
@@ -43,7 +44,7 @@ class AuthRepositoryImpl(
         return String.EMPTY
     }
 
-    override fun sendPasswordResetEmail(email: String, result: (Result<Unit>) -> Unit) {
+    override fun sendPasswordResetEmail(email: String, result: (NetworkResult<Unit>) -> Unit) {
         /*firebaseAuth.sendPasswordResetEmail(email)
             .addOnSuccessListener {
                 result.invoke(Result.Success())
@@ -52,7 +53,7 @@ class AuthRepositoryImpl(
             }*/
     }
 
-    override fun fetchSignInMethodsForEmail(email: String, result: (Result<List<String>>) -> Unit) {
+    override fun fetchSignInMethodsForEmail(email: String, result: (NetworkResult<List<String>>) -> Unit) {
         /*firebaseAuth.fetchSignInMethodsForEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -66,7 +67,7 @@ class AuthRepositoryImpl(
     override fun signInWithEmailAndPassword(
         email: String,
         password: String,
-        result: (Result<Unit>) -> Unit,
+        result: (NetworkResult<Unit>) -> Unit,
     ) {
         /*firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
@@ -76,7 +77,7 @@ class AuthRepositoryImpl(
             }*/
     }
 
-    override fun signInWithGoogle(idToken: String, result: (Result<Unit>) -> Unit) {
+    override fun signInWithGoogle(idToken: String, result: (NetworkResult<Unit>) -> Unit) {
         /*val credential = GoogleAuthProvider.getCredential(idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnSuccessListener {
@@ -86,7 +87,7 @@ class AuthRepositoryImpl(
             }*/
     }
 
-    override fun signInAnonymously(result: (Result<Unit>) -> Unit) {
+    override fun signInAnonymously(result: (NetworkResult<Unit>) -> Unit) {
         /*firebaseAuth.signInAnonymously()
             .addOnSuccessListener {
                 result.invoke(Result.Success())
@@ -98,7 +99,7 @@ class AuthRepositoryImpl(
     override fun createUserWithEmailAndPassword(
         email: String,
         password: String,
-        result: (Result<String>) -> Unit,
+        result: (NetworkResult<String>) -> Unit,
     ) {
         /*firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
@@ -111,7 +112,7 @@ class AuthRepositoryImpl(
     override fun changePassword(
         currentPassword: String,
         newPassword: String,
-        result: (Result<Unit>) -> Unit,
+        result: (NetworkResult<Unit>) -> Unit,
     ) {
         /*val user = firebaseAuth.currentUser
         val credential = EmailAuthProvider.getCredential(user?.email.orEmpty(), currentPassword)
@@ -136,7 +137,7 @@ class AuthRepositoryImpl(
             }*/
     }
 
-    override fun deleteUser(result: (Result<Unit>) -> Unit) {
+    override fun deleteUser(result: (NetworkResult<Unit>) -> Unit) {
         /*firebaseAuth.currentUser?.delete()
             ?.addOnSuccessListener {
                 signOut(result)
@@ -145,7 +146,7 @@ class AuthRepositoryImpl(
             }*/
     }
 
-    override fun signOut(result: (Result<Unit>) -> Unit) {
+    override fun signOut(result: (NetworkResult<Unit>) -> Unit) {
         /*googleSignInClient.signOut().addOnSuccessListener {
             firebaseAuth.signOut()
             result.invoke(Result.Success())

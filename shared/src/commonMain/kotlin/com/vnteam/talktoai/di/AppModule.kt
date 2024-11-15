@@ -26,6 +26,13 @@ import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnteam.talktoai.domain.usecase.AppUseCase
 import com.vnteam.talktoai.domain.usecase.ChatUseCase
 import com.vnteam.talktoai.domain.usecase.MainUseCase
+import com.vnteam.talktoai.domain.usecase.SettingsAccountUseCase
+import com.vnteam.talktoai.domain.usecase.SettingsChatUseCase
+import com.vnteam.talktoai.domain.usecase.SettingsLanguageUseCase
+import com.vnteam.talktoai.domain.usecase.SettingsListUseCase
+import com.vnteam.talktoai.domain.usecase.SettingsPrivacyPolicyUseCase
+import com.vnteam.talktoai.domain.usecase.SettingsSignUpUseCase
+import com.vnteam.talktoai.domain.usecase.SettingsThemeUseCase
 import com.vnteam.talktoai.presentation.mapperimpls.ChatUIMapperImpl
 import com.vnteam.talktoai.presentation.mapperimpls.MessageUIMapperImpl
 import io.ktor.client.HttpClient
@@ -36,9 +43,23 @@ import org.koin.dsl.module
 import com.vnteam.talktoai.presentation.usecaseimpl.AppUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.ChatUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.MainUseCaseImpl
+import com.vnteam.talktoai.presentation.usecaseimpl.SettingsAccountUseCaseImpl
+import com.vnteam.talktoai.presentation.usecaseimpl.SettingsChatUseCaseImpl
+import com.vnteam.talktoai.presentation.usecaseimpl.SettingsFeedbackUseCaseImpl
+import com.vnteam.talktoai.presentation.usecaseimpl.SettingsLanguageUseCaseImpl
+import com.vnteam.talktoai.presentation.usecaseimpl.SettingsPrivacyPolicyUseCaseImpl
+import com.vnteam.talktoai.presentation.usecaseimpl.SettingsSignUpUseCaseImpl
+import com.vnteam.talktoai.presentation.usecaseimpl.SettingsThemeUseCaseImpl
 import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
 import com.vnteam.talktoai.presentation.viewmodels.ChatViewModel
 import com.vnteam.talktoai.presentation.viewmodels.MainViewModel
+import com.vnteam.talktoai.presentation.viewmodels.SettingsAccountViewModel
+import com.vnteam.talktoai.presentation.viewmodels.SettingsChatViewModel
+import com.vnteam.talktoai.presentation.viewmodels.SettingsFeedbackViewModel
+import com.vnteam.talktoai.presentation.viewmodels.SettingsLanguageViewModel
+import com.vnteam.talktoai.presentation.viewmodels.SettingsPrivacyPolicyViewModel
+import com.vnteam.talktoai.presentation.viewmodels.SettingsSignUpViewModel
+import com.vnteam.talktoai.presentation.viewmodels.SettingsThemeViewModel
 import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
@@ -102,6 +123,52 @@ val appModule = module {
 
     single<MainUseCase> { MainUseCaseImpl(get(), get(), get(), get(), get()) }
 
+    single<SettingsListUseCase> {
+        SettingsFeedbackUseCaseImpl(
+            authRepository = get(),
+            realDataBaseRepository = get()
+        )
+    }
+    single<SettingsChatUseCase> {
+        SettingsChatUseCaseImpl(
+            preferencesRepository = get(),
+            realDataBaseRepository = get()
+        )
+    }
+    single<SettingsAccountUseCase> {
+        SettingsAccountUseCaseImpl(
+            authRepository = get(),
+            preferencesRepository = get(),
+            realDataBaseRepository = get(),
+            chatRepository = get(),
+            messageRepository = get()
+        )
+    }
+    single<SettingsSignUpUseCase> {
+        SettingsSignUpUseCaseImpl(
+            chatRepository = get(),
+            messageRepository = get(),
+            authRepository = get(),
+            realDataBaseRepository = get()
+        )
+    }
+    single<SettingsLanguageUseCase> {
+        SettingsLanguageUseCaseImpl(
+            preferencesRepository = get()
+        )
+    }
+    single<SettingsThemeUseCase> {
+        SettingsThemeUseCaseImpl(
+            preferencesRepository = get()
+        )
+    }
+    single<SettingsPrivacyPolicyUseCase> {
+        SettingsPrivacyPolicyUseCaseImpl(
+            preferencesRepository = get(),
+            realDataBaseRepository = get()
+        )
+    }
+
     viewModel {
         AppViewModel(get())
     }
@@ -110,5 +177,40 @@ val appModule = module {
     }
     viewModel {
         ChatViewModel(get(), get(), get())
+    }
+    viewModel {
+        SettingsAccountViewModel(
+            settingsAccountUseCase = get()
+        )
+    }
+    viewModel {
+        SettingsChatViewModel(
+            settingsChatUseCase = get()
+        )
+    }
+    viewModel {
+        SettingsFeedbackViewModel(
+            settingsListUseCase = get()
+        )
+    }
+    viewModel {
+        SettingsLanguageViewModel(
+            settingsLanguageUseCase = get()
+        )
+    }
+    viewModel {
+        SettingsPrivacyPolicyViewModel(
+            settingsPrivacyPolicyUseCase = get()
+        )
+    }
+    viewModel {
+        SettingsSignUpViewModel(
+            settingsSignUpUseCase = get()
+        )
+    }
+    viewModel {
+        SettingsThemeViewModel(
+            settingsThemeUseCase = get()
+        )
     }
 }

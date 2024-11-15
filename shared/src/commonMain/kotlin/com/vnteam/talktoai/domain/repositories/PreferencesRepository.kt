@@ -19,4 +19,8 @@ interface PreferencesRepository {
     suspend fun setReviewVoted(isReviewVoted: Boolean)
 
     suspend fun getIsReviewVoted(): Flow<Boolean?>
+
+    suspend fun clearDataByKeys(keys: List<String>) {
+        // TODO: Implement this method
+    }
 }
