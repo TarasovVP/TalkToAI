@@ -55,7 +55,7 @@ fun SettingsSignUpContent(
     val accountExistState = viewModel.accountExistLiveData.collectAsState()
     LaunchedEffect(accountExistState.value) {
         accountExistState.value.takeIf { it.isNotEmpty() }?.let {
-            viewModel.googleSignInClient.signOut()
+            //viewModel.googleSignInClient.signOut()
             showAccountExistDialog.value = true
         }
     }
@@ -152,7 +152,7 @@ fun SettingsSignUpContent(
         LocalStringResources.current.SETTINGS_ACCOUNT_EXIST,
         showAccountExistDialog,
         onDismiss = {
-            viewModel.googleSignInClient.signOut()
+            //viewModel.googleSignInClient.signOut()
             showAccountExistDialog.value = false
         }) {
         viewModel.accountExistLiveData.value.takeIf { it.isNotEmpty() }?.let { idToken ->

@@ -19,19 +19,16 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.compose.rememberNavController
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
 import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
-import com.vnstudio.talktoai.infrastructure.components.AppDrawer
-import com.vnstudio.talktoai.infrastructure.components.AppSnackBar
-import com.vnstudio.talktoai.infrastructure.components.DeleteModeTopBar
-import com.vnstudio.talktoai.infrastructure.components.PrimaryTopBar
-import com.vnstudio.talktoai.infrastructure.components.SecondaryTopBar
+import presentation.AppDrawer
+import presentation.AppSnackBar
+import presentation.DeleteModeTopBar
+import presentation.PrimaryTopBar
+import presentation.SecondaryTopBar
 import com.vnteam.talktoai.CommonExtensions.isNotTrue
 import com.vnteam.talktoai.CommonExtensions.isNull
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.models.Chat
-import com.vnteam.talktoai.presentation.NavigationScreen
-import com.vnteam.talktoai.presentation.NavigationScreen.Companion.isSettingsScreen
-import com.vnteam.talktoai.presentation.NavigationScreen.Companion.settingsScreenNameByRoute
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.MainViewModel
 import components.ConfirmationDialog
@@ -43,6 +40,10 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.AppNavigation
+import presentation.NavigationScreen
+import presentation.NavigationScreen.Companion.isSettingsScreen
+import presentation.NavigationScreen.Companion.settingsScreenNameByRoute
+import presentation.StringResources
 import resources.LocalStringResources
 
 
@@ -138,9 +139,9 @@ fun AppContent() {
             else -> NavigationScreen.fromRoute(screenState.value)
         }
         val route = screenState.value.currentScreenState.value.orEmpty()
-        /*if ((navigationScreen as? NavigationScreen)?.route != (navController.currentBackStackEntry?.destination?.route)) {
+        if ((navigationScreen as? NavigationScreen)?.route != (navController.currentBackStackEntry?.destination?.route) && route.isNotEmpty()) {
             navController.navigate(route)
-        }*/
+        }
     }
 
     /*
@@ -211,7 +212,7 @@ fun AppContent() {
                     navController.currentBackStackEntry?.destination?.route == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
                         settingsScreenNameByRoute(
                             navController.currentBackStackEntry?.destination?.route,
-                            com.vnteam.talktoai.presentation.StringResources
+                            StringResources
                         )
                     ) {
                         navController.popBackStack()
@@ -226,7 +227,7 @@ fun AppContent() {
                         ) currentChatState.value?.name
                             ?: LocalStringResources.current.APP_NAME else settingsScreenNameByRoute(
                             navController.currentBackStackEntry?.destination?.route,
-                            com.vnteam.talktoai.presentation.StringResources
+                            StringResources
                         ),
                         onNavigationIconClick = {
                             scope.launch {

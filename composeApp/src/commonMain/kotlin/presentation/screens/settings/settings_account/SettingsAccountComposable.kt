@@ -34,7 +34,6 @@ import com.vnteam.talktoai.domain.models.InfoMessage
 import com.vnteam.talktoai.ic_avatar_anonymous
 import com.vnteam.talktoai.ic_avatar_email
 import com.vnteam.talktoai.ic_avatar_google
-import com.vnteam.talktoai.presentation.NavigationScreen
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsAccountViewModel
 import components.ConfirmationDialog
@@ -49,6 +48,7 @@ import components.SecondaryButton
 import components.ShapeableImage
 import components.SubmitButtons
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.NavigationScreen
 import resources.LocalStringResources
 import theme.Primary500
 

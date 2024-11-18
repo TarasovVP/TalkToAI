@@ -1,4 +1,4 @@
-package com.vnstudio.talktoai.infrastructure.components
+package presentation
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
@@ -35,11 +35,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Constants
+import com.vnteam.talktoai.Res
+import com.vnteam.talktoai.avatar_ai
 import com.vnteam.talktoai.domain.models.Chat
+import com.vnteam.talktoai.empty_state
+import com.vnteam.talktoai.ic_arrow_back
+import com.vnteam.talktoai.ic_chat
+import com.vnteam.talktoai.ic_chat_add
+import com.vnteam.talktoai.ic_delete
+import com.vnteam.talktoai.ic_drag_handle
+import com.vnteam.talktoai.ic_edit
+import com.vnteam.talktoai.ic_navigation
+import com.vnteam.talktoai.ic_settings
 import components.TextIconButton
 import components.draggable.DragDropColumn
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import presentation.NavigationScreen.Companion.isSettingsScreen
+import presentation.NavigationScreen.Companion.settingScreens
+import presentation.NavigationScreen.Companion.settingsScreenNameByRoute
 import resources.LocalStringResources
 import theme.Neutral50
 import theme.Primary100

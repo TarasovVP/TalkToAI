@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import org.koin.core.component.KoinComponent
+import presentation.screens.chat.ChatContent
 import presentation.screens.settings.settings_account.SettingsAccountContent
 import presentation.screens.settings.settings_chat.SettingsChatContent
 import presentation.screens.settings.settings_feedback.SettingsFeedbackContent
@@ -14,7 +15,7 @@ import presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPoli
 import presentation.screens.settings.settings_sign_up.SettingsSignUpContent
 import presentation.screens.settings.settings_theme.SettingsThemeContent
 
-sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY): Screen,
+sealed class NavigationScreen(val route: String, val name: String = String.EMPTY, val icon: String = String.EMPTY): Screen,
     KoinComponent {
     class OnboardingScreen(private val screenState: ScreenState = ScreenState()) :
         NavigationScreen(ONBOARDING_SCREEN) {
@@ -45,7 +46,7 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
     ) : NavigationScreen(CHAT_SCREEN, DrawableResources.IC_CHAT) {
         @Composable
         override fun Content() {
-            //ChatContent(chatId, showCreateChatDialogue, isMessageActionModeState, screenState)
+            ChatContent(chatId, showCreateChatDialogue, isMessageActionModeState, screenState)
         }
     }
     class SettingsChatScreen(private val screenState: ScreenState = ScreenState()) :
