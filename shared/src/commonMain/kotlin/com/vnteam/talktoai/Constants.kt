@@ -6,6 +6,7 @@ object Constants {
     //App
     const val SUCCESS_MESSAGE = "successMessage"
     const val ERROR_MESSAGE = "errorMessage"
+    const val APP_NETWORK_UNAVAILABLE_REPEAT = "app_network_unavailable_repeat"
 
     //Chat
     const val CURRENT_CHAT_ID = "current_chat_id"
