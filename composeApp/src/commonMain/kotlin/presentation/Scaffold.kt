@@ -55,6 +55,7 @@ import presentation.NavigationScreen.Companion.isSettingsScreen
 import presentation.NavigationScreen.Companion.settingScreens
 import presentation.NavigationScreen.Companion.settingsScreenNameByRoute
 import resources.LocalStringResources
+import resources.StringResources
 import theme.Neutral50
 import theme.Primary100
 import theme.Primary700
@@ -163,8 +164,8 @@ fun AppDrawer(
             ) {
                 settingScreens.forEach { settingsScreen ->
                     DrawerItem(
-                        name = settingsScreenNameByRoute(settingsScreen.route, StringResources),
-                        mainIcon = Res.drawable.ic_settings/* settingsScreen.icon*/,
+                        name = settingsScreenNameByRoute(settingsScreen.route, LocalStringResources.current),
+                        mainIcon = Res.drawable.ic_settings,
                         isCurrent = currentRouteState == settingsScreen.route,
                         secondaryIcon = null/*if (settingsScreen.route == NavigationScreen.SettingsLanguageScreen().route) LocaleList.current.flagDrawable() else null*/
                     ) {

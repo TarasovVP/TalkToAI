@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
+import presentation.screens.authorization.onboarding.OnboardingPage
 import presentation.screens.chat.ChatContent
 import presentation.screens.settings.settings_account.SettingsAccountContent
 import presentation.screens.settings.settings_chat.SettingsChatContent
@@ -20,6 +21,56 @@ import presentation.screens.settings.settings_theme.SettingsThemeContent
 @Composable
 fun AppNavigation(navController: NavHostController, screenState: MutableState<ScreenState>) {
     NavHost(navController = navController, startDestination = NavigationScreen.CHAT_SCREEN) {
+        composable(NavigationScreen.ONBOARDING_SCREEN) {
+            screenState.value = screenState.value.copy(
+                appBarState = screenState.value.appBarState.copy(
+                    appBarTitle = NavigationScreen.ONBOARDING_SCREEN,
+                    topAppBarActionVisible = false,
+                ),
+                floatingActionState = screenState.value.floatingActionState.copy(
+                    floatingActionButtonVisible = true,
+                    floatingActionButtonTitle = "LocalStringResources.current.ADD",
+                    floatingActionButtonAction = {
+                        navController.navigate("${NavigationScreen.CHAT_SCREEN}-1")
+                    }
+                )
+            )
+            OnboardingPage(0) {
+                navController.navigate(NavigationScreen.LOGIN_SCREEN)
+            }
+        }
+        composable(NavigationScreen.LOGIN_SCREEN) {
+            screenState.value = screenState.value.copy(
+                appBarState = screenState.value.appBarState.copy(
+                    appBarTitle = NavigationScreen.LOGIN_SCREEN,
+                    topAppBarActionVisible = false,
+                ),
+                floatingActionState = screenState.value.floatingActionState.copy(
+                    floatingActionButtonVisible = true,
+                    floatingActionButtonTitle = "LocalStringResources.current.ADD",
+                    floatingActionButtonAction = {
+                        navController.navigate("${NavigationScreen.CHAT_SCREEN}-1")
+                    }
+                )
+            )
+            ChatContent(1L, mutableStateOf(false), mutableStateOf(false), ScreenState())
+        }
+        composable(NavigationScreen.SIGN_UP_SCREEN) {
+            screenState.value = screenState.value.copy(
+                appBarState = screenState.value.appBarState.copy(
+                    appBarTitle = NavigationScreen.SIGN_UP_SCREEN,
+                    topAppBarActionVisible = false,
+                ),
+                floatingActionState = screenState.value.floatingActionState.copy(
+                    floatingActionButtonVisible = true,
+                    floatingActionButtonTitle = "LocalStringResources.current.ADD",
+                    floatingActionButtonAction = {
+                        navController.navigate("${NavigationScreen.CHAT_SCREEN}-1")
+                    }
+                )
+            )
+            ChatContent(1L, mutableStateOf(false), mutableStateOf(false), ScreenState())
+        }
         composable(NavigationScreen.CHAT_SCREEN) {
             screenState.value = screenState.value.copy(
                 appBarState = screenState.value.appBarState.copy(

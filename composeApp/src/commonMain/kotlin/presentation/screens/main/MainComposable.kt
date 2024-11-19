@@ -1,6 +1,8 @@
 package presentation.screens.main
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -15,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.compose.rememberNavController
 import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
@@ -43,7 +46,6 @@ import presentation.AppNavigation
 import presentation.NavigationScreen
 import presentation.NavigationScreen.Companion.isSettingsScreen
 import presentation.NavigationScreen.Companion.settingsScreenNameByRoute
-import presentation.StringResources
 import resources.LocalStringResources
 
 
@@ -159,10 +161,11 @@ fun AppContent() {
         }
     }*/
 
-    val isDrawerGesturesEnabled = isSettingsScreen(navController.currentBackStackEntry?.destination?.route) ||
-            (navController.currentBackStackEntry?.destination?.route == NavigationScreen.ChatScreen(
-                isMessageActionModeState = isMessageActionModeState
-            ).route && isMessageActionModeState.value.isNotTrue())
+    val isDrawerGesturesEnabled =
+        isSettingsScreen(navController.currentBackStackEntry?.destination?.route) ||
+                (navController.currentBackStackEntry?.destination?.route == NavigationScreen.ChatScreen(
+                    isMessageActionModeState = isMessageActionModeState
+                ).route && isMessageActionModeState.value.isNotTrue())
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -212,7 +215,7 @@ fun AppContent() {
                     navController.currentBackStackEntry?.destination?.route == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
                         settingsScreenNameByRoute(
                             navController.currentBackStackEntry?.destination?.route,
-                            StringResources
+                            LocalStringResources.current
                         )
                     ) {
                         navController.popBackStack()
@@ -227,7 +230,7 @@ fun AppContent() {
                         ) currentChatState.value?.name
                             ?: LocalStringResources.current.APP_NAME else settingsScreenNameByRoute(
                             navController.currentBackStackEntry?.destination?.route,
-                            StringResources
+                            LocalStringResources.current
                         ),
                         onNavigationIconClick = {
                             scope.launch {
@@ -250,8 +253,12 @@ fun AppContent() {
             snackbarHost = {
                 AppSnackBar(snackBarHostState)
             }
-        ) {
-            Box {
+        ) { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+            ) {
                 AppNavigation(navController, screenState)
                 ExceptionMessageHandler(
                     screenState.value.infoMessageState,
