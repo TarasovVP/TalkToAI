@@ -1,4 +1,4 @@
-package resources
+package com.vnteam.talktoai.presentation.ui.resources
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf

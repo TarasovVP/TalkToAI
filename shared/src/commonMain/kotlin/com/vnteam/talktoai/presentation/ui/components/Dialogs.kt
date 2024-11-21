@@ -1,4 +1,4 @@
-package components
+package com.vnteam.talktoai.presentation.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,7 +17,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import theme.Primary500
+import com.vnteam.talktoai.presentation.ui.theme.Primary500
 
 @Composable
 fun ConfirmationDialog(

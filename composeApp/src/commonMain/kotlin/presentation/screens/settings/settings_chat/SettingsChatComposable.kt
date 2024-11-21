@@ -8,10 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsChatViewModel
-import components.ExceptionMessageHandler
-import components.PrimaryButton
+import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
+import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import org.koin.compose.viewmodel.koinViewModel
-import resources.LocalStringResources
+import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 
 @Composable
 fun SettingsChatContent(

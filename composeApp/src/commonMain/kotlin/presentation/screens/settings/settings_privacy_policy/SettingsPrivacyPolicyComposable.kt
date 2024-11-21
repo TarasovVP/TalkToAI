@@ -6,12 +6,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import com.vnstudio.talktoai.infrastructure.Constants.PRIVACY_POLICY
 import com.vnteam.talktoai.CommonExtensions.EMPTY
+import com.vnteam.talktoai.Constants.PRIVACY_POLICY
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsPrivacyPolicyViewModel
 import org.koin.compose.viewmodel.koinViewModel
-import resources.LocalStringResources
+import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 
 @Composable
 fun SettingsPrivacyPolicyContent(screenState: ScreenState) {

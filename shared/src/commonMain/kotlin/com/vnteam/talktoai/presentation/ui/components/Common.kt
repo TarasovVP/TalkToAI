@@ -1,4 +1,4 @@
-package components
+package com.vnteam.talktoai.presentation.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,19 +16,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.ceil
-import com.vnstudio.talktoai.infrastructure.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
 import com.vnteam.talktoai.Constants
+import com.vnteam.talktoai.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.domain.models.InfoMessage
 import com.vnteam.talktoai.ic_empty_state
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
-import resources.LocalMediumTextSize
-import resources.LocalSmallPadding
-import resources.LocalStringResources
-import theme.Primary300
-import theme.Primary700
+import com.vnteam.talktoai.presentation.ui.resources.LocalMediumTextSize
+import com.vnteam.talktoai.presentation.ui.resources.LocalSmallPadding
+import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.ui.theme.Primary300
+import com.vnteam.talktoai.presentation.ui.theme.Primary700
 
 @Composable
 fun ExceptionMessageHandler(

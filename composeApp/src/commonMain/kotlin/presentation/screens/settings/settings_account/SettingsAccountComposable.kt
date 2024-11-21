@@ -27,7 +27,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.vnstudio.talktoai.infrastructure.Constants.REVIEW_VOTE
+import com.vnteam.talktoai.Constants.REVIEW_VOTE
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.models.InfoMessage
@@ -36,21 +36,21 @@ import com.vnteam.talktoai.ic_avatar_email
 import com.vnteam.talktoai.ic_avatar_google
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsAccountViewModel
-import components.ConfirmationDialog
-import components.DataEditDialog
-import components.EmptyState
-import components.ExceptionMessageHandler
-import components.LinkButton
-import components.PasswordTextField
-import components.PrimaryButton
-import components.ProgressVisibilityHandler
-import components.SecondaryButton
-import components.ShapeableImage
-import components.SubmitButtons
+import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
+import com.vnteam.talktoai.presentation.ui.components.DataEditDialog
+import com.vnteam.talktoai.presentation.ui.components.EmptyState
+import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
+import com.vnteam.talktoai.presentation.ui.components.LinkButton
+import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
+import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
+import com.vnteam.talktoai.presentation.ui.components.ProgressVisibilityHandler
+import com.vnteam.talktoai.presentation.ui.components.SecondaryButton
+import com.vnteam.talktoai.presentation.ui.components.ShapeableImage
+import com.vnteam.talktoai.presentation.ui.components.SubmitButtons
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.NavigationScreen
-import resources.LocalStringResources
-import theme.Primary500
+import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.ui.theme.Primary500
 
 @Composable
 fun SettingsAccountContent(

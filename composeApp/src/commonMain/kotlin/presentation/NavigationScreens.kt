@@ -17,7 +17,7 @@ import presentation.screens.settings.settings_language.SettingsLanguageContent
 import presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyContent
 import presentation.screens.settings.settings_sign_up.SettingsSignUpContent
 import presentation.screens.settings.settings_theme.SettingsThemeContent
-import resources.StringResources
+import com.vnteam.talktoai.presentation.ui.resources.StringResources
 
 sealed class NavigationScreen(val route: String, val name: String = String.EMPTY, val icon: String = String.EMPTY): Screen,
     KoinComponent {

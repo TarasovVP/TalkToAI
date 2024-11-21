@@ -1,4 +1,4 @@
-package theme
+package com.vnteam.talktoai.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -21,23 +21,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
-import com.vnstudio.talktoai.infrastructure.Constants.DESTINATION_CHAT_SCREEN
+import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
+import com.vnteam.talktoai.Constants.DESTINATION_CHAT_SCREEN
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SignUpViewModel
-import components.ConfirmationDialog
-import components.ExceptionMessageHandler
-import components.GoogleButton
-import components.LinkButton
-import components.OrDivider
-import components.PasswordTextField
-import components.PrimaryButton
-import components.PrimaryTextField
-import components.ProgressVisibilityHandler
+import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
+import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
+import com.vnteam.talktoai.presentation.ui.components.GoogleButton
+import com.vnteam.talktoai.presentation.ui.components.LinkButton
+import com.vnteam.talktoai.presentation.ui.components.OrDivider
+import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
+import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
+import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
+import com.vnteam.talktoai.presentation.ui.components.ProgressVisibilityHandler
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.NavigationScreen
-import resources.LocalStringResources
+import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 
 @Composable
 fun SignUpContent(

@@ -47,20 +47,19 @@ import com.vnteam.talktoai.ic_drag_handle
 import com.vnteam.talktoai.ic_edit
 import com.vnteam.talktoai.ic_navigation
 import com.vnteam.talktoai.ic_settings
-import components.TextIconButton
-import components.draggable.DragDropColumn
+import com.vnteam.talktoai.presentation.ui.components.TextIconButton
+import com.vnteam.talktoai.presentation.ui.components.draggable.DragDropColumn
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import presentation.NavigationScreen.Companion.isSettingsScreen
 import presentation.NavigationScreen.Companion.settingScreens
 import presentation.NavigationScreen.Companion.settingsScreenNameByRoute
-import resources.LocalStringResources
-import resources.StringResources
-import theme.Neutral50
-import theme.Primary100
-import theme.Primary700
-import theme.Primary800
-import theme.Primary900
+import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.ui.theme.Neutral50
+import com.vnteam.talktoai.presentation.ui.theme.Primary100
+import com.vnteam.talktoai.presentation.ui.theme.Primary700
+import com.vnteam.talktoai.presentation.ui.theme.Primary800
+import com.vnteam.talktoai.presentation.ui.theme.Primary900
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

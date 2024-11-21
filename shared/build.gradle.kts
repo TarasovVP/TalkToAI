@@ -33,6 +33,8 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.foundation)
             implementation(compose.runtime)
+            implementation(compose.material3)
+            implementation(compose.components.resources)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.androidx.viewmodel.compose)
@@ -111,6 +113,12 @@ sqldelight {
             version = 2
         }
     }
+}
+
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.vnteam.talktoai"
+    generateResClass = always
 }
 
 

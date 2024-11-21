@@ -1,4 +1,4 @@
-package components.draggable
+package com.vnteam.talktoai.presentation.ui.components.draggable
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutLinearInEasing

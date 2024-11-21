@@ -21,10 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsThemeViewModel
-import components.ExceptionMessageHandler
+import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import org.koin.compose.viewmodel.koinViewModel
-import theme.Neutral500
-import theme.Primary700
+import com.vnteam.talktoai.presentation.ui.theme.Neutral500
+import com.vnteam.talktoai.presentation.ui.theme.Primary700
 
 @Composable
 fun SettingsThemeContent(screenState: ScreenState) {

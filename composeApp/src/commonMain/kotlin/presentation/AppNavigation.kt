@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import resources.LocalStringResources
+import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import presentation.screens.authorization.onboarding.OnboardingPage
 import presentation.screens.chat.ChatContent

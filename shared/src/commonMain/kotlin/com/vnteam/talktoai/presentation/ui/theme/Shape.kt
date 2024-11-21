@@ -1,10 +1,10 @@
-package theme
+package com.vnteam.talktoai.presentation.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes
-import resources.default_padding
-import resources.medium_padding
-import resources.small_padding
+import com.vnteam.talktoai.presentation.ui.resources.default_padding
+import com.vnteam.talktoai.presentation.ui.resources.medium_padding
+import com.vnteam.talktoai.presentation.ui.resources.small_padding
 
 val Shapes = Shapes(
     small = RoundedCornerShape(small_padding.size.value),

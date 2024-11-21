@@ -1,4 +1,4 @@
-package components
+package com.vnteam.talktoai.presentation.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,11 +34,11 @@ import com.vnteam.talktoai.ic_message_send
 import com.vnteam.talktoai.ic_toggle_password_disabled
 import com.vnteam.talktoai.ic_toggle_password_enabled
 import org.jetbrains.compose.resources.painterResource
-import resources.LocalDefaultTextSize
-import resources.LocalStringResources
-import theme.Neutral600
-import theme.Primary500
-import theme.Primary900
+import com.vnteam.talktoai.presentation.ui.resources.LocalDefaultTextSize
+import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.ui.theme.Neutral600
+import com.vnteam.talktoai.presentation.ui.theme.Primary500
+import com.vnteam.talktoai.presentation.ui.theme.Primary900
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

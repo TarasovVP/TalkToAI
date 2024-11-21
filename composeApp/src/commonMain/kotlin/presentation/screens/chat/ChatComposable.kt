@@ -39,13 +39,11 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import clearCheckToAction
-import com.vnstudio.talktoai.infrastructure.Constants.DEFAULT_CHAT_ID
-import com.vnstudio.talktoai.infrastructure.Constants.MESSAGE_ROLE_CHAT_GPT
-import com.vnstudio.talktoai.infrastructure.Constants.MESSAGE_ROLE_ME
-import com.vnstudio.talktoai.infrastructure.Constants.MESSAGE_ROLE_USER
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.CommonExtensions.isNotNull
 import com.vnteam.talktoai.CommonExtensions.isTrue
+import com.vnteam.talktoai.Constants
+import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.data.network.request.ApiRequest
 import com.vnteam.talktoai.data.network.request.MessageApi
@@ -59,30 +57,30 @@ import com.vnteam.talktoai.ic_share
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.ChatViewModel
-import components.ConfirmationDialog
-import components.EmptyState
-import components.ExceptionMessageHandler
-import components.ProgressVisibilityHandler
-import components.TextFieldWithButton
-import components.TextIconButton
-import components.TruncatableText
-import components.draggable.UpdateViewConfiguration
-import components.textLinesCount
+import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
+import com.vnteam.talktoai.presentation.ui.components.EmptyState
+import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
+import com.vnteam.talktoai.presentation.ui.components.ProgressVisibilityHandler
+import com.vnteam.talktoai.presentation.ui.components.TextFieldWithButton
+import com.vnteam.talktoai.presentation.ui.components.TextIconButton
+import com.vnteam.talktoai.presentation.ui.components.TruncatableText
+import com.vnteam.talktoai.presentation.ui.components.draggable.UpdateViewConfiguration
+import com.vnteam.talktoai.presentation.ui.components.textLinesCount
 import dateToMilliseconds
 import isDefineSecondsLater
 import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
-import resources.LocalDefaultTextSize
-import resources.LocalLargePadding
-import resources.LocalMediumAvatarSize
-import resources.LocalSmallPadding
-import resources.LocalStringResources
+import com.vnteam.talktoai.presentation.ui.resources.LocalDefaultTextSize
+import com.vnteam.talktoai.presentation.ui.resources.LocalLargePadding
+import com.vnteam.talktoai.presentation.ui.resources.LocalMediumAvatarSize
+import com.vnteam.talktoai.presentation.ui.resources.LocalSmallPadding
+import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import textToAction
-import theme.Neutral50
-import theme.Primary500
-import theme.Primary600
-import theme.Primary900
+import com.vnteam.talktoai.presentation.ui.theme.Neutral50
+import com.vnteam.talktoai.presentation.ui.theme.Primary500
+import com.vnteam.talktoai.presentation.ui.theme.Primary600
+import com.vnteam.talktoai.presentation.ui.theme.Primary900
 
 @Composable
 fun ChatContent(
@@ -198,7 +196,7 @@ fun ChatContent(
                             MessageUI(
                                 id = Clock.System.now().toEpochMilliseconds(),
                                 chatId = currentChatState.value?.id ?: 0,
-                                author = MESSAGE_ROLE_ME,
+                                author = Constants.MESSAGE_ROLE_ME,
                                 message = messageText,
                                 updatedAt = Clock.System.now().dateToMilliseconds(),
                                 status = MessageStatus.SUCCESS
@@ -207,7 +205,7 @@ fun ChatContent(
                         val temporaryMessage = MessageUI(
                             id = Clock.System.now().toEpochMilliseconds() + 1,
                             chatId = currentChatState.value?.id ?: 0,
-                            author = MESSAGE_ROLE_CHAT_GPT,
+                            author = Constants.MESSAGE_ROLE_CHAT_GPT,
                             message = String.EMPTY,
                             updatedAt = Clock.System.now().dateToMilliseconds() + 1,
                             status = MessageStatus.REQUESTING
@@ -215,10 +213,10 @@ fun ChatContent(
                         viewModel.insertMessage(temporaryMessage)
                         viewModel.sendRequest(
                             temporaryMessage, ApiRequest(
-                                model = MESSAGE_ROLE_CHAT_GPT,
+                                model = Constants.MESSAGE_ROLE_CHAT_GPT,
                                 temperature = 0.7f,
                                 messages = listOf(
-                                    MessageApi(role = MESSAGE_ROLE_USER, content = messageText)
+                                    MessageApi(role = Constants.MESSAGE_ROLE_USER, content = messageText)
                                 )
                             )
                         )
@@ -318,7 +316,7 @@ fun MessagesList(
                 ) {
                     items(messages) { message ->
                         Message(
-                            isUserAuthor = message.author == MESSAGE_ROLE_ME,
+                            isUserAuthor = message.author == Constants.MESSAGE_ROLE_ME,
                             message = message,
                             isMessageDeleteModeState = isMessageActionModeState,
                             onMessageChange

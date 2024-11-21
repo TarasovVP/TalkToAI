@@ -1,4 +1,4 @@
-package components
+package com.vnteam.talktoai.presentation.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,15 +25,15 @@ import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.ic_logo_google
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
-import resources.LocalStringResources
-import theme.Blue
-import theme.Neutral400
-import theme.Neutral50
-import theme.Neutral700
-import theme.Primary300
-import theme.Primary400
-import theme.Primary500
-import theme.Primary700
+import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.ui.theme.Blue
+import com.vnteam.talktoai.presentation.ui.theme.Neutral400
+import com.vnteam.talktoai.presentation.ui.theme.Neutral50
+import com.vnteam.talktoai.presentation.ui.theme.Neutral700
+import com.vnteam.talktoai.presentation.ui.theme.Primary300
+import com.vnteam.talktoai.presentation.ui.theme.Primary400
+import com.vnteam.talktoai.presentation.ui.theme.Primary500
+import com.vnteam.talktoai.presentation.ui.theme.Primary700
 
 @Composable
 fun PrimaryButton(

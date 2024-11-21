@@ -1,4 +1,4 @@
-package resources
+package com.vnteam.talktoai.presentation.ui.resources
 
 object DrawableResources {
     const val EMPTY_STATE = "ic_empty_state"
