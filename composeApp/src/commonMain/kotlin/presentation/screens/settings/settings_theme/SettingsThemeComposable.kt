@@ -1,5 +1,6 @@
 package presentation.screens.settings.settings_theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,14 +15,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsThemeViewModel
 import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
+import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import org.koin.compose.viewmodel.koinViewModel
 import com.vnteam.talktoai.presentation.ui.theme.Neutral500
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
@@ -30,15 +30,11 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary700
 fun SettingsThemeContent(screenState: ScreenState) {
 
     val viewModel: SettingsThemeViewModel = koinViewModel()
-    val appThemeState = remember { mutableStateOf<Int?>(null) }
 
     LaunchedEffect(Unit) {
-        viewModel.getAppTheme()
+        viewModel.getIsDarkTheme()
     }
-    val appTheme = viewModel.appThemeLiveData.collectAsState()
-    LaunchedEffect(appTheme.value) {
-        appThemeState.value = appTheme.value
-    }
+    val appTheme = viewModel.isDarkTheme.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,27 +42,18 @@ fun SettingsThemeContent(screenState: ScreenState) {
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        /*SettingsThemeItem(
+        SettingsThemeItem(
             LocalStringResources.current.SETTINGS_THEME_DAY,
-            AppCompatDelegate.MODE_NIGHT_NO == appThemeState.value
+            isSystemInDarkTheme() != appTheme.value
         ) {
-            viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_NO)
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            viewModel.setIsDarkTheme(false)
         }
         SettingsThemeItem(
             LocalStringResources.current.SETTINGS_THEME_NIGHT,
-            AppCompatDelegate.MODE_NIGHT_YES == appThemeState.value
+            isSystemInDarkTheme() == appTheme.value
         ) {
-            viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_YES)
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            viewModel.setIsDarkTheme(true)
         }
-        SettingsThemeItem(
-            LocalStringResources.current.SETTINGS_THEME_AUTO,
-            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM == appThemeState.value
-        ) {
-            viewModel.setAppTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-        }*/
     }
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
 }
