@@ -9,10 +9,10 @@ class OnBoardingUseCaseImpl(
 ) : OnBoardingUseCase {
 
     override suspend fun setOnBoardingSeen(onBoardingSeen: Boolean) {
-        return preferencesRepository.setOnBoardingSeen(true)
+        preferencesRepository.setOnBoardingSeen(onBoardingSeen)
     }
 
     override suspend fun getIsBoardingSeen(): Flow<Boolean?> {
-        TODO("Not yet implemented")
+        return preferencesRepository.getIsBoardingSeen()
     }
 }

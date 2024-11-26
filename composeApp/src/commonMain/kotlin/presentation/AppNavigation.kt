@@ -8,7 +8,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
-import presentation.screens.authorization.onboarding.OnboardingPage
+import presentation.screens.authorization.login.LoginContent
+import presentation.screens.authorization.onboarding.OnboardingContent
+import presentation.screens.authorization.signup.SignUpContent
 import presentation.screens.chat.ChatContent
 import presentation.screens.settings.settings_account.SettingsAccountContent
 import presentation.screens.settings.settings_chat.SettingsChatContent
@@ -35,9 +37,7 @@ fun AppNavigation(navController: NavHostController, screenState: MutableState<Sc
                     }
                 )
             )
-            OnboardingPage(0) {
-                navController.navigate(NavigationScreen.LOGIN_SCREEN)
-            }
+            OnboardingContent(screenState.value)
         }
         composable(NavigationScreen.LOGIN_SCREEN) {
             screenState.value = screenState.value.copy(
@@ -53,7 +53,7 @@ fun AppNavigation(navController: NavHostController, screenState: MutableState<Sc
                     }
                 )
             )
-            ChatContent(1L, mutableStateOf(false), mutableStateOf(false), ScreenState())
+            LoginContent(screenState.value)
         }
         composable(NavigationScreen.SIGN_UP_SCREEN) {
             screenState.value = screenState.value.copy(
@@ -69,7 +69,7 @@ fun AppNavigation(navController: NavHostController, screenState: MutableState<Sc
                     }
                 )
             )
-            ChatContent(1L, mutableStateOf(false), mutableStateOf(false), ScreenState())
+            SignUpContent(screenState.value)
         }
         composable(NavigationScreen.CHAT_SCREEN) {
             screenState.value = screenState.value.copy(

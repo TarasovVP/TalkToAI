@@ -30,9 +30,11 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vnteam.talktoai.CommonExtensions.flagDrawable
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
@@ -166,7 +168,7 @@ fun AppDrawer(
                         name = settingsScreenNameByRoute(settingsScreen.route, LocalStringResources.current),
                         mainIcon = Res.drawable.ic_settings,
                         isCurrent = currentRouteState == settingsScreen.route,
-                        secondaryIcon = null/*if (settingsScreen.route == NavigationScreen.SettingsLanguageScreen().route) LocaleList.current.flagDrawable() else null*/
+                        secondaryIcon = if (settingsScreen.route == NavigationScreen.SettingsLanguageScreen().route) LocaleList.current.flagDrawable() else null
                     ) {
                         onNextScreen.invoke(settingsScreen.route)
                     }

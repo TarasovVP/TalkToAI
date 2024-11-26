@@ -25,7 +25,9 @@ import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnteam.talktoai.domain.usecase.AppUseCase
 import com.vnteam.talktoai.domain.usecase.ChatUseCase
+import com.vnteam.talktoai.domain.usecase.LoginUseCase
 import com.vnteam.talktoai.domain.usecase.MainUseCase
+import com.vnteam.talktoai.domain.usecase.OnBoardingUseCase
 import com.vnteam.talktoai.domain.usecase.SettingsAccountUseCase
 import com.vnteam.talktoai.domain.usecase.SettingsChatUseCase
 import com.vnteam.talktoai.domain.usecase.SettingsLanguageUseCase
@@ -33,6 +35,7 @@ import com.vnteam.talktoai.domain.usecase.SettingsListUseCase
 import com.vnteam.talktoai.domain.usecase.SettingsPrivacyPolicyUseCase
 import com.vnteam.talktoai.domain.usecase.SettingsSignUpUseCase
 import com.vnteam.talktoai.domain.usecase.SettingsThemeUseCase
+import com.vnteam.talktoai.domain.usecase.SignUpUseCase
 import com.vnteam.talktoai.presentation.mapperimpls.ChatUIMapperImpl
 import com.vnteam.talktoai.presentation.mapperimpls.MessageUIMapperImpl
 import io.ktor.client.HttpClient
@@ -42,7 +45,9 @@ import kotlinx.serialization.json.Json
 import org.koin.dsl.module
 import com.vnteam.talktoai.presentation.usecaseimpl.AppUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.ChatUseCaseImpl
+import com.vnteam.talktoai.presentation.usecaseimpl.LoginUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.MainUseCaseImpl
+import com.vnteam.talktoai.presentation.usecaseimpl.OnBoardingUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.SettingsAccountUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.SettingsChatUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.SettingsFeedbackUseCaseImpl
@@ -50,9 +55,12 @@ import com.vnteam.talktoai.presentation.usecaseimpl.SettingsLanguageUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.SettingsPrivacyPolicyUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.SettingsSignUpUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.SettingsThemeUseCaseImpl
+import com.vnteam.talktoai.presentation.usecaseimpl.SignUpUseCaseImpl
 import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
 import com.vnteam.talktoai.presentation.viewmodels.ChatViewModel
+import com.vnteam.talktoai.presentation.viewmodels.LoginViewModel
 import com.vnteam.talktoai.presentation.viewmodels.MainViewModel
+import com.vnteam.talktoai.presentation.viewmodels.OnBoardingViewModel
 import com.vnteam.talktoai.presentation.viewmodels.SettingsAccountViewModel
 import com.vnteam.talktoai.presentation.viewmodels.SettingsChatViewModel
 import com.vnteam.talktoai.presentation.viewmodels.SettingsFeedbackViewModel
@@ -60,6 +68,7 @@ import com.vnteam.talktoai.presentation.viewmodels.SettingsLanguageViewModel
 import com.vnteam.talktoai.presentation.viewmodels.SettingsPrivacyPolicyViewModel
 import com.vnteam.talktoai.presentation.viewmodels.SettingsSignUpViewModel
 import com.vnteam.talktoai.presentation.viewmodels.SettingsThemeViewModel
+import com.vnteam.talktoai.presentation.viewmodels.SignUpViewModel
 import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
@@ -119,6 +128,12 @@ val appModule = module {
 
     single<AppUseCase> { AppUseCaseImpl(get()) }
 
+    single<OnBoardingUseCase> { OnBoardingUseCaseImpl(get()) }
+
+    single<LoginUseCase> { LoginUseCaseImpl(get()) }
+
+    single<SignUpUseCase> { SignUpUseCaseImpl(get(), get()) }
+
     single<ChatUseCase> { ChatUseCaseImpl(get(), get(), get(), get(), get(), get()) }
 
     single<MainUseCase> { MainUseCaseImpl(get(), get(), get(), get(), get()) }
@@ -171,6 +186,15 @@ val appModule = module {
 
     viewModel {
         AppViewModel(get())
+    }
+    viewModel {
+        OnBoardingViewModel(get())
+    }
+    viewModel {
+        LoginViewModel(get())
+    }
+    viewModel {
+        SignUpViewModel(get())
     }
     viewModel {
         MainViewModel(get())
