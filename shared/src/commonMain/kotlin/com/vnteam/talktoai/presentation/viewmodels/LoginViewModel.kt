@@ -95,7 +95,9 @@ class LoginViewModel(
 
     fun signInAnonymously() {
         if (true/*application.isNetworkAvailable()*/) {
-            showProgress()
+            // TODO uncomment
+            successSignInLiveData.value = true
+            /*showProgress()
             loginUseCase.signInAnonymously { authResult ->
                 when (authResult) {
                     is NetworkResult.Success -> successSignInLiveData.value = true
@@ -105,7 +107,7 @@ class LoginViewModel(
                     }
                 }
                 hideProgress()
-            }
+            }*/
         } else {
             exceptionLiveData.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
