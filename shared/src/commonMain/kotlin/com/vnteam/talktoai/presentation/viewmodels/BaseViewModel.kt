@@ -3,6 +3,7 @@ package com.vnteam.talktoai.presentation.viewmodels
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vnteam.talktoai.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,11 +26,11 @@ open class BaseViewModel : ViewModel() {
     }
 
     fun checkNetworkAvailable(networkAvailableResult: () -> Unit) {
-        /*if (application.isNetworkAvailable()) {
+        if (true /*application.isNetworkAvailable()*/) {
             networkAvailableResult.invoke()
         } else {
             exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
-        }*/
+        }
     }
 
     protected fun launch(

@@ -1,4 +1,7 @@
 package com.vnteam.talktoai.presentation.viewmodels
+
+import com.vnteam.talktoai.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
+import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.usecase.SettingsAccountUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +28,7 @@ class SettingsAccountViewModel(
     }
 
     fun signOut() {
-        /*if (application.isNetworkAvailable()) {
+        if (true /*application.isNetworkAvailable()*/) {
             showProgress()
             settingsAccountUseCase.signOut { result ->
                 when (result) {
@@ -36,11 +39,11 @@ class SettingsAccountViewModel(
             hideProgress()
         } else {
             exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
-        }*/
+        }
     }
 
     fun changePassword(currentPassword: String, newPassword: String) {
-        /*if (application.isNetworkAvailable()) {
+        if (true /*application.isNetworkAvailable()*/) {
             showProgress()
             settingsAccountUseCase.changePassword(currentPassword, newPassword) { result ->
                 when (result) {
@@ -51,13 +54,13 @@ class SettingsAccountViewModel(
             }
         } else {
             exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
-        }*/
+        }
     }
 
     fun reAuthenticate(/*authCredential: AuthCredential*/) {
-        /*if (application.isNetworkAvailable()) {
+        if (true /*application.isNetworkAvailable()*/) {
             showProgress()
-            settingsAccountUseCase.reAuthenticate(authCredential) { result ->
+            settingsAccountUseCase.reAuthenticate(/*authCredential*/) { result ->
                 when (result) {
                     is NetworkResult.Success -> reAuthenticateLiveData.value = true
                     is NetworkResult.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
@@ -66,11 +69,11 @@ class SettingsAccountViewModel(
             }
         } else {
             exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
-        }*/
+        }
     }
 
     fun deleteUser() {
-        /*if (application.isNetworkAvailable()) {
+        if (true /*application.isNetworkAvailable()*/) {
             showProgress()
             settingsAccountUseCase.deleteUser { result ->
                 when (result) {
@@ -81,7 +84,7 @@ class SettingsAccountViewModel(
             }
         } else {
             exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
-        }*/
+        }
     }
 
     fun clearDataByKeys(keys: List<String>) {

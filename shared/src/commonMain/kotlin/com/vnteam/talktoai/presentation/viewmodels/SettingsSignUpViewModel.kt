@@ -1,6 +1,8 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.CommonExtensions.EMPTY
+import com.vnteam.talktoai.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
+import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.usecase.SettingsSignUpUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +21,7 @@ class SettingsSignUpViewModel(
     val successRemoteUserLiveData = MutableStateFlow(false)
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
-        /*if (application.isNetworkAvailable()) {
+        if (true /*application.isNetworkAvailable()*/) {
             showProgress()
             settingsSignUpUseCase.fetchSignInMethodsForEmail(email) { authResult ->
                 when (authResult) {
@@ -39,11 +41,11 @@ class SettingsSignUpViewModel(
             }
         } else {
             exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
-        }*/
+        }
     }
 
     fun createUserWithGoogle(idToken: String, isExistUser: Boolean) {
-        /*if (application.isNetworkAvailable()) {
+        if (true /*application.isNetworkAvailable()*/) {
             showProgress()
             settingsSignUpUseCase.createUserWithGoogle(idToken) { operationResult ->
                 when (operationResult) {
@@ -57,11 +59,11 @@ class SettingsSignUpViewModel(
             }
         } else {
             exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
-        }*/
+        }
     }
 
     fun createUserWithEmailAndPassword(email: String, password: String) {
-        /*if (application.isNetworkAvailable()) {
+        if (true /*application.isNetworkAvailable()*/) {
             showProgress()
             settingsSignUpUseCase.createUserWithEmailAndPassword(
                 email,
@@ -78,11 +80,11 @@ class SettingsSignUpViewModel(
             }
         } else {
             exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
-        }*/
+        }
     }
 
     fun signInWithEmailAndPassword(email: String, password: String) {
-        /*if (application.isNetworkAvailable()) {
+        if (true /*application.isNetworkAvailable()*/) {
             showProgress()
             settingsSignUpUseCase.signInWithEmailAndPassword(email, password) { authResult ->
                 when (authResult) {
@@ -96,7 +98,7 @@ class SettingsSignUpViewModel(
             }
         } else {
             exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
-        }*/
+        }
     }
 
     fun createRemoteUser(isExistUser: Boolean) {
@@ -114,7 +116,7 @@ class SettingsSignUpViewModel(
     }
 
     fun insertRemoteCurrentUser(remoteUser: RemoteUser) {
-        /*if (application.isNetworkAvailable()) {
+        if (true /*application.isNetworkAvailable()*/) {
             showProgress()
             settingsSignUpUseCase.insertRemoteCurrentUser(remoteUser) { operationResult ->
                 when (operationResult) {
@@ -128,11 +130,11 @@ class SettingsSignUpViewModel(
             }
         } else {
             exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
-        }*/
+        }
     }
 
     fun updateRemoteCurrentUser(remoteUser: RemoteUser) {
-        /*if (application.isNetworkAvailable()) {
+        if (true /*application.isNetworkAvailable()*/) {
             showProgress()
             settingsSignUpUseCase.updateRemoteCurrentUser(remoteUser) { operationResult ->
                 when (operationResult) {
@@ -146,6 +148,6 @@ class SettingsSignUpViewModel(
             }
         } else {
             exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
-        }*/
+        }
     }
 }
