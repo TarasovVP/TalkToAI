@@ -5,12 +5,14 @@ import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.usecase.SignUpUseCase
 import com.vnteam.talktoai.presentation.SignUpUIState
+import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class SignUpViewModel(
     private val signUpUseCase: SignUpUseCase,
+    private val networkState: NetworkState,
     //val googleSignInClient: GoogleSignInClient,
 ) : BaseViewModel() {
 
@@ -18,7 +20,7 @@ class SignUpViewModel(
     val uiState: StateFlow<SignUpUIState> = _uiState.asStateFlow()
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
-        if (true/*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             signUpUseCase.fetchSignInMethodsForEmail(email) { authResult ->
                 when (authResult) {
@@ -40,7 +42,7 @@ class SignUpViewModel(
     }
 
     fun createUserWithGoogle(idToken: String) {
-        if (true/*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             signUpUseCase.createUserWithGoogle(idToken) { operationResult ->
                 when (operationResult) {
@@ -58,7 +60,7 @@ class SignUpViewModel(
     }
 
     fun createUserWithEmailAndPassword(email: String, password: String) {
-        if (true/*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             signUpUseCase.createUserWithEmailAndPassword(email, password) { operationResult ->
                 when (operationResult) {
@@ -76,7 +78,7 @@ class SignUpViewModel(
     }
 
     fun insertRemoteUser(remoteUser: RemoteUser) {
-        if (true/*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             signUpUseCase.insertRemoteUser(remoteUser) { operationResult ->
                 when (operationResult) {

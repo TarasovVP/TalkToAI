@@ -4,10 +4,12 @@ import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.usecase.LoginUseCase
+import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
+    private val networkState: NetworkState,
     //val googleSignInClient: GoogleSignInClient,
 ) : BaseViewModel() {
 
@@ -18,7 +20,7 @@ class LoginViewModel(
     val successSignInLiveData = MutableStateFlow<Boolean?>(null)
 
     fun sendPasswordResetEmail(email: String) {
-        if (true/*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             loginUseCase.sendPasswordResetEmail(email) { authResult ->
                 when (authResult) {
@@ -36,7 +38,7 @@ class LoginViewModel(
     }
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
-        if (true/*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             loginUseCase.fetchSignInMethodsForEmail(email) { authResult ->
                 when (authResult) {
@@ -58,7 +60,7 @@ class LoginViewModel(
     }
 
     fun signInWithEmailAndPassword(email: String, password: String) {
-        if (true/*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             loginUseCase.signInWithEmailAndPassword(email, password) { authResult ->
                 when (authResult) {
@@ -76,7 +78,7 @@ class LoginViewModel(
     }
 
     fun signInAuthWithGoogle(idToken: String) {
-        if (true/*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             loginUseCase.signInAuthWithGoogle(idToken) { operationResult ->
                 when (operationResult) {
@@ -94,7 +96,7 @@ class LoginViewModel(
     }
 
     fun signInAnonymously() {
-        if (true/*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             // TODO uncomment
             successSignInLiveData.value = true
             /*showProgress()

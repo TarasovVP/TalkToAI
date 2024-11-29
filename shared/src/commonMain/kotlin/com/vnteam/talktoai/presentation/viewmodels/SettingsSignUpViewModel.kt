@@ -5,11 +5,13 @@ import com.vnteam.talktoai.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
 import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.usecase.SettingsSignUpUseCase
+import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 
 class SettingsSignUpViewModel(
     private val settingsSignUpUseCase: SettingsSignUpUseCase,
+    private val networkState: NetworkState,
     //val googleSignInClient: GoogleSignInClient,
 ) : BaseViewModel() {
 
@@ -21,7 +23,7 @@ class SettingsSignUpViewModel(
     val successRemoteUserLiveData = MutableStateFlow(false)
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
-        if (true /*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             settingsSignUpUseCase.fetchSignInMethodsForEmail(email) { authResult ->
                 when (authResult) {
@@ -45,7 +47,7 @@ class SettingsSignUpViewModel(
     }
 
     fun createUserWithGoogle(idToken: String, isExistUser: Boolean) {
-        if (true /*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             settingsSignUpUseCase.createUserWithGoogle(idToken) { operationResult ->
                 when (operationResult) {
@@ -63,7 +65,7 @@ class SettingsSignUpViewModel(
     }
 
     fun createUserWithEmailAndPassword(email: String, password: String) {
-        if (true /*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             settingsSignUpUseCase.createUserWithEmailAndPassword(
                 email,
@@ -84,7 +86,7 @@ class SettingsSignUpViewModel(
     }
 
     fun signInWithEmailAndPassword(email: String, password: String) {
-        if (true /*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             settingsSignUpUseCase.signInWithEmailAndPassword(email, password) { authResult ->
                 when (authResult) {
@@ -116,7 +118,7 @@ class SettingsSignUpViewModel(
     }
 
     fun insertRemoteCurrentUser(remoteUser: RemoteUser) {
-        if (true /*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             settingsSignUpUseCase.insertRemoteCurrentUser(remoteUser) { operationResult ->
                 when (operationResult) {
@@ -134,7 +136,7 @@ class SettingsSignUpViewModel(
     }
 
     fun updateRemoteCurrentUser(remoteUser: RemoteUser) {
-        if (true /*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             settingsSignUpUseCase.updateRemoteCurrentUser(remoteUser) { operationResult ->
                 when (operationResult) {

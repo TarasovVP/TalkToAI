@@ -191,10 +191,10 @@ val appModule = module {
         OnBoardingViewModel(get())
     }
     viewModel {
-        LoginViewModel(get())
+        LoginViewModel(get(), get())
     }
     viewModel {
-        SignUpViewModel(get())
+        SignUpViewModel(get(), get())
     }
     viewModel {
         MainViewModel(get())
@@ -204,7 +204,7 @@ val appModule = module {
     }
     viewModel {
         SettingsAccountViewModel(
-            settingsAccountUseCase = get()
+            settingsAccountUseCase = get(), get()
         )
     }
     viewModel {
@@ -214,7 +214,7 @@ val appModule = module {
     }
     viewModel {
         SettingsFeedbackViewModel(
-            settingsListUseCase = get()
+            settingsListUseCase = get(), get()
         )
     }
     viewModel {
@@ -229,7 +229,7 @@ val appModule = module {
     }
     viewModel {
         SettingsSignUpViewModel(
-            settingsSignUpUseCase = get()
+            settingsSignUpUseCase = get(), get()
         )
     }
     viewModel {

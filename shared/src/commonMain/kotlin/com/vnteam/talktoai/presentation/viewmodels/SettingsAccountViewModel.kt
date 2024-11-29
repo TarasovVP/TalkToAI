@@ -4,10 +4,12 @@ import com.vnteam.talktoai.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
 import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.usecase.SettingsAccountUseCase
+import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class SettingsAccountViewModel(
     private val settingsAccountUseCase: SettingsAccountUseCase,
+    private val networkState: NetworkState,
     //val googleSignInClient: GoogleSignInClient
 ) : BaseViewModel() {
 
@@ -28,7 +30,7 @@ class SettingsAccountViewModel(
     }
 
     fun signOut() {
-        if (true /*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             settingsAccountUseCase.signOut { result ->
                 when (result) {
@@ -43,7 +45,7 @@ class SettingsAccountViewModel(
     }
 
     fun changePassword(currentPassword: String, newPassword: String) {
-        if (true /*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             settingsAccountUseCase.changePassword(currentPassword, newPassword) { result ->
                 when (result) {
@@ -58,7 +60,7 @@ class SettingsAccountViewModel(
     }
 
     fun reAuthenticate(/*authCredential: AuthCredential*/) {
-        if (true /*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             settingsAccountUseCase.reAuthenticate(/*authCredential*/) { result ->
                 when (result) {
@@ -73,7 +75,7 @@ class SettingsAccountViewModel(
     }
 
     fun deleteUser() {
-        if (true /*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             settingsAccountUseCase.deleteUser { result ->
                 when (result) {

@@ -4,11 +4,13 @@ import com.vnteam.talktoai.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
 import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.models.Feedback
 import com.vnteam.talktoai.domain.usecase.SettingsListUseCase
+import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
 
 
 class SettingsFeedbackViewModel(
     private val settingsListUseCase: SettingsListUseCase,
+    private val networkState: NetworkState
 ) : BaseViewModel() {
 
     val successFeedbackLiveData = MutableStateFlow(false)
@@ -18,7 +20,7 @@ class SettingsFeedbackViewModel(
     }
 
     fun insertFeedback(feedback: Feedback) {
-        if (true /*application.isNetworkAvailable()*/) {
+        if (networkState.isNetworkAvailable()) {
             showProgress()
             settingsListUseCase.insertFeedback(feedback) { result ->
                 when (result) {
