@@ -14,6 +14,6 @@ val androidModule = module {
         PreferencesFactory(androidContext())
     }
     single {
-        NetworkState()
+        NetworkState(androidContext())
     }
 }
