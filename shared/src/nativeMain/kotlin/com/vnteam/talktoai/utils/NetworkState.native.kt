@@ -1,7 +1,10 @@
 package com.vnteam.talktoai.utils
 
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.alloc
 import kotlinx.cinterop.nativeHeap
+import kotlinx.cinterop.ptr
+import kotlinx.cinterop.value
 import platform.SystemConfiguration.SCNetworkReachabilityCreateWithName
 import platform.SystemConfiguration.SCNetworkReachabilityFlagsVar
 import platform.SystemConfiguration.SCNetworkReachabilityGetFlags
