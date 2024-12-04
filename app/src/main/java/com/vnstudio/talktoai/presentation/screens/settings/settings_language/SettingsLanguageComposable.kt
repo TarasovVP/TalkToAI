@@ -85,7 +85,12 @@ fun SettingsLanguageContent(
 }
 
 @Composable
-fun SettingsLanguageItem(name: String, isChecked: Boolean, icon: String, onLanguageCheck: () -> Unit) {
+fun SettingsLanguageItem(
+    name: String,
+    isChecked: Boolean,
+    icon: String,
+    onLanguageCheck: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

@@ -54,9 +54,6 @@ import com.vnteam.talktoai.ic_chat_add
 import com.vnteam.talktoai.ic_copy
 import com.vnteam.talktoai.ic_delete
 import com.vnteam.talktoai.ic_share
-import com.vnteam.talktoai.presentation.uimodels.MessageUI
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
-import com.vnteam.talktoai.presentation.viewmodels.ChatViewModel
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.EmptyState
 import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
@@ -66,21 +63,24 @@ import com.vnteam.talktoai.presentation.ui.components.TextIconButton
 import com.vnteam.talktoai.presentation.ui.components.TruncatableText
 import com.vnteam.talktoai.presentation.ui.components.draggable.UpdateViewConfiguration
 import com.vnteam.talktoai.presentation.ui.components.textLinesCount
-import dateToMilliseconds
-import isDefineSecondsLater
-import kotlinx.datetime.Clock
-import org.jetbrains.compose.resources.painterResource
-import org.koin.compose.viewmodel.koinViewModel
 import com.vnteam.talktoai.presentation.ui.resources.LocalDefaultTextSize
 import com.vnteam.talktoai.presentation.ui.resources.LocalLargePadding
 import com.vnteam.talktoai.presentation.ui.resources.LocalMediumAvatarSize
 import com.vnteam.talktoai.presentation.ui.resources.LocalSmallPadding
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
-import textToAction
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import com.vnteam.talktoai.presentation.ui.theme.Primary600
 import com.vnteam.talktoai.presentation.ui.theme.Primary900
+import com.vnteam.talktoai.presentation.uimodels.MessageUI
+import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
+import com.vnteam.talktoai.presentation.viewmodels.ChatViewModel
+import dateToMilliseconds
+import isDefineSecondsLater
+import kotlinx.datetime.Clock
+import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
+import textToAction
 
 @Composable
 fun ChatContent(
@@ -216,7 +216,10 @@ fun ChatContent(
                                 model = Constants.MESSAGE_ROLE_CHAT_GPT,
                                 temperature = 0.7f,
                                 messages = listOf(
-                                    MessageApi(role = Constants.MESSAGE_ROLE_USER, content = messageText)
+                                    MessageApi(
+                                        role = Constants.MESSAGE_ROLE_USER,
+                                        content = messageText
+                                    )
                                 )
                             )
                         )

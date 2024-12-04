@@ -141,7 +141,10 @@ fun AppDrawer(
             ) {
                 settingScreens.forEach { settingsScreen ->
                     DrawerItem(
-                        name = settingsScreenNameByRoute(settingsScreen.route, LocalStringResources.current),
+                        name = settingsScreenNameByRoute(
+                            settingsScreen.route,
+                            LocalStringResources.current
+                        ),
                         mainIcon = settingsScreen.icon,
                         isCurrent = currentRouteState == settingsScreen.route,
                         secondaryIcon = if (settingsScreen.route == NavigationScreen.SettingsLanguageScreen().route) LocalConfiguration.current.locales.flagDrawable() else null

@@ -30,9 +30,11 @@ class SettingsPrivacyPolicyViewModel(
         launch {
             settingsPrivacyPolicyUseCase.getPrivacyPolicy(appLang) { operationResult ->
                 when (operationResult) {
-                    is Result.Success -> privacyPolicyLiveData.value = 
+                    is Result.Success -> privacyPolicyLiveData.value =
                         operationResult.data ?: PRIVACY_POLICY
-                    is Result.Failure -> exceptionLiveData.value = operationResult.errorMessage.orEmpty()
+
+                    is Result.Failure -> exceptionLiveData.value =
+                        operationResult.errorMessage.orEmpty()
                 }
             }
             hideProgress()

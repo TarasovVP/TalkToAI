@@ -15,7 +15,10 @@ class SettingsPrivacyPolicyUseCaseImpl(
         return preferencesRepository.getLanguage()
     }
 
-    override suspend fun getPrivacyPolicy(appLang: String, result: (NetworkResult<String>) -> Unit) {
+    override suspend fun getPrivacyPolicy(
+        appLang: String,
+        result: (NetworkResult<String>) -> Unit
+    ) {
         return realDataBaseRepository.getPrivacyPolicy(appLang, result)
     }
 }

@@ -30,7 +30,8 @@ class ChatUseCaseImpl(
 
     override fun isAuthorisedUser() = authRepository.isAuthorisedUser()
 
-    override fun insertRemoteChat(chat: Chat, result: (Result<Unit>) -> Unit) = realDataBaseRepository.insertChat(chat, result)
+    override fun insertRemoteChat(chat: Chat, result: (Result<Unit>) -> Unit) =
+        realDataBaseRepository.insertChat(chat, result)
 
     override fun insertRemoteMessage(message: Message, result: (Result<Unit>) -> Unit) {
         realDataBaseRepository.insertMessage(message, result)
@@ -41,13 +42,16 @@ class ChatUseCaseImpl(
     }
 
 
+    override suspend fun deleteMessages(messageIds: List<Long>) =
+        messageRepository.deleteMessages(messageIds)
 
-    override suspend fun deleteMessages(messageIds: List<Long>) = messageRepository.deleteMessages(messageIds)
+    override fun deleteRemoteMessages(messageIds: List<Long>, result: (Result<Unit>) -> Unit) =
+        realDataBaseRepository.deleteMessages(messageIds.map { it.toString() }, result)
 
-    override fun deleteRemoteMessages(messageIds: List<Long>, result: (Result<Unit>) -> Unit) = realDataBaseRepository.deleteMessages(messageIds.map { it.toString() }, result)
+    override suspend fun getMessagesFromChat(chatId: Long): Flow<List<Message>> =
+        messageRepository.getMessagesFromChat(chatId)
 
-    override suspend fun getMessagesFromChat(chatId: Long): Flow<List<Message>> = messageRepository.getMessagesFromChat(chatId)
-
-    override suspend fun sendRequest(apiRequest: ApiRequest) = messageRepository.sendRequest(apiRequest)
+    override suspend fun sendRequest(apiRequest: ApiRequest) =
+        messageRepository.sendRequest(apiRequest)
 
 }

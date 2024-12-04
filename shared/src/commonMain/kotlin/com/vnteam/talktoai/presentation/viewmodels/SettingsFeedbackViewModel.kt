@@ -25,7 +25,8 @@ class SettingsFeedbackViewModel(
             settingsListUseCase.insertFeedback(feedback) { result ->
                 when (result) {
                     is NetworkResult.Success -> successFeedbackLiveData.value = true
-                    is NetworkResult.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
+                    is NetworkResult.Failure -> exceptionLiveData.value =
+                        result.errorMessage.orEmpty()
                 }
             }
             hideProgress()

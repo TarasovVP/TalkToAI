@@ -39,7 +39,8 @@ fun SettingsPrivacyPolicyContent(screenState: ScreenState) {
     val stringRes = LocalStringResources.current
     LaunchedEffect(privacyPolicyState.value) {
         privacyPolicyState.value.let { url ->
-            privacyPolicyUrlState.value = if (url == PRIVACY_POLICY) stringRes.PRIVACY_POLICY else url
+            privacyPolicyUrlState.value =
+                if (url == PRIVACY_POLICY) stringRes.PRIVACY_POLICY else url
         }
     }
     privacyPolicyState.value.takeIf { it.isNotEmpty() }?.let { url ->

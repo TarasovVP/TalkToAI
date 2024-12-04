@@ -12,7 +12,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
-class SignUpViewModelUnitTest: BaseViewModelUnitTest<SignUpViewModel>() {
+class SignUpViewModelUnitTest : BaseViewModelUnitTest<SignUpViewModel>() {
 
     @MockK
     private lateinit var useCase: SignUpUseCase
@@ -26,7 +26,13 @@ class SignUpViewModelUnitTest: BaseViewModelUnitTest<SignUpViewModel>() {
     fun createUserWithEmailAndPasswordTest() {
         val expectedResult = Result.Success<Unit>()
         every { application.isNetworkAvailable } returns true
-        every { useCase.createUserWithEmailAndPassword(eq("testEmail"), eq("testPassword"), any()) } answers {
+        every {
+            useCase.createUserWithEmailAndPassword(
+                eq("testEmail"),
+                eq("testPassword"),
+                any()
+            )
+        } answers {
             val callback = thirdArg<(Result<Unit>) -> Unit>()
             callback.invoke(expectedResult)
         }

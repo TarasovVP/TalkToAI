@@ -27,9 +27,11 @@ class SignUpViewModel(
                     is NetworkResult.Success -> when {
                         authResult.data.isNullOrEmpty()
                             .not() -> updateUIState(SignUpUIState(accountExist = true))
+
                         idToken.isNullOrEmpty() -> updateUIState(SignUpUIState(createEmailAccount = true))
                         else -> updateUIState(SignUpUIState(createGoogleAccount = idToken))
                     }
+
                     is NetworkResult.Failure -> authResult.errorMessage?.let {
                         exceptionLiveData.value = it
                     }
@@ -48,7 +50,7 @@ class SignUpViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> updateUIState(SignUpUIState(successSignUp = true))
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -66,7 +68,7 @@ class SignUpViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> updateUIState(SignUpUIState(successSignUp = true))
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -82,9 +84,9 @@ class SignUpViewModel(
             showProgress()
             signUpUseCase.insertRemoteUser(remoteUser) { operationResult ->
                 when (operationResult) {
-                    is NetworkResult.Success ->updateUIState(SignUpUIState(createCurrentUser = true))
+                    is NetworkResult.Success -> updateUIState(SignUpUIState(createCurrentUser = true))
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }

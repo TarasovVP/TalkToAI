@@ -44,9 +44,11 @@ class MessageRepositoryImpl(
 
     override suspend fun deleteMessage(id: Long) = messageDao.deleteMessage(id)
 
-    override suspend fun deleteMessagesFromChat(chatId: Long) = messageDao.deleteMessagesFromChat(chatId)
+    override suspend fun deleteMessagesFromChat(chatId: Long) =
+        messageDao.deleteMessagesFromChat(chatId)
 
-    override suspend fun deleteMessages(messageIds: List<Long>) = messageDao.deleteMessages(messageIds)
+    override suspend fun deleteMessages(messageIds: List<Long>) =
+        messageDao.deleteMessages(messageIds)
 
     override suspend fun updateMessages(messages: List<Message>) {
         deleteMessages(messages.map { it.id.orZero() })

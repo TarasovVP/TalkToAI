@@ -12,7 +12,10 @@ class SignUpUseCaseImpl(
     private val realDataBaseRepository: RealDataBaseRepository,
 ) : SignUpUseCase {
 
-    override fun fetchSignInMethodsForEmail(email: String, result: (NetworkResult<List<String>>) -> Unit) =
+    override fun fetchSignInMethodsForEmail(
+        email: String,
+        result: (NetworkResult<List<String>>) -> Unit
+    ) =
         authRepository.fetchSignInMethodsForEmail(email) { authResult ->
             result.invoke(authResult)
         }

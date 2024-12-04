@@ -135,16 +135,24 @@ fun LoginContent(
         PasswordTextField(passwordInputValue, LocalStringResources.current.AUTHORIZATION_PASSWORD)
         Row(
             modifier = Modifier.fillMaxWidth()
-        )  {
-            LinkButton(text = LocalStringResources.current.AUTHORIZATION_SIGN_UP, textAlign = TextAlign.Start, modifier = Modifier
-                .wrapContentSize()
-                .padding(start = 16.dp)) {
+        ) {
+            LinkButton(
+                text = LocalStringResources.current.AUTHORIZATION_SIGN_UP,
+                textAlign = TextAlign.Start,
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(start = 16.dp)
+            ) {
                 screenState.currentScreenState.value = NavigationScreen.SignUpScreen().route
             }
             Spacer(modifier = Modifier.weight(0.5f))
-            LinkButton(text = LocalStringResources.current.AUTHORIZATION_FORGOT_PASSWORD, textAlign = TextAlign.End, modifier = Modifier
-                .wrapContentSize()
-                .padding(end = 16.dp)) {
+            LinkButton(
+                text = LocalStringResources.current.AUTHORIZATION_FORGOT_PASSWORD,
+                textAlign = TextAlign.End,
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(end = 16.dp)
+            ) {
                 showForgotPasswordDialog.value = true
             }
         }
@@ -156,7 +164,11 @@ fun LoginContent(
             viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
         }
         OrDivider(modifier = Modifier)
-        SecondaryButton(text = LocalStringResources.current.AUTHORIZATION_CONTINUE_WITHOUT_ACCOUNT, false, modifier = Modifier) {
+        SecondaryButton(
+            text = LocalStringResources.current.AUTHORIZATION_CONTINUE_WITHOUT_ACCOUNT,
+            false,
+            modifier = Modifier
+        ) {
             showUnauthorizedEnterDialog.value = true
         }
     }
@@ -193,5 +205,8 @@ fun LoginContent(
         showUnauthorizedEnterDialog.value = false
     }
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(screenState.progressVisibilityState, viewModel.progressVisibilityLiveData)
+    ProgressVisibilityHandler(
+        screenState.progressVisibilityState,
+        viewModel.progressVisibilityLiveData
+    )
 }

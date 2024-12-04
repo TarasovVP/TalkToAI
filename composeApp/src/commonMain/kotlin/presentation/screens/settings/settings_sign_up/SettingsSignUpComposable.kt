@@ -27,8 +27,6 @@ import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.Constants.DESTINATION_CHAT_SCREEN
 import com.vnteam.talktoai.domain.models.RemoteUser
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
-import com.vnteam.talktoai.presentation.viewmodels.SettingsSignUpViewModel
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.components.GoogleButton
@@ -37,9 +35,11 @@ import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
 import com.vnteam.talktoai.presentation.ui.components.ProgressVisibilityHandler
-import org.koin.compose.viewmodel.koinViewModel
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Primary300
+import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
+import com.vnteam.talktoai.presentation.viewmodels.SettingsSignUpViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SettingsSignUpContent(
@@ -164,7 +164,10 @@ fun SettingsSignUpContent(
         showAccountExistDialog.value = false
     }
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(mutableStateOf(screenState.isProgressVisible), viewModel.progressVisibilityLiveData)
+    ProgressVisibilityHandler(
+        mutableStateOf(screenState.isProgressVisible),
+        viewModel.progressVisibilityLiveData
+    )
 }
 
 @Composable

@@ -147,15 +147,17 @@ fun MainProgress(progressVisibilityState: MutableState<Boolean>) {
 
     if (progressVisibilityState.value) {
         Box(modifier = Modifier.fillMaxSize(), Alignment.Center) {
-           /* CircularProgressIndicator(
-                modifier = Modifier.size(100.dp),
-                color = Primary700,
-                strokeWidth = 5.dp
-            )*/
+            /* CircularProgressIndicator(
+                 modifier = Modifier.size(100.dp),
+                 color = Primary700,
+                 strokeWidth = 5.dp
+             )*/
         }
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.main_progress))
-        Box(contentAlignment = Alignment.Center, modifier = Modifier
-            .fillMaxSize()) {
+        Box(
+            contentAlignment = Alignment.Center, modifier = Modifier
+                .fillMaxSize()
+        ) {
             LottieAnimation(
                 composition,
                 iterations = LottieConstants.IterateForever,
@@ -167,13 +169,13 @@ fun MainProgress(progressVisibilityState: MutableState<Boolean>) {
 }
 
 @Composable
-fun textLinesCount(text: String, paddings: Float, textSize: Float) : Int {
+fun textLinesCount(text: String, paddings: Float, textSize: Float): Int {
     val charsInLine = charsInLine(paddings, textSize)
     return charsInLine.takeIf { it > 0 }?.let { ceil((text.length / it).toDouble()).toInt() } ?: 1
 }
 
 @Composable
-fun charsInLine(paddings: Float, textSize: Float) : Float {
+fun charsInLine(paddings: Float, textSize: Float): Float {
     val screenWidth = measureScreenWidth() - paddings
     val charWidth = measureCharWidth(textSize)
     return charWidth.takeIf { it > 0 }?.let { screenWidth / it } ?: 0f

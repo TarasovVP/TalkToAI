@@ -53,7 +53,10 @@ class AuthRepositoryImpl(
             }*/
     }
 
-    override fun fetchSignInMethodsForEmail(email: String, result: (NetworkResult<List<String>>) -> Unit) {
+    override fun fetchSignInMethodsForEmail(
+        email: String,
+        result: (NetworkResult<List<String>>) -> Unit
+    ) {
         /*firebaseAuth.fetchSignInMethodsForEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {

@@ -34,6 +34,7 @@ class ChatViewModel(
                         is NetworkResult.Success -> {
 
                         }
+
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
                             exceptionLiveData.value = it
                         }
@@ -68,11 +69,11 @@ class ChatViewModel(
         showProgress()
         messagesFlowSubscription?.cancel()
         messagesFlowSubscription = launch {
-           chatUseCase.getMessagesFromChat(chatId).catch {
-               hideProgress()
+            chatUseCase.getMessagesFromChat(chatId).catch {
+                hideProgress()
             }.collect { result ->
-               messagesLiveData.value = messageUIMapper.mapToImplModelList(result)
-               hideProgress()
+                messagesLiveData.value = messageUIMapper.mapToImplModelList(result)
+                hideProgress()
             }
         }
     }
@@ -93,6 +94,7 @@ class ChatViewModel(
                             status = MessageStatus.SUCCESS
                         })
                     }
+
                     is NetworkResult.Failure -> {
                         insertMessage(temporaryMessage.apply {
                             status = MessageStatus.ERROR
@@ -114,6 +116,7 @@ class ChatViewModel(
                         is NetworkResult.Success -> {
 
                         }
+
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
                             exceptionLiveData.value = it
                         }
@@ -137,6 +140,7 @@ class ChatViewModel(
                         is NetworkResult.Success -> {
 
                         }
+
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
                             exceptionLiveData.value = it
                         }
@@ -161,6 +165,7 @@ class ChatViewModel(
                         is NetworkResult.Success -> {
 
                         }
+
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
                             exceptionLiveData.value = it
                         }

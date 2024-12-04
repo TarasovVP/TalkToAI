@@ -1,9 +1,9 @@
 package com.vnteam.talktoai.di
 
 import com.vnteam.talktoai.data.baseUrl
+import com.vnteam.talktoai.data.database.SharedDatabase
 import com.vnteam.talktoai.data.database.dao.ChatDao
 import com.vnteam.talktoai.data.database.dao.ChatDaoImpl
-import com.vnteam.talktoai.data.database.SharedDatabase
 import com.vnteam.talktoai.data.database.dao.MessageDao
 import com.vnteam.talktoai.data.database.dao.MessageDaoImpl
 import com.vnteam.talktoai.data.mapperimpls.ChatDBMapperImpl
@@ -38,11 +38,6 @@ import com.vnteam.talktoai.domain.usecase.SettingsThemeUseCase
 import com.vnteam.talktoai.domain.usecase.SignUpUseCase
 import com.vnteam.talktoai.presentation.mapperimpls.ChatUIMapperImpl
 import com.vnteam.talktoai.presentation.mapperimpls.MessageUIMapperImpl
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.json.Json
-import org.koin.dsl.module
 import com.vnteam.talktoai.presentation.usecaseimpl.AppUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.ChatUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.LoginUseCaseImpl
@@ -69,21 +64,28 @@ import com.vnteam.talktoai.presentation.viewmodels.SettingsPrivacyPolicyViewMode
 import com.vnteam.talktoai.presentation.viewmodels.SettingsSignUpViewModel
 import com.vnteam.talktoai.presentation.viewmodels.SettingsThemeViewModel
 import com.vnteam.talktoai.presentation.viewmodels.SignUpViewModel
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.module
 
 val appModule = module {
 
     single { baseUrl() }
     single { ApiService(get<String>(), get()) }
-    single { Json {
-        prettyPrint = true
-        isLenient = true
-        ignoreUnknownKeys = true
-    } }
+    single {
+        Json {
+            prettyPrint = true
+            isLenient = true
+            ignoreUnknownKeys = true
+        }
+    }
     single {
         HttpClient {
             install(Logging) {

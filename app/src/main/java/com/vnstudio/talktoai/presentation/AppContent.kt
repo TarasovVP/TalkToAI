@@ -12,14 +12,14 @@ import com.vnstudio.talktoai.presentation.settings.SettingsScreen
 @Composable
 fun AppContent() {
     val navController = rememberNavController()
-    MainScreen (
+    MainScreen(
         onChatClicked = {
             navController.navigate("destination_chat_screen")
         },
         onSettingsClicked = {
             navController.navigate("destination_settings_screen")
         },
-        content =  {
+        content = {
             MainNavGraph(navController)
         })
 

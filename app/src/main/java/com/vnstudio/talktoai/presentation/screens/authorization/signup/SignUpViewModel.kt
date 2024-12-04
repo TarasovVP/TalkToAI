@@ -30,9 +30,11 @@ class SignUpViewModel(
                     is Result.Success -> when {
                         authResult.data.isNullOrEmpty()
                             .not() -> updateUIState(SignUpUIState(accountExist = true))
+
                         idToken.isNullOrEmpty() -> updateUIState(SignUpUIState(createEmailAccount = true))
                         else -> updateUIState(SignUpUIState(createGoogleAccount = idToken))
                     }
+
                     is Result.Failure -> authResult.errorMessage?.let {
                         exceptionLiveData.value = it
                     }
@@ -51,7 +53,7 @@ class SignUpViewModel(
                 when (operationResult) {
                     is Result.Success -> updateUIState(SignUpUIState(successSignUp = true))
                     is Result.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -69,7 +71,7 @@ class SignUpViewModel(
                 when (operationResult) {
                     is Result.Success -> updateUIState(SignUpUIState(successSignUp = true))
                     is Result.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -85,9 +87,9 @@ class SignUpViewModel(
             showProgress()
             signUpUseCase.insertRemoteUser(remoteUser) { operationResult ->
                 when (operationResult) {
-                    is Result.Success ->updateUIState(SignUpUIState(createCurrentUser = true))
+                    is Result.Success -> updateUIState(SignUpUIState(createCurrentUser = true))
                     is Result.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }

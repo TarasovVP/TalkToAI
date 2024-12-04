@@ -20,11 +20,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.compose.rememberNavController
-import presentation.AppDrawer
-import presentation.AppSnackBar
-import presentation.DeleteModeTopBar
-import presentation.PrimaryTopBar
-import presentation.SecondaryTopBar
 import com.vnteam.talktoai.CommonExtensions.isNotTrue
 import com.vnteam.talktoai.CommonExtensions.isNull
 import com.vnteam.talktoai.CommonExtensions.isTrue
@@ -32,21 +27,26 @@ import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.Constants.DESTINATION_CHAT_SCREEN
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.models.Chat
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
-import com.vnteam.talktoai.presentation.viewmodels.MainViewModel
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.DataEditDialog
 import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.components.MainProgress
+import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
+import com.vnteam.talktoai.presentation.viewmodels.MainViewModel
 import dateToMilliseconds
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.AppDrawer
 import presentation.AppNavigation
+import presentation.AppSnackBar
+import presentation.DeleteModeTopBar
 import presentation.NavigationScreen
 import presentation.NavigationScreen.Companion.isSettingsScreen
 import presentation.NavigationScreen.Companion.settingsScreenNameByRoute
-import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import presentation.PrimaryTopBar
+import presentation.SecondaryTopBar
 
 
 @Composable

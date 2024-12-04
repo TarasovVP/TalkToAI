@@ -21,7 +21,11 @@ interface AuthRepository {
 
     fun fetchSignInMethodsForEmail(email: String, result: (NetworkResult<List<String>>) -> Unit)
 
-    fun signInWithEmailAndPassword(email: String, password: String, result: (NetworkResult<Unit>) -> Unit)
+    fun signInWithEmailAndPassword(
+        email: String,
+        password: String,
+        result: (NetworkResult<Unit>) -> Unit
+    )
 
     fun signInWithGoogle(idToken: String, result: (NetworkResult<Unit>) -> Unit)
 
@@ -33,7 +37,11 @@ interface AuthRepository {
         result: (NetworkResult<String>) -> Unit,
     )
 
-    fun changePassword(currentPassword: String, newPassword: String, result: (NetworkResult<Unit>) -> Unit)
+    fun changePassword(
+        currentPassword: String,
+        newPassword: String,
+        result: (NetworkResult<Unit>) -> Unit
+    )
 
     fun reAuthenticate()
 

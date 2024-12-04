@@ -82,19 +82,23 @@ class RealDataBaseRepositoryImpl(
     }
 
     override fun addRemoteChatListener(remoteChatListener: ValueEventListener) {
-        firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty()).child(CHATS).addValueEventListener(remoteChatListener)
+        firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
+            .child(CHATS).addValueEventListener(remoteChatListener)
     }
 
     override fun addRemoteMessageListener(remoteMessageListener: ValueEventListener) {
-        firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty()).child(MESSAGES).addValueEventListener(remoteMessageListener)
+        firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
+            .child(MESSAGES).addValueEventListener(remoteMessageListener)
     }
 
     override fun removeRemoteChatListener(remoteChatListener: ValueEventListener) {
-        firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty()).child(CHATS).removeEventListener(remoteChatListener)
+        firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
+            .child(CHATS).removeEventListener(remoteChatListener)
     }
 
     override fun removeRemoteMessageListener(remoteMessageListener: ValueEventListener) {
-        firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty()).child(MESSAGES).removeEventListener(remoteMessageListener)
+        firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
+            .child(MESSAGES).removeEventListener(remoteMessageListener)
     }
 
     override fun insertChat(chat: Chat, result: (Result<Unit>) -> Unit) {
@@ -109,7 +113,8 @@ class RealDataBaseRepositoryImpl(
 
     override fun updateChat(chat: Chat, result: (Result<Unit>) -> Unit) {
         firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
-            .child(CHATS).child(chat.id.toString()).updateChildren(mapOf("name" to chat.name, "updated" to chat.updated))
+            .child(CHATS).child(chat.id.toString())
+            .updateChildren(mapOf("name" to chat.name, "updated" to chat.updated))
             .addOnSuccessListener {
                 result.invoke(Result.Success())
             }.addOnFailureListener { exception ->

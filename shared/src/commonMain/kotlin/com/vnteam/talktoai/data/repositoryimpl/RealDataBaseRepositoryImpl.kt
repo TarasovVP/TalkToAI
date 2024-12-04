@@ -2,7 +2,6 @@ package com.vnteam.talktoai.data.repositoryimpl
 
 import com.vnteam.talktoai.Constants.CHATS
 import com.vnteam.talktoai.Constants.MESSAGES
-import com.vnteam.talktoai.Constants.USERS
 import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.models.Feedback

@@ -123,6 +123,7 @@ class MainViewModel(
                             is NetworkResult.Success -> {
 
                             }
+
                             is NetworkResult.Failure -> authResult.errorMessage?.let {
                                 exceptionLiveData.value = it
                             }
@@ -147,6 +148,7 @@ class MainViewModel(
                         is NetworkResult.Success -> {
 
                         }
+
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
                             exceptionLiveData.value = it
                         }
@@ -170,6 +172,7 @@ class MainViewModel(
                         is NetworkResult.Success -> {
 
                         }
+
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
                             exceptionLiveData.value = it
                         }
@@ -193,6 +196,7 @@ class MainViewModel(
                         is NetworkResult.Success -> {
 
                         }
+
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
                             exceptionLiveData.value = it
                         }
@@ -227,12 +231,16 @@ class MainViewModel(
         val fromItem = _chatsList.value?.get(firstIndex)
         val toItem = _chatsList.value?.get(secondIndex)
         val newList = _chatsList.value.orEmpty().toMutableList()
-        toItem?.let { newList[firstIndex] = it.apply {
-            listOrder = (_chatsList.value.orEmpty().size - firstIndex).toLong()
-        } }
-        fromItem?.let { newList[secondIndex] = it.apply {
-            listOrder = (_chatsList.value.orEmpty().size - secondIndex).toLong()
-        } }
+        toItem?.let {
+            newList[firstIndex] = it.apply {
+                listOrder = (_chatsList.value.orEmpty().size - firstIndex).toLong()
+            }
+        }
+        fromItem?.let {
+            newList[secondIndex] = it.apply {
+                listOrder = (_chatsList.value.orEmpty().size - secondIndex).toLong()
+            }
+        }
         _chatsList.value = null
         _chatsList.value = newList
     }

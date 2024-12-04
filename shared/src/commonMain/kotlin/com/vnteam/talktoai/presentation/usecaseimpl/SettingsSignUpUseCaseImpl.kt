@@ -15,7 +15,10 @@ class SettingsSignUpUseCaseImpl(
     private val realDataBaseRepository: RealDataBaseRepository,
 ) : SettingsSignUpUseCase {
 
-    override fun fetchSignInMethodsForEmail(email: String, result: (NetworkResult<List<String>>) -> Unit) =
+    override fun fetchSignInMethodsForEmail(
+        email: String,
+        result: (NetworkResult<List<String>>) -> Unit
+    ) =
         authRepository.fetchSignInMethodsForEmail(email) { authResult ->
             result.invoke(authResult)
         }
@@ -45,12 +48,18 @@ class SettingsSignUpUseCaseImpl(
 
     override suspend fun getMessages() = messageRepository.getMessages()
 
-    override fun insertRemoteCurrentUser(remoteUser: RemoteUser, result: (NetworkResult<Unit>) -> Unit) =
+    override fun insertRemoteCurrentUser(
+        remoteUser: RemoteUser,
+        result: (NetworkResult<Unit>) -> Unit
+    ) =
         realDataBaseRepository.insertRemoteUser(remoteUser) { authResult ->
             result.invoke(authResult)
         }
 
-    override fun updateRemoteCurrentUser(remoteUser: RemoteUser, result: (NetworkResult<Unit>) -> Unit) =
+    override fun updateRemoteCurrentUser(
+        remoteUser: RemoteUser,
+        result: (NetworkResult<Unit>) -> Unit
+    ) =
         realDataBaseRepository.updateRemoteUser(remoteUser) { authResult ->
             result.invoke(authResult)
         }

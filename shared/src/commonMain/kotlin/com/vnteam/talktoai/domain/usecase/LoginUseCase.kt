@@ -8,7 +8,11 @@ interface LoginUseCase {
 
     fun fetchSignInMethodsForEmail(email: String, result: (NetworkResult<List<String>>) -> Unit)
 
-    fun signInWithEmailAndPassword(email: String, password: String, result: (NetworkResult<Unit>) -> Unit)
+    fun signInWithEmailAndPassword(
+        email: String,
+        password: String,
+        result: (NetworkResult<Unit>) -> Unit
+    )
 
     fun signInAuthWithGoogle(idToken: String, result: (NetworkResult<Unit>) -> Unit)
 

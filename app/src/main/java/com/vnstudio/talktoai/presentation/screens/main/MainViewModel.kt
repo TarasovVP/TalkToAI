@@ -48,7 +48,7 @@ class MainViewModel(
     }
 
     fun addAuthStateListener() {
-        authStateListener  = FirebaseAuth.AuthStateListener { firebaseAuth ->
+        authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             val user = firebaseAuth.currentUser
             val authState = when {
                 user?.isAnonymous.isTrue() -> AuthState.AUTHORISED_ANONYMOUSLY
@@ -135,6 +135,7 @@ class MainViewModel(
                             is Result.Success -> {
 
                             }
+
                             is Result.Failure -> authResult.errorMessage?.let {
                                 exceptionLiveData.value = it
                             }
@@ -159,6 +160,7 @@ class MainViewModel(
                         is Result.Success -> {
 
                         }
+
                         is Result.Failure -> authResult.errorMessage?.let {
                             exceptionLiveData.value = it
                         }
@@ -182,6 +184,7 @@ class MainViewModel(
                         is Result.Success -> {
 
                         }
+
                         is Result.Failure -> authResult.errorMessage?.let {
                             exceptionLiveData.value = it
                         }
@@ -205,6 +208,7 @@ class MainViewModel(
                         is Result.Success -> {
 
                         }
+
                         is Result.Failure -> authResult.errorMessage?.let {
                             exceptionLiveData.value = it
                         }
@@ -239,12 +243,16 @@ class MainViewModel(
         val fromItem = _chatsList.value?.get(firstIndex)
         val toItem = _chatsList.value?.get(secondIndex)
         val newList = _chatsList.value.orEmpty().toMutableList()
-        toItem?.let { newList[firstIndex] = it.apply {
-            listOrder = _chatsList.value.orEmpty().size - firstIndex
-        } }
-        fromItem?.let { newList[secondIndex] = it.apply {
-            listOrder = _chatsList.value.orEmpty().size - secondIndex
-        } }
+        toItem?.let {
+            newList[firstIndex] = it.apply {
+                listOrder = _chatsList.value.orEmpty().size - firstIndex
+            }
+        }
+        fromItem?.let {
+            newList[secondIndex] = it.apply {
+                listOrder = _chatsList.value.orEmpty().size - secondIndex
+            }
+        }
         _chatsList.value = null
         _chatsList.value = newList
     }

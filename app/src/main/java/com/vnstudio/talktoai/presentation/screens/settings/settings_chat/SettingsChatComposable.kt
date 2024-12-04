@@ -24,7 +24,10 @@ fun SettingsChatContent(
         verticalArrangement = Arrangement.Center
     ) {
         Text(text = LocalStringResources.current.SETTINGS_CHAT)
-        PrimaryButton(text = LocalStringResources.current.BUTTON_OK, modifier = Modifier, onClick = {})
+        PrimaryButton(
+            text = LocalStringResources.current.BUTTON_OK,
+            modifier = Modifier,
+            onClick = {})
     }
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
 }

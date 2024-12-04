@@ -8,10 +8,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Constants.PRIVACY_POLICY
+import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsPrivacyPolicyViewModel
 import org.koin.compose.viewmodel.koinViewModel
-import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 
 @Composable
 fun SettingsPrivacyPolicyContent(screenState: ScreenState) {
@@ -33,11 +33,12 @@ fun SettingsPrivacyPolicyContent(screenState: ScreenState) {
     val stringRes = LocalStringResources.current
     LaunchedEffect(privacyPolicyState.value) {
         privacyPolicyState.value.let { url ->
-            privacyPolicyUrlState.value = if (url == PRIVACY_POLICY) stringRes.PRIVACY_POLICY else url
+            privacyPolicyUrlState.value =
+                if (url == PRIVACY_POLICY) stringRes.PRIVACY_POLICY else url
         }
     }
     privacyPolicyState.value.takeIf { it.isNotEmpty() }?.let { url ->
-        AppWebView(url, mutableStateOf( screenState.isProgressVisible))
+        AppWebView(url, mutableStateOf(screenState.isProgressVisible))
     }
 }
 

@@ -9,7 +9,7 @@ import org.junit.Before
 import org.junit.Rule
 
 @ExperimentalCoroutinesApi
-abstract class BaseViewModelUnitTest<VM: BaseViewModel> {
+abstract class BaseViewModelUnitTest<VM : BaseViewModel> {
 
     @Rule
     @JvmField
@@ -18,7 +18,7 @@ abstract class BaseViewModelUnitTest<VM: BaseViewModel> {
     @MockK
     protected lateinit var application: TalkToAIApp
 
-    protected lateinit var viewModel:VM
+    protected lateinit var viewModel: VM
 
     abstract fun createViewModel(): VM
 

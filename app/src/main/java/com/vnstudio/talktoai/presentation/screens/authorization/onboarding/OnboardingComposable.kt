@@ -95,13 +95,17 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
                     3 -> DrawableResources.IC_TAB_FOUR
                     else -> DrawableResources.IC_TAB_ONE
                 }
-            ), contentDescription = "${LocalStringResources.current.ONBOARDING_SCREEN} $page", modifier = Modifier
+            ),
+            contentDescription = "${LocalStringResources.current.ONBOARDING_SCREEN} $page",
+            modifier = Modifier
                 .fillMaxWidth()
         )
         PrimaryButton(
-            text = if (page == 3) LocalStringResources.current.AUTHORIZATION_ENTER else LocalStringResources.current.BUTTON_NEXT, modifier = Modifier
+            text = if (page == 3) LocalStringResources.current.AUTHORIZATION_ENTER else LocalStringResources.current.BUTTON_NEXT,
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 40.dp), onClick = onClick
+                .padding(vertical = 40.dp),
+            onClick = onClick
         )
     }
 }

@@ -97,8 +97,8 @@ fun AppNavigation(navController: NavHostController, screenState: MutableState<Sc
                     }
                 ),
                 floatingActionState = screenState.value.floatingActionState.copy(
-                floatingActionButtonVisible = false
-            ))
+                    floatingActionButtonVisible = false
+                ))
             SettingsChatContent(screenState.value)
         }
         composable(NavigationScreen.SETTINGS_ACCOUNT_SCREEN) {

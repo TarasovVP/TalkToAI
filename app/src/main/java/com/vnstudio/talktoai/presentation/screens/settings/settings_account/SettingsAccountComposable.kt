@@ -61,7 +61,7 @@ fun SettingsAccountContent(
 ) {
 
     val viewModel: SettingsAccountViewModel = koinViewModel()
-    val authState =  remember { mutableStateOf<AuthState?>(null) }
+    val authState = remember { mutableStateOf<AuthState?>(null) }
     val showLogOutDialog = remember { mutableStateOf(false) }
     val showChangePasswordDialog = remember { mutableStateOf(false) }
     val showDeleteGoogleAccountDialog = remember { mutableStateOf(false) }
@@ -78,7 +78,8 @@ fun SettingsAccountContent(
         }
     }
 
-    val successChangePasswordMessage = InfoMessage(LocalStringResources.current.SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED)
+    val successChangePasswordMessage =
+        InfoMessage(LocalStringResources.current.SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED)
     val successChangePasswordState = viewModel.successChangePasswordLiveData.collectAsState()
     LaunchedEffect(successChangePasswordState.value) {
         if (successChangePasswordState.value) {
@@ -106,7 +107,8 @@ fun SettingsAccountContent(
                 }
             } catch (e: ApiException) {
                 viewModel.googleSignInClient.signOut()
-                viewModel.exceptionLiveData.value = CommonStatusCodes.getStatusCodeString(e.statusCode)
+                viewModel.exceptionLiveData.value =
+                    CommonStatusCodes.getStatusCodeString(e.statusCode)
             }
         }
 
@@ -120,12 +122,19 @@ fun SettingsAccountContent(
             showLogOutDialog.value = true
         }
         if (authState.value == AuthState.AUTHORISED_EMAIL) {
-            PrimaryButton(text = LocalStringResources.current.SETTINGS_ACCOUNT_CHANGE_PASSWORD_TITLE, modifier = Modifier) {
+            PrimaryButton(
+                text = LocalStringResources.current.SETTINGS_ACCOUNT_CHANGE_PASSWORD_TITLE,
+                modifier = Modifier
+            ) {
                 showChangePasswordDialog.value = true
             }
         }
         if (authState.value == AuthState.AUTHORISED_EMAIL || authState.value == AuthState.AUTHORISED_GOOGLE) {
-            SecondaryButton(text = LocalStringResources.current.SETTINGS_ACCOUNT_DELETE_TITLE, true, modifier = Modifier) {
+            SecondaryButton(
+                text = LocalStringResources.current.SETTINGS_ACCOUNT_DELETE_TITLE,
+                true,
+                modifier = Modifier
+            ) {
                 if (authState.value == AuthState.AUTHORISED_GOOGLE) {
                     showDeleteGoogleAccountDialog.value = true
                 } else {
@@ -133,8 +142,11 @@ fun SettingsAccountContent(
                 }
             }
         } else {
-            PrimaryButton(text = LocalStringResources.current.AUTHORIZATION_SIGNING_UP, modifier = Modifier) {
-                screenState.currentScreenState.value =  NavigationScreen.SettingsSignUpScreen().route
+            PrimaryButton(
+                text = LocalStringResources.current.AUTHORIZATION_SIGNING_UP,
+                modifier = Modifier
+            ) {
+                screenState.currentScreenState.value = NavigationScreen.SettingsSignUpScreen().route
             }
             EmptyState(
                 text = LocalStringResources.current.EMPTY_STATE_ACCOUNT,
@@ -152,8 +164,8 @@ fun SettingsAccountContent(
             AuthState.AUTHORISED_ANONYMOUSLY -> LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED_LOG_OUT
             else -> LocalStringResources.current.SETTINGS_ACCOUNT_LOG_OUT
         }, showLogOutDialog, onDismiss = {
-        showLogOutDialog.value = false
-    }) {
+            showLogOutDialog.value = false
+        }) {
         viewModel.signOut()
         showLogOutDialog.value = false
     }
@@ -184,7 +196,10 @@ fun SettingsAccountContent(
     }
 
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(screenState.progressVisibilityState, viewModel.progressVisibilityLiveData)
+    ProgressVisibilityHandler(
+        screenState.progressVisibilityState,
+        viewModel.progressVisibilityLiveData
+    )
 }
 
 @Composable
@@ -209,13 +224,16 @@ fun AccountCard(authState: AuthState?, email: String, onClick: () -> Unit) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) email else LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED, modifier = Modifier
+                    text = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) email else LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED,
+                    modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 8.dp, top = 8.dp)
                 )
                 LinkButton(
-                    text = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) LocalStringResources.current.SETTINGS_ACCOUNT_LOG_OUT_TITLE else LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED_LOG_OUT_TITLE, modifier = Modifier
-                        .wrapContentSize(), onClick = onClick
+                    text = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) LocalStringResources.current.SETTINGS_ACCOUNT_LOG_OUT_TITLE else LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED_LOG_OUT_TITLE,
+                    modifier = Modifier
+                        .wrapContentSize(),
+                    onClick = onClick
                 )
             }
         }
@@ -254,14 +272,28 @@ fun ChangePasswordDialog(
                                 .padding(16.dp),
                             textAlign = TextAlign.Center,
                         )
-                        PasswordTextField(currentPasswordInputValue, LocalStringResources.current.SETTINGS_ACCOUNT_ENTER_CURRENT_PASSWORD)
-                        PasswordTextField(newPasswordInputValue, LocalStringResources.current.SETTINGS_ACCOUNT_ENTER_NEW_PASSWORD)
-                        SubmitButtons(currentPasswordInputValue.value.text.isNotEmpty() && newPasswordInputValue.value.text.isNotEmpty(), {
-                            showDialog.value = false
-                        }, {
-                            showDialog.value = false
-                            onConfirmationClick.invoke(Pair(currentPasswordInputValue.value.text, newPasswordInputValue.value.text))
-                        })
+                        PasswordTextField(
+                            currentPasswordInputValue,
+                            LocalStringResources.current.SETTINGS_ACCOUNT_ENTER_CURRENT_PASSWORD
+                        )
+                        PasswordTextField(
+                            newPasswordInputValue,
+                            LocalStringResources.current.SETTINGS_ACCOUNT_ENTER_NEW_PASSWORD
+                        )
+                        SubmitButtons(
+                            currentPasswordInputValue.value.text.isNotEmpty() && newPasswordInputValue.value.text.isNotEmpty(),
+                            {
+                                showDialog.value = false
+                            },
+                            {
+                                showDialog.value = false
+                                onConfirmationClick.invoke(
+                                    Pair(
+                                        currentPasswordInputValue.value.text,
+                                        newPasswordInputValue.value.text
+                                    )
+                                )
+                            })
                     }
                 }
             )

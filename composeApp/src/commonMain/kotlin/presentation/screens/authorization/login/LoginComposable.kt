@@ -24,8 +24,6 @@ import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.Constants.DESTINATION_CHAT_SCREEN
 import com.vnteam.talktoai.domain.models.InfoMessage
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
-import com.vnteam.talktoai.presentation.viewmodels.LoginViewModel
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.DataEditDialog
 import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
@@ -37,9 +35,11 @@ import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
 import com.vnteam.talktoai.presentation.ui.components.ProgressVisibilityHandler
 import com.vnteam.talktoai.presentation.ui.components.SecondaryButton
+import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
+import com.vnteam.talktoai.presentation.viewmodels.LoginViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.NavigationScreen
-import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 
 @Composable
 fun LoginContent(
@@ -131,16 +131,24 @@ fun LoginContent(
         PasswordTextField(passwordInputValue, LocalStringResources.current.AUTHORIZATION_PASSWORD)
         Row(
             modifier = Modifier.fillMaxWidth()
-        )  {
-            LinkButton(text = LocalStringResources.current.AUTHORIZATION_SIGN_UP, textAlign = TextAlign.Start, modifier = Modifier
-                .wrapContentSize()
-                .padding(start = 16.dp)) {
+        ) {
+            LinkButton(
+                text = LocalStringResources.current.AUTHORIZATION_SIGN_UP,
+                textAlign = TextAlign.Start,
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(start = 16.dp)
+            ) {
                 screenState.currentScreenState.value = NavigationScreen.SignUpScreen().route
             }
             Spacer(modifier = Modifier.weight(0.5f))
-            LinkButton(text = LocalStringResources.current.AUTHORIZATION_FORGOT_PASSWORD, textAlign = TextAlign.End, modifier = Modifier
-                .wrapContentSize()
-                .padding(end = 16.dp)) {
+            LinkButton(
+                text = LocalStringResources.current.AUTHORIZATION_FORGOT_PASSWORD,
+                textAlign = TextAlign.End,
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(end = 16.dp)
+            ) {
                 showForgotPasswordDialog.value = true
             }
         }
@@ -152,7 +160,11 @@ fun LoginContent(
             viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
         }
         OrDivider(modifier = Modifier)
-        SecondaryButton(text = LocalStringResources.current.AUTHORIZATION_CONTINUE_WITHOUT_ACCOUNT, false, modifier = Modifier) {
+        SecondaryButton(
+            text = LocalStringResources.current.AUTHORIZATION_CONTINUE_WITHOUT_ACCOUNT,
+            false,
+            modifier = Modifier
+        ) {
             showUnauthorizedEnterDialog.value = true
         }
     }
@@ -189,5 +201,8 @@ fun LoginContent(
         showUnauthorizedEnterDialog.value = false
     }
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(mutableStateOf(screenState.isProgressVisible), viewModel.progressVisibilityLiveData)
+    ProgressVisibilityHandler(
+        mutableStateOf(screenState.isProgressVisible),
+        viewModel.progressVisibilityLiveData
+    )
 }

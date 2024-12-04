@@ -19,11 +19,14 @@ class MainUseCaseImpl(
     private val messageRepository: MessageRepository,
 ) : MainUseCase {
 
-    override suspend fun getOnBoardingSeen(): Flow<Boolean?> = dataStoreRepository.getIsBoardingSeen()
+    override suspend fun getOnBoardingSeen(): Flow<Boolean?> =
+        dataStoreRepository.getIsBoardingSeen()
 
-    override fun addAuthStateListener(/*authStateListener: FirebaseAuth.AuthStateListener*/) = authRepository.addAuthStateListener(/*authStateListener*/)
+    override fun addAuthStateListener(/*authStateListener: FirebaseAuth.AuthStateListener*/) =
+        authRepository.addAuthStateListener(/*authStateListener*/)
 
-    override fun removeAuthStateListener(/*authStateListener: FirebaseAuth.AuthStateListener*/) = authRepository.removeAuthStateListener(/*authStateListener*/)
+    override fun removeAuthStateListener(/*authStateListener: FirebaseAuth.AuthStateListener*/) =
+        authRepository.removeAuthStateListener(/*authStateListener*/)
 
     override fun isLoggedInUser() = authRepository.isLoggedInUser()
 
@@ -50,21 +53,25 @@ class MainUseCaseImpl(
 
     override suspend fun insertChats(chats: List<Chat>) = chatRepository.insertChats(chats)
 
-    override suspend fun insertMessages(messages: List<Message>) = messageRepository.insertMessages(messages)
+    override suspend fun insertMessages(messages: List<Message>) =
+        messageRepository.insertMessages(messages)
 
     override suspend fun getChats(): Flow<List<Chat>> = chatRepository.getChats()
 
     override suspend fun updateChats(chats: List<Chat>) = chatRepository.updateChats(chats)
 
-    override fun updateRemoteChats(chats: List<Chat>, result: (NetworkResult<Unit>) -> Unit) = realDataBaseRepository.updateRemoteChats(chats, result)
+    override fun updateRemoteChats(chats: List<Chat>, result: (NetworkResult<Unit>) -> Unit) =
+        realDataBaseRepository.updateRemoteChats(chats, result)
 
     override suspend fun insertChat(chat: Chat) = chatRepository.insertChat(chat)
 
-    override fun insertRemoteChat(chat: Chat, result: (NetworkResult<Unit>) -> Unit) = realDataBaseRepository.insertChat(chat, result)
+    override fun insertRemoteChat(chat: Chat, result: (NetworkResult<Unit>) -> Unit) =
+        realDataBaseRepository.insertChat(chat, result)
 
     override suspend fun updateChat(chat: Chat) = chatRepository.updateChat(chat)
 
-    override fun updateRemoteChat(chat: Chat, result: (NetworkResult<Unit>) -> Unit) = realDataBaseRepository.updateChat(chat, result)
+    override fun updateRemoteChat(chat: Chat, result: (NetworkResult<Unit>) -> Unit) =
+        realDataBaseRepository.updateChat(chat, result)
 
     override suspend fun deleteChat(chat: Chat) {
         chatRepository.deleteChat(chat)
@@ -77,5 +84,6 @@ class MainUseCaseImpl(
         }
     }
 
-    override suspend fun updateMessages(messages: List<Message>) = messageRepository.updateMessages(messages)
+    override suspend fun updateMessages(messages: List<Message>) =
+        messageRepository.updateMessages(messages)
 }

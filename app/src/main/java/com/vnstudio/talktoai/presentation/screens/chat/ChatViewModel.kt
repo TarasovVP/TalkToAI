@@ -35,6 +35,7 @@ class ChatViewModel(
                         is Result.Success -> {
 
                         }
+
                         is Result.Failure -> authResult.errorMessage?.let {
                             exceptionLiveData.value = it
                         }
@@ -69,11 +70,11 @@ class ChatViewModel(
         showProgress()
         messagesFlowSubscription?.cancel()
         messagesFlowSubscription = launch {
-           chatUseCase.getMessagesFromChat(chatId).catch {
-               hideProgress()
+            chatUseCase.getMessagesFromChat(chatId).catch {
+                hideProgress()
             }.collect { result ->
-               messagesLiveData.value = messageUIMapper.mapToUIModelList(result)
-               hideProgress()
+                messagesLiveData.value = messageUIMapper.mapToUIModelList(result)
+                hideProgress()
             }
         }
     }
@@ -94,6 +95,7 @@ class ChatViewModel(
                             status = MessageStatus.SUCCESS
                         })
                     }
+
                     is Result.Failure -> {
                         insertMessage(temporaryMessage.apply {
                             status = MessageStatus.ERROR
@@ -115,6 +117,7 @@ class ChatViewModel(
                         is Result.Success -> {
 
                         }
+
                         is Result.Failure -> authResult.errorMessage?.let {
                             exceptionLiveData.value = it
                         }
@@ -138,6 +141,7 @@ class ChatViewModel(
                         is Result.Success -> {
 
                         }
+
                         is Result.Failure -> authResult.errorMessage?.let {
                             exceptionLiveData.value = it
                         }
@@ -162,6 +166,7 @@ class ChatViewModel(
                         is Result.Success -> {
 
                         }
+
                         is Result.Failure -> authResult.errorMessage?.let {
                             exceptionLiveData.value = it
                         }

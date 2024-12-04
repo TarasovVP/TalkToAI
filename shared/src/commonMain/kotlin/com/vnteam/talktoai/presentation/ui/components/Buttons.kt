@@ -23,8 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.ic_logo_google
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Blue
 import com.vnteam.talktoai.presentation.ui.theme.Neutral400
@@ -34,6 +32,8 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary300
 import com.vnteam.talktoai.presentation.ui.theme.Primary400
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun PrimaryButton(
@@ -90,8 +90,17 @@ fun SubmitButtons(
             .padding(8.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        SecondaryButton(text = LocalStringResources.current.BUTTON_CANCEL, false, Modifier.weight(1f), onClick = onDismiss)
-        PrimaryButton(text = LocalStringResources.current.BUTTON_OK, isEnabled, Modifier.weight(1f)) {
+        SecondaryButton(
+            text = LocalStringResources.current.BUTTON_CANCEL,
+            false,
+            Modifier.weight(1f),
+            onClick = onDismiss
+        )
+        PrimaryButton(
+            text = LocalStringResources.current.BUTTON_OK,
+            isEnabled,
+            Modifier.weight(1f)
+        ) {
             onConfirmationClick.invoke()
         }
     }
@@ -121,11 +130,23 @@ fun GoogleButton(title: String, modifier: Modifier, onClick: () -> Unit) {
 }
 
 @Composable
-fun LinkButton(text: String, modifier: Modifier, textAlign: TextAlign? = null,  onClick: () -> Unit) {
+fun LinkButton(
+    text: String,
+    modifier: Modifier,
+    textAlign: TextAlign? = null,
+    onClick: () -> Unit
+) {
     TextButton(
         onClick = onClick, modifier = modifier
     ) {
-        Text(text = text, maxLines = 1, overflow = TextOverflow.Ellipsis, color = Blue, textAlign = textAlign, modifier = Modifier.wrapContentSize())
+        Text(
+            text = text,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            color = Blue,
+            textAlign = textAlign,
+            modifier = Modifier.wrapContentSize()
+        )
     }
 }
 

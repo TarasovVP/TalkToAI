@@ -24,15 +24,15 @@ import com.vnteam.talktoai.ic_tab_one
 import com.vnteam.talktoai.ic_tab_three
 import com.vnteam.talktoai.ic_tab_two
 import com.vnteam.talktoai.onboarding_intro
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
-import com.vnteam.talktoai.presentation.viewmodels.OnBoardingViewModel
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
-import org.jetbrains.compose.resources.painterResource
-import org.koin.compose.viewmodel.koinViewModel
-import presentation.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
+import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
+import com.vnteam.talktoai.presentation.viewmodels.OnBoardingViewModel
+import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
+import presentation.NavigationScreen
 
 @Composable
 fun OnboardingContent(screenState: ScreenState) {
@@ -101,13 +101,17 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
                     3 -> Res.drawable.ic_tab_four
                     else -> Res.drawable.ic_tab_one
                 }
-            ), contentDescription = "${LocalStringResources.current.ONBOARDING_SCREEN} $page", modifier = Modifier
+            ),
+            contentDescription = "${LocalStringResources.current.ONBOARDING_SCREEN} $page",
+            modifier = Modifier
                 .fillMaxWidth()
         )
         PrimaryButton(
-            text = if (page == 3) LocalStringResources.current.AUTHORIZATION_ENTER else LocalStringResources.current.BUTTON_NEXT, modifier = Modifier
+            text = if (page == 3) LocalStringResources.current.AUTHORIZATION_ENTER else LocalStringResources.current.BUTTON_NEXT,
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 40.dp), onClick = onClick
+                .padding(vertical = 40.dp),
+            onClick = onClick
         )
     }
 }

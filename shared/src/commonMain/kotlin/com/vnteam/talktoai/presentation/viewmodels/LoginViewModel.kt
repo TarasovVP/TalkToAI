@@ -26,7 +26,7 @@ class LoginViewModel(
                 when (authResult) {
                     is NetworkResult.Success -> successPasswordResetLiveData.value = true
                     is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -47,8 +47,9 @@ class LoginViewModel(
                         idToken.isNullOrEmpty() -> isEmailAccountExistLiveData.value = true
                         else -> idToken.let { isGoogleAccountExistLiveData.value = it }
                     }
+
                     is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -66,7 +67,7 @@ class LoginViewModel(
                 when (authResult) {
                     is NetworkResult.Success -> successSignInLiveData.value = true
                     is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -84,7 +85,7 @@ class LoginViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> successSignInLiveData.value = true
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -103,7 +104,7 @@ class LoginViewModel(
                 when (authResult) {
                     is NetworkResult.Success -> successSignInLiveData.value = true
                     is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }

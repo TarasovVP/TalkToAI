@@ -23,7 +23,13 @@ interface SettingsSignUpUseCase {
 
     suspend fun getMessages(): Flow<List<Message>>
 
-    fun insertRemoteCurrentUser(remoteUser: com.vnstudio.talktoai.domain.models.RemoteUser, result: (Result<Unit>) -> Unit)
+    fun insertRemoteCurrentUser(
+        remoteUser: com.vnstudio.talktoai.domain.models.RemoteUser,
+        result: (Result<Unit>) -> Unit
+    )
 
-    fun updateRemoteCurrentUser(remoteUser: com.vnstudio.talktoai.domain.models.RemoteUser, result: (Result<Unit>) -> Unit)
+    fun updateRemoteCurrentUser(
+        remoteUser: com.vnstudio.talktoai.domain.models.RemoteUser,
+        result: (Result<Unit>) -> Unit
+    )
 }

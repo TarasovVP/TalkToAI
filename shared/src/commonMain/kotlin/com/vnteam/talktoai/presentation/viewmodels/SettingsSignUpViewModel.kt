@@ -31,11 +31,13 @@ class SettingsSignUpViewModel(
                         authResult.data.isNullOrEmpty().not() -> {
                             accountExistLiveData.value = idToken.orEmpty()
                         }
+
                         idToken.isNullOrEmpty() -> createEmailAccountLiveData.value = true
                         else -> idToken.let { createGoogleAccountLiveData.value = it }
                     }
+
                     is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -53,7 +55,7 @@ class SettingsSignUpViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> successAuthorisationLiveData.value = isExistUser
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -74,7 +76,7 @@ class SettingsSignUpViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> successAuthorisationLiveData.value = false
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -92,7 +94,7 @@ class SettingsSignUpViewModel(
                 when (authResult) {
                     is NetworkResult.Success -> successAuthorisationLiveData.value = true
                     is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -124,7 +126,7 @@ class SettingsSignUpViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> successRemoteUserLiveData.value = true
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -142,7 +144,7 @@ class SettingsSignUpViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> successRemoteUserLiveData.value = true
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }

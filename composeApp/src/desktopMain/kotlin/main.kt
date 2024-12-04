@@ -1,4 +1,3 @@
-
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.vnteam.talktoai.di_desktop.doInitKoin

@@ -29,7 +29,7 @@ class LoginViewModel(
                 when (authResult) {
                     is Result.Success -> successPasswordResetLiveData.value = true
                     is Result.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -50,8 +50,9 @@ class LoginViewModel(
                         idToken.isNullOrEmpty() -> isEmailAccountExistLiveData.value = true
                         else -> idToken.let { isGoogleAccountExistLiveData.value = it }
                     }
+
                     is Result.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -69,7 +70,7 @@ class LoginViewModel(
                 when (authResult) {
                     is Result.Success -> successSignInLiveData.value = true
                     is Result.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -87,7 +88,7 @@ class LoginViewModel(
                 when (operationResult) {
                     is Result.Success -> successSignInLiveData.value = true
                     is Result.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -105,7 +106,7 @@ class LoginViewModel(
                 when (authResult) {
                     is Result.Success -> successSignInLiveData.value = true
                     is Result.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }

@@ -235,7 +235,9 @@ fun ChatContent(
                         viewModel.sendRequest(
                             temporaryMessage,
                             ApiRequest(
-                                model = MESSAGE_ROLE_CHAT_GPT, temperature = 0.7f, messages = listOf(
+                                model = MESSAGE_ROLE_CHAT_GPT,
+                                temperature = 0.7f,
+                                messages = listOf(
                                     MessageApi(role = MESSAGE_ROLE_USER, content = messageText)
                                 )
                             )
@@ -259,7 +261,8 @@ fun ChatContent(
     ) {
         when (messageActionState.value) {
             MessageAction.Delete().value -> {
-                viewModel.deleteMessages(messagesState.value.filter { it.isCheckedToDelete.value }.map { it.id })
+                viewModel.deleteMessages(messagesState.value.filter { it.isCheckedToDelete.value }
+                    .map { it.id })
                 resetMessageActionState(
                     messagesState,
                     messageActionState,
@@ -292,7 +295,10 @@ fun ChatContent(
     }
 
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(screenState.progressVisibilityState, viewModel.progressVisibilityLiveData)
+    ProgressVisibilityHandler(
+        screenState.progressVisibilityState,
+        viewModel.progressVisibilityLiveData
+    )
 }
 
 private fun resetMessageActionState(
@@ -390,11 +396,13 @@ fun Message(
             }
     ) {
 
-        Column(modifier = Modifier
-            .fillMaxHeight()
-            .width(32.dp)
-            .padding(top = 6.dp),
-            verticalArrangement = Arrangement.Top) {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(32.dp)
+                .padding(top = 6.dp),
+            verticalArrangement = Arrangement.Top
+        ) {
             if (isMessageDeleteModeState.value.isTrue()) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -449,10 +457,11 @@ fun Message(
                             .wrapContentSize()
                     )
 
-                    message.status == MessageStatus.REQUESTING && Clock.System.now().isDefineSecondsLater(
-                        20,
-                        message.updatedAt
-                    ) -> Text(
+                    message.status == MessageStatus.REQUESTING && Clock.System.now()
+                        .isDefineSecondsLater(
+                            20,
+                            message.updatedAt
+                        ) -> Text(
                         text = LocalStringResources.current.UNKNOWN_ERROR,
                         fontSize = 16.sp,
                         color = Color.Red,

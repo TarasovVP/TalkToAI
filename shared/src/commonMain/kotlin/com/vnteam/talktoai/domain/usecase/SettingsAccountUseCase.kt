@@ -15,7 +15,11 @@ interface SettingsAccountUseCase {
 
     fun signOut(result: (NetworkResult<Unit>) -> Unit)
 
-    fun changePassword(currentPassword: String, newPassword: String, result: (NetworkResult<Unit>) -> Unit)
+    fun changePassword(
+        currentPassword: String,
+        newPassword: String,
+        result: (NetworkResult<Unit>) -> Unit
+    )
 
     fun reAuthenticate(/*authCredential: AuthCredential, */result: (NetworkResult<Unit>) -> Unit)
 

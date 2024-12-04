@@ -29,7 +29,9 @@ class SettingsPrivacyPolicyViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> privacyPolicyLiveData.value =
                         operationResult.data ?: PRIVACY_POLICY
-                    is NetworkResult.Failure -> exceptionLiveData.value = operationResult.errorMessage.orEmpty()
+
+                    is NetworkResult.Failure -> exceptionLiveData.value =
+                        operationResult.errorMessage.orEmpty()
                 }
             }
             hideProgress()

@@ -85,7 +85,8 @@ fun SignUpContent(
                 account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
             } catch (e: ApiException) {
                 viewModel.googleSignInClient.signOut()
-                viewModel.exceptionLiveData.value = CommonStatusCodes.getStatusCodeString(e.statusCode)
+                viewModel.exceptionLiveData.value =
+                    CommonStatusCodes.getStatusCodeString(e.statusCode)
             }
         }
 
@@ -116,11 +117,18 @@ fun SignUpContent(
         }
         OrDivider(modifier = Modifier)
         PrimaryTextField(
-            LocalStringResources.current.AUTHORIZATION_EMAIL, emailInputValue)
+            LocalStringResources.current.AUTHORIZATION_EMAIL, emailInputValue
+        )
         PasswordTextField(passwordInputValue, LocalStringResources.current.AUTHORIZATION_PASSWORD)
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = LocalStringResources.current.AUTHORIZATION_ENTRANCE_TITLE, modifier = Modifier.padding(start = 16.dp))
-            LinkButton(text = LocalStringResources.current.AUTHORIZATION_ENTRANCE, modifier = Modifier.wrapContentSize()) {
+            Text(
+                text = LocalStringResources.current.AUTHORIZATION_ENTRANCE_TITLE,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+            LinkButton(
+                text = LocalStringResources.current.AUTHORIZATION_ENTRANCE,
+                modifier = Modifier.wrapContentSize()
+            ) {
                 screenState.currentScreenState.value = NavigationScreen.LoginScreen().route
             }
         }
@@ -142,5 +150,8 @@ fun SignUpContent(
         screenState.currentScreenState.value = NavigationScreen.LoginScreen().route
     }
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(screenState.progressVisibilityState, viewModel.progressVisibilityLiveData)
+    ProgressVisibilityHandler(
+        screenState.progressVisibilityState,
+        viewModel.progressVisibilityLiveData
+    )
 }

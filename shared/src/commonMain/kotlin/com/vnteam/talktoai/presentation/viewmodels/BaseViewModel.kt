@@ -1,8 +1,8 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
-import com.vnteam.talktoai.CommonExtensions.EMPTY
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope

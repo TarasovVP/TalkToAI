@@ -34,8 +34,6 @@ import com.vnteam.talktoai.domain.models.InfoMessage
 import com.vnteam.talktoai.ic_avatar_anonymous
 import com.vnteam.talktoai.ic_avatar_email
 import com.vnteam.talktoai.ic_avatar_google
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
-import com.vnteam.talktoai.presentation.viewmodels.SettingsAccountViewModel
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.DataEditDialog
 import com.vnteam.talktoai.presentation.ui.components.EmptyState
@@ -47,10 +45,12 @@ import com.vnteam.talktoai.presentation.ui.components.ProgressVisibilityHandler
 import com.vnteam.talktoai.presentation.ui.components.SecondaryButton
 import com.vnteam.talktoai.presentation.ui.components.ShapeableImage
 import com.vnteam.talktoai.presentation.ui.components.SubmitButtons
-import org.koin.compose.viewmodel.koinViewModel
-import presentation.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
+import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
+import com.vnteam.talktoai.presentation.viewmodels.SettingsAccountViewModel
+import org.koin.compose.viewmodel.koinViewModel
+import presentation.NavigationScreen
 
 @Composable
 fun SettingsAccountContent(
@@ -58,7 +58,7 @@ fun SettingsAccountContent(
 ) {
 
     val viewModel: SettingsAccountViewModel = koinViewModel()
-    val authState =  remember { mutableStateOf<AuthState?>(null) }
+    val authState = remember { mutableStateOf<AuthState?>(null) }
     val showLogOutDialog = remember { mutableStateOf(false) }
     val showChangePasswordDialog = remember { mutableStateOf(false) }
     val showDeleteGoogleAccountDialog = remember { mutableStateOf(false) }
@@ -75,7 +75,8 @@ fun SettingsAccountContent(
         }
     }
 
-    val successChangePasswordMessage = InfoMessage(LocalStringResources.current.SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED)
+    val successChangePasswordMessage =
+        InfoMessage(LocalStringResources.current.SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED)
     val successChangePasswordState = viewModel.successChangePasswordLiveData.collectAsState()
     LaunchedEffect(successChangePasswordState.value) {
         if (successChangePasswordState.value) {
@@ -117,12 +118,19 @@ fun SettingsAccountContent(
             showLogOutDialog.value = true
         }
         if (authState.value == AuthState.AUTHORISED_EMAIL) {
-            PrimaryButton(text = LocalStringResources.current.SETTINGS_ACCOUNT_CHANGE_PASSWORD_TITLE, modifier = Modifier) {
+            PrimaryButton(
+                text = LocalStringResources.current.SETTINGS_ACCOUNT_CHANGE_PASSWORD_TITLE,
+                modifier = Modifier
+            ) {
                 showChangePasswordDialog.value = true
             }
         }
         if (authState.value == AuthState.AUTHORISED_EMAIL || authState.value == AuthState.AUTHORISED_GOOGLE) {
-            SecondaryButton(text = LocalStringResources.current.SETTINGS_ACCOUNT_DELETE_TITLE, true, modifier = Modifier) {
+            SecondaryButton(
+                text = LocalStringResources.current.SETTINGS_ACCOUNT_DELETE_TITLE,
+                true,
+                modifier = Modifier
+            ) {
                 if (authState.value == AuthState.AUTHORISED_GOOGLE) {
                     showDeleteGoogleAccountDialog.value = true
                 } else {
@@ -130,8 +138,11 @@ fun SettingsAccountContent(
                 }
             }
         } else {
-            PrimaryButton(text = LocalStringResources.current.AUTHORIZATION_SIGNING_UP, modifier = Modifier) {
-                screenState.currentScreenState.value =  NavigationScreen.SettingsSignUpScreen().route
+            PrimaryButton(
+                text = LocalStringResources.current.AUTHORIZATION_SIGNING_UP,
+                modifier = Modifier
+            ) {
+                screenState.currentScreenState.value = NavigationScreen.SettingsSignUpScreen().route
             }
             EmptyState(
                 text = LocalStringResources.current.EMPTY_STATE_ACCOUNT,
@@ -149,8 +160,8 @@ fun SettingsAccountContent(
             AuthState.AUTHORISED_ANONYMOUSLY -> LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED_LOG_OUT
             else -> LocalStringResources.current.SETTINGS_ACCOUNT_LOG_OUT
         }, showLogOutDialog, onDismiss = {
-        showLogOutDialog.value = false
-    }) {
+            showLogOutDialog.value = false
+        }) {
         viewModel.signOut()
         showLogOutDialog.value = false
     }
@@ -181,7 +192,10 @@ fun SettingsAccountContent(
     }
 
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(mutableStateOf( screenState.isProgressVisible ), viewModel.progressVisibilityLiveData)
+    ProgressVisibilityHandler(
+        mutableStateOf(screenState.isProgressVisible),
+        viewModel.progressVisibilityLiveData
+    )
 }
 
 @Composable
@@ -206,13 +220,16 @@ fun AccountCard(authState: AuthState?, email: String, onClick: () -> Unit) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) email else LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED, modifier = Modifier
+                    text = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) email else LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED,
+                    modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 8.dp, top = 8.dp)
                 )
                 LinkButton(
-                    text = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) LocalStringResources.current.SETTINGS_ACCOUNT_LOG_OUT_TITLE else LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED_LOG_OUT_TITLE, modifier = Modifier
-                        .wrapContentSize(), onClick = onClick
+                    text = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) LocalStringResources.current.SETTINGS_ACCOUNT_LOG_OUT_TITLE else LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED_LOG_OUT_TITLE,
+                    modifier = Modifier
+                        .wrapContentSize(),
+                    onClick = onClick
                 )
             }
         }
@@ -251,14 +268,28 @@ fun ChangePasswordDialog(
                                 .padding(16.dp),
                             textAlign = TextAlign.Center,
                         )
-                        PasswordTextField(currentPasswordInputValue, LocalStringResources.current.SETTINGS_ACCOUNT_ENTER_CURRENT_PASSWORD)
-                        PasswordTextField(newPasswordInputValue, LocalStringResources.current.SETTINGS_ACCOUNT_ENTER_NEW_PASSWORD)
-                        SubmitButtons(currentPasswordInputValue.value.text.isNotEmpty() && newPasswordInputValue.value.text.isNotEmpty(), {
-                            showDialog.value = false
-                        }, {
-                            showDialog.value = false
-                            onConfirmationClick.invoke(Pair(currentPasswordInputValue.value.text, newPasswordInputValue.value.text))
-                        })
+                        PasswordTextField(
+                            currentPasswordInputValue,
+                            LocalStringResources.current.SETTINGS_ACCOUNT_ENTER_CURRENT_PASSWORD
+                        )
+                        PasswordTextField(
+                            newPasswordInputValue,
+                            LocalStringResources.current.SETTINGS_ACCOUNT_ENTER_NEW_PASSWORD
+                        )
+                        SubmitButtons(
+                            currentPasswordInputValue.value.text.isNotEmpty() && newPasswordInputValue.value.text.isNotEmpty(),
+                            {
+                                showDialog.value = false
+                            },
+                            {
+                                showDialog.value = false
+                                onConfirmationClick.invoke(
+                                    Pair(
+                                        currentPasswordInputValue.value.text,
+                                        newPasswordInputValue.value.text
+                                    )
+                                )
+                            })
                     }
                 }
             )

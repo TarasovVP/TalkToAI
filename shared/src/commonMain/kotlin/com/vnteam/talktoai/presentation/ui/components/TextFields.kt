@@ -33,12 +33,12 @@ import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.ic_message_send
 import com.vnteam.talktoai.ic_toggle_password_disabled
 import com.vnteam.talktoai.ic_toggle_password_enabled
-import org.jetbrains.compose.resources.painterResource
 import com.vnteam.talktoai.presentation.ui.resources.LocalDefaultTextSize
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral600
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import com.vnteam.talktoai.presentation.ui.theme.Primary900
+import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -189,9 +189,11 @@ fun TruncatableText(
     isTruncated: MutableState<Boolean>,
     linesCount: Int,
 ) {
-    Column(modifier = Modifier
-        .padding(10.dp)
-        .wrapContentSize()) {
+    Column(
+        modifier = Modifier
+            .padding(10.dp)
+            .wrapContentSize()
+    ) {
         Text(
             text = message,
             fontSize = LocalDefaultTextSize.current.textSize,
@@ -200,7 +202,8 @@ fun TruncatableText(
             overflow = TextOverflow.Ellipsis
         )
         if (linesCount > 2) {
-            Text(text = if (isTruncated.value) LocalStringResources.current.MESSAGE_MORE else LocalStringResources.current.MESSAGE_HIDE,
+            Text(
+                text = if (isTruncated.value) LocalStringResources.current.MESSAGE_MORE else LocalStringResources.current.MESSAGE_HIDE,
                 color = Color.LightGray,
                 fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
                 fontSize = 12.sp,

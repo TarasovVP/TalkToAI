@@ -1,7 +1,7 @@
 package com.vnteam.talktoai.data.repositoryimpl
 
-import com.vnteam.talktoai.data.IS_DARK_THEME
 import com.vnteam.talktoai.data.APP_LANGUAGE
+import com.vnteam.talktoai.data.IS_DARK_THEME
 import com.vnteam.talktoai.data.IS_ONBOARDING_SEEN
 import com.vnteam.talktoai.data.IS_REVIEW_VOTE
 import com.vnteam.talktoai.data.local.PreferencesFactory

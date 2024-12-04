@@ -116,7 +116,8 @@ fun SettingsSignUpContent(
                 account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
             } catch (e: ApiException) {
                 viewModel.googleSignInClient.signOut()
-                viewModel.exceptionLiveData.value = CommonStatusCodes.getStatusCodeString(e.statusCode)
+                viewModel.exceptionLiveData.value =
+                    CommonStatusCodes.getStatusCodeString(e.statusCode)
             }
         }
 
@@ -168,7 +169,10 @@ fun SettingsSignUpContent(
         showAccountExistDialog.value = false
     }
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(screenState.progressVisibilityState, viewModel.progressVisibilityLiveData)
+    ProgressVisibilityHandler(
+        screenState.progressVisibilityState,
+        viewModel.progressVisibilityLiveData
+    )
 }
 
 @Composable

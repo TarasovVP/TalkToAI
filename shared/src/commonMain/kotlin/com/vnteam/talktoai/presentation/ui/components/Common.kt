@@ -3,11 +3,23 @@ package com.vnteam.talktoai.presentation.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,20 +27,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.math.ceil
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.domain.models.InfoMessage
 import com.vnteam.talktoai.ic_empty_state
-import kotlinx.coroutines.flow.MutableStateFlow
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 import com.vnteam.talktoai.presentation.ui.resources.LocalMediumTextSize
 import com.vnteam.talktoai.presentation.ui.resources.LocalSmallPadding
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Primary300
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
+import kotlin.math.ceil
 
 @Composable
 fun ExceptionMessageHandler(
@@ -156,13 +168,13 @@ fun MainProgress(progressVisibilityState: MutableState<Boolean>) {
 }
 
 @Composable
-fun textLinesCount(text: String, paddings: Float, textSize: Float) : Int {
+fun textLinesCount(text: String, paddings: Float, textSize: Float): Int {
     val charsInLine = charsInLine(paddings, textSize)
     return charsInLine.takeIf { it > 0 }?.let { ceil((text.length / it).toDouble()).toInt() } ?: 1
 }
 
 @Composable
-fun charsInLine(paddings: Float, textSize: Float) : Float {
+fun charsInLine(paddings: Float, textSize: Float): Float {
     val screenWidth = measureScreenWidth() - paddings
     val charWidth = measureCharWidth(textSize)
     return charWidth.takeIf { it > 0 }?.let { screenWidth / it } ?: 0f

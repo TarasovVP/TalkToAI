@@ -34,11 +34,13 @@ class SettingsSignUpViewModel(
                         authResult.data.isNullOrEmpty().not() -> {
                             accountExistLiveData.value = idToken.orEmpty()
                         }
+
                         idToken.isNullOrEmpty() -> createEmailAccountLiveData.value = true
                         else -> idToken.let { createGoogleAccountLiveData.value = it }
                     }
+
                     is Result.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -56,7 +58,7 @@ class SettingsSignUpViewModel(
                 when (operationResult) {
                     is Result.Success -> successAuthorisationLiveData.value = isExistUser
                     is Result.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -77,7 +79,7 @@ class SettingsSignUpViewModel(
                 when (operationResult) {
                     is Result.Success -> successAuthorisationLiveData.value = false
                     is Result.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -95,7 +97,7 @@ class SettingsSignUpViewModel(
                 when (authResult) {
                     is Result.Success -> successAuthorisationLiveData.value = true
                     is Result.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -127,7 +129,7 @@ class SettingsSignUpViewModel(
                 when (operationResult) {
                     is Result.Success -> successRemoteUserLiveData.value = true
                     is Result.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }
@@ -145,7 +147,7 @@ class SettingsSignUpViewModel(
                 when (operationResult) {
                     is Result.Success -> successRemoteUserLiveData.value = true
                     is Result.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value = 
+                        exceptionLiveData.value =
                             it
                     }
                 }

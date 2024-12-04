@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
-class ChatRepositoryImpl(private val chatDao: ChatDao, private val chatDBMapper: ChatDBMapper):
+class ChatRepositoryImpl(private val chatDao: ChatDao, private val chatDBMapper: ChatDBMapper) :
     ChatRepository {
 
     override suspend fun clearChats() {

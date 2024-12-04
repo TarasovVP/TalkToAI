@@ -13,7 +13,10 @@ class LoginUseCaseImpl(private val authRepository: AuthRepository) :
             result.invoke(authResult)
         }
 
-    override fun fetchSignInMethodsForEmail(email: String, result: (NetworkResult<List<String>>) -> Unit) =
+    override fun fetchSignInMethodsForEmail(
+        email: String,
+        result: (NetworkResult<List<String>>) -> Unit
+    ) =
         authRepository.fetchSignInMethodsForEmail(email) { authResult ->
             result.invoke(authResult)
         }

@@ -19,16 +19,18 @@ actual class PreferencesFactory : Preferences {
 
     @OptIn(ExperimentalForeignApi::class)
     private val dataStore = PreferenceDataStoreFactory.createWithPath(
-        produceFile = { val documentDirectory: NSURL? = NSFileManager.defaultManager.URLForDirectory(
-            directory = NSDocumentDirectory,
-            inDomain = NSUserDomainMask,
-            appropriateForURL = null,
-            create = false,
-            error = null,
-        )
+        produceFile = {
+            val documentDirectory: NSURL? = NSFileManager.defaultManager.URLForDirectory(
+                directory = NSDocumentDirectory,
+                inDomain = NSUserDomainMask,
+                appropriateForURL = null,
+                create = false,
+                error = null,
+            )
             (documentDirectory?.path + "/$PREFERENCES_PB").toPath()
         }
     )
+
     actual override suspend fun putString(key: String, value: String) {
         val preferencesKey = stringPreferencesKey(key)
         dataStore.edit { preferences ->

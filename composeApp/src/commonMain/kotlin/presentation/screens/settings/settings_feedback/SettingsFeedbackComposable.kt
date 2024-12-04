@@ -20,13 +20,13 @@ import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.domain.models.Feedback
 import com.vnteam.talktoai.domain.models.InfoMessage
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
-import com.vnteam.talktoai.presentation.viewmodels.SettingsFeedbackViewModel
 import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
+import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
+import com.vnteam.talktoai.presentation.viewmodels.SettingsFeedbackViewModel
 import kotlinx.datetime.Clock
 import org.koin.compose.viewmodel.koinViewModel
-import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 
 @Composable
 fun SettingsFeedbackContent(

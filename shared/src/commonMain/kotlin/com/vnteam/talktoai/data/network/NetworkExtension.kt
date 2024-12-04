@@ -16,6 +16,7 @@ suspend inline fun <reified T> HttpResponse?.handleResponse(): NetworkResult<T> 
             println("Error ${bodyAsText()}")
             NetworkResult.Failure(CONNECTION_EXCEPTION)
         }
+
         status.value !in 200..299 -> {
             val error = bodyAsText()
             NetworkResult.Failure(error)

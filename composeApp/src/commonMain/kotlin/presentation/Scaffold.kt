@@ -51,17 +51,17 @@ import com.vnteam.talktoai.ic_navigation
 import com.vnteam.talktoai.ic_settings
 import com.vnteam.talktoai.presentation.ui.components.TextIconButton
 import com.vnteam.talktoai.presentation.ui.components.draggable.DragDropColumn
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
-import presentation.NavigationScreen.Companion.isSettingsScreen
-import presentation.NavigationScreen.Companion.settingScreens
-import presentation.NavigationScreen.Companion.settingsScreenNameByRoute
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
 import com.vnteam.talktoai.presentation.ui.theme.Primary100
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
 import com.vnteam.talktoai.presentation.ui.theme.Primary800
 import com.vnteam.talktoai.presentation.ui.theme.Primary900
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
+import presentation.NavigationScreen.Companion.isSettingsScreen
+import presentation.NavigationScreen.Companion.settingScreens
+import presentation.NavigationScreen.Companion.settingsScreenNameByRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -165,7 +165,10 @@ fun AppDrawer(
             ) {
                 settingScreens.forEach { settingsScreen ->
                     DrawerItem(
-                        name = settingsScreenNameByRoute(settingsScreen.route, LocalStringResources.current),
+                        name = settingsScreenNameByRoute(
+                            settingsScreen.route,
+                            LocalStringResources.current
+                        ),
                         mainIcon = Res.drawable.ic_settings,
                         isCurrent = currentRouteState == settingsScreen.route,
                         secondaryIcon = if (settingsScreen.route == NavigationScreen.SettingsLanguageScreen().route) LocaleList.current.flagDrawable() else null

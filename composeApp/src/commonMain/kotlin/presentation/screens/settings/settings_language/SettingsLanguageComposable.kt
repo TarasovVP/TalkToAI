@@ -23,15 +23,15 @@ import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.ic_flag_en
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
-import com.vnteam.talktoai.presentation.viewmodels.SettingsLanguageViewModel
 import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
-import org.koin.compose.viewmodel.koinViewModel
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral500
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
+import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
+import com.vnteam.talktoai.presentation.viewmodels.SettingsLanguageViewModel
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SettingsLanguageContent(
@@ -76,7 +76,12 @@ fun SettingsLanguageContent(
 }
 
 @Composable
-fun SettingsLanguageItem(name: String, isChecked: Boolean, icon: DrawableResource, onLanguageCheck: () -> Unit) {
+fun SettingsLanguageItem(
+    name: String,
+    isChecked: Boolean,
+    icon: DrawableResource,
+    onLanguageCheck: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

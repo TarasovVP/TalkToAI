@@ -35,7 +35,8 @@ class SettingsAccountViewModel(
             settingsAccountUseCase.signOut { result ->
                 when (result) {
                     is NetworkResult.Success -> successLiveData.value = true
-                    is NetworkResult.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
+                    is NetworkResult.Failure -> exceptionLiveData.value =
+                        result.errorMessage.orEmpty()
                 }
             }
             hideProgress()
@@ -50,7 +51,8 @@ class SettingsAccountViewModel(
             settingsAccountUseCase.changePassword(currentPassword, newPassword) { result ->
                 when (result) {
                     is NetworkResult.Success -> successChangePasswordLiveData.value = true
-                    is NetworkResult.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
+                    is NetworkResult.Failure -> exceptionLiveData.value =
+                        result.errorMessage.orEmpty()
                 }
                 hideProgress()
             }
@@ -65,7 +67,8 @@ class SettingsAccountViewModel(
             settingsAccountUseCase.reAuthenticate(/*authCredential*/) { result ->
                 when (result) {
                     is NetworkResult.Success -> reAuthenticateLiveData.value = true
-                    is NetworkResult.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
+                    is NetworkResult.Failure -> exceptionLiveData.value =
+                        result.errorMessage.orEmpty()
                 }
                 hideProgress()
             }
@@ -80,7 +83,8 @@ class SettingsAccountViewModel(
             settingsAccountUseCase.deleteUser { result ->
                 when (result) {
                     is NetworkResult.Success -> successLiveData.value = true
-                    is NetworkResult.Failure -> exceptionLiveData.value = result.errorMessage.orEmpty()
+                    is NetworkResult.Failure -> exceptionLiveData.value =
+                        result.errorMessage.orEmpty()
                 }
                 hideProgress()
             }

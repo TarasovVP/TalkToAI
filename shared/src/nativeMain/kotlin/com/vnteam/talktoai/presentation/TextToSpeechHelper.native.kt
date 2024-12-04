@@ -26,7 +26,7 @@ class TextToSpeechInstance : NSObject(), AVSpeechSynthesizerDelegateProtocol {
     }
 
     fun speak(text: String) {
-        if(!isSpeaking && isPaused) {
+        if (!isSpeaking && isPaused) {
             continueSpeaking()
         }
 

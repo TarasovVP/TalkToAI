@@ -8,7 +8,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class ChatDaoImpl(private val appDatabase: SharedDatabase): ChatDao {
+class ChatDaoImpl(private val appDatabase: SharedDatabase) : ChatDao {
     override suspend fun clearChats() {
         appDatabase { db ->
             db.appDatabaseQueries.clearChats()

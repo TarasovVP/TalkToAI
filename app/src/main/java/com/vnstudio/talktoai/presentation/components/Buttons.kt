@@ -86,8 +86,17 @@ fun SubmitButtons(
             .padding(8.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        SecondaryButton(text = LocalStringResources.current.BUTTON_CANCEL, false, Modifier.weight(1f), onClick = onDismiss)
-        PrimaryButton(text = LocalStringResources.current.BUTTON_OK, isEnabled, Modifier.weight(1f)) {
+        SecondaryButton(
+            text = LocalStringResources.current.BUTTON_CANCEL,
+            false,
+            Modifier.weight(1f),
+            onClick = onDismiss
+        )
+        PrimaryButton(
+            text = LocalStringResources.current.BUTTON_OK,
+            isEnabled,
+            Modifier.weight(1f)
+        ) {
             onConfirmationClick.invoke()
         }
     }
@@ -117,11 +126,23 @@ fun GoogleButton(title: String, modifier: Modifier, onClick: () -> Unit) {
 }
 
 @Composable
-fun LinkButton(text: String, modifier: Modifier, textAlign: TextAlign? = null,  onClick: () -> Unit) {
+fun LinkButton(
+    text: String,
+    modifier: Modifier,
+    textAlign: TextAlign? = null,
+    onClick: () -> Unit
+) {
     TextButton(
         onClick = onClick, modifier = modifier
     ) {
-        Text(text = text, maxLines = 1, overflow = TextOverflow.Ellipsis, color = Blue, textAlign = textAlign, modifier = Modifier.wrapContentSize())
+        Text(
+            text = text,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            color = Blue,
+            textAlign = textAlign,
+            modifier = Modifier.wrapContentSize()
+        )
     }
 }
 

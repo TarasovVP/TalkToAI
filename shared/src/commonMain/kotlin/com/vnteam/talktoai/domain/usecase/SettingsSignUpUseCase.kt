@@ -18,7 +18,11 @@ interface SettingsSignUpUseCase {
         result: (NetworkResult<String>) -> Unit,
     )
 
-    fun signInWithEmailAndPassword(email: String, password: String, result: (NetworkResult<Unit>) -> Unit)
+    fun signInWithEmailAndPassword(
+        email: String,
+        password: String,
+        result: (NetworkResult<Unit>) -> Unit
+    )
 
     suspend fun getChats(): Flow<List<Chat>>
 

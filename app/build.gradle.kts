@@ -1,4 +1,3 @@
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
@@ -27,18 +26,30 @@ android {
             useSupportLibrary = true
         }
         buildConfigField("String", "OPENAI_API_KEY", "${rootProject.properties["OPENAI_API_KEY"]}")
-        buildConfigField("String", "ORGANIZATION_ID", "${rootProject.properties["ORGANIZATION_ID"]}")
+        buildConfigField(
+            "String",
+            "ORGANIZATION_ID",
+            "${rootProject.properties["ORGANIZATION_ID"]}"
+        )
         buildConfigField("String", "BASE_URL", "${rootProject.properties["BASE_URL"]}")
-        buildConfigField("String", "SERVER_CLIENT_ID", "${rootProject.properties["SERVER_CLIENT_ID"]}")
-        buildConfigField("String", "REALTIME_DATABASE", "${rootProject.properties["REALTIME_DATABASE"]}")
+        buildConfigField(
+            "String",
+            "SERVER_CLIENT_ID",
+            "${rootProject.properties["SERVER_CLIENT_ID"]}"
+        )
+        buildConfigField(
+            "String",
+            "REALTIME_DATABASE",
+            "${rootProject.properties["REALTIME_DATABASE"]}"
+        )
     }
 
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
             )
         }
     }

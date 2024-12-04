@@ -45,7 +45,8 @@ class SettingsAccountUseCaseImpl(
             authRepository.deleteUser(result)
         }
 
-    override suspend fun clearDataByKeys(keys: List<String>) = preferencesRepository.clearDataByKeys(keys)
+    override suspend fun clearDataByKeys(keys: List<String>) =
+        preferencesRepository.clearDataByKeys(keys)
 
     override suspend fun clearDataInDB() {
         TODO("Not yet implemented")
