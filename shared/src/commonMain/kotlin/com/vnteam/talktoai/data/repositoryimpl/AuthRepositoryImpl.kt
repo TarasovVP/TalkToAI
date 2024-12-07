@@ -91,6 +91,8 @@ class AuthRepositoryImpl(
     }
 
     override fun signInAnonymously(result: (NetworkResult<Unit>) -> Unit) {
+        // TODO uncomment
+        result.invoke(NetworkResult.Success())
         /*firebaseAuth.signInAnonymously()
             .addOnSuccessListener {
                 result.invoke(Result.Success())

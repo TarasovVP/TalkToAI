@@ -30,7 +30,9 @@ class SettingsAccountViewModel(
     }
 
     fun signOut() {
-        if (networkState.isNetworkAvailable()) {
+        successLiveData.value = true
+        // TODO uncomment
+        /*if (networkState.isNetworkAvailable()) {
             showProgress()
             settingsAccountUseCase.signOut { result ->
                 when (result) {
@@ -42,7 +44,7 @@ class SettingsAccountViewModel(
             hideProgress()
         } else {
             exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
-        }
+        }*/
     }
 
     fun changePassword(currentPassword: String, newPassword: String) {
