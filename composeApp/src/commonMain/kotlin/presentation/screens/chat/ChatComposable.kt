@@ -122,10 +122,6 @@ fun ChatContent(
     val messageSent = LocalStringResources.current.MESSAGE_ACTION_SEND
     val messageCopy = LocalStringResources.current.MESSAGE_ACTION_COPY
     val messageShare = LocalStringResources.current.MESSAGE_ACTION_SHARE
-    /*val shareIntentLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
-            screenState.infoMessageState.value = InfoMessage(messageSent)
-        }*/
     LaunchedEffect(messageActionState.value) {
         when (messageActionState.value) {
             MessageAction.Delete().value -> {
@@ -143,19 +139,14 @@ fun ChatContent(
                 screenState.infoMessageState.value = InfoMessage(messageCopy)
             }
 
-            MessageAction.Share().value -> {/*Intent(Intent.ACTION_SEND).apply {
-                    type = "text/plain"
-                    putExtra(Intent.EXTRA_TEXT, messagesState.value.textToAction())
-
-                    val chooser = Intent.createChooser(this, messageShare)
-                    shareIntentLauncher.launch(chooser)
-                }
+            MessageAction.Share().value -> {
+                viewModel.shareLink(messagesState.value.textToAction())
                 resetMessageActionState(
                     messagesState,
                     messageActionState,
                     isMessageActionModeState,
                     showMessageActionDialog
-                )*/
+                )
             }
 
             MessageAction.Transfer().value -> showMessageActionDialog.value = true
@@ -493,7 +484,8 @@ fun MessageActionField(
 }
 
 @Composable
-fun MessageTypingAnimation() {/*val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.message_typing))
+fun MessageTypingAnimation() {
+    /*val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.message_typing))
     Box(
         Modifier
             .padding(16.dp)

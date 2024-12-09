@@ -202,7 +202,7 @@ val appModule = module {
         MainViewModel(get())
     }
     viewModel {
-        ChatViewModel(get(), get(), get())
+        ChatViewModel(get(), get(), get(), get())
     }
     viewModel {
         SettingsAccountViewModel(

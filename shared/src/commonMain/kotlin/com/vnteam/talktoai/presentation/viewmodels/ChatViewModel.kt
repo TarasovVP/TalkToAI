@@ -10,6 +10,7 @@ import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.usecase.ChatUseCase
 import com.vnteam.talktoai.presentation.uimodels.ChatUI
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
+import com.vnteam.talktoai.utils.ShareUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -17,7 +18,8 @@ import kotlinx.coroutines.flow.catch
 class ChatViewModel(
     private val chatUseCase: ChatUseCase,
     private val messageUIMapper: MessageUIMapper,
-    private val chatUIMapper: ChatUIMapper
+    private val chatUIMapper: ChatUIMapper,
+    private val shareUtils: ShareUtils
 ) : BaseViewModel() {
 
     val currentChatLiveData = MutableStateFlow<ChatUI?>(null)
@@ -179,6 +181,10 @@ class ChatViewModel(
             }
         }
         hideProgress()
+    }
+
+    fun shareLink(text: String) {
+        shareUtils.shareLink(text)
     }
 
     override fun onCleared() {
