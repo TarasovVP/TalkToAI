@@ -34,25 +34,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import clearCheckToAction
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.CommonExtensions.isNotNull
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.Res
+import com.vnteam.talktoai.avatar_ai
 import com.vnteam.talktoai.data.network.request.ApiRequest
 import com.vnteam.talktoai.data.network.request.MessageApi
 import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.models.InfoMessage
 import com.vnteam.talktoai.domain.sealed_classes.MessageAction
 import com.vnteam.talktoai.ic_chat_add
+import com.vnteam.talktoai.ic_checked_check_box
 import com.vnteam.talktoai.ic_copy
 import com.vnteam.talktoai.ic_delete
+import com.vnteam.talktoai.ic_empty_check_box
 import com.vnteam.talktoai.ic_share
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.EmptyState
@@ -113,7 +121,8 @@ fun ChatContent(
     val clipboardManager = LocalClipboardManager.current
     val messageSent = LocalStringResources.current.MESSAGE_ACTION_SEND
     val messageCopy = LocalStringResources.current.MESSAGE_ACTION_COPY
-    val messageShare = LocalStringResources.current.MESSAGE_ACTION_SHARE/*val shareIntentLauncher =
+    val messageShare = LocalStringResources.current.MESSAGE_ACTION_SHARE
+    /*val shareIntentLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
             screenState.infoMessageState.value = InfoMessage(messageSent)
         }*/
@@ -369,8 +378,9 @@ fun Message(
             modifier = Modifier.fillMaxHeight().width(32.dp).padding(top = 6.dp),
             verticalArrangement = Arrangement.Top
         ) {
-            if (isMessageDeleteModeState.value.isTrue()) {/*AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
+            if (isMessageDeleteModeState.value.isTrue()) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalPlatformContext.current)
                         .data(if (message.isCheckedToDelete.value) Res.drawable.ic_checked_check_box else Res.drawable.ic_empty_check_box)
                         .crossfade(true)
                         .build(),
@@ -378,17 +388,16 @@ fun Message(
                     contentScale = ContentScale.Inside,
                     modifier = Modifier
                         .padding(2.dp)
-                )*/
+                )
             } else if (isUserAuthor.not()) {
-                //TODO
-                /*AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(painterRes(resId = "avatar_ai"))
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalPlatformContext.current)
+                        .data(painterResource(Res.drawable.avatar_ai))
                         .crossfade(true)
                         .build(),
                     contentDescription = LocalStringResources.current.AI_AVATAR,
                     contentScale = ContentScale.Crop
-                )*/
+                )
             }
         }
         Row(
