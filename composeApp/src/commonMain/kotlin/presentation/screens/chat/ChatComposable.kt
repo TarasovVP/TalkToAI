@@ -100,6 +100,7 @@ fun ChatContent(
     val viewModel = koinViewModel<ChatViewModel>()
     val currentChatState = viewModel.currentChatLiveData.collectAsState()
     val messagesState = viewModel.messagesLiveData.collectAsState()
+    val animationResource = viewModel.animationResource.collectAsState()
     val messageActionState: MutableState<String> =
         rememberSaveable { mutableStateOf(MessageAction.Cancel().value) }
     val showMessageActionDialog: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
@@ -481,21 +482,4 @@ fun MessageActionField(
             )
         }
     }
-}
-
-@Composable
-fun MessageTypingAnimation() {
-    /*val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.message_typing))
-    Box(
-        Modifier
-            .padding(16.dp)
-    ) {
-        LottieAnimation(
-            composition,
-            iterations = LottieConstants.IterateForever,
-            modifier = Modifier
-                .width(52.dp)
-                .height(12.dp)
-        )
-    }*/
 }

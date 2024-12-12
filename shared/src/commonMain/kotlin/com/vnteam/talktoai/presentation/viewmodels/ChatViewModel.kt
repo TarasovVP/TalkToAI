@@ -10,20 +10,25 @@ import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.usecase.ChatUseCase
 import com.vnteam.talktoai.presentation.uimodels.ChatUI
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
+import com.vnteam.talktoai.utils.AnimationUtils
 import com.vnteam.talktoai.utils.ShareUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
+import org.jetbrains.compose.resources.InternalResourceApi
+import org.jetbrains.compose.resources.readResourceBytes
 
 class ChatViewModel(
     private val chatUseCase: ChatUseCase,
     private val messageUIMapper: MessageUIMapper,
     private val chatUIMapper: ChatUIMapper,
-    private val shareUtils: ShareUtils
+    private val shareUtils: ShareUtils,
+    private val animationUtils: AnimationUtils
 ) : BaseViewModel() {
 
     val currentChatLiveData = MutableStateFlow<ChatUI?>(null)
     val messagesLiveData = MutableStateFlow<List<MessageUI>>(listOf())
+    val animationResource = MutableStateFlow("")
 
     private var messagesFlowSubscription: Job? = null
 
@@ -185,6 +190,14 @@ class ChatViewModel(
 
     fun shareLink(text: String) {
         shareUtils.shareLink(text)
+    }
+
+    @OptIn(InternalResourceApi::class)
+    fun messageTypingAnimation() {
+        launch {
+            val resource = readResourceBytes("files/message_typing.json").decodeToString()
+            animationResource.value = resource
+        }
     }
 
     override fun onCleared() {

@@ -60,16 +60,16 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.components.resources)
             implementation(libs.androidx.viewmodel.compose)
-            //Koin
+            // Koin
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
-            //Coil
+            // Coil
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
-            //Navigation
+            // Navigation
             implementation(libs.navigation.compose)
-            //DateTime
+            // DateTime
             implementation(libs.kotlinx.datetime)
         }
         androidMain.dependencies {
@@ -78,7 +78,7 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
 
-            //Compose
+            // Compose
             implementation(compose.material3)
             implementation(libs.androidx.activity.compose)
             implementation(libs.material.ripple)

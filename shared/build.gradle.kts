@@ -38,7 +38,7 @@ kotlin {
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.androidx.viewmodel.compose)
-            //Ktor
+            // Ktor
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
@@ -47,8 +47,10 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
-            //SQLDelight
+            // SQLDelight
             implementation(libs.sqldelight.coroutines.extensions)
+            // Lottie
+            implementation(libs.lottie.compose)
         }
         androidMain.dependencies {
             implementation(libs.androidx.multidex)
@@ -57,13 +59,13 @@ kotlin {
             // Koin
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
-            //Datastore
+            // Datastore
             implementation(libs.androidx.datastore.preferences)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
             implementation(libs.sqldelight.native.driver)
-            //Datastore
+            // Datastore
             implementation(libs.androidx.datastore.preferences)
         }
         nativeMain.dependencies {
@@ -76,9 +78,9 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.sqldelight.java.driver)
             implementation(libs.slf4j)
-            //Datastore
+            // Datastore
             implementation(libs.androidx.datastore.preferences)
-            //Text to speech
+            // Text to speech
             implementation(libs.freetts)
         }
         jsMain.dependencies {
