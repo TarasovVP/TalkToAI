@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -31,11 +32,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -332,6 +335,7 @@ fun MessagesList(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Message(
     isUserAuthor: Boolean,
@@ -400,7 +404,7 @@ fun Message(
             Spacer(modifier = Modifier.width(4.dp))
             Box(
                 modifier = Modifier.wrapContentSize().fillMaxWidth(0.8f)
-                    //.widthIn(40.dp, (/*LocalConfiguration.current.screenWidthDp*/ * 0.8).dp)
+                    .widthIn(40.dp, (LocalWindowInfo.current.containerSize.width * 0.8).dp)
                     .background(
                         color = if (isUserAuthor) Primary500 else Primary600,
                         shape = RoundedCornerShape(
@@ -439,6 +443,12 @@ fun Message(
             }
         }
     }
+}
+
+@Composable
+fun MessageTypingAnimation() {
+    val viewModel = koinViewModel<ChatViewModel>()
+    viewModel.messageTypingAnimation()
 }
 
 @Composable
