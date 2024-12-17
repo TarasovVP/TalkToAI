@@ -104,10 +104,13 @@ fun ChatContent(
     val viewModel = koinViewModel<ChatViewModel>()
     val currentChatState = viewModel.currentChatLiveData.collectAsState()
     val messagesState = viewModel.messagesLiveData.collectAsState()
-    val animationResource = viewModel.animationResource.collectAsState()
     val messageActionState: MutableState<String> =
         rememberSaveable { mutableStateOf(MessageAction.Cancel().value) }
     val showMessageActionDialog: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.getAnimationResource()
+    }
 
     LaunchedEffect(screenState.currentScreenState.value) {
         viewModel.getCurrentChat(chatId)
@@ -388,7 +391,7 @@ fun Message(
             } else if (isUserAuthor.not()) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalPlatformContext.current)
-                        .data(painterResource(Res.drawable.avatar_ai))
+                        .data(Res.drawable.avatar_ai)
                         .crossfade(true)
                         .build(),
                     contentDescription = LocalStringResources.current.AI_AVATAR,
@@ -448,7 +451,11 @@ fun Message(
 @Composable
 fun MessageTypingAnimation() {
     val viewModel = koinViewModel<ChatViewModel>()
-    viewModel.messageTypingAnimation()
+    viewModel.animationResource.collectAsState().value.let {
+        viewModel.animationUtils.MessageTypingAnimation(
+            it
+        )
+    }
 }
 
 @Composable

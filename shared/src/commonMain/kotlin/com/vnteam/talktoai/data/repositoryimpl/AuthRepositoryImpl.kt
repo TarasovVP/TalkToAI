@@ -19,11 +19,11 @@ class AuthRepositoryImpl(
     }
 
     override fun isLoggedInUser(): Boolean {
-        return /*firebaseAuth.currentUser.isNotNull()*/true
+        return /*firebaseAuth.currentUser.isNotNull()*/false
     }
 
     override fun isAuthorisedUser(): Boolean {
-        return /*firebaseAuth.currentUser.isNotNull() && firebaseAuth.currentUser?.isAnonymous.isNotTrue()*/ true
+        return /*firebaseAuth.currentUser.isNotNull() && firebaseAuth.currentUser?.isAnonymous.isNotTrue()*/ false
     }
 
     override fun isGoogleAuthUser(): Boolean {
@@ -31,7 +31,7 @@ class AuthRepositoryImpl(
             if (it.providerId == GoogleAuthProvider.PROVIDER_ID) return true
         }
         return false*/
-        return true
+        return false
     }
 
     override fun currentUserEmail(): String {

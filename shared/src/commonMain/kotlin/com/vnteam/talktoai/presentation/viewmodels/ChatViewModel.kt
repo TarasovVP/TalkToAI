@@ -1,6 +1,7 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.CommonExtensions.isNull
+import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.data.network.request.ApiRequest
 import com.vnteam.talktoai.domain.enums.MessageStatus
@@ -15,15 +16,14 @@ import com.vnteam.talktoai.utils.ShareUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
-import org.jetbrains.compose.resources.InternalResourceApi
-import org.jetbrains.compose.resources.readResourceBytes
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class ChatViewModel(
     private val chatUseCase: ChatUseCase,
     private val messageUIMapper: MessageUIMapper,
     private val chatUIMapper: ChatUIMapper,
     private val shareUtils: ShareUtils,
-    private val animationUtils: AnimationUtils
+    val animationUtils: AnimationUtils
 ) : BaseViewModel() {
 
     val currentChatLiveData = MutableStateFlow<ChatUI?>(null)
@@ -192,10 +192,10 @@ class ChatViewModel(
         shareUtils.shareLink(text)
     }
 
-    @OptIn(InternalResourceApi::class)
-    fun messageTypingAnimation() {
+    @OptIn(ExperimentalResourceApi::class)
+    fun getAnimationResource() {
         launch {
-            val resource = readResourceBytes("files/message_typing.json").decodeToString()
+            val resource = Res.readBytes("files/message_typing.json").decodeToString()
             animationResource.value = resource
         }
     }

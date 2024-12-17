@@ -3,6 +3,7 @@ package com.vnteam.talktoai.data.repositoryimpl
 import com.vnteam.talktoai.CommonExtensions.orZero
 import com.vnteam.talktoai.data.database.dao.MessageDao
 import com.vnteam.talktoai.data.network.ApiService
+import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.data.network.handleResponse
 import com.vnteam.talktoai.data.network.request.ApiRequest
 import com.vnteam.talktoai.data.network.responses.ApiResponse
@@ -56,7 +57,9 @@ class MessageRepositoryImpl(
     }
 
     override suspend fun sendRequest(apiRequest: ApiRequest) = flow {
-        val httpResponse = apiService.sendRequest(apiRequest)
-        emit(httpResponse.handleResponse<ApiResponse>())
+        // TODO uncomment
+        /*val httpResponse = apiService.sendRequest(apiRequest)
+        emit(httpResponse.handleResponse<ApiResponse>())*/
+        emit(NetworkResult.Success(ApiResponse("id", "chatObject", "createdAt", "updatedAt", null, listOf())))
     }
 }
