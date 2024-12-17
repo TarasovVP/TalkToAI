@@ -86,6 +86,7 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary900
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.ChatViewModel
+import com.vnteam.talktoai.utils.screenWidth
 import dateToMilliseconds
 import isDefineSecondsLater
 import kotlinx.datetime.Clock
@@ -335,7 +336,6 @@ fun MessagesList(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Message(
     isUserAuthor: Boolean,
@@ -404,7 +404,7 @@ fun Message(
             Spacer(modifier = Modifier.width(4.dp))
             Box(
                 modifier = Modifier.wrapContentSize().fillMaxWidth(0.8f)
-                    .widthIn(40.dp, (LocalWindowInfo.current.containerSize.width * 0.8).dp)
+                    .widthIn(40.dp, (screenWidth().value * 0.8).dp)
                     .background(
                         color = if (isUserAuthor) Primary500 else Primary600,
                         shape = RoundedCornerShape(
