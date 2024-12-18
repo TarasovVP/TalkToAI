@@ -52,6 +52,7 @@ class ApiService(
     suspend fun sendRequest(apiRequest: ApiRequest): HttpResponse? {
         val httpResponse = try {
             httpClient.post("${baseUrl}chat/completions") {
+                contentType(ContentType.Application.Json)
                 setBody(apiRequest)
             }
         } catch (e: Exception) {

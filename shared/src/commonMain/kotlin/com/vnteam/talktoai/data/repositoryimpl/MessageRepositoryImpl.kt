@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.map
 class MessageRepositoryImpl(
     private val messageDao: MessageDao,
     private val messageDBMapper: MessageDBMapper,
-    private val apiService: ApiService,
+    private val apiService: ApiService
 ) : MessageRepository {
 
     override suspend fun insertMessages(messages: List<Message>) {
@@ -57,9 +57,7 @@ class MessageRepositoryImpl(
     }
 
     override suspend fun sendRequest(apiRequest: ApiRequest) = flow {
-        // TODO uncomment
-        /*val httpResponse = apiService.sendRequest(apiRequest)
-        emit(httpResponse.handleResponse<ApiResponse>())*/
-        emit(NetworkResult.Success(ApiResponse("id", "chatObject", "createdAt", "updatedAt", null, listOf())))
+        val httpResponse = apiService.sendRequest(apiRequest)
+        emit(httpResponse.handleResponse<ApiResponse>())
     }
 }
