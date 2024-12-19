@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.di
 
+import com.vnteam.talktoai.data.apiKey
 import com.vnteam.talktoai.data.baseUrl
 import com.vnteam.talktoai.data.database.SharedDatabase
 import com.vnteam.talktoai.data.database.dao.ChatDao
@@ -9,6 +10,7 @@ import com.vnteam.talktoai.data.database.dao.MessageDaoImpl
 import com.vnteam.talktoai.data.mapperimpls.ChatDBMapperImpl
 import com.vnteam.talktoai.data.mapperimpls.MessageDBMapperImpl
 import com.vnteam.talktoai.data.network.ApiService
+import com.vnteam.talktoai.data.organizationId
 import com.vnteam.talktoai.data.repositoryimpl.AuthRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.ChatRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.MessageRepositoryImpl
@@ -65,11 +67,13 @@ import com.vnteam.talktoai.presentation.viewmodels.SettingsSignUpViewModel
 import com.vnteam.talktoai.presentation.viewmodels.SettingsThemeViewModel
 import com.vnteam.talktoai.presentation.viewmodels.SignUpViewModel
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.header
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.viewModel
@@ -77,8 +81,7 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    single { baseUrl() }
-    single { ApiService(get<String>(), get()) }
+    single { ApiService(baseUrl(), get()) }
     single {
         Json {
             prettyPrint = true
@@ -88,12 +91,17 @@ val appModule = module {
     }
     single {
         HttpClient {
-            install(Logging) {
-                level = LogLevel.ALL
-                logger = Logger.DEFAULT
-            }
             install(ContentNegotiation) {
                 json(get())
+            }
+            install(DefaultRequest) {
+                header("Content-Type", "application/json")
+                header("Authorization", "Bearer ${apiKey()}")
+                header("OpenAI-Organization", organizationId())
+            }
+            install(Logging) {
+                logger = Logger.DEFAULT
+                level = LogLevel.ALL
             }
         }
     }
