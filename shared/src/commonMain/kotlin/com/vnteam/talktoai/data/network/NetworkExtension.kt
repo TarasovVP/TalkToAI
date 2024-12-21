@@ -1,7 +1,5 @@
 package com.vnteam.talktoai.data.network
 
-import com.vnteam.talktoai.data.baseUrl
-import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
@@ -32,14 +30,3 @@ suspend inline fun <reified T> HttpResponse?.handleResponse(): NetworkResult<T> 
         }
     }
 }
-
-suspend inline fun <reified T> HttpClient.safeRequest(
-    block: HttpClient.() -> HttpResponse,
-): NetworkResult<T> =
-    try {
-        val response = block()
-        response.handleResponse<T>()
-    } catch (e: Exception) {
-        val errorMessage = if (baseUrl().contains(":8080/")) CONNECTION_EXCEPTION else e.message
-        NetworkResult.Failure(errorMessage)
-    }

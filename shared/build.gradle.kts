@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -121,6 +122,36 @@ compose.resources {
     publicResClass = true
     packageOfResClass = "com.vnteam.talktoai"
     generateResClass = always
+}
+
+tasks.register("generateConfig") {
+    val localProperties = file(rootProject.file("local.properties"))
+    val configDir = file("${projectDir}/src/commonMain/kotlin/com/vnteam/talktoai/config")
+    val configFile = file("${configDir}/Config.kt")
+    doLast {
+        if (!localProperties.exists()) {
+            throw GradleException("local.properties file not found!")
+        }
+        val properties = Properties().apply {
+            load(localProperties.inputStream())
+        }
+        if (!configDir.exists()) {
+            configDir.mkdirs()
+        }
+        configFile.writeText(
+            """
+            package com.vnteam.talktoai.config
+            
+            object Config {
+                val BASE_URL = "${properties.getProperty("BASE_URL", "")}"
+                val API_KEY = "${properties.getProperty("API_KEY", "")}"
+                val ORGANIZATION_ID = "${properties.getProperty("ORGANIZATION_ID", "")}"
+                val PROJECT_ID = "${properties.getProperty("PROJECT_ID", "")}"
+            }
+            """.trimIndent()
+        )
+        println("Config.kt generated at: ${configFile.absolutePath}")
+    }
 }
 
 

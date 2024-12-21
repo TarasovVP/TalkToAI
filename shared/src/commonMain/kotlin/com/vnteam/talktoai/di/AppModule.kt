@@ -1,7 +1,9 @@
 package com.vnteam.talktoai.di
 
-import com.vnteam.talktoai.data.apiKey
-import com.vnteam.talktoai.data.baseUrl
+import com.vnteam.talktoai.config.Config.API_KEY
+import com.vnteam.talktoai.config.Config.BASE_URL
+import com.vnteam.talktoai.config.Config.ORGANIZATION_ID
+import com.vnteam.talktoai.config.Config.PROJECT_ID
 import com.vnteam.talktoai.data.database.SharedDatabase
 import com.vnteam.talktoai.data.database.dao.ChatDao
 import com.vnteam.talktoai.data.database.dao.ChatDaoImpl
@@ -10,8 +12,6 @@ import com.vnteam.talktoai.data.database.dao.MessageDaoImpl
 import com.vnteam.talktoai.data.mapperimpls.ChatDBMapperImpl
 import com.vnteam.talktoai.data.mapperimpls.MessageDBMapperImpl
 import com.vnteam.talktoai.data.network.ApiService
-import com.vnteam.talktoai.data.organizationId
-import com.vnteam.talktoai.data.projectId
 import com.vnteam.talktoai.data.repositoryimpl.AuthRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.ChatRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.MessageRepositoryImpl
@@ -70,7 +70,6 @@ import com.vnteam.talktoai.presentation.viewmodels.SignUpViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
@@ -82,7 +81,7 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    single { ApiService(baseUrl(), get()) }
+    single { ApiService(BASE_URL, get()) }
     single {
         Json {
             prettyPrint = true
@@ -97,9 +96,9 @@ val appModule = module {
             }
             install(DefaultRequest) {
                 header("Content-Type", "application/json")
-                header("Authorization", "Bearer ${apiKey()}")
-                header("OpenAI-Organization", organizationId())
-                header("OpenAI-Project", projectId())
+                header("Authorization", "Bearer $API_KEY")
+                header("OpenAI-Organization", ORGANIZATION_ID)
+                header("OpenAI-Project", PROJECT_ID)
             }
             install(Logging) {
                 logger = object : Logger {
