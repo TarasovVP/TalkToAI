@@ -106,6 +106,7 @@ class ChatViewModel(
                         insertMessage(temporaryMessage.apply {
                             status = MessageStatus.ERROR
                             errorMessage = result.errorMessage.orEmpty()
+                            println("Error when api request: ${result.errorMessage}")
                         })
                     }
                 }

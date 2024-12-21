@@ -47,5 +47,5 @@ object Constants {
     //Message roles
     const val MESSAGE_ROLE_ME = "me"
     const val MESSAGE_ROLE_USER = "user"
-    const val MESSAGE_ROLE_CHAT_GPT = "gpt-4o-mini"
+    const val MESSAGE_ROLE_CHAT_GPT = "gpt-3.5-turbo-1106"
 }

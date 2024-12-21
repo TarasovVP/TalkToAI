@@ -6,6 +6,7 @@ const val CLOUD_URL = "https://android-architecure-templates-86976280995.us-cent
 const val BASE_URL = "https://api.openai.com/v1/"
 const val API_KEY = "..."
 const val ORGANIZATION_ID = "..."
+const val PROJECT_ID = "..."
 const val DEMO_OBJECTS_DB = "demoObjects.db"
 const val PREFERENCES_PB = "aat.preferences_pb"
 const val IS_DARK_THEME = "isDarkTheme.db"

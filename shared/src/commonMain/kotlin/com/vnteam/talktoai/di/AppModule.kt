@@ -11,6 +11,7 @@ import com.vnteam.talktoai.data.mapperimpls.ChatDBMapperImpl
 import com.vnteam.talktoai.data.mapperimpls.MessageDBMapperImpl
 import com.vnteam.talktoai.data.network.ApiService
 import com.vnteam.talktoai.data.organizationId
+import com.vnteam.talktoai.data.projectId
 import com.vnteam.talktoai.data.repositoryimpl.AuthRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.ChatRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.MessageRepositoryImpl
@@ -98,9 +99,14 @@ val appModule = module {
                 header("Content-Type", "application/json")
                 header("Authorization", "Bearer ${apiKey()}")
                 header("OpenAI-Organization", organizationId())
+                header("OpenAI-Project", projectId())
             }
             install(Logging) {
-                logger = Logger.DEFAULT
+                logger = object : Logger {
+                    override fun log(message: String) {
+                        println("Logger Ktor => $message")
+                    }
+                }
                 level = LogLevel.ALL
             }
         }
