@@ -28,7 +28,7 @@ class MessageUIMapperImpl : MessageUIMapper {
             to.author,
             to.message,
             to.updatedAt,
-            MessageStatus.REQUESTING,
+            to.status,
             to.errorMessage,
             to.isTruncated
         )
