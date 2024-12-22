@@ -1,2 +1,2 @@
 /build
-shared/src/commonMain/kotlin/com/vnteam/talktoai/config/Config.kt
+**/secrets/

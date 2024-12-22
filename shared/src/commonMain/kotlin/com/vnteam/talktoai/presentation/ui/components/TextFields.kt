@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
@@ -146,12 +147,15 @@ fun TextFieldWithButton(
     TextField(value = inputValue.value,
         onValueChange = { newValue ->
             inputValue.value = newValue
-        }, placeholder = { Text(text = LocalStringResources.current.MESSAGE_ENTER_REQUEST) },
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = Color.White,
+        }, placeholder = { Text(text = LocalStringResources.current.MESSAGE_ENTER_REQUEST, style = TextStyle(color = Color.Gray)) },
+        textStyle = TextStyle(color = Color.Black),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            disabledContainerColor = Color.White,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent
+            disabledIndicatorColor = Color.Transparent,
         ),
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier

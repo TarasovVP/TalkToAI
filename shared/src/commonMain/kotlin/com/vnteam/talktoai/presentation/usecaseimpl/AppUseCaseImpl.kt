@@ -23,11 +23,11 @@ class AppUseCaseImpl(private val preferencesRepository: PreferencesRepository) :
     }
 
     override suspend fun setOnBoardingSeen(isOnBoardingSeen: Boolean) {
-        preferencesRepository.setIsDarkTheme(isOnBoardingSeen)
+        preferencesRepository.setOnBoardingSeen(isOnBoardingSeen)
     }
 
     override suspend fun getIsBoardingSeen(): Flow<Boolean?> {
-        return preferencesRepository.getIsDarkTheme()
+        return preferencesRepository.getIsBoardingSeen()
     }
 
     override suspend fun setReviewVoted(isReviewVoted: Boolean) {

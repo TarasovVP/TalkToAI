@@ -126,8 +126,8 @@ compose.resources {
 
 tasks.register("generateConfig") {
     val localProperties = file(rootProject.file("local.properties"))
-    val configDir = file("${projectDir}/src/commonMain/kotlin/com/vnteam/talktoai/config")
-    val configFile = file("${configDir}/Config.kt")
+    val configDir = file("${projectDir}/src/commonMain/kotlin/com/vnteam/talktoai/secrets")
+    val configFile = file("${configDir}/Secrets.kt")
     doLast {
         if (!localProperties.exists()) {
             throw GradleException("local.properties file not found!")
@@ -140,7 +140,7 @@ tasks.register("generateConfig") {
         }
         configFile.writeText(
             """
-            package com.vnteam.talktoai.config
+            package com.vnteam.talktoai.secrets
             
             object Config {
                 val BASE_URL = "${properties.getProperty("BASE_URL", "")}"
@@ -150,8 +150,10 @@ tasks.register("generateConfig") {
             }
             """.trimIndent()
         )
-        println("Config.kt generated at: ${configFile.absolutePath}")
     }
+}
+tasks.named("preBuild") {
+    dependsOn("generateConfig")
 }
 
 

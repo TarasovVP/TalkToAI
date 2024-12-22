@@ -1,9 +1,5 @@
 package com.vnteam.talktoai.di
 
-import com.vnteam.talktoai.config.Config.API_KEY
-import com.vnteam.talktoai.config.Config.BASE_URL
-import com.vnteam.talktoai.config.Config.ORGANIZATION_ID
-import com.vnteam.talktoai.config.Config.PROJECT_ID
 import com.vnteam.talktoai.data.database.SharedDatabase
 import com.vnteam.talktoai.data.database.dao.ChatDao
 import com.vnteam.talktoai.data.database.dao.ChatDaoImpl
@@ -67,6 +63,10 @@ import com.vnteam.talktoai.presentation.viewmodels.SettingsPrivacyPolicyViewMode
 import com.vnteam.talktoai.presentation.viewmodels.SettingsSignUpViewModel
 import com.vnteam.talktoai.presentation.viewmodels.SettingsThemeViewModel
 import com.vnteam.talktoai.presentation.viewmodels.SignUpViewModel
+import com.vnteam.talktoai.secrets.Config.API_KEY
+import com.vnteam.talktoai.secrets.Config.BASE_URL
+import com.vnteam.talktoai.secrets.Config.ORGANIZATION_ID
+import com.vnteam.talktoai.secrets.Config.PROJECT_ID
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation

@@ -32,21 +32,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import clearCheckToAction
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.CommonExtensions.isNotNull
 import com.vnteam.talktoai.CommonExtensions.isTrue
@@ -378,24 +371,16 @@ fun Message(
             verticalArrangement = Arrangement.Top
         ) {
             if (isMessageDeleteModeState.value.isTrue()) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalPlatformContext.current)
-                        .data(if (message.isCheckedToDelete.value) Res.drawable.ic_checked_check_box else Res.drawable.ic_empty_check_box)
-                        .crossfade(true)
-                        .build(),
+                Image(
+                    painter = painterResource(if (message.isCheckedToDelete.value) Res.drawable.ic_checked_check_box else Res.drawable.ic_empty_check_box),
                     contentDescription = LocalStringResources.current.MESSAGE_DELETE_CONFIRMATION,
-                    contentScale = ContentScale.Inside,
                     modifier = Modifier
                         .padding(2.dp)
                 )
             } else if (isUserAuthor.not()) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalPlatformContext.current)
-                        .data(Res.drawable.avatar_ai)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = LocalStringResources.current.AI_AVATAR,
-                    contentScale = ContentScale.Crop
+                Image(
+                    painter = painterResource(Res.drawable.avatar_ai),
+                    contentDescription = LocalStringResources.current.AI_AVATAR
                 )
             }
         }
