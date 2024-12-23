@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -152,11 +153,11 @@ fun LinkButton(
 
 @Composable
 fun TextIconButton(text: String, icon: DrawableResource, modifier: Modifier, onClick: () -> Unit) {
-    IconButton(onClick = onClick) {
+    Button(onClick = onClick) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .background(color = Primary700, shape = RoundedCornerShape(16.dp))
+                .background(color = Color.Transparent, shape = RoundedCornerShape(16.dp))
         ) {
             Image(
                 painter = painterResource(icon),

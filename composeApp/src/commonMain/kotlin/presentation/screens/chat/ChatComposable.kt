@@ -106,10 +106,12 @@ fun ChatContent(
     }
 
     LaunchedEffect(screenState.currentScreenState.value) {
+        println("ChatContent: LaunchedEffect(screenState.currentScreenState.value) ${screenState.currentScreenState.value}")
         viewModel.getCurrentChat(chatId)
     }
 
     LaunchedEffect(currentChatState.value) {
+        println("ChatContent: LaunchedEffect(currentChatState.value) ${currentChatState.value}")
         currentChatState.value?.let { chat ->
             viewModel.getMessagesFromChat(chat.id)
         }
@@ -179,6 +181,7 @@ fun ChatContent(
         Box(
             modifier = Modifier.fillMaxWidth().background(Primary900)
         ) {
+            println("ChatContent: Box: ${currentChatState.value}")
             when {
                 currentChatState.value?.id == DEFAULT_CHAT_ID -> CreateChatScreen {
                     showCreateChatDialog.value = true
