@@ -18,7 +18,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.compose.rememberNavController
 import com.vnteam.talktoai.CommonExtensions.isNotTrue
 import com.vnteam.talktoai.CommonExtensions.isNull
@@ -28,7 +27,7 @@ import com.vnteam.talktoai.Constants.DESTINATION_CHAT_SCREEN
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
-import com.vnteam.talktoai.presentation.ui.components.DataEditDialog
+import com.vnteam.talktoai.presentation.ui.components.CreateChatDialog
 import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.components.MainProgress
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
@@ -265,45 +264,28 @@ fun AppContent() {
                     viewModel.exceptionLiveData
                 )
 
-                DataEditDialog(
-                    LocalStringResources.current.CHAT_CREATE_TITLE,
-                    LocalStringResources.current.CHAT_NAME,
-                    remember {
-                        mutableStateOf(TextFieldValue())
-                    },
-                    showCreateChatDialog,
-                    onDismiss = {
-                        showCreateChatDialog.value = false
-                    }) { newChatName ->
-                    viewModel.insertChat(
-                        Chat(
-                            id = Clock.System.now().dateToMilliseconds(),
-                            name = newChatName,
-                            updated = Clock.System.now().dateToMilliseconds(),
-                            listOrder = (chatsState.value.orEmpty().size + 1).toLong()
+                CreateChatDialog(
+                    currentChatState.value?.name.orEmpty(),
+                    showCreateChatDialog
+                ) {
+                    if (currentChatState.value?.name.isNullOrEmpty()) {
+                        viewModel.insertChat(
+                            Chat(
+                                id = Clock.System.now().dateToMilliseconds(),
+                                name = it,
+                                updated = Clock.System.now().dateToMilliseconds(),
+                                listOrder = (chatsState.value.orEmpty().size + 1).toLong()
+                            )
                         )
-                    )
-                    showCreateChatDialog.value = false
-                    currentChatState.value = null
+                        currentChatState.value = null
+                    } else {
+                        currentChatState.value?.apply {
+                            name = it
+                        }?.let { viewModel.updateChat(it) }
+                    }
                     scope.launch {
                         drawerState.close()
                     }
-                }
-
-                DataEditDialog(
-                    LocalStringResources.current.CHAT_RENAME_TITLE,
-                    LocalStringResources.current.CHAT_NAME,
-                    remember {
-                        mutableStateOf(TextFieldValue(currentChatState.value?.name.orEmpty()))
-                    },
-                    showEditChatDialog,
-                    onDismiss = {
-                        showEditChatDialog.value = false
-                    }) { newChatName ->
-                    currentChatState.value?.apply {
-                        name = newChatName
-                    }?.let { viewModel.updateChat(it) }
-                    showEditChatDialog.value = false
                 }
 
                 ConfirmationDialog(
