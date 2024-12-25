@@ -66,7 +66,7 @@ class SettingsAccountViewModel(
     fun reAuthenticate(/*authCredential: AuthCredential*/) {
         if (networkState.isNetworkAvailable()) {
             showProgress()
-            settingsAccountUseCase.reAuthenticate(/*authCredential*/) { result ->
+            settingsAccountUseCase.reAuthenticate { result ->
                 when (result) {
                     is NetworkResult.Success -> reAuthenticateLiveData.value = true
                     is NetworkResult.Failure -> exceptionLiveData.value =

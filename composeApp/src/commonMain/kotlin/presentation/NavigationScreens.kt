@@ -54,7 +54,7 @@ sealed class NavigationScreen(
         private val chatId: Long = -1L,
         private val showCreateChatDialogue: MutableState<Boolean> = mutableStateOf(false),
         private val isMessageActionModeState: MutableState<Boolean?> = mutableStateOf(false),
-        private val screenState: ScreenState = ScreenState()
+        private val screenState: ScreenState? = ScreenState()
     ) : NavigationScreen(CHAT_SCREEN, DrawableResources.IC_CHAT) {
         @Composable
         override fun Content() {
@@ -159,8 +159,8 @@ sealed class NavigationScreen(
 
         fun isChatScreen(route: String?) = route == ChatScreen().route
 
-        fun fromRoute(screenState: ScreenState): Screen {
-            return when (screenState.currentScreenState.value) {
+        fun fromRoute(screenState: ScreenState?): Screen {
+            return when (screenState?.currentScreenState?.value) {
                 OnboardingScreen().route -> OnboardingScreen(screenState)
                 LoginScreen().route -> LoginScreen(screenState)
                 SignUpScreen().route -> SignUpScreen(screenState)

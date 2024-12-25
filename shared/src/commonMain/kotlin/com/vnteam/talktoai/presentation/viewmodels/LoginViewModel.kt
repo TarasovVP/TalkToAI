@@ -3,6 +3,7 @@ package com.vnteam.talktoai.presentation.viewmodels
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.usecase.LoginUseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +12,8 @@ class LoginViewModel(
     private val loginUseCase: LoginUseCase,
     private val networkState: NetworkState,
     //val googleSignInClient: GoogleSignInClient,
+    // TODO remove
+    private val preferencesRepository: PreferencesRepository
 ) : BaseViewModel() {
 
     val accountExistLiveData = MutableStateFlow<Boolean?>(null)
@@ -100,7 +103,16 @@ class LoginViewModel(
         println("NetworkTAG networkState.isNetworkAvailable() = ${networkState.isNetworkAvailable()}")
         if (networkState.isNetworkAvailable()) {
             showProgress()
-            loginUseCase.signInAnonymously { authResult ->
+            println("AppTAG LoginViewModel signInAnonymously: successSignInLiveData.value ${successSignInLiveData.value}")
+            // TODO remove this and uncomment below
+            successSignInLiveData.value = true
+            launch {
+                preferencesRepository.setLoggedInUser(true)
+            }
+            hideProgress()
+            /*loginUseCase.signInAnonymously { authResult ->
+
+
                 when (authResult) {
                     is NetworkResult.Success -> successSignInLiveData.value = true
                     is NetworkResult.Failure -> authResult.errorMessage?.let {
@@ -109,7 +121,7 @@ class LoginViewModel(
                     }
                 }
                 hideProgress()
-            }
+            }*/
         } else {
             exceptionLiveData.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }

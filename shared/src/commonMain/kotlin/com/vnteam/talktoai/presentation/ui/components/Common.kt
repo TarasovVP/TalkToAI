@@ -12,11 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,14 +44,14 @@ import kotlin.math.ceil
 
 @Composable
 fun ExceptionMessageHandler(
-    messageState: MutableState<InfoMessage?>,
+    messageState: MutableState<InfoMessage?>?,
     exceptionStateFlow: MutableStateFlow<String?>,
 ) {
     val exceptionState = exceptionStateFlow.collectAsState()
     val stringRes = LocalStringResources.current
     LaunchedEffect(exceptionState.value) {
         exceptionState.value.takeIf { exceptionState.value.isNullOrEmpty().not() }?.let {
-            messageState.value = InfoMessage(
+            messageState?.value = InfoMessage(
                 if (exceptionState.value == APP_NETWORK_UNAVAILABLE_REPEAT) stringRes.APP_NETWORK_UNAVAILABLE_REPEAT else exceptionState.value.orEmpty(),
                 Constants.ERROR_MESSAGE
             )

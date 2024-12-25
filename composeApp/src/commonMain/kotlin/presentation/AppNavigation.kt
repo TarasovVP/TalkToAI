@@ -21,15 +21,20 @@ import presentation.screens.settings.settings_sign_up.SettingsSignUpContent
 import presentation.screens.settings.settings_theme.SettingsThemeContent
 
 @Composable
-fun AppNavigation(navController: NavHostController, screenState: MutableState<ScreenState>) {
-    NavHost(navController = navController, startDestination = NavigationScreen.CHAT_SCREEN) {
+fun AppNavigation(navController: NavHostController, screenState: MutableState<ScreenState?>) {
+    val startDestination = when {
+        screenState.value?.isOnboardingSeen == false -> NavigationScreen.ONBOARDING_SCREEN
+        screenState.value?.loggedInUser == false -> NavigationScreen.LOGIN_SCREEN
+        else -> NavigationScreen.CHAT_SCREEN
+    }
+    NavHost(navController = navController, startDestination = startDestination) {
         composable(NavigationScreen.ONBOARDING_SCREEN) {
-            screenState.value = screenState.value.copy(
-                appBarState = screenState.value.appBarState.copy(
+            screenState.value = screenState.value?.copy(
+                appBarState = screenState.value?.appBarState?.copy(
                     appBarTitle = NavigationScreen.ONBOARDING_SCREEN,
                     topAppBarActionVisible = false,
                 ),
-                floatingActionState = screenState.value.floatingActionState.copy(
+                floatingActionState = screenState.value?.floatingActionState?.copy(
                     floatingActionButtonVisible = true,
                     floatingActionButtonTitle = "LocalStringResources.current.ADD",
                     floatingActionButtonAction = {
@@ -37,15 +42,15 @@ fun AppNavigation(navController: NavHostController, screenState: MutableState<Sc
                     }
                 )
             )
-            OnboardingContent(screenState.value)
+            screenState.value?.let { it1 -> OnboardingContent(it1) }
         }
         composable(NavigationScreen.LOGIN_SCREEN) {
-            screenState.value = screenState.value.copy(
-                appBarState = screenState.value.appBarState.copy(
+            screenState.value = screenState.value?.copy(
+                appBarState = screenState.value?.appBarState?.copy(
                     appBarTitle = NavigationScreen.LOGIN_SCREEN,
                     topAppBarActionVisible = false,
                 ),
-                floatingActionState = screenState.value.floatingActionState.copy(
+                floatingActionState = screenState.value?.floatingActionState?.copy(
                     floatingActionButtonVisible = true,
                     floatingActionButtonTitle = "LocalStringResources.current.ADD",
                     floatingActionButtonAction = {
@@ -53,15 +58,15 @@ fun AppNavigation(navController: NavHostController, screenState: MutableState<Sc
                     }
                 )
             )
-            LoginContent(screenState.value)
+            screenState.value?.let { it1 -> LoginContent(it1) }
         }
         composable(NavigationScreen.SIGN_UP_SCREEN) {
-            screenState.value = screenState.value.copy(
-                appBarState = screenState.value.appBarState.copy(
+            screenState.value = screenState.value?.copy(
+                appBarState = screenState.value?.appBarState?.copy(
                     appBarTitle = NavigationScreen.SIGN_UP_SCREEN,
                     topAppBarActionVisible = false,
                 ),
-                floatingActionState = screenState.value.floatingActionState.copy(
+                floatingActionState = screenState.value?.floatingActionState?.copy(
                     floatingActionButtonVisible = true,
                     floatingActionButtonTitle = "LocalStringResources.current.ADD",
                     floatingActionButtonAction = {
@@ -69,15 +74,15 @@ fun AppNavigation(navController: NavHostController, screenState: MutableState<Sc
                     }
                 )
             )
-            SignUpContent(screenState.value)
+            screenState.value?.let { it1 -> SignUpContent(it1) }
         }
         composable(NavigationScreen.CHAT_SCREEN) {
-            screenState.value = screenState.value.copy(
-                appBarState = screenState.value.appBarState.copy(
+            screenState.value = screenState.value?.copy(
+                appBarState = screenState.value?.appBarState?.copy(
                     appBarTitle = LocalStringResources.current.APP_NAME,
                     topAppBarActionVisible = false,
                 ),
-                floatingActionState = screenState.value.floatingActionState.copy(
+                floatingActionState = screenState.value?.floatingActionState?.copy(
                     floatingActionButtonVisible = true,
                     floatingActionButtonTitle = "LocalStringResources.current.ADD",
                     floatingActionButtonAction = {
@@ -88,102 +93,102 @@ fun AppNavigation(navController: NavHostController, screenState: MutableState<Sc
             ChatContent(1L, mutableStateOf(false), mutableStateOf(false), ScreenState())
         }
         composable(NavigationScreen.SETTINGS_CHAT_SCREEN) {
-            screenState.value = screenState.value.copy(
-                appBarState = screenState.value.appBarState.copy(
+            screenState.value = screenState.value?.copy(
+                appBarState = screenState.value?.appBarState?.copy(
                     appBarTitle = NavigationScreen.SETTINGS_CHAT_SCREEN,
                     topAppBarActionVisible = true,
                     topAppBarAction = {
                         navController.navigateUp()
                     }
                 ),
-                floatingActionState = screenState.value.floatingActionState.copy(
+                floatingActionState = screenState.value?.floatingActionState?.copy(
                     floatingActionButtonVisible = false
                 ))
-            SettingsChatContent(screenState.value)
+            screenState.value?.let { it1 -> SettingsChatContent(it1) }
         }
         composable(NavigationScreen.SETTINGS_ACCOUNT_SCREEN) {
-            screenState.value = screenState.value.copy(
-                appBarState = screenState.value.appBarState.copy(
+            screenState.value = screenState.value?.copy(
+                appBarState = screenState.value?.appBarState?.copy(
                     appBarTitle = NavigationScreen.SETTINGS_ACCOUNT_SCREEN,
                     topAppBarActionVisible = true,
                     topAppBarAction = {
                         navController.navigateUp()
                     }
                 ),
-                floatingActionState = screenState.value.floatingActionState.copy(
+                floatingActionState = screenState.value?.floatingActionState?.copy(
                     floatingActionButtonVisible = false
                 ))
-            SettingsAccountContent(screenState.value)
+            screenState.value?.let { it1 -> SettingsAccountContent(it1) }
         }
         composable(NavigationScreen.SETTINGS_LANGUAGE_SCREEN) {
-            screenState.value = screenState.value.copy(
-                appBarState = screenState.value.appBarState.copy(
+            screenState.value = screenState.value?.copy(
+                appBarState = screenState.value?.appBarState?.copy(
                     appBarTitle = NavigationScreen.SETTINGS_LANGUAGE_SCREEN,
                     topAppBarActionVisible = true,
                     topAppBarAction = {
                         navController.navigateUp()
                     }
                 ),
-                floatingActionState = screenState.value.floatingActionState.copy(
+                floatingActionState = screenState.value?.floatingActionState?.copy(
                     floatingActionButtonVisible = false
                 ))
-            SettingsLanguageContent(screenState.value)
+            screenState.value?.let { it1 -> SettingsLanguageContent(it1) }
         }
         composable(NavigationScreen.SETTINGS_THEME_SCREEN) {
-            screenState.value = screenState.value.copy(
-                appBarState = screenState.value.appBarState.copy(
+            screenState.value = screenState.value?.copy(
+                appBarState = screenState.value?.appBarState?.copy(
                     appBarTitle = NavigationScreen.SETTINGS_THEME_SCREEN,
                     topAppBarActionVisible = true,
                     topAppBarAction = {
                         navController.navigateUp()
                     }
                 ),
-                floatingActionState = screenState.value.floatingActionState.copy(
+                floatingActionState = screenState.value?.floatingActionState?.copy(
                     floatingActionButtonVisible = false
                 ))
-            SettingsThemeContent(screenState.value)
+            screenState.value?.let { it1 -> SettingsThemeContent(it1) }
         }
         composable(NavigationScreen.SETTINGS_FEEDBACK_SCREEN) {
-            screenState.value = screenState.value.copy(
-                appBarState = screenState.value.appBarState.copy(
+            screenState.value = screenState.value?.copy(
+                appBarState = screenState.value?.appBarState?.copy(
                     appBarTitle = NavigationScreen.SETTINGS_FEEDBACK_SCREEN,
                     topAppBarActionVisible = true,
                     topAppBarAction = {
                         navController.navigateUp()
                     }
                 ),
-                floatingActionState = screenState.value.floatingActionState.copy(
+                floatingActionState = screenState.value?.floatingActionState?.copy(
                     floatingActionButtonVisible = false
                 ))
-            SettingsFeedbackContent(screenState.value)
+            screenState.value?.let { it1 -> SettingsFeedbackContent(it1) }
         }
         composable(NavigationScreen.SETTINGS_PRIVACY_POLICY_SCREEN) {
-            screenState.value = screenState.value.copy(
-                appBarState = screenState.value.appBarState.copy(
+            screenState.value = screenState.value?.copy(
+                appBarState = screenState.value?.appBarState?.copy(
                     appBarTitle = NavigationScreen.SETTINGS_PRIVACY_POLICY_SCREEN,
                     topAppBarActionVisible = true,
                     topAppBarAction = {
                         navController.navigateUp()
                     }
                 ),
-                floatingActionState = screenState.value.floatingActionState.copy(
+                floatingActionState = screenState.value?.floatingActionState?.copy(
                     floatingActionButtonVisible = false
                 ))
-            SettingsPrivacyPolicyContent(screenState.value)
+            screenState.value?.let { it1 -> SettingsPrivacyPolicyContent(it1) }
         }
         composable(NavigationScreen.SETTINGS_SIGN_UP_SCREEN) {
-            screenState.value = screenState.value.copy(
-                appBarState = screenState.value.appBarState.copy(
+            screenState.value = screenState.value?.copy(
+                appBarState = screenState.value?.appBarState?.copy(
                     appBarTitle = NavigationScreen.SETTINGS_SIGN_UP_SCREEN,
                     topAppBarActionVisible = true,
                     topAppBarAction = {
                         navController.navigateUp()
                     }
                 ),
-                floatingActionState = screenState.value.floatingActionState.copy(
+                floatingActionState = screenState.value?.floatingActionState?.copy(
                     floatingActionButtonVisible = false
                 ))
-            SettingsSignUpContent(screenState.value)
+            screenState.value?.let { it1 -> SettingsSignUpContent(it1) }
         }
     }
 }

@@ -10,10 +10,7 @@ import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
 
 
-class RealDataBaseRepositoryImpl(
-    /*private val firebaseDatabase: FirebaseDatabase,
-    private val firebaseAuth: FirebaseAuth,*/
-) :
+class RealDataBaseRepositoryImpl :
     RealDataBaseRepository {
 
     override fun insertRemoteUser(remoteUser: RemoteUser, result: (NetworkResult<Unit>) -> Unit) {

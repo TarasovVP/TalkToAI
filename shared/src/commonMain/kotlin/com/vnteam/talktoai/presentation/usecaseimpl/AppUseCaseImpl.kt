@@ -26,6 +26,10 @@ class AppUseCaseImpl(private val preferencesRepository: PreferencesRepository) :
         preferencesRepository.setOnBoardingSeen(isOnBoardingSeen)
     }
 
+    override suspend fun getIsLoggedInUser(): Flow<Boolean?> {
+        return preferencesRepository.getIsLoggedInUser()
+    }
+
     override suspend fun getIsBoardingSeen(): Flow<Boolean?> {
         return preferencesRepository.getIsBoardingSeen()
     }
@@ -34,7 +38,7 @@ class AppUseCaseImpl(private val preferencesRepository: PreferencesRepository) :
         preferencesRepository.setReviewVoted(isReviewVoted)
     }
 
-    override suspend fun reviewVoted(): Flow<Boolean?> {
+    override suspend fun getReviewVoted(): Flow<Boolean?> {
         return preferencesRepository.getIsReviewVoted()
     }
 }

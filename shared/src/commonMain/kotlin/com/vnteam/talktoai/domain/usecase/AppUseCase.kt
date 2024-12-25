@@ -4,19 +4,21 @@ import kotlinx.coroutines.flow.Flow
 
 interface AppUseCase {
 
-    suspend fun setIsDarkTheme(isDarkTheme: Boolean)
-
     suspend fun getIsDarkTheme(): Flow<Boolean>
 
-    suspend fun setLanguage(language: String)
+    suspend fun setIsDarkTheme(isDarkTheme: Boolean)
 
     suspend fun getLanguage(): Flow<String?>
 
-    suspend fun setOnBoardingSeen(isOnBoardingSeen: Boolean)
+    suspend fun setLanguage(language: String)
 
     suspend fun getIsBoardingSeen(): Flow<Boolean?>
 
-    suspend fun setReviewVoted(isReviewVoted: Boolean)
+    suspend fun setOnBoardingSeen(isOnBoardingSeen: Boolean)
 
-    suspend fun reviewVoted(): Flow<Boolean?>
+    suspend fun getIsLoggedInUser(): Flow<Boolean?>
+
+    suspend fun getReviewVoted(): Flow<Boolean?>
+
+    suspend fun setReviewVoted(isReviewVoted: Boolean)
 }

@@ -92,7 +92,7 @@ fun ChatContent(
     chatId: Long,
     showCreateChatDialog: MutableState<Boolean>,
     isMessageActionModeState: MutableState<Boolean?> = mutableStateOf(false),
-    screenState: ScreenState
+    screenState: ScreenState?
 ) {
     val viewModel = koinViewModel<ChatViewModel>()
     val currentChatState = viewModel.currentChatLiveData.collectAsState()
@@ -105,8 +105,8 @@ fun ChatContent(
         viewModel.getAnimationResource()
     }
 
-    LaunchedEffect(screenState.currentScreenState.value) {
-        println("ChatContent: LaunchedEffect(screenState.currentScreenState.value) ${screenState.currentScreenState.value}")
+    LaunchedEffect(screenState?.currentScreenState?.value) {
+        println("ChatContent: LaunchedEffect(screenState.currentScreenState.value) ${screenState?.currentScreenState?.value}")
         viewModel.getCurrentChat(chatId)
     }
 
@@ -139,7 +139,7 @@ fun ChatContent(
                     isMessageActionModeState,
                     showMessageActionDialog
                 )
-                screenState.infoMessageState.value = InfoMessage(messageCopy)
+                screenState?.infoMessageState?.value = InfoMessage(messageCopy)
             }
 
             MessageAction.Share().value -> {
@@ -181,7 +181,6 @@ fun ChatContent(
         Box(
             modifier = Modifier.fillMaxWidth().background(Primary900)
         ) {
-            println("ChatContent: Box: ${currentChatState.value}")
             when {
                 currentChatState.value?.id == DEFAULT_CHAT_ID -> CreateChatScreen {
                     showCreateChatDialog.value = true
@@ -252,7 +251,7 @@ fun ChatContent(
                     isMessageActionModeState,
                     showMessageActionDialog
                 )
-                screenState.infoMessageState.value = InfoMessage(messageDelete)
+                screenState?.infoMessageState?.value = InfoMessage(messageDelete)
             }
 
             MessageAction.Transfer().value -> {
@@ -263,7 +262,7 @@ fun ChatContent(
                     isMessageActionModeState,
                     showMessageActionDialog
                 )
-                screenState.infoMessageState.value = InfoMessage(messageTransfer)
+                screenState?.infoMessageState?.value = InfoMessage(messageTransfer)
             }
 
             else -> {
@@ -277,9 +276,9 @@ fun ChatContent(
         }
     }
 
-    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
+    ExceptionMessageHandler(screenState?.infoMessageState, viewModel.exceptionLiveData)
     ProgressVisibilityHandler(
-        mutableStateOf(screenState.isProgressVisible), viewModel.progressVisibilityLiveData
+        mutableStateOf(screenState?.isProgressVisible.isTrue()), viewModel.progressVisibilityLiveData
     )
 }
 

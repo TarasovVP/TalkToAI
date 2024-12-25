@@ -4,10 +4,7 @@ import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 
-class AuthRepositoryImpl(
-    /*private val firebaseAuth: FirebaseAuth,
-    private val googleSignInClient: GoogleSignInClient,*/
-) :
+class AuthRepositoryImpl :
     AuthRepository {
 
     override fun addAuthStateListener(/*authStateListener: AuthStateListener*/) {
@@ -91,8 +88,6 @@ class AuthRepositoryImpl(
     }
 
     override fun signInAnonymously(result: (NetworkResult<Unit>) -> Unit) {
-        // TODO uncomment
-        result.invoke(NetworkResult.Success())
         /*firebaseAuth.signInAnonymously()
             .addOnSuccessListener {
                 result.invoke(Result.Success())

@@ -84,6 +84,7 @@ fun LoginContent(
     }
     val successSignInState = viewModel.successSignInLiveData.collectAsState()
     LaunchedEffect(successSignInState.value) {
+        println("AppTAG LoginComposable successSignInState: ${successSignInState.value}")
         if (successSignInState.value.isTrue()) {
             screenState.currentScreenState.value = "${DESTINATION_CHAT_SCREEN}/$DEFAULT_CHAT_ID"
         }

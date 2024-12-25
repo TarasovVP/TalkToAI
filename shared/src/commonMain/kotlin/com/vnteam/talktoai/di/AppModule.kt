@@ -198,7 +198,6 @@ val appModule = module {
             realDataBaseRepository = get()
         )
     }
-
     viewModel {
         AppViewModel(get())
     }
@@ -206,7 +205,7 @@ val appModule = module {
         OnBoardingViewModel(get())
     }
     viewModel {
-        LoginViewModel(get(), get())
+        LoginViewModel(get(), get(), get())
     }
     viewModel {
         SignUpViewModel(get(), get())
