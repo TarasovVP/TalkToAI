@@ -29,7 +29,6 @@ import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.CreateChatDialog
 import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
-import com.vnteam.talktoai.presentation.ui.components.MainProgress
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.MainViewModel
@@ -76,6 +75,7 @@ fun AppContent() {
     LaunchedEffect(Unit) {
         viewModel.getOnBoardingSeen()
         viewModel.addAuthStateListener()
+        viewModel.getAnimationResource()
     }
 
     LaunchedEffect(onBoardingSeenState.value) {
@@ -298,9 +298,20 @@ fun AppContent() {
                     showDeleteChatDialog.value = false
                     deleteChatState.value = null
                 }
-
-                MainProgress(mutableStateOf(screenState.value.isProgressVisible))
+                if (screenState.value.isProgressVisible) {
+                    MainProgressAnimation()
+                }
             }
         }
+    }
+}
+
+@Composable
+fun MainProgressAnimation() {
+    val viewModel: MainViewModel = koinViewModel()
+    viewModel.animationResource.collectAsState().value?.let {
+        viewModel.animationUtils.MainProgressAnimation(
+            it
+        )
     }
 }

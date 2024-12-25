@@ -1,18 +1,22 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.CommonExtensions.isTrue
+import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.usecase.MainUseCase
+import com.vnteam.talktoai.utils.AnimationUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class MainViewModel(
-    private val mainUseCase: MainUseCase
+    private val mainUseCase: MainUseCase,
+    val animationUtils: AnimationUtils
 ) : BaseViewModel() {
 
     private val _onBoardingSeen = MutableStateFlow<Boolean?>(null)
@@ -21,6 +25,8 @@ class MainViewModel(
     val chatsList = _chatsList.asStateFlow()
     private val _authState = MutableStateFlow<AuthState?>(null)
     val authState = _authState.asStateFlow()
+    private val _animationResource = MutableStateFlow<String?>(null)
+    val animationResource = _animationResource.asStateFlow()
 
     /*private var remoteChatListener: ValueEventListener? = null
     private var remoteMessageListener: ValueEventListener? = null
@@ -32,6 +38,14 @@ class MainViewModel(
             mainUseCase.getOnBoardingSeen().collect { isOnBoardingSeen ->
                 _onBoardingSeen.value = isOnBoardingSeen.isTrue()
             }
+        }
+    }
+
+    @OptIn(ExperimentalResourceApi::class)
+    fun getAnimationResource() {
+        launch {
+            val resource = Res.readBytes("files/main_progress.json").decodeToString()
+            _animationResource.value = resource
         }
     }
 

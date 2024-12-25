@@ -8,4 +8,8 @@ actual class AnimationUtils {
     actual fun MessageTypingAnimation(animationResource: String) {
         TODO("Not yet implemented")
     }
+
+    @Composable
+    actual fun MainProgressAnimation(animationResource: String) {
+    }
 }

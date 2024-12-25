@@ -6,4 +6,6 @@ import androidx.compose.runtime.Composable
 expect class AnimationUtils {
     @Composable
     fun MessageTypingAnimation(animationResource: String)
+    @Composable
+    fun MainProgressAnimation(animationResource: String)
 }

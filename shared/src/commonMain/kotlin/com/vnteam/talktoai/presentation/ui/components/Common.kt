@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -141,30 +143,6 @@ fun EmptyState(text: String, modifier: Modifier) {
                 .padding(top = 16.dp)
         )
     }
-}
-
-@Composable
-fun MainProgress(progressVisibilityState: MutableState<Boolean>) {
-
-    /*if (progressVisibilityState.value) {
-        Box(modifier = Modifier.fillMaxSize(), Alignment.Center) {
-           *//* CircularProgressIndicator(
-                modifier = Modifier.size(100.dp),
-                color = Primary700,
-                strokeWidth = 5.dp
-            )*//*
-        }
-        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.main_progress))
-        Box(contentAlignment = Alignment.Center, modifier = Modifier
-            .fillMaxSize()) {
-            LottieAnimation(
-                composition,
-                iterations = LottieConstants.IterateForever,
-                modifier = Modifier
-                    .fillMaxSize(0.6f)
-            )
-        }
-    }*/
 }
 
 @Composable
