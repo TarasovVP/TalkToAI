@@ -53,7 +53,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.SignUpUseCaseImpl
 import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
 import com.vnteam.talktoai.presentation.viewmodels.ChatViewModel
 import com.vnteam.talktoai.presentation.viewmodels.LoginViewModel
-import com.vnteam.talktoai.presentation.viewmodels.MainViewModel
+import com.vnteam.talktoai.presentation.viewmodels.ChatListViewModel
 import com.vnteam.talktoai.presentation.viewmodels.OnBoardingViewModel
 import com.vnteam.talktoai.presentation.viewmodels.SettingsAccountViewModel
 import com.vnteam.talktoai.presentation.viewmodels.SettingsChatViewModel
@@ -211,7 +211,7 @@ val appModule = module {
         SignUpViewModel(get(), get())
     }
     viewModel {
-        MainViewModel(get(), get())
+        ChatListViewModel(get(), get())
     }
     viewModel {
         ChatViewModel(get(), get(), get(), get(), get())

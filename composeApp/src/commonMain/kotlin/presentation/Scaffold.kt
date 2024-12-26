@@ -63,6 +63,45 @@ import presentation.NavigationScreen.Companion.isSettingsScreen
 import presentation.NavigationScreen.Companion.settingScreens
 import presentation.NavigationScreen.Companion.settingsScreenNameByRoute
 
+@Composable
+fun AppTopBar(
+    currentNavRoute: String,
+    onNavigationIconClick: () -> Unit,
+    showEditChatDialog: MutableState<Boolean>,
+    isMessageActionModeState: MutableState<Boolean?>,
+    currentChatState: MutableState<Chat?>,
+    chatsState: MutableState<List<Chat>?>
+) {
+    when {
+        isMessageActionModeState.value.isTrue() -> DeleteModeTopBar(LocalStringResources.current.MESSAGE_ACTION_SELECTED)
+        currentNavRoute == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
+            settingsScreenNameByRoute(
+                currentNavRoute, LocalStringResources.current
+            )
+        ) {
+            onNavigationIconClick()
+        }
+
+        isSettingsScreen(currentNavRoute) || currentNavRoute == NavigationScreen.ChatScreen(
+            isMessageActionModeState = isMessageActionModeState
+        ).route -> PrimaryTopBar(
+            title = if (currentNavRoute == NavigationScreen.ChatScreen(
+                    isMessageActionModeState = isMessageActionModeState
+                ).route
+            ) currentChatState.value?.name
+                ?: LocalStringResources.current.APP_NAME else settingsScreenNameByRoute(
+                currentNavRoute, LocalStringResources.current
+            ),
+            onNavigationIconClick = onNavigationIconClick,
+            isActionVisible = currentNavRoute == NavigationScreen.ChatScreen(
+                isMessageActionModeState = isMessageActionModeState
+            ).route && chatsState.value.orEmpty().isNotEmpty()
+        ) {
+            showEditChatDialog.value = true
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrimaryTopBar(
@@ -71,64 +110,52 @@ fun PrimaryTopBar(
     isActionVisible: Boolean,
     onActionIconClick: () -> Unit,
 ) {
-    TopAppBar(
-        title = { Text(title) },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Primary900,
-            titleContentColor = Neutral50
-        ),
-        navigationIcon = {
-            IconButton(onClick = onNavigationIconClick) {
+    TopAppBar(title = { Text(title) }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        containerColor = Primary900, titleContentColor = Neutral50
+    ), navigationIcon = {
+        IconButton(onClick = onNavigationIconClick) {
+            Icon(
+                painter = painterResource(Res.drawable.ic_navigation),
+                contentDescription = LocalStringResources.current.NAVIGATION_ICON,
+                tint = Primary100
+            )
+        }
+    }, actions = {
+        if (isActionVisible) {
+            IconButton(
+                onClick = onActionIconClick
+            ) {
                 Icon(
-                    painter = painterResource(Res.drawable.ic_navigation),
-                    contentDescription = LocalStringResources.current.NAVIGATION_ICON,
+                    painter = painterResource(Res.drawable.ic_edit),
+                    contentDescription = LocalStringResources.current.CHAT_EDIT_BUTTON,
                     tint = Primary100
                 )
             }
-        },
-        actions = {
-            if (isActionVisible) {
-                IconButton(
-                    onClick = onActionIconClick
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_edit),
-                        contentDescription = LocalStringResources.current.CHAT_EDIT_BUTTON,
-                        tint = Primary100
-                    )
-                }
-            }
         }
-    )
+    })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SecondaryTopBar(title: String, onNavigationIconClick: () -> Unit) {
-    TopAppBar(
-        title = { Text(title) },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Primary900,
-            titleContentColor = Neutral50
-        ),
-        navigationIcon = {
-            IconButton(onClick = onNavigationIconClick) {
-                Icon(
-                    painter = painterResource(Res.drawable.ic_arrow_back),
-                    contentDescription = LocalStringResources.current.NAVIGATION_ICON
-                )
-            }
-        })
+    TopAppBar(title = { Text(title) }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        containerColor = Primary900, titleContentColor = Neutral50
+    ), navigationIcon = {
+        IconButton(onClick = onNavigationIconClick) {
+            Icon(
+                painter = painterResource(Res.drawable.ic_arrow_back),
+                contentDescription = LocalStringResources.current.NAVIGATION_ICON
+            )
+        }
+    })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeleteModeTopBar(title: String) {
     TopAppBar(
-        title = { Text(title) },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Primary900,
-            titleContentColor = Neutral50
+        title = { Text(title) }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = Primary900, titleContentColor = Neutral50
         )
     )
 }
@@ -147,10 +174,7 @@ fun AppDrawer(
     onNextScreen: (String) -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Primary900),
-        Arrangement.Top
+        modifier = Modifier.fillMaxSize().background(Primary900), Arrangement.Top
     ) {
         DrawerHeader(
             isSettingsDrawerMode.value.isTrue() || isSettingsScreen(currentRouteState)
@@ -159,15 +183,12 @@ fun AppDrawer(
         }
         if (isSettingsDrawerMode.value.isTrue() || isSettingsScreen(currentRouteState)) {
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 16.dp, vertical = 24.dp)
+                modifier = Modifier.weight(1f).padding(horizontal = 16.dp, vertical = 24.dp)
             ) {
                 settingScreens.forEach { settingsScreen ->
                     DrawerItem(
                         name = settingsScreenNameByRoute(
-                            settingsScreen.route,
-                            LocalStringResources.current
+                            settingsScreen.route, LocalStringResources.current
                         ),
                         mainIcon = Res.drawable.ic_settings,
                         isCurrent = currentRouteState == settingsScreen.route,
@@ -182,23 +203,17 @@ fun AppDrawer(
                 Image(
                     painter = painterResource(Res.drawable.empty_state),
                     contentDescription = LocalStringResources.current.CHAT_EMPTY_STATE,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(top = 16.dp)
+                    modifier = Modifier.fillMaxWidth().weight(1f).padding(top = 16.dp)
                 )
             } else {
                 DragDropColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 16.dp, vertical = 24.dp),
+                    modifier = Modifier.weight(1f).padding(horizontal = 16.dp, vertical = 24.dp),
                     items = chats.value.orEmpty(),
                     onSwap = onSwap,
                     onDragEnd = onDragEnd
                 ) { chat, isDragging ->
                     val elevation = animateDpAsState(if (isDragging) 4.dp else 1.dp)
-                    DrawerItem(
-                        name = chat.name,
+                    DrawerItem(name = chat.name,
                         mainIcon = Res.drawable.ic_chat,
                         isCurrent = chat.id == currentChatId,
                         secondaryIcon = if (isDragging) Res.drawable.ic_drag_handle else Res.drawable.ic_delete,
@@ -223,24 +238,20 @@ fun AppDrawer(
 @Composable
 fun DrawerHeader(isSettingsDrawerMode: Boolean, onDrawerModeClick: (Boolean) -> Unit) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = Primary700), verticalAlignment = Alignment.Top
+        modifier = Modifier.fillMaxWidth().background(color = Primary700),
+        verticalAlignment = Alignment.Top
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Image(
                 painter = painterResource(if (isSettingsDrawerMode) Res.drawable.ic_settings else Res.drawable.avatar_ai),
                 contentDescription = LocalStringResources.current.SETTINGS,
-                modifier = Modifier
-                    .padding(start = 16.dp, top = 16.dp)
-                    .size(60.dp)
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp).size(60.dp)
             )
             Text(
                 text = if (isSettingsDrawerMode) LocalStringResources.current.SETTINGS else LocalStringResources.current.APP_NAME,
                 fontSize = 16.sp,
                 color = Neutral50,
-                modifier = Modifier
-                    .padding(start = 16.dp, bottom = 16.dp, top = 8.dp)
+                modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, top = 8.dp)
             )
         }
         IconButton(onClick = {
@@ -249,9 +260,7 @@ fun DrawerHeader(isSettingsDrawerMode: Boolean, onDrawerModeClick: (Boolean) -> 
             Image(
                 painter = painterResource(if (isSettingsDrawerMode) Res.drawable.ic_chat else Res.drawable.ic_settings),
                 contentDescription = LocalStringResources.current.NAVIGATION_ICON,
-                modifier = Modifier
-                    .padding(end = 16.dp, top = 16.dp)
-                    .size(24.dp)
+                modifier = Modifier.padding(end = 16.dp, top = 16.dp).size(24.dp)
             )
         }
     }
@@ -269,55 +278,45 @@ fun DrawerItem(
     onItemClick: () -> Unit,
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp)
-            .let { modifier ->
-                if (isCurrent.not()) {
-                    modifier.clickable {
-                        onItemClick.invoke()
-                    }
-                } else {
-                    modifier
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp).let { modifier ->
+            if (isCurrent.not()) {
+                modifier.clickable {
+                    onItemClick.invoke()
                 }
-            },
-        colors = CardDefaults.cardColors(
+            } else {
+                modifier
+            }
+        }, colors = CardDefaults.cardColors(
             containerColor = if (isCurrent) Primary800 else Primary900
-        ),
-        elevation = CardDefaults.cardElevation(
+        ), elevation = CardDefaults.cardElevation(
             defaultElevation = elevation ?: 1.dp
         )
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             Image(
-                painter = painterResource(mainIcon), contentDescription = name,
-                modifier = Modifier
-                    .padding(8.dp)
+                painter = painterResource(mainIcon),
+                contentDescription = name,
+                modifier = Modifier.padding(8.dp)
             )
             Text(
                 text = name,
                 color = Neutral50,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = 8.dp)
+                modifier = Modifier.weight(1f).padding(vertical = 8.dp)
             )
             secondaryIcon?.let { icon ->
                 Image(painter = painterResource(icon),
                     contentDescription = name,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .let {
-                            if (isIconClick.isTrue()) {
-                                it.clickable {
-                                    onIconClick.invoke()
-                                }
-                            } else {
-                                it
+                    modifier = Modifier.padding(8.dp).let {
+                        if (isIconClick.isTrue()) {
+                            it.clickable {
+                                onIconClick.invoke()
                             }
-                        })
+                        } else {
+                            it
+                        }
+                    })
             }
         }
     }
@@ -325,18 +324,15 @@ fun DrawerItem(
 
 @Composable
 fun AppSnackBar(snackBarHostState: SnackbarHostState) {
-    SnackbarHost(
-        hostState = snackBarHostState,
-        snackbar = { data ->
-            Box {
-                Snackbar(
-                    modifier = Modifier.padding(8.dp),
-                    containerColor = if (data.visuals.actionLabel == Constants.ERROR_MESSAGE) Color.Red else Primary700
-                ) {
-                    Text(data.visuals.message)
-                }
-                Spacer(modifier = Modifier.fillMaxSize())
+    SnackbarHost(hostState = snackBarHostState, snackbar = { data ->
+        Box {
+            Snackbar(
+                modifier = Modifier.padding(8.dp),
+                containerColor = if (data.visuals.actionLabel == Constants.ERROR_MESSAGE) Color.Red else Primary700
+            ) {
+                Text(data.visuals.message)
             }
+            Spacer(modifier = Modifier.fillMaxSize())
         }
-    )
+    })
 }

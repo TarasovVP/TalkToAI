@@ -31,7 +31,7 @@ import com.vnteam.talktoai.presentation.ui.components.CreateChatDialog
 import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
-import com.vnteam.talktoai.presentation.viewmodels.MainViewModel
+import com.vnteam.talktoai.presentation.viewmodels.ChatListViewModel
 import dateToMilliseconds
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -49,7 +49,7 @@ import presentation.SecondaryTopBar
 @Composable
 fun AppContent(appViewModel: AppViewModel) {
 
-    val viewModel: MainViewModel = koinViewModel()
+    val viewModel: ChatListViewModel = koinViewModel()
 
     // Scaffold
     val scope = rememberCoroutineScope()
@@ -132,6 +132,7 @@ fun AppContent(appViewModel: AppViewModel) {
         if ((navigationScreen as? NavigationScreen)?.route != (navController.currentBackStackEntry?.destination?.route) && route.isNotEmpty()) {
             navController.navigate(route)
         }
+        println("LaunchedEffectTAG screenState.value?.currentScreenState?.value: ${screenState.value?.currentScreenState?.value}")
     }
 
     /*
@@ -208,9 +209,7 @@ fun AppContent(appViewModel: AppViewModel) {
                         navController.popBackStack()
                     }
 
-                    isSettingsScreen(navController.currentBackStackEntry?.destination?.route) || navController.currentBackStackEntry?.destination?.route == NavigationScreen.ChatScreen(
-                        isMessageActionModeState = isMessageActionModeState
-                    ).route -> PrimaryTopBar(
+                    else -> PrimaryTopBar(
                         title = if (navController.currentBackStackEntry?.destination?.route == NavigationScreen.ChatScreen(
                                 isMessageActionModeState = isMessageActionModeState
                             ).route

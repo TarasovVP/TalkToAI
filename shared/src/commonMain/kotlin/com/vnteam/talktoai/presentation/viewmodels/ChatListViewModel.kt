@@ -1,7 +1,5 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
-import com.vnteam.talktoai.CommonExtensions.isTrue
-import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.models.Chat
@@ -12,15 +10,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 
-class MainViewModel(
+class ChatListViewModel(
     private val mainUseCase: MainUseCase,
     val animationUtils: AnimationUtils
 ) : BaseViewModel() {
 
-    private val _onBoardingSeen = MutableStateFlow<Boolean?>(null)
-    val onBoardingSeen = _onBoardingSeen.asStateFlow()
     private val _chatsList = MutableStateFlow<List<Chat>?>(null)
     val chatsList = _chatsList.asStateFlow()
     private val _authState = MutableStateFlow<AuthState?>(null)
@@ -33,24 +28,8 @@ class MainViewModel(
     private var authStateListener: FirebaseAuth.AuthStateListener? = null*/
     private var chatsFlowSubscription: Job? = null
 
-    fun getOnBoardingSeen() {
-        launch {
-            mainUseCase.getOnBoardingSeen().collect { isOnBoardingSeen ->
-                _onBoardingSeen.value = isOnBoardingSeen.isTrue()
-            }
-        }
-    }
-
-    @OptIn(ExperimentalResourceApi::class)
-    fun getAnimationResource() {
-        launch {
-            val resource = Res.readBytes("files/main_progress.json").decodeToString()
-            _animationResource.value = resource
-        }
-    }
-
     fun addAuthStateListener() {
-        /*authStateListener  = FirebaseAuth.AuthStateListener { firebaseAuth ->
+        /*authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             val user = firebaseAuth.currentUser
             val authState = when {
                 user?.isAnonymous.isTrue() -> AuthState.AUTHORISED_ANONYMOUSLY
