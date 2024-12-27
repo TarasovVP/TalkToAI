@@ -36,15 +36,17 @@ import dateToMilliseconds
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import org.koin.compose.viewmodel.koinViewModel
-import presentation.AppDrawer
 import presentation.AppNavigation
 import presentation.AppSnackBar
 import presentation.DeleteModeTopBar
+import presentation.DrawerHeader
 import presentation.NavigationScreen
 import presentation.NavigationScreen.Companion.isSettingsScreen
 import presentation.NavigationScreen.Companion.settingsScreenNameByRoute
 import presentation.PrimaryTopBar
 import presentation.SecondaryTopBar
+import presentation.screens.chat_list.ChatListComposable
+import presentation.screens.settings.settings_list.SettingsListComposable
 
 @Composable
 fun AppContent(appViewModel: AppViewModel) {
@@ -132,23 +134,24 @@ fun AppContent(appViewModel: AppViewModel) {
         if ((navigationScreen as? NavigationScreen)?.route != (navController.currentBackStackEntry?.destination?.route) && route.isNotEmpty()) {
             navController.navigate(route)
         }
-        println("LaunchedEffectTAG screenState.value?.currentScreenState?.value: ${screenState.value?.currentScreenState?.value}")
     }
 
-    /*
     LaunchedEffect(isSettingsDrawerModeState.value) {
         isSettingsDrawerModeState.value.let { isSettingsDrawerMode ->
             if (isSettingsDrawerMode) {
-                viewModel.removeRemoteUserListeners()
-                screenState.value.currentScreenState.value =
+                //viewModel.removeRemoteUserListeners()
+                screenState.value?.currentScreenState?.value =
                     NavigationScreen.SettingsChatScreen().route
             } else {
-                viewModel.addRemoteChatListener()
-                viewModel.addRemoteMessageListener()
-                navController.popBackStack()
+                //viewModel.addRemoteChatListener()
+                //viewModel.addRemoteMessageListener()
+                screenState.value?.currentScreenState?.value =
+                    NavigationScreen.ChatScreen(
+                        isMessageActionModeState = isMessageActionModeState
+                    ).route
             }
         }
-    }*/
+    }
 
     val isDrawerGesturesEnabled =
         isSettingsScreen(navController.currentBackStackEntry?.destination?.route) ||
@@ -161,37 +164,36 @@ fun AppContent(appViewModel: AppViewModel) {
         gesturesEnabled = isDrawerGesturesEnabled,
         drawerContent = {
             ModalDrawerSheet {
-                AppDrawer(
-                    isSettingsDrawerModeState,
-                    navController.currentBackStackEntry?.destination?.route,
-                    currentChatState.value?.id,
-                    chats = chatsState,
-                    onCreateChatClick = {
-                        showCreateChatDialog.value = true
-                    },
-                    onChatClick = { chat ->
-                        currentChatState.value = chat
-                        screenState.value?.currentScreenState?.value =
-                            "$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id}"
+                DrawerHeader(isSettingsDrawerModeState.value) { settingsDrawerModeState ->
+                    isSettingsDrawerModeState.value = settingsDrawerModeState
+                }
+                if (isSettingsDrawerModeState.value.isTrue()) {
+                    SettingsListComposable(screenState.value?.currentScreenState?.value){ route ->
+                        screenState.value?.currentScreenState?.value = route
                         scope.launch {
                             drawerState.close()
                         }
-                    },
-                    onDeleteChatClick = { chat ->
-                        showDeleteChatDialog.value = true
-                        deleteChatState.value = chat
-                    },
-                    onSwap = { firstIndex, secondIndex ->
-                        viewModel.swapChats(firstIndex, secondIndex)
-                    },
-                    onDragEnd = {
-                        viewModel.updateChats(chatsState.value.orEmpty())
                     }
-                ) { route ->
-                    screenState.value?.currentScreenState?.value = route
-                    scope.launch {
-                        drawerState.close()
-                    }
+                } else {
+                    ChatListComposable(
+                        currentChatState.value?.id,
+                        chats = chatsState,
+                        onCreateChatClick = {
+                            showCreateChatDialog.value = true
+                        },
+                        onChatClick = { chat ->
+                            currentChatState.value = chat
+                            screenState.value?.currentScreenState?.value =
+                                "$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id}"
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        },
+                        onDeleteChatClick = { chat ->
+                            showDeleteChatDialog.value = true
+                            deleteChatState.value = chat
+                        }
+                    )
                 }
             }
         }
@@ -245,7 +247,7 @@ fun AppContent(appViewModel: AppViewModel) {
                     .padding(paddingValues)
                     .fillMaxSize()
             ) {
-                AppNavigation(navController, mutableStateOf( screenState.value ))
+                AppNavigation(navController, mutableStateOf(screenState.value))
                 ExceptionMessageHandler(
                     screenState.value?.infoMessageState,
                     viewModel.exceptionLiveData

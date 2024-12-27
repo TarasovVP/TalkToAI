@@ -16,7 +16,7 @@ import presentation.screens.main.AppContent
 @Composable
 fun App(appViewModel: AppViewModel) {
     val screenState = appViewModel.screenState.collectAsState()
-    var isSplashScreenVisible = remember { mutableStateOf(true) }
+    val isSplashScreenVisible = remember { mutableStateOf(true) }
     if (screenState.value?.isReadyToLaunch.isTrue() && isSplashScreenVisible.value.not()) {
         CompositionLocalProvider(LocalStringResources provides getStringResourcesByLocale(screenState.value?.language.orEmpty())) {
             AppTheme(screenState.value?.isDarkTheme.isTrue()) {
