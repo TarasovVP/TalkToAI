@@ -24,6 +24,7 @@ import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.Constants.DESTINATION_CHAT_SCREEN
 import com.vnteam.talktoai.domain.models.InfoMessage
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.DataEditDialog
 import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
@@ -39,7 +40,6 @@ import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.LoginViewModel
 import org.koin.compose.viewmodel.koinViewModel
-import presentation.NavigationScreen
 
 @Composable
 fun LoginContent(
@@ -86,7 +86,7 @@ fun LoginContent(
     LaunchedEffect(successSignInState.value) {
         println("AppTAG LoginComposable successSignInState: ${successSignInState.value}")
         if (successSignInState.value.isTrue()) {
-            screenState.currentScreenState.value = "${DESTINATION_CHAT_SCREEN}/$DEFAULT_CHAT_ID"
+            screenState.currentScreenRoute = "${DESTINATION_CHAT_SCREEN}/$DEFAULT_CHAT_ID"
         }
     }
 
@@ -140,7 +140,7 @@ fun LoginContent(
                     .wrapContentSize()
                     .padding(start = 16.dp)
             ) {
-                screenState.currentScreenState.value = NavigationScreen.SignUpScreen().route
+                screenState.currentScreenRoute = NavigationScreen.SignUpScreen().route
             }
             Spacer(modifier = Modifier.weight(0.5f))
             LinkButton(
@@ -189,7 +189,7 @@ fun LoginContent(
             showAccountExistDialog.value = false
         }) {
         showAccountExistDialog.value = false
-        screenState.currentScreenState.value = NavigationScreen.SignUpScreen().route
+        screenState.currentScreenRoute = NavigationScreen.SignUpScreen().route
     }
 
     ConfirmationDialog(

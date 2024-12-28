@@ -20,17 +20,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.avatar_ai
-import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.ic_arrow_back
 import com.vnteam.talktoai.ic_chat
 import com.vnteam.talktoai.ic_edit
@@ -42,47 +39,6 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary100
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
 import com.vnteam.talktoai.presentation.ui.theme.Primary900
 import org.jetbrains.compose.resources.painterResource
-import presentation.NavigationScreen.Companion.isSettingsScreen
-import presentation.NavigationScreen.Companion.settingsScreenNameByRoute
-
-@Composable
-fun AppTopBar(
-    currentNavRoute: String,
-    onNavigationIconClick: () -> Unit,
-    showEditChatDialog: MutableState<Boolean>,
-    isMessageActionModeState: MutableState<Boolean?>,
-    currentChatState: MutableState<Chat?>,
-    chatsState: MutableState<List<Chat>?>
-) {
-    when {
-        isMessageActionModeState.value.isTrue() -> DeleteModeTopBar(LocalStringResources.current.MESSAGE_ACTION_SELECTED)
-        currentNavRoute == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
-            settingsScreenNameByRoute(
-                currentNavRoute, LocalStringResources.current
-            )
-        ) {
-            onNavigationIconClick()
-        }
-
-        isSettingsScreen(currentNavRoute) || currentNavRoute == NavigationScreen.ChatScreen(
-            isMessageActionModeState = isMessageActionModeState
-        ).route -> PrimaryTopBar(
-            title = if (currentNavRoute == NavigationScreen.ChatScreen(
-                    isMessageActionModeState = isMessageActionModeState
-                ).route
-            ) currentChatState.value?.name
-                ?: LocalStringResources.current.APP_NAME else settingsScreenNameByRoute(
-                currentNavRoute, LocalStringResources.current
-            ),
-            onNavigationIconClick = onNavigationIconClick,
-            isActionVisible = currentNavRoute == NavigationScreen.ChatScreen(
-                isMessageActionModeState = isMessageActionModeState
-            ).route && chatsState.value.orEmpty().isNotEmpty()
-        ) {
-            showEditChatDialog.value = true
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

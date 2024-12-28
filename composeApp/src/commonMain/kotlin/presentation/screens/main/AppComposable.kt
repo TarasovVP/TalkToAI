@@ -12,37 +12,27 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.vnteam.talktoai.CommonExtensions.isNotTrue
-import com.vnteam.talktoai.CommonExtensions.isNull
 import com.vnteam.talktoai.CommonExtensions.isTrue
-import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.Constants.DESTINATION_CHAT_SCREEN
 import com.vnteam.talktoai.domain.enums.AuthState
-import com.vnteam.talktoai.domain.models.Chat
-import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
-import com.vnteam.talktoai.presentation.ui.components.CreateChatDialog
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
+import com.vnteam.talktoai.presentation.ui.NavigationScreen.Companion.settingsScreenNameByRoute
 import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
 import com.vnteam.talktoai.presentation.viewmodels.ChatListViewModel
-import dateToMilliseconds
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.AppNavigation
 import presentation.AppSnackBar
 import presentation.DeleteModeTopBar
 import presentation.DrawerHeader
-import presentation.NavigationScreen
-import presentation.NavigationScreen.Companion.isSettingsScreen
-import presentation.NavigationScreen.Companion.settingsScreenNameByRoute
 import presentation.PrimaryTopBar
 import presentation.SecondaryTopBar
 import presentation.screens.chat_list.ChatListComposable
@@ -64,17 +54,8 @@ fun AppContent(appViewModel: AppViewModel) {
     val navController = rememberNavController()
 
     val authState = viewModel.authState.collectAsState()
-    val chatsState = viewModel.chatsList.collectAsState()
 
-    val isSettingsDrawerModeState = remember { mutableStateOf(false) }
     val isMessageActionModeState = remember { mutableStateOf<Boolean?>(null) }
-
-    val showCreateChatDialog = remember { mutableStateOf(false) }
-    val showEditChatDialog: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val showDeleteChatDialog = remember { mutableStateOf(false) }
-
-    val currentChatState = remember { mutableStateOf<Chat?>(null) }
-    val deleteChatState = remember { mutableStateOf<Chat?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.addAuthStateListener()
@@ -94,19 +75,6 @@ fun AppContent(appViewModel: AppViewModel) {
         }
     }
 
-    LaunchedEffect(chatsState.value) {
-        chatsState.value?.let { chats ->
-            when {
-                currentChatState.value.isNull() -> currentChatState.value = chats.firstOrNull()
-                chats.contains(currentChatState.value).not() -> {
-                    currentChatState.value = chats.firstOrNull()
-                    screenState.value?.currentScreenState?.value =
-                        "$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id ?: DEFAULT_CHAT_ID}"
-                }
-            }
-        }
-    }
-
     LaunchedEffect(screenState.value?.infoMessageState?.value) {
         screenState.value?.infoMessageState?.value?.let { infoMessage ->
             scope.launch {
@@ -119,79 +87,47 @@ fun AppContent(appViewModel: AppViewModel) {
         }
     }
 
-    LaunchedEffect(screenState.value?.currentScreenState?.value) {
-        val navigationScreen = when {
-            NavigationScreen.isChatScreen(screenState.value?.currentScreenState?.value) -> NavigationScreen.ChatScreen(
-                currentChatState.value?.id ?: -1L,
-                showCreateChatDialog,
-                isMessageActionModeState,
-                screenState.value
-            )
-
-            else -> NavigationScreen.fromRoute(screenState.value)
-        }
-        val route = screenState.value?.currentScreenState?.value.orEmpty()
-        if ((navigationScreen as? NavigationScreen)?.route != (navController.currentBackStackEntry?.destination?.route) && route.isNotEmpty()) {
-            navController.navigate(route)
-        }
+    LaunchedEffect(screenState.value?.currentScreenRoute) {
+        val navigationScreen =
+            if (screenState.value?.isChatScreen.isTrue()) NavigationScreen.ChatScreen(screenState.value)
+            else NavigationScreen.fromRoute(screenState.value)
+        navController.navigate(navigationScreen.route)
     }
-
-    LaunchedEffect(isSettingsDrawerModeState.value) {
-        isSettingsDrawerModeState.value.let { isSettingsDrawerMode ->
-            if (isSettingsDrawerMode) {
-                //viewModel.removeRemoteUserListeners()
-                screenState.value?.currentScreenState?.value =
-                    NavigationScreen.SettingsChatScreen().route
-            } else {
-                //viewModel.addRemoteChatListener()
-                //viewModel.addRemoteMessageListener()
-                screenState.value?.currentScreenState?.value =
-                    NavigationScreen.ChatScreen(
-                        isMessageActionModeState = isMessageActionModeState
-                    ).route
-            }
-        }
-    }
-
-    val isDrawerGesturesEnabled =
-        isSettingsScreen(navController.currentBackStackEntry?.destination?.route) ||
-                (navController.currentBackStackEntry?.destination?.route == NavigationScreen.ChatScreen(
-                    isMessageActionModeState = isMessageActionModeState
-                ).route && isMessageActionModeState.value.isNotTrue())
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = isDrawerGesturesEnabled,
+        gesturesEnabled = screenState.value?.isDrawerGesturesEnabled.isTrue(),
         drawerContent = {
             ModalDrawerSheet {
-                DrawerHeader(isSettingsDrawerModeState.value) { settingsDrawerModeState ->
-                    isSettingsDrawerModeState.value = settingsDrawerModeState
+                DrawerHeader(screenState.value?.isSettingsScreen.isTrue()) { settingsDrawerModeState ->
+                    appViewModel.updateScreenState(
+                        screenState.value?.copy(
+                            currentScreenRoute = if (settingsDrawerModeState) {
+                                NavigationScreen.SettingsChatScreen().route
+                            } else {
+                                NavigationScreen.ChatScreen().route
+                            }
+                        )
+                    )
                 }
-                if (isSettingsDrawerModeState.value.isTrue()) {
-                    SettingsListComposable(screenState.value?.currentScreenState?.value){ route ->
-                        screenState.value?.currentScreenState?.value = route
+                if (screenState.value?.isSettingsScreen.isTrue()) {
+                    SettingsListComposable(screenState.value?.currentScreenRoute) { route ->
+                        appViewModel.updateScreenState(screenState.value?.copy(currentScreenRoute = route))
                         scope.launch {
                             drawerState.close()
                         }
                     }
                 } else {
                     ChatListComposable(
-                        currentChatState.value?.id,
-                        chats = chatsState,
-                        onCreateChatClick = {
-                            showCreateChatDialog.value = true
-                        },
-                        onChatClick = { chat ->
-                            currentChatState.value = chat
-                            screenState.value?.currentScreenState?.value =
-                                "$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id}"
+                        onChatClick = { chatId ->
+                            appViewModel.updateScreenState(
+                                screenState.value?.copy(
+                                    currentScreenRoute = "$DESTINATION_CHAT_SCREEN/$chatId"
+                                )
+                            )
                             scope.launch {
                                 drawerState.close()
                             }
-                        },
-                        onDeleteChatClick = { chat ->
-                            showDeleteChatDialog.value = true
-                            deleteChatState.value = chat
                         }
                     )
                 }
@@ -202,9 +138,9 @@ fun AppContent(appViewModel: AppViewModel) {
             topBar = {
                 when {
                     isMessageActionModeState.value.isTrue() -> DeleteModeTopBar(LocalStringResources.current.MESSAGE_ACTION_SELECTED)
-                    navController.currentBackStackEntry?.destination?.route == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
+                    screenState.value?.currentScreenRoute == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
                         settingsScreenNameByRoute(
-                            navController.currentBackStackEntry?.destination?.route,
+                            screenState.value?.currentScreenRoute,
                             LocalStringResources.current
                         )
                     ) {
@@ -212,12 +148,10 @@ fun AppContent(appViewModel: AppViewModel) {
                     }
 
                     else -> PrimaryTopBar(
-                        title = if (navController.currentBackStackEntry?.destination?.route == NavigationScreen.ChatScreen(
-                                isMessageActionModeState = isMessageActionModeState
-                            ).route
-                        ) currentChatState.value?.name
+                        title = if (screenState.value?.isChatScreen.isTrue()
+                        ) screenState.value?.currentChat?.name
                             ?: LocalStringResources.current.APP_NAME else settingsScreenNameByRoute(
-                            navController.currentBackStackEntry?.destination?.route,
+                            screenState.value?.currentScreenRoute,
                             LocalStringResources.current
                         ),
                         onNavigationIconClick = {
@@ -229,12 +163,9 @@ fun AppContent(appViewModel: AppViewModel) {
                                 }
                             }
                         },
-                        isActionVisible = navController.currentBackStackEntry?.destination?.route == NavigationScreen.ChatScreen(
-                            isMessageActionModeState = isMessageActionModeState
-                        ).route && chatsState.value.orEmpty()
-                            .isNotEmpty()
+                        isActionVisible = screenState.value?.isChatScreen.isTrue() && screenState.value?.currentChat != null
                     ) {
-                        showEditChatDialog.value = true
+                        //showEditChatDialog.value = true
                     }
                 }
             },
@@ -253,40 +184,6 @@ fun AppContent(appViewModel: AppViewModel) {
                     viewModel.exceptionLiveData
                 )
 
-                CreateChatDialog(
-                    currentChatState.value?.name.orEmpty(),
-                    showCreateChatDialog
-                ) {
-                    if (currentChatState.value?.name.isNullOrEmpty()) {
-                        viewModel.insertChat(
-                            Chat(
-                                id = Clock.System.now().dateToMilliseconds(),
-                                name = it,
-                                updated = Clock.System.now().dateToMilliseconds(),
-                                listOrder = (chatsState.value.orEmpty().size + 1).toLong()
-                            )
-                        )
-                        currentChatState.value = null
-                    } else {
-                        currentChatState.value?.apply {
-                            name = it
-                        }?.let { viewModel.updateChat(it) }
-                    }
-                    scope.launch {
-                        drawerState.close()
-                    }
-                }
-
-                ConfirmationDialog(
-                    LocalStringResources.current.CHAT_DELETE_TITLE,
-                    showDeleteChatDialog,
-                    onDismiss = {
-                        showDeleteChatDialog.value = false
-                    }) {
-                    deleteChatState.value?.let { viewModel.deleteChat(it) }
-                    showDeleteChatDialog.value = false
-                    deleteChatState.value = null
-                }
                 if (screenState.value?.isProgressVisible.isTrue()) {
                     viewModel.animationUtils.MainProgressAnimation(
                         animationResourceState.value.orEmpty()

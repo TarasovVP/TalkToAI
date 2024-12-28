@@ -14,11 +14,16 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.vnteam.talktoai.CommonExtensions.isNull
 import com.vnteam.talktoai.CommonExtensions.isTrue
+import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.empty_state
@@ -26,6 +31,8 @@ import com.vnteam.talktoai.ic_chat
 import com.vnteam.talktoai.ic_chat_add
 import com.vnteam.talktoai.ic_delete
 import com.vnteam.talktoai.ic_drag_handle
+import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
+import com.vnteam.talktoai.presentation.ui.components.CreateChatDialog
 import com.vnteam.talktoai.presentation.ui.components.TextIconButton
 import com.vnteam.talktoai.presentation.ui.components.draggable.DragDropColumn
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
@@ -33,23 +40,41 @@ import com.vnteam.talktoai.presentation.ui.theme.Neutral50
 import com.vnteam.talktoai.presentation.ui.theme.Primary800
 import com.vnteam.talktoai.presentation.ui.theme.Primary900
 import com.vnteam.talktoai.presentation.viewmodels.ChatListViewModel
+import dateToMilliseconds
+import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ChatListComposable(
-    currentChatId: Long?,
-    chats: State<List<Chat>?>,
-    onCreateChatClick: () -> Unit,
-    onChatClick: (Chat) -> Unit,
-    onDeleteChatClick: (Chat) -> Unit
+    onChatClick: (Long) -> Unit
 ) {
     val viewModel = koinViewModel<ChatListViewModel>()
+    val chatsState = viewModel.chatsList.collectAsState()
+    val showCreateChatDialog = remember { mutableStateOf(false) }
+    val showDeleteChatDialog = remember { mutableStateOf(false) }
+
+    val currentChatState = remember { mutableStateOf<Chat?>(null) }
+    val deleteChatState = remember { mutableStateOf<Chat?>(null) }
+
+    LaunchedEffect(chatsState.value) {
+        chatsState.value?.let { chats ->
+            when {
+                currentChatState.value.isNull() -> currentChatState.value = chats.firstOrNull()
+                chats.contains(currentChatState.value).not() -> {
+                    currentChatState.value = chats.firstOrNull()
+                    /*chatsState.value?.currentScreenState?.value =
+                        "$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id ?: DEFAULT_CHAT_ID}"*/
+                }
+            }
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize().background(Primary900), Arrangement.Top
     ) {
-        if (chats.value.isNullOrEmpty()) {
+        if (chatsState.value.isNullOrEmpty()) {
             Image(
                 painter = painterResource(Res.drawable.empty_state),
                 contentDescription = LocalStringResources.current.CHAT_EMPTY_STATE,
@@ -58,34 +83,69 @@ fun ChatListComposable(
         } else {
             DragDropColumn(
                 modifier = Modifier.weight(1f).padding(horizontal = 16.dp, vertical = 24.dp),
-                items = chats.value.orEmpty(),
+                items = chatsState.value.orEmpty(),
                 onSwap = { firstIndex, secondIndex ->
                     viewModel.swapChats(firstIndex, secondIndex)
                 },
                 onDragEnd = {
-                    viewModel.updateChats(chats.value.orEmpty())
+                    viewModel.updateChats(chatsState.value.orEmpty())
                 }
             ) { chat, isDragging ->
                 val elevation = animateDpAsState(if (isDragging) 4.dp else 1.dp)
                 ChatItem(name = chat.name,
                     mainIcon = Res.drawable.ic_chat,
-                    isCurrent = chat.id == currentChatId,
+                    isCurrent = chat.id == currentChatState.value?.id,
                     secondaryIcon = if (isDragging) Res.drawable.ic_drag_handle else Res.drawable.ic_delete,
                     elevation = elevation.value,
                     isIconClick = true,
                     onIconClick = {
-                        if (isDragging.not()) onDeleteChatClick.invoke(chat)
+                        if (isDragging.not()) {
+                            deleteChatState.value = chat
+                            showDeleteChatDialog.value = true
+                        }
                     },
-                    onItemClick = { if (isDragging.not()) onChatClick.invoke(chat) })
+                    onItemClick = { if (isDragging.not()) onChatClick.invoke(chat.id) })
             }
-
-            TextIconButton(
-                LocalStringResources.current.NEW_CHAT,
-                Res.drawable.ic_chat_add,
-                Modifier.padding(bottom = 40.dp, start = 16.dp, end = 16.dp),
-                onCreateChatClick
-            )
         }
+        TextIconButton(
+            LocalStringResources.current.NEW_CHAT,
+            Res.drawable.ic_chat_add,
+            Modifier.padding(bottom = 40.dp, start = 16.dp, end = 16.dp)
+        ) {
+            showCreateChatDialog.value = true
+        }
+    }
+    CreateChatDialog(
+        currentChatState.value?.name.orEmpty(),
+        showCreateChatDialog
+    ) {
+        if (currentChatState.value?.name.isNullOrEmpty()) {
+            viewModel.insertChat(
+                Chat(
+                    id = Clock.System.now().dateToMilliseconds(),
+                    name = it,
+                    updated = Clock.System.now().dateToMilliseconds(),
+                    listOrder = (chatsState.value.orEmpty().size + 1).toLong()
+                )
+            )
+            currentChatState.value = null
+        } else {
+            currentChatState.value?.apply {
+                name = it
+            }?.let { viewModel.updateChat(it) }
+        }
+        onChatClick.invoke(currentChatState.value?.id ?: DEFAULT_CHAT_ID)
+    }
+
+    ConfirmationDialog(
+        LocalStringResources.current.CHAT_DELETE_TITLE,
+        showDeleteChatDialog,
+        onDismiss = {
+            showDeleteChatDialog.value = false
+        }) {
+        deleteChatState.value?.let { viewModel.deleteChat(it) }
+        showDeleteChatDialog.value = false
+        deleteChatState.value = null
     }
 }
 

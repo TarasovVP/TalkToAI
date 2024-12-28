@@ -24,6 +24,7 @@ import com.vnteam.talktoai.ic_tab_one
 import com.vnteam.talktoai.ic_tab_three
 import com.vnteam.talktoai.ic_tab_two
 import com.vnteam.talktoai.onboarding_intro
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
@@ -32,7 +33,6 @@ import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.OnBoardingViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
-import presentation.NavigationScreen
 
 @Composable
 fun OnboardingContent(screenState: ScreenState) {
@@ -44,7 +44,7 @@ fun OnboardingContent(screenState: ScreenState) {
     val onBoardingSeenState = viewModel.onBoardingSeenLiveData.collectAsState()
     LaunchedEffect(onBoardingSeenState.value) {
         if (onBoardingSeenState.value) {
-            screenState.currentScreenState.value = NavigationScreen.LoginScreen().route
+            screenState.currentScreenRoute = NavigationScreen.LoginScreen().route
             viewModel.onBoardingSeenLiveData.value = false
         }
     }

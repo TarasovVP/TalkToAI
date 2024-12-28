@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.Constants.DESTINATION_CHAT_SCREEN
 import com.vnteam.talktoai.domain.models.RemoteUser
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.components.GoogleButton
@@ -37,7 +38,6 @@ import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SignUpViewModel
 import org.koin.compose.viewmodel.koinViewModel
-import presentation.NavigationScreen
 
 @Composable
 fun SignUpContent(
@@ -69,7 +69,7 @@ fun SignUpContent(
             viewModel.insertRemoteUser(RemoteUser())
         }
         signUpUiState.createCurrentUser?.let {
-            screenState.currentScreenState.value = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"
+            screenState.currentScreenRoute = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"
         }
     }
 
@@ -124,7 +124,7 @@ fun SignUpContent(
                 text = LocalStringResources.current.AUTHORIZATION_ENTRANCE,
                 modifier = Modifier.wrapContentSize()
             ) {
-                screenState.currentScreenState.value = NavigationScreen.LoginScreen().route
+                screenState.currentScreenRoute = NavigationScreen.LoginScreen().route
             }
         }
         PrimaryButton(
@@ -142,7 +142,7 @@ fun SignUpContent(
             showAccountExistDialog.value = false
         }) {
         showAccountExistDialog.value = false
-        screenState.currentScreenState.value = NavigationScreen.LoginScreen().route
+        screenState.currentScreenRoute = NavigationScreen.LoginScreen().route
     }
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
     ProgressVisibilityHandler(

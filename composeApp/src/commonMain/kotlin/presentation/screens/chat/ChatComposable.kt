@@ -50,6 +50,7 @@ import com.vnteam.talktoai.avatar_ai
 import com.vnteam.talktoai.data.network.request.ApiRequest
 import com.vnteam.talktoai.data.network.request.MessageApi
 import com.vnteam.talktoai.domain.enums.MessageStatus
+import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.models.InfoMessage
 import com.vnteam.talktoai.domain.sealed_classes.MessageAction
 import com.vnteam.talktoai.ic_chat_add
@@ -59,6 +60,7 @@ import com.vnteam.talktoai.ic_delete
 import com.vnteam.talktoai.ic_empty_check_box
 import com.vnteam.talktoai.ic_share
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
+import com.vnteam.talktoai.presentation.ui.components.CreateChatDialog
 import com.vnteam.talktoai.presentation.ui.components.EmptyState
 import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.components.ProgressVisibilityHandler
@@ -90,13 +92,13 @@ import textToAction
 @Composable
 fun ChatContent(
     chatId: Long,
-    showCreateChatDialog: MutableState<Boolean>,
     isMessageActionModeState: MutableState<Boolean?> = mutableStateOf(false),
     screenState: ScreenState?
 ) {
     val viewModel = koinViewModel<ChatViewModel>()
     val currentChatState = viewModel.currentChatLiveData.collectAsState()
     val messagesState = viewModel.messagesLiveData.collectAsState()
+    val showCreateChatDialogue: MutableState<Boolean> = mutableStateOf(false)
     val messageActionState: MutableState<String> =
         rememberSaveable { mutableStateOf(MessageAction.Cancel().value) }
     val showMessageActionDialog: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
@@ -105,8 +107,8 @@ fun ChatContent(
         viewModel.getAnimationResource()
     }
 
-    LaunchedEffect(screenState?.currentScreenState?.value) {
-        println("ChatContent: LaunchedEffect(screenState.currentScreenState.value) ${screenState?.currentScreenState?.value}")
+    LaunchedEffect(screenState?.currentScreenRoute) {
+        println("ChatContent: LaunchedEffect(screenState.currentScreenState.value) ${screenState?.currentScreenRoute}")
         viewModel.getCurrentChat(chatId)
     }
 
@@ -183,7 +185,7 @@ fun ChatContent(
         ) {
             when {
                 currentChatState.value?.id == DEFAULT_CHAT_ID -> CreateChatScreen {
-                    showCreateChatDialog.value = true
+                    showCreateChatDialogue.value = true
                 }
 
                 isMessageActionModeState.value.isTrue() -> {
@@ -280,6 +282,19 @@ fun ChatContent(
     ProgressVisibilityHandler(
         mutableStateOf(screenState?.isProgressVisible.isTrue()), viewModel.progressVisibilityLiveData
     )
+    CreateChatDialog(
+        currentChatState.value?.name.orEmpty(),
+        showCreateChatDialogue
+    ) {
+        viewModel.insertChat(
+            Chat(
+                id = Clock.System.now().dateToMilliseconds(),
+                name = it,
+                updated = Clock.System.now().dateToMilliseconds(),
+                listOrder = 1
+            )
+        )
+    }
 }
 
 private fun resetMessageActionState(

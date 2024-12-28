@@ -1,122 +1,47 @@
-package presentation
+package com.vnteam.talktoai.presentation.ui
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.presentation.ui.resources.StringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
-import org.koin.core.component.KoinComponent
-import presentation.screens.authorization.login.LoginContent
-import presentation.screens.authorization.onboarding.OnboardingContent
-import presentation.screens.authorization.signup.SignUpContent
-import presentation.screens.chat.ChatContent
-import presentation.screens.settings.settings_account.SettingsAccountContent
-import presentation.screens.settings.settings_chat.SettingsChatContent
-import presentation.screens.settings.settings_feedback.SettingsFeedbackContent
-import presentation.screens.settings.settings_language.SettingsLanguageContent
-import presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyContent
-import presentation.screens.settings.settings_sign_up.SettingsSignUpContent
-import presentation.screens.settings.settings_theme.SettingsThemeContent
 
 sealed class NavigationScreen(
     val route: String,
     val name: String = String.EMPTY,
     val icon: String = String.EMPTY
-) : Screen,
-    KoinComponent {
-    class OnboardingScreen(private val screenState: ScreenState = ScreenState()) :
-        NavigationScreen(ONBOARDING_SCREEN) {
-        @Composable
-        override fun Content() {
-            OnboardingContent(screenState)
-        }
-    }
+) {
+    class OnboardingScreen(private var screenState: ScreenState = ScreenState()) : NavigationScreen(ONBOARDING_SCREEN)
 
     class LoginScreen(private val screenState: ScreenState = ScreenState()) :
-        NavigationScreen(LOGIN_SCREEN) {
-        @Composable
-        override fun Content() {
-            LoginContent(screenState)
-        }
-    }
+        NavigationScreen(LOGIN_SCREEN)
 
     class SignUpScreen(private val screenState: ScreenState = ScreenState()) : NavigationScreen(
         SIGN_UP_SCREEN
-    ) {
-        @Composable
-        override fun Content() {
-            SignUpContent(screenState)
-        }
-    }
+    )
 
     class ChatScreen(
-        private val chatId: Long = -1L,
-        private val showCreateChatDialogue: MutableState<Boolean> = mutableStateOf(false),
-        private val isMessageActionModeState: MutableState<Boolean?> = mutableStateOf(false),
         private val screenState: ScreenState? = ScreenState()
-    ) : NavigationScreen(CHAT_SCREEN, DrawableResources.IC_CHAT) {
-        @Composable
-        override fun Content() {
-            ChatContent(chatId, showCreateChatDialogue, isMessageActionModeState, screenState)
-        }
-    }
+    ) : NavigationScreen(CHAT_SCREEN, DrawableResources.IC_CHAT)
 
     class SettingsChatScreen(private val screenState: ScreenState = ScreenState()) :
-        NavigationScreen(SETTINGS_CHAT_SCREEN, DrawableResources.IC_SETTINGS_CHAT) {
-        @Composable
-        override fun Content() {
-            SettingsChatContent(screenState)
-        }
-    }
+        NavigationScreen(SETTINGS_CHAT_SCREEN, DrawableResources.IC_SETTINGS_CHAT)
 
     class SettingsAccountScreen(private val screenState: ScreenState = ScreenState()) :
-        NavigationScreen(SETTINGS_ACCOUNT_SCREEN, DrawableResources.IC_SETTINGS_ACCOUNT) {
-        @Composable
-        override fun Content() {
-            SettingsAccountContent(screenState)
-        }
-    }
+        NavigationScreen(SETTINGS_ACCOUNT_SCREEN, DrawableResources.IC_SETTINGS_ACCOUNT)
 
     class SettingsSignUpScreen(private val screenState: ScreenState = ScreenState()) :
-        NavigationScreen(SETTINGS_SIGN_UP_SCREEN) {
-        @Composable
-        override fun Content() {
-            SettingsSignUpContent(screenState)
-        }
-    }
+        NavigationScreen(SETTINGS_SIGN_UP_SCREEN)
 
     class SettingsLanguageScreen(private val screenState: ScreenState = ScreenState()) :
-        NavigationScreen(SETTINGS_LANGUAGE_SCREEN, DrawableResources.IC_SETTINGS_LANGUAGE) {
-        @Composable
-        override fun Content() {
-            SettingsLanguageContent(screenState)
-        }
-    }
+        NavigationScreen(SETTINGS_LANGUAGE_SCREEN, DrawableResources.IC_SETTINGS_LANGUAGE)
 
     class SettingsThemeScreen(private val screenState: ScreenState = ScreenState()) :
-        NavigationScreen(SETTINGS_THEME_SCREEN, DrawableResources.IC_SETTINGS_THEME) {
-        @Composable
-        override fun Content() {
-            SettingsThemeContent(screenState)
-        }
-    }
+        NavigationScreen(SETTINGS_THEME_SCREEN, DrawableResources.IC_SETTINGS_THEME)
 
     class SettingsFeedbackScreen(private val screenState: ScreenState = ScreenState()) :
-        NavigationScreen(SETTINGS_FEEDBACK_SCREEN, DrawableResources.IC_SETTINGS_FEEDBACK) {
-        @Composable
-        override fun Content() {
-            SettingsFeedbackContent(screenState)
-        }
-    }
+        NavigationScreen(SETTINGS_FEEDBACK_SCREEN, DrawableResources.IC_SETTINGS_FEEDBACK)
 
     class SettingsPrivacyPolicyScreen(private val screenState: ScreenState = ScreenState()) :
-        NavigationScreen(SETTINGS_PRIVACY_POLICY_SCREEN, DrawableResources.IC_SETTINGS_PRIVACY) {
-        @Composable
-        override fun Content() {
-            SettingsPrivacyPolicyContent(screenState)
-        }
-    }
+        NavigationScreen(SETTINGS_PRIVACY_POLICY_SCREEN, DrawableResources.IC_SETTINGS_PRIVACY)
 
     companion object {
 
@@ -159,8 +84,8 @@ sealed class NavigationScreen(
 
         fun isChatScreen(route: String?) = route == ChatScreen().route
 
-        fun fromRoute(screenState: ScreenState?): Screen {
-            return when (screenState?.currentScreenState?.value) {
+        fun fromRoute(screenState: ScreenState?): NavigationScreen {
+            return when (screenState?.currentScreenRoute) {
                 OnboardingScreen().route -> OnboardingScreen(screenState)
                 LoginScreen().route -> LoginScreen(screenState)
                 SignUpScreen().route -> SignUpScreen(screenState)
@@ -174,11 +99,6 @@ sealed class NavigationScreen(
             }
         }
     }
-}
-
-interface Screen {
-    @Composable
-    fun Content()
 }
 
 object DrawableResources {

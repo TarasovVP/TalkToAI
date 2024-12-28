@@ -34,6 +34,7 @@ import com.vnteam.talktoai.domain.models.InfoMessage
 import com.vnteam.talktoai.ic_avatar_anonymous
 import com.vnteam.talktoai.ic_avatar_email
 import com.vnteam.talktoai.ic_avatar_google
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.DataEditDialog
 import com.vnteam.talktoai.presentation.ui.components.EmptyState
@@ -50,7 +51,6 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsAccountViewModel
 import org.koin.compose.viewmodel.koinViewModel
-import presentation.NavigationScreen
 
 @Composable
 fun SettingsAccountContent(
@@ -89,7 +89,7 @@ fun SettingsAccountContent(
         if (successState.value) {
             viewModel.clearDataByKeys(listOf(REVIEW_VOTE))
             viewModel.clearDataBase()
-            screenState.currentScreenState.value = NavigationScreen.LoginScreen().route
+            screenState.currentScreenRoute = NavigationScreen.LoginScreen().route
         }
     }
 
@@ -142,7 +142,7 @@ fun SettingsAccountContent(
                 text = LocalStringResources.current.AUTHORIZATION_SIGNING_UP,
                 modifier = Modifier
             ) {
-                screenState.currentScreenState.value = NavigationScreen.SettingsSignUpScreen().route
+                screenState.currentScreenRoute = NavigationScreen.SettingsSignUpScreen().route
             }
             EmptyState(
                 text = LocalStringResources.current.EMPTY_STATE_ACCOUNT,

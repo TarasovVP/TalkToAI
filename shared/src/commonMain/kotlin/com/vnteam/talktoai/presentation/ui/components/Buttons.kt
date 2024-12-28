@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -32,7 +31,6 @@ import com.vnteam.talktoai.presentation.ui.theme.Neutral700
 import com.vnteam.talktoai.presentation.ui.theme.Primary300
 import com.vnteam.talktoai.presentation.ui.theme.Primary400
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
-import com.vnteam.talktoai.presentation.ui.theme.Primary700
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
@@ -153,9 +151,9 @@ fun LinkButton(
 
 @Composable
 fun TextIconButton(text: String, icon: DrawableResource, modifier: Modifier, onClick: () -> Unit) {
-    Button(onClick = onClick) {
+    Button(onClick = onClick, modifier = modifier) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .background(color = Color.Transparent, shape = RoundedCornerShape(16.dp))
         ) {

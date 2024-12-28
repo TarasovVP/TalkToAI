@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import presentation.screens.authorization.login.LoginContent
@@ -61,6 +62,7 @@ fun AppNavigation(navController: NavHostController, screenState: MutableState<Sc
             screenState.value?.let { it1 -> LoginContent(it1) }
         }
         composable(NavigationScreen.SIGN_UP_SCREEN) {
+            NavigationScreen.SIGN_UP_SCREEN
             screenState.value = screenState.value?.copy(
                 appBarState = screenState.value?.appBarState?.copy(
                     appBarTitle = NavigationScreen.SIGN_UP_SCREEN,
@@ -90,7 +92,7 @@ fun AppNavigation(navController: NavHostController, screenState: MutableState<Sc
                     }
                 )
             )
-            ChatContent(1L, mutableStateOf(false), mutableStateOf(false), ScreenState())
+            ChatContent(1L, mutableStateOf(false), ScreenState())
         }
         composable(NavigationScreen.SETTINGS_CHAT_SCREEN) {
             screenState.value = screenState.value?.copy(

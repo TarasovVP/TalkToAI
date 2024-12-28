@@ -100,7 +100,7 @@ fun SettingsSignUpContent(
     val successRemoteUserState = viewModel.successRemoteUserLiveData.collectAsState()
     LaunchedEffect(successRemoteUserState.value) {
         if (successRemoteUserState.value) {
-            screenState.currentScreenState.value = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"
+            screenState.currentScreenRoute = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"
         }
     }
 

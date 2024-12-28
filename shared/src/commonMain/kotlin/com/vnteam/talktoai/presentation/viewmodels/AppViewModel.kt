@@ -105,4 +105,8 @@ class AppViewModel(
             appUseCase.setLanguage(language)
         }
     }
+
+    fun updateScreenState(newState: ScreenState?) {
+        _screenState.value = newState
+    }
 }

@@ -11,9 +11,9 @@ import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.ic_settings
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Primary900
-import presentation.NavigationScreen
-import presentation.NavigationScreen.Companion.settingScreens
-import presentation.NavigationScreen.Companion.settingsScreenNameByRoute
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
+import com.vnteam.talktoai.presentation.ui.NavigationScreen.Companion.settingScreens
+import com.vnteam.talktoai.presentation.ui.NavigationScreen.Companion.settingsScreenNameByRoute
 import presentation.screens.chat_list.ChatItem
 
 @Composable
