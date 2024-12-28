@@ -89,7 +89,7 @@ fun SettingsAccountContent(
         if (successState.value) {
             viewModel.clearDataByKeys(listOf(REVIEW_VOTE))
             viewModel.clearDataBase()
-            screenState.currentScreenRoute = NavigationScreen.LoginScreen().route
+            screenState.currentScreenRoute = NavigationScreen.LoginScreen.route
         }
     }
 
@@ -142,7 +142,7 @@ fun SettingsAccountContent(
                 text = LocalStringResources.current.AUTHORIZATION_SIGNING_UP,
                 modifier = Modifier
             ) {
-                screenState.currentScreenRoute = NavigationScreen.SettingsSignUpScreen().route
+                screenState.currentScreenRoute = NavigationScreen.SettingsSignUpScreen.route
             }
             EmptyState(
                 text = LocalStringResources.current.EMPTY_STATE_ACCOUNT,

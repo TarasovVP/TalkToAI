@@ -29,7 +29,7 @@ data class ScreenState(
         get() = isDarkTheme.isNotNull() && language.isNotNull() && loggedInUser.isNotNull() && isOnboardingSeen.isNotNull()
 
     val isChatScreen: Boolean
-        get() = currentScreenRoute == NavigationScreen.ChatScreen().route
+        get() = currentScreenRoute == NavigationScreen.ChatScreen.route
 
     val isSettingsScreen: Boolean
         get() = isSettingsScreen(currentScreenRoute)

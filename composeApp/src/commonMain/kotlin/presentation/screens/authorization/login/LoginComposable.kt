@@ -140,7 +140,7 @@ fun LoginContent(
                     .wrapContentSize()
                     .padding(start = 16.dp)
             ) {
-                screenState.currentScreenRoute = NavigationScreen.SignUpScreen().route
+                screenState.currentScreenRoute = NavigationScreen.SignUpScreen.route
             }
             Spacer(modifier = Modifier.weight(0.5f))
             LinkButton(
@@ -189,7 +189,7 @@ fun LoginContent(
             showAccountExistDialog.value = false
         }) {
         showAccountExistDialog.value = false
-        screenState.currentScreenRoute = NavigationScreen.SignUpScreen().route
+        screenState.currentScreenRoute = NavigationScreen.SignUpScreen.route
     }
 
     ConfirmationDialog(

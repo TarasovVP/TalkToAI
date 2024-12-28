@@ -23,7 +23,7 @@ import org.koin.core.component.KoinComponent
 
 sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY) : Screen,
     KoinComponent {
-    class OnboardingScreen(private val screenState: ScreenState = ScreenState()) :
+    class OnboardingScreen :
         NavigationScreen(ONBOARDING_SCREEN) {
         @Composable
         override fun Content() {
@@ -31,7 +31,7 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
         }
     }
 
-    class LoginScreen(private val screenState: ScreenState = ScreenState()) :
+    class LoginScreen :
         NavigationScreen(LOGIN_SCREEN) {
         @Composable
         override fun Content() {
@@ -39,7 +39,7 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
         }
     }
 
-    class SignUpScreen(private val screenState: ScreenState = ScreenState()) :
+    class SignUpScreen :
         NavigationScreen(SIGN_UP_SCREEN) {
         @Composable
         override fun Content() {
@@ -59,7 +59,7 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
         }
     }
 
-    class SettingsChatScreen(private val screenState: ScreenState = ScreenState()) :
+    class SettingsChatScreen :
         NavigationScreen(SETTINGS_CHAT_SCREEN, DrawableResources.IC_SETTINGS_CHAT) {
         @Composable
         override fun Content() {
@@ -67,7 +67,7 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
         }
     }
 
-    class SettingsAccountScreen(private val screenState: ScreenState = ScreenState()) :
+    class SettingsAccountScreen :
         NavigationScreen(SETTINGS_ACCOUNT_SCREEN, DrawableResources.IC_SETTINGS_ACCOUNT) {
         @Composable
         override fun Content() {
@@ -75,7 +75,7 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
         }
     }
 
-    class SettingsSignUpScreen(private val screenState: ScreenState = ScreenState()) :
+    class SettingsSignUpScreen :
         NavigationScreen(SETTINGS_SIGN_UP_SCREEN) {
         @Composable
         override fun Content() {
@@ -83,7 +83,7 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
         }
     }
 
-    class SettingsLanguageScreen(private val screenState: ScreenState = ScreenState()) :
+    class SettingsLanguageScreen :
         NavigationScreen(SETTINGS_LANGUAGE_SCREEN, DrawableResources.IC_SETTINGS_LANGUAGE) {
         @Composable
         override fun Content() {
@@ -91,7 +91,7 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
         }
     }
 
-    class SettingsThemeScreen(private val screenState: ScreenState = ScreenState()) :
+    class SettingsThemeScreen :
         NavigationScreen(SETTINGS_THEME_SCREEN, DrawableResources.IC_SETTINGS_THEME) {
         @Composable
         override fun Content() {
@@ -99,7 +99,7 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
         }
     }
 
-    class SettingsFeedbackScreen(private val screenState: ScreenState = ScreenState()) :
+    class SettingsFeedbackScreen :
         NavigationScreen(SETTINGS_FEEDBACK_SCREEN, DrawableResources.IC_SETTINGS_FEEDBACK) {
         @Composable
         override fun Content() {
@@ -107,7 +107,7 @@ sealed class NavigationScreen(val route: String, val icon: String = String.EMPTY
         }
     }
 
-    class SettingsPrivacyPolicyScreen(private val screenState: ScreenState = ScreenState()) :
+    class SettingsPrivacyPolicyScreen :
         NavigationScreen(SETTINGS_PRIVACY_POLICY_SCREEN, DrawableResources.IC_SETTINGS_PRIVACY) {
         @Composable
         override fun Content() {

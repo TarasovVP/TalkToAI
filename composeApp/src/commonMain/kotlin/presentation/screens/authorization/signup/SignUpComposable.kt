@@ -124,7 +124,7 @@ fun SignUpContent(
                 text = LocalStringResources.current.AUTHORIZATION_ENTRANCE,
                 modifier = Modifier.wrapContentSize()
             ) {
-                screenState.currentScreenRoute = NavigationScreen.LoginScreen().route
+                screenState.currentScreenRoute = NavigationScreen.LoginScreen.route
             }
         }
         PrimaryButton(
@@ -142,7 +142,7 @@ fun SignUpContent(
             showAccountExistDialog.value = false
         }) {
         showAccountExistDialog.value = false
-        screenState.currentScreenRoute = NavigationScreen.LoginScreen().route
+        screenState.currentScreenRoute = NavigationScreen.LoginScreen.route
     }
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
     ProgressVisibilityHandler(

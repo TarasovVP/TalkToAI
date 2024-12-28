@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -19,7 +18,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.vnteam.talktoai.CommonExtensions.isTrue
-import com.vnteam.talktoai.Constants.DESTINATION_CHAT_SCREEN
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.NavigationScreen.Companion.settingsScreenNameByRoute
@@ -32,11 +30,8 @@ import org.koin.compose.viewmodel.koinViewModel
 import presentation.AppNavigation
 import presentation.AppSnackBar
 import presentation.DeleteModeTopBar
-import presentation.DrawerHeader
 import presentation.PrimaryTopBar
 import presentation.SecondaryTopBar
-import presentation.screens.chat_list.ChatListComposable
-import presentation.screens.settings.settings_list.SettingsListComposable
 
 @Composable
 fun AppContent(appViewModel: AppViewModel) {
@@ -50,6 +45,8 @@ fun AppContent(appViewModel: AppViewModel) {
 
     val screenState = appViewModel.screenState.collectAsState()
     val animationResourceState = appViewModel.animationResource.collectAsState()
+
+    println("AppContentTAG: screenState.value: ${screenState.value}")
 
     val navController = rememberNavController()
 
@@ -88,48 +85,21 @@ fun AppContent(appViewModel: AppViewModel) {
     }
 
     LaunchedEffect(screenState.value?.currentScreenRoute) {
-        val navigationScreen =
-            if (screenState.value?.isChatScreen.isTrue()) NavigationScreen.ChatScreen(screenState.value)
-            else NavigationScreen.fromRoute(screenState.value)
-        navController.navigate(navigationScreen.route)
+        navController.navigate(
+            screenState.value?.currentScreenRoute ?: NavigationScreen.ChatScreen.route
+        )
     }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = screenState.value?.isDrawerGesturesEnabled.isTrue(),
         drawerContent = {
-            ModalDrawerSheet {
-                DrawerHeader(screenState.value?.isSettingsScreen.isTrue()) { settingsDrawerModeState ->
-                    appViewModel.updateScreenState(
-                        screenState.value?.copy(
-                            currentScreenRoute = if (settingsDrawerModeState) {
-                                NavigationScreen.SettingsChatScreen().route
-                            } else {
-                                NavigationScreen.ChatScreen().route
-                            }
-                        )
-                    )
-                }
-                if (screenState.value?.isSettingsScreen.isTrue()) {
-                    SettingsListComposable(screenState.value?.currentScreenRoute) { route ->
-                        appViewModel.updateScreenState(screenState.value?.copy(currentScreenRoute = route))
-                        scope.launch {
-                            drawerState.close()
-                        }
+            DrawerContent(screenState.value) { newScreenState, isDrawerClose ->
+                appViewModel.updateScreenState(newScreenState)
+                if (isDrawerClose) {
+                    scope.launch {
+                        drawerState.close()
                     }
-                } else {
-                    ChatListComposable(
-                        onChatClick = { chatId ->
-                            appViewModel.updateScreenState(
-                                screenState.value?.copy(
-                                    currentScreenRoute = "$DESTINATION_CHAT_SCREEN/$chatId"
-                                )
-                            )
-                            scope.launch {
-                                drawerState.close()
-                            }
-                        }
-                    )
                 }
             }
         }
@@ -138,7 +108,7 @@ fun AppContent(appViewModel: AppViewModel) {
             topBar = {
                 when {
                     isMessageActionModeState.value.isTrue() -> DeleteModeTopBar(LocalStringResources.current.MESSAGE_ACTION_SELECTED)
-                    screenState.value?.currentScreenRoute == NavigationScreen.SettingsSignUpScreen().route -> SecondaryTopBar(
+                    screenState.value?.currentScreenRoute == NavigationScreen.SettingsSignUpScreen.route -> SecondaryTopBar(
                         settingsScreenNameByRoute(
                             screenState.value?.currentScreenRoute,
                             LocalStringResources.current

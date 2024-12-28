@@ -44,7 +44,7 @@ fun OnboardingContent(screenState: ScreenState) {
     val onBoardingSeenState = viewModel.onBoardingSeenLiveData.collectAsState()
     LaunchedEffect(onBoardingSeenState.value) {
         if (onBoardingSeenState.value) {
-            screenState.currentScreenRoute = NavigationScreen.LoginScreen().route
+            screenState.currentScreenRoute = NavigationScreen.LoginScreen.route
             viewModel.onBoardingSeenLiveData.value = false
         }
     }

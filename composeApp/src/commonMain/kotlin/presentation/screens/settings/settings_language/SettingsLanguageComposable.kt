@@ -61,7 +61,6 @@ fun SettingsLanguageContent(
             Res.drawable.ic_flag_en
         ) {
             viewModel.setAppLanguage(Constants.APP_LANG_EN)
-            //AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(APP_LANG_EN))
         }
         SettingsLanguageItem(
             LocalStringResources.current.SETTINGS_LANGUAGE_UKRAINIAN,
@@ -69,7 +68,6 @@ fun SettingsLanguageContent(
             Res.drawable.ic_flag_en
         ) {
             viewModel.setAppLanguage(Constants.APP_LANG_UK)
-            //AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(APP_LANG_UK))
         }
     }
     ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)

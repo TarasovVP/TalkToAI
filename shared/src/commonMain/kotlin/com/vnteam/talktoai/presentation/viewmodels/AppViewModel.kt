@@ -45,7 +45,12 @@ class AppViewModel(
             ) { isDarkTheme, language, loggedInUser, onBoardingSeen ->
                 ScreenState(isDarkTheme = isDarkTheme, language = language, loggedInUser = loggedInUser, isOnboardingSeen = onBoardingSeen)
             }.collect { newState ->
-                _screenState.value = newState
+                _screenState.value = _screenState.value?.copy(
+                    isDarkTheme = newState.isDarkTheme,
+                    language = newState.language,
+                    loggedInUser = newState.loggedInUser,
+                    isOnboardingSeen = newState.isOnboardingSeen
+                ) ?: newState
             }
         }
     }

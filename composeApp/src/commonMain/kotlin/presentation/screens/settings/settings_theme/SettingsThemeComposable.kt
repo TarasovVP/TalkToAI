@@ -44,13 +44,13 @@ fun SettingsThemeContent(screenState: ScreenState) {
     ) {
         SettingsThemeItem(
             LocalStringResources.current.SETTINGS_THEME_DAY,
-            isSystemInDarkTheme() != appTheme.value
+            isSystemInDarkTheme() == appTheme.value
         ) {
             viewModel.setIsDarkTheme(false)
         }
         SettingsThemeItem(
             LocalStringResources.current.SETTINGS_THEME_NIGHT,
-            isSystemInDarkTheme() == appTheme.value
+            isSystemInDarkTheme() != appTheme.value
         ) {
             viewModel.setIsDarkTheme(true)
         }
