@@ -21,14 +21,15 @@ import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral500
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsThemeViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.updateScreenState
 
 @Composable
-fun SettingsThemeContent(screenState: ScreenState, onScreenStateUpdate: (ScreenState?) -> Unit) {
+fun SettingsThemeContent() {
 
     val viewModel: SettingsThemeViewModel = koinViewModel()
+    updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
 
     LaunchedEffect(Unit) {
         viewModel.getIsDarkTheme()

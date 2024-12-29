@@ -38,13 +38,15 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary300
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsSignUpViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.updateScreenState
 
 @Composable
 fun SettingsSignUpContent(
     screenState: ScreenState,
-    onScreenStateUpdate: (ScreenState?) -> Unit
+    onScreenStateUpdate: (ScreenState) -> Unit
 ) {
     val viewModel: SettingsSignUpViewModel = koinViewModel()
+    updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
     val showAccountExistDialog = remember { mutableStateOf(false) }

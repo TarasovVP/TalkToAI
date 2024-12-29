@@ -21,18 +21,16 @@ import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.domain.models.Feedback
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsFeedbackViewModel
 import kotlinx.datetime.Clock
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.updateScreenState
 
 @Composable
-fun SettingsFeedbackContent(
-    screenState: ScreenState,
-    onScreenStateUpdate: (ScreenState?) -> Unit
-) {
+fun SettingsFeedbackContent() {
 
     val viewModel: SettingsFeedbackViewModel = koinViewModel()
+    updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
     val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }
 
     val successFeedbackState = viewModel.successFeedbackLiveData.collectAsState()

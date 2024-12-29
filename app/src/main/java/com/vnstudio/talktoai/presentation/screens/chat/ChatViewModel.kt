@@ -37,7 +37,7 @@ class ChatViewModel(
                         }
 
                         is Result.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.value = it
+                            _exceptionMessage.value = it
                         }
                     }
                     hideProgress()
@@ -119,7 +119,7 @@ class ChatViewModel(
                         }
 
                         is Result.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.value = it
+                            _exceptionMessage.value = it
                         }
                     }
                     hideProgress()
@@ -143,7 +143,7 @@ class ChatViewModel(
                         }
 
                         is Result.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.value = it
+                            _exceptionMessage.value = it
                         }
                     }
                     hideProgress()
@@ -168,7 +168,7 @@ class ChatViewModel(
                         }
 
                         is Result.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.value = it
+                            _exceptionMessage.value = it
                         }
                     }
                     hideProgress()

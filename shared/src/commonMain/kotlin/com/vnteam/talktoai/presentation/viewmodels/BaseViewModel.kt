@@ -9,27 +9,31 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 open class BaseViewModel : ViewModel() {
 
-    val exceptionLiveData = MutableStateFlow<String?>(String.EMPTY)
-    val progressVisibilityLiveData = MutableStateFlow(false)
+    val _exceptionMessage = MutableStateFlow(String.EMPTY)
+    val exceptionMessage = _exceptionMessage.asStateFlow()
+
+    val _progressVisibilityState = MutableStateFlow(false)
+    val progressVisibilityState = _progressVisibilityState.asStateFlow()
 
     fun showProgress() {
-        progressVisibilityLiveData.value = true
+        _progressVisibilityState.value = true
     }
 
     fun hideProgress() {
-        progressVisibilityLiveData.value = false
+        _progressVisibilityState.value = false
     }
 
     fun checkNetworkAvailable(networkAvailableResult: () -> Unit) {
         if (true /*application.isNetworkAvailable()*/) {
             networkAvailableResult.invoke()
         } else {
-            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -47,6 +51,6 @@ open class BaseViewModel : ViewModel() {
     protected open fun onError(throwable: Throwable, block: suspend CoroutineScope.() -> Unit) {
         hideProgress()
         throwable.printStackTrace()
-        exceptionLiveData.value = throwable.message
+        _exceptionMessage.value = throwable.message.orEmpty()
     }
 }

@@ -91,7 +91,7 @@ fun ChatContent(
     chatId: Long,
     isMessageActionModeState: MutableState<Boolean?> = mutableStateOf(false),
     screenState: ScreenState,
-    onScreenStateChange: (ScreenState?) -> Unit
+    onScreenStateChange: (ScreenState) -> Unit
 ) {
     val viewModel = koinViewModel<ChatViewModel>()
     val currentChatState = viewModel.currentChatLiveData.collectAsState()
@@ -183,7 +183,8 @@ fun ChatContent(
         ) {
             when {
                 currentChatState.value?.id == DEFAULT_CHAT_ID -> CreateChatScreen {
-                    showCreateChatDialogue.value = true
+                    //showCreateChatDialogue.value = true
+
                 }
 
                 isMessageActionModeState.value.isTrue() -> {

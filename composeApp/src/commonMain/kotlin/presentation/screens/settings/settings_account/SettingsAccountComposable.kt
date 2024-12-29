@@ -49,14 +49,15 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsAccountViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.updateScreenState
 
 @Composable
 fun SettingsAccountContent(
     screenState: ScreenState,
-    onScreenStateUpdate: (ScreenState?) -> Unit
+    onScreenStateUpdate: (ScreenState) -> Unit
 ) {
-
     val viewModel: SettingsAccountViewModel = koinViewModel()
+    updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
     val authState = remember { mutableStateOf<AuthState?>(null) }
     val showLogOutDialog = remember { mutableStateOf(false) }
     val showChangePasswordDialog = remember { mutableStateOf(false) }

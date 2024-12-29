@@ -129,10 +129,10 @@ fun DeleteModeTopBar(title: String) {
 @Composable
 fun AppSnackBar(screenState: ScreenState?, scope: CoroutineScope) {
     val snackBarHostState = remember { SnackbarHostState() }
-    screenState?.appMessageState?.let { infoMessage ->
+    screenState?.appMessage?.let { infoMessage ->
         scope.launch {
             snackBarHostState.showSnackbar(
-                message = infoMessage.messageText,
+                message = infoMessage.message,
                 //actionLabel = infoMessage.isMessageError,
                 duration = SnackbarDuration.Short
             )

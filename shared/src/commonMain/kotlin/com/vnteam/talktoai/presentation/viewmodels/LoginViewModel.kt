@@ -29,14 +29,14 @@ class LoginViewModel(
                 when (authResult) {
                     is NetworkResult.Success -> successPasswordResetLiveData.value = true
                     is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value =
+                        _exceptionMessage.value =
                             it
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -52,14 +52,14 @@ class LoginViewModel(
                     }
 
                     is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value =
+                        _exceptionMessage.value =
                             it
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -70,14 +70,14 @@ class LoginViewModel(
                 when (authResult) {
                     is NetworkResult.Success -> successSignInLiveData.value = true
                     is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value =
+                        _exceptionMessage.value =
                             it
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -88,14 +88,14 @@ class LoginViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> successSignInLiveData.value = true
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value =
+                        _exceptionMessage.value =
                             it
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -122,7 +122,7 @@ class LoginViewModel(
                 hideProgress()
             }*/
         } else {
-            exceptionLiveData.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 }

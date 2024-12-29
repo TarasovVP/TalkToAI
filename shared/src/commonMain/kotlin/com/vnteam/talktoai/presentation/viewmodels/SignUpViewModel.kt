@@ -33,13 +33,13 @@ class SignUpViewModel(
                     }
 
                     is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value = it
+                        _exceptionMessage.value = it
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -50,14 +50,14 @@ class SignUpViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> updateUIState(SignUpUIState(successSignUp = true))
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value =
+                        _exceptionMessage.value =
                             it
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -68,14 +68,14 @@ class SignUpViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> updateUIState(SignUpUIState(successSignUp = true))
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value =
+                        _exceptionMessage.value =
                             it
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -86,14 +86,14 @@ class SignUpViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> updateUIState(SignUpUIState(createCurrentUser = true))
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value =
+                        _exceptionMessage.value =
                             it
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 

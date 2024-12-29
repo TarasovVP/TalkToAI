@@ -53,13 +53,13 @@ class SettingsAccountViewModel(
             settingsAccountUseCase.changePassword(currentPassword, newPassword) { result ->
                 when (result) {
                     is NetworkResult.Success -> successChangePasswordLiveData.value = true
-                    is NetworkResult.Failure -> exceptionLiveData.value =
+                    is NetworkResult.Failure -> _exceptionMessage.value =
                         result.errorMessage.orEmpty()
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -69,13 +69,13 @@ class SettingsAccountViewModel(
             settingsAccountUseCase.reAuthenticate { result ->
                 when (result) {
                     is NetworkResult.Success -> reAuthenticateLiveData.value = true
-                    is NetworkResult.Failure -> exceptionLiveData.value =
+                    is NetworkResult.Failure -> _exceptionMessage.value =
                         result.errorMessage.orEmpty()
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -85,13 +85,13 @@ class SettingsAccountViewModel(
             settingsAccountUseCase.deleteUser { result ->
                 when (result) {
                     is NetworkResult.Success -> successLiveData.value = true
-                    is NetworkResult.Failure -> exceptionLiveData.value =
+                    is NetworkResult.Failure -> _exceptionMessage.value =
                         result.errorMessage.orEmpty()
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 

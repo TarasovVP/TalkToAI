@@ -17,28 +17,28 @@ import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
 import kotlinx.coroutines.launch
 import presentation.AppNavigation
+import presentation.LocalScreenState
 
 @Composable
 fun AppContent(appViewModel: AppViewModel) {
 
-    // Scaffold
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val navController = rememberNavController()
 
-    val screenState = appViewModel.screenState.collectAsState()
+    val screenState = LocalScreenState.current
 
     println("AppContentTAG: screenState.value: ${screenState.value}")
 
-    LaunchedEffect(screenState.value?.currentScreenRoute) {
-        screenState.value?.currentScreenRoute?.let {
+    LaunchedEffect(screenState.value.currentScreenRoute) {
+        screenState.value.currentScreenRoute?.let {
             navController.navigate(it)
         }
     }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = screenState.value?.isLoggedInUser.isTrue(),
+        gesturesEnabled = screenState.value.isLoggedInUser.isTrue(),
         drawerContent = {
             DrawerContent(screenState.value) { newScreenState, isDrawerClose ->
                 appViewModel.updateScreenState(newScreenState)
@@ -53,7 +53,7 @@ fun AppContent(appViewModel: AppViewModel) {
         Scaffold(
             topBar = {
                 AppTopBar(screenState.value) {
-                    if (screenState.value?.isSecondaryScreen.isTrue()) {
+                    if (screenState.value.isSecondaryScreen.isTrue()) {
                         navController.navigateUp()
                     } else {
                         scope.launch {
@@ -73,11 +73,9 @@ fun AppContent(appViewModel: AppViewModel) {
                     .padding(paddingValues)
                     .fillMaxSize()
             ) {
-                screenState.value?.let { screenState ->
-                    AppNavigation(navController, screenState) { updatedScreenState ->
-                        println("AppTAG AppNavigation updatedScreenState: $updatedScreenState")
-                        appViewModel.updateScreenState(updatedScreenState)
-                    }
+                AppNavigation(navController, screenState.value) { updatedScreenState ->
+                    println("AppTAG AppNavigation updatedScreenState: $updatedScreenState")
+                    appViewModel.updateScreenState(updatedScreenState)
                 }
                 if (screenState.value?.isProgressVisible.isTrue()) {
                     val animationResourceState = appViewModel.animationResource.collectAsState()

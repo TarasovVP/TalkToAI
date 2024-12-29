@@ -43,7 +43,7 @@ class ChatViewModel(
                         }
 
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.value = it
+                            _exceptionMessage.value = it
                         }
                     }
                     hideProgress()
@@ -126,7 +126,7 @@ class ChatViewModel(
                         }
 
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.value = it
+                            _exceptionMessage.value = it
                         }
                     }
                     hideProgress()
@@ -150,7 +150,7 @@ class ChatViewModel(
                         }
 
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.value = it
+                            _exceptionMessage.value = it
                         }
                     }
                     hideProgress()
@@ -175,7 +175,7 @@ class ChatViewModel(
                         }
 
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
-                            exceptionLiveData.value = it
+                            _exceptionMessage.value = it
                         }
                     }
                     hideProgress()

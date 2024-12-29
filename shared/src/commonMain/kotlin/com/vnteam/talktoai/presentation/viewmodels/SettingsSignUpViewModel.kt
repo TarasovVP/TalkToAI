@@ -37,14 +37,14 @@ class SettingsSignUpViewModel(
                     }
 
                     is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value =
+                        _exceptionMessage.value =
                             it
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -55,14 +55,14 @@ class SettingsSignUpViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> successAuthorisationLiveData.value = isExistUser
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value =
+                        _exceptionMessage.value =
                             it
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -76,14 +76,14 @@ class SettingsSignUpViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> successAuthorisationLiveData.value = false
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value =
+                        _exceptionMessage.value =
                             it
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -94,14 +94,14 @@ class SettingsSignUpViewModel(
                 when (authResult) {
                     is NetworkResult.Success -> successAuthorisationLiveData.value = true
                     is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value =
+                        _exceptionMessage.value =
                             it
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -126,14 +126,14 @@ class SettingsSignUpViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> successRemoteUserLiveData.value = true
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value =
+                        _exceptionMessage.value =
                             it
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
@@ -144,14 +144,14 @@ class SettingsSignUpViewModel(
                 when (operationResult) {
                     is NetworkResult.Success -> successRemoteUserLiveData.value = true
                     is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        exceptionLiveData.value =
+                        _exceptionMessage.value =
                             it
                     }
                 }
                 hideProgress()
             }
         } else {
-            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
+            _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 }

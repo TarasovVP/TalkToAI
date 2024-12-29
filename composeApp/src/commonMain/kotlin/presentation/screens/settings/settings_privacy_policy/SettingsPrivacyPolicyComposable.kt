@@ -11,14 +11,16 @@ import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsPrivacyPolicyViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.updateScreenState
 
 @Composable
 fun SettingsPrivacyPolicyContent(
     screenState: ScreenState,
-    onScreenStateUpdate: (ScreenState?) -> Unit
+    onScreenStateUpdate: (ScreenState) -> Unit
 ) {
 
     val viewModel: SettingsPrivacyPolicyViewModel = koinViewModel()
+    updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
     val privacyPolicyUrlState = remember { mutableStateOf(String.EMPTY) }
 
     LaunchedEffect(Unit) {

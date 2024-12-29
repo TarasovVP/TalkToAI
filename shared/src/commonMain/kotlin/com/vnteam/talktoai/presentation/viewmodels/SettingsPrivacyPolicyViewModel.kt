@@ -30,7 +30,7 @@ class SettingsPrivacyPolicyViewModel(
                     is NetworkResult.Success -> privacyPolicyLiveData.value =
                         operationResult.data ?: PRIVACY_POLICY
 
-                    is NetworkResult.Failure -> exceptionLiveData.value =
+                    is NetworkResult.Failure -> _exceptionMessage.value =
                         operationResult.errorMessage.orEmpty()
                 }
             }

@@ -30,11 +30,11 @@ import presentation.screens.chat_list.ChatListComposable
 import presentation.screens.settings.settings_list.SettingsListComposable
 
 @Composable
-fun DrawerContent(screenState: ScreenState?, onScreenStateUpdate: (ScreenState?, Boolean) -> Unit) {
+fun DrawerContent(screenState: ScreenState, onScreenStateUpdate: (ScreenState, Boolean) -> Unit) {
     ModalDrawerSheet {
-        DrawerHeader(screenState?.isSettingsScreen.isTrue()) { settingsDrawerModeState ->
+        DrawerHeader(screenState.isSettingsScreen.isTrue()) { settingsDrawerModeState ->
             onScreenStateUpdate(
-                screenState?.copy(
+                screenState.copy(
                     currentScreenRoute = if (settingsDrawerModeState) {
                         NavigationScreen.SettingsChatScreen.route
                     } else {
@@ -43,15 +43,15 @@ fun DrawerContent(screenState: ScreenState?, onScreenStateUpdate: (ScreenState?,
                 ), false
             )
         }
-        if (screenState?.isSettingsScreen.isTrue()) {
-            SettingsListComposable(screenState?.currentScreenRoute) { route ->
-                onScreenStateUpdate(screenState?.copy(currentScreenRoute = route), true)
+        if (screenState.isSettingsScreen.isTrue()) {
+            SettingsListComposable(screenState.currentScreenRoute) { route ->
+                onScreenStateUpdate(screenState.copy(currentScreenRoute = route), true)
             }
         } else {
             ChatListComposable(
                 onChatClick = { chatId ->
                     onScreenStateUpdate(
-                        screenState?.copy(
+                        screenState.copy(
                             currentScreenRoute = "${NavigationScreen.ChatScreen.route}/$chatId"
                         ),
                         false

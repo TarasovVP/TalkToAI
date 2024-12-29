@@ -50,8 +50,6 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             // SQLDelight
             implementation(libs.sqldelight.coroutines.extensions)
-            // Lottie
-            implementation(libs.lottie.compose)
         }
         androidMain.dependencies {
             implementation(libs.androidx.multidex)
@@ -62,16 +60,22 @@ kotlin {
             implementation(libs.koin.androidx.compose)
             // Datastore
             implementation(libs.androidx.datastore.preferences)
+            // Lottie
+            implementation(libs.lottie.compose)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
             implementation(libs.sqldelight.native.driver)
             // Datastore
             implementation(libs.androidx.datastore.preferences)
+            // Lottie
+            implementation(libs.lottie.compose)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
             implementation(libs.sqldelight.native.driver)
+            // Lottie
+            implementation(libs.lottie.compose)
         }
         jvmMain.dependencies {
             implementation(libs.koin.core)
@@ -83,6 +87,8 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
             // Text to speech
             implementation(libs.freetts)
+            // Lottie
+            //implementation(libs.lottie.compose)
         }
         jsMain.dependencies {
             implementation(libs.ktor.client.js)

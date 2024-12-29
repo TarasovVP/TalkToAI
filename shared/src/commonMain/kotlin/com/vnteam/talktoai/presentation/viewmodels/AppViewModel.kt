@@ -18,7 +18,7 @@ class AppViewModel(
     val animationUtils: AnimationUtils
 ) : BaseViewModel() {
 
-    private val _screenState = MutableStateFlow<ScreenState?>(null)
+    private val _screenState = MutableStateFlow(ScreenState())
     val screenState = _screenState.asStateFlow()
 
     private val _onBoardingSeen = MutableStateFlow<Boolean?>(null)
@@ -114,7 +114,7 @@ class AppViewModel(
         }
     }
 
-    fun updateScreenState(newState: ScreenState?) {
+    fun updateScreenState(newState: ScreenState) {
         _screenState.value = newState
     }
 }

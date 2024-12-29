@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.presentation.uimodels.screen
 
-data class AppMessageState(
+data class AppMessage(
     var isMessageError: Boolean = false,
-    var messageText: String = ""
+    var message: String = ""
 )

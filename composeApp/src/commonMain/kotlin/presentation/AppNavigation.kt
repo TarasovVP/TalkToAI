@@ -23,7 +23,7 @@ import presentation.screens.settings.settings_theme.SettingsThemeContent
 fun AppNavigation(
     navController: NavHostController,
     screenState: ScreenState,
-    onScreenStateUpdate: (ScreenState?) -> Unit
+    onScreenStateUpdate: (ScreenState) -> Unit
 ) {
     NavHost(navController = navController, startDestination = screenState.startDestination) {
         composable(NavigationScreen.ONBOARDING_SCREEN) {
@@ -39,19 +39,19 @@ fun AppNavigation(
             ChatContent(-1L, mutableStateOf(false), screenState, onScreenStateUpdate)
         }
         composable(NavigationScreen.SETTINGS_CHAT_SCREEN) {
-            SettingsChatContent(screenState, onScreenStateUpdate)
+            SettingsChatContent()
         }
         composable(NavigationScreen.SETTINGS_ACCOUNT_SCREEN) {
             SettingsAccountContent(screenState, onScreenStateUpdate)
         }
         composable(NavigationScreen.SETTINGS_LANGUAGE_SCREEN) {
-            SettingsLanguageContent(screenState, onScreenStateUpdate)
+            SettingsLanguageContent()
         }
         composable(NavigationScreen.SETTINGS_THEME_SCREEN) {
-            SettingsThemeContent(screenState, onScreenStateUpdate)
+            SettingsThemeContent()
         }
         composable(NavigationScreen.SETTINGS_FEEDBACK_SCREEN) {
-            SettingsFeedbackContent(screenState, onScreenStateUpdate)
+            SettingsFeedbackContent()
         }
         composable(NavigationScreen.SETTINGS_PRIVACY_POLICY_SCREEN) {
             SettingsPrivacyPolicyContent(screenState, onScreenStateUpdate)

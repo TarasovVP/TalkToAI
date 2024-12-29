@@ -26,19 +26,17 @@ import com.vnteam.talktoai.ic_flag_en
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral500
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsLanguageViewModel
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.updateScreenState
 
 @Composable
-fun SettingsLanguageContent(
-    screenState: ScreenState,
-    onScreenStateUpdate: (ScreenState?) -> Unit
-) {
+fun SettingsLanguageContent() {
 
     val viewModel: SettingsLanguageViewModel = koinViewModel()
+    updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
     val appLanguageState = remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {

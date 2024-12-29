@@ -39,7 +39,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun LoginContent(
     screenState: ScreenState,
-    onScreenStateUpdate: (ScreenState?) -> Unit
+    onScreenStateUpdate: (ScreenState) -> Unit
 ) {
     val viewModel = koinViewModel<LoginViewModel>()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }

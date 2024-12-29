@@ -1,6 +1,7 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.domain.usecase.SettingsChatUseCase
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class SettingsChatViewModel(
@@ -9,11 +10,11 @@ class SettingsChatViewModel(
 
     val chatSettingsLiveData = MutableStateFlow(false)
 
-    fun getChatSettings() {
+    fun testProgressVisibilityChange() {
         launch {
-            settingsChatUseCase.getChatSettings().collect { blockerTurnOn ->
-                chatSettingsLiveData.value = blockerTurnOn ?: true
-            }
+            showProgress()
+            delay(3000)
+            hideProgress()
         }
     }
 }
