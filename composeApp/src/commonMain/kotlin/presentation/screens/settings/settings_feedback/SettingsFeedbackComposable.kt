@@ -19,8 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.domain.models.Feedback
-import com.vnteam.talktoai.domain.models.InfoMessage
-import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
@@ -30,7 +28,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SettingsFeedbackContent(
-    screenState: ScreenState
+    screenState: ScreenState,
+    onScreenStateUpdate: (ScreenState?) -> Unit
 ) {
 
     val viewModel: SettingsFeedbackViewModel = koinViewModel()
@@ -40,7 +39,7 @@ fun SettingsFeedbackContent(
     val feedbackSendSuccess = LocalStringResources.current.SETTINGS_FEEDBACK_SEND_SUCCESS
     LaunchedEffect(successFeedbackState.value) {
         if (successFeedbackState.value) {
-            screenState.infoMessageState.value = InfoMessage(message = feedbackSendSuccess)
+            //screenState.infoMessageState.value = InfoMessage(message = feedbackSendSuccess)
         }
     }
     Column(
@@ -84,5 +83,4 @@ fun SettingsFeedbackContent(
             inputValue.value = TextFieldValue(String.EMPTY)
         }
     }
-    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
 }

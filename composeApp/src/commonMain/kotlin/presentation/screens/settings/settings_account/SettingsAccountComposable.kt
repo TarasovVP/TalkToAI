@@ -38,11 +38,9 @@ import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.DataEditDialog
 import com.vnteam.talktoai.presentation.ui.components.EmptyState
-import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.components.LinkButton
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
-import com.vnteam.talktoai.presentation.ui.components.ProgressVisibilityHandler
 import com.vnteam.talktoai.presentation.ui.components.SecondaryButton
 import com.vnteam.talktoai.presentation.ui.components.ShapeableImage
 import com.vnteam.talktoai.presentation.ui.components.SubmitButtons
@@ -54,7 +52,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SettingsAccountContent(
-    screenState: ScreenState
+    screenState: ScreenState,
+    onScreenStateUpdate: (ScreenState?) -> Unit
 ) {
 
     val viewModel: SettingsAccountViewModel = koinViewModel()
@@ -80,7 +79,7 @@ fun SettingsAccountContent(
     val successChangePasswordState = viewModel.successChangePasswordLiveData.collectAsState()
     LaunchedEffect(successChangePasswordState.value) {
         if (successChangePasswordState.value) {
-            screenState.infoMessageState.value = successChangePasswordMessage
+            //screenState.infoMessageState.value = successChangePasswordMessage
         }
     }
 
@@ -89,7 +88,7 @@ fun SettingsAccountContent(
         if (successState.value) {
             viewModel.clearDataByKeys(listOf(REVIEW_VOTE))
             viewModel.clearDataBase()
-            screenState.currentScreenRoute = NavigationScreen.LoginScreen.route
+            onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.LoginScreen.route))
         }
     }
 
@@ -142,7 +141,7 @@ fun SettingsAccountContent(
                 text = LocalStringResources.current.AUTHORIZATION_SIGNING_UP,
                 modifier = Modifier
             ) {
-                screenState.currentScreenRoute = NavigationScreen.SettingsSignUpScreen.route
+                onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.SettingsSignUpScreen.route))
             }
             EmptyState(
                 text = LocalStringResources.current.EMPTY_STATE_ACCOUNT,
@@ -190,12 +189,6 @@ fun SettingsAccountContent(
         viewModel.reAuthenticate(authCredential)*/
         showDeleteEmailAccountDialog.value = false
     }
-
-    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(
-        mutableStateOf(screenState.isProgressVisible),
-        viewModel.progressVisibilityLiveData
-    )
 }
 
 @Composable

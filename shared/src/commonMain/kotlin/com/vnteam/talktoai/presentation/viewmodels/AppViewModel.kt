@@ -6,6 +6,7 @@ import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.data.APP_LANG_EN
 import com.vnteam.talktoai.domain.usecase.AppUseCase
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
+import com.vnteam.talktoai.utils.AnimationUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -13,7 +14,8 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class AppViewModel(
-    private val appUseCase: AppUseCase
+    private val appUseCase: AppUseCase,
+    val animationUtils: AnimationUtils
 ) : BaseViewModel() {
 
     private val _screenState = MutableStateFlow<ScreenState?>(null)
@@ -33,6 +35,7 @@ class AppViewModel(
         getLanguage()
         getIsLoggedInUser()
         getOnBoardingSeen()
+        getAnimationResource()
     }
 
     private fun combineFlows() {
@@ -43,12 +46,12 @@ class AppViewModel(
                 _loggedInUser,
                 _onBoardingSeen
             ) { isDarkTheme, language, loggedInUser, onBoardingSeen ->
-                ScreenState(isDarkTheme = isDarkTheme, language = language, loggedInUser = loggedInUser, isOnboardingSeen = onBoardingSeen)
+                ScreenState(isDarkTheme = isDarkTheme, language = language, isLoggedInUser = loggedInUser, isOnboardingSeen = onBoardingSeen)
             }.collect { newState ->
                 _screenState.value = _screenState.value?.copy(
                     isDarkTheme = newState.isDarkTheme,
                     language = newState.language,
-                    loggedInUser = newState.loggedInUser,
+                    isLoggedInUser = newState.isLoggedInUser,
                     isOnboardingSeen = newState.isOnboardingSeen
                 ) ?: newState
             }
@@ -63,7 +66,7 @@ class AppViewModel(
         }
     }
 
-    fun getIsLoggedInUser() {
+    private fun getIsLoggedInUser() {
         launch {
             appUseCase.getIsLoggedInUser().collect { isLoggedInUser ->
                 _loggedInUser.value = isLoggedInUser.isTrue()
@@ -71,7 +74,7 @@ class AppViewModel(
         }
     }
 
-    fun getOnBoardingSeen() {
+    private fun getOnBoardingSeen() {
         launch {
             appUseCase.getIsBoardingSeen().collect { isOnBoardingSeen ->
                 _onBoardingSeen.value = isOnBoardingSeen.isTrue()
@@ -79,7 +82,7 @@ class AppViewModel(
         }
     }
 
-    fun getIsDarkTheme() {
+    private fun getIsDarkTheme() {
         viewModelScope.launch {
             appUseCase.getIsDarkTheme().collect {
                 _isDarkTheme.value = it
@@ -95,7 +98,7 @@ class AppViewModel(
         }
     }
 
-    fun getLanguage() {
+    private fun getLanguage() {
         viewModelScope.launch {
             appUseCase.getLanguage().collect {
                 _language.value = it ?: APP_LANG_EN

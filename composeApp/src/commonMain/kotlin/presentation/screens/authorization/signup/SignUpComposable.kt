@@ -26,14 +26,12 @@ import com.vnteam.talktoai.Constants.DESTINATION_CHAT_SCREEN
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
-import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.components.GoogleButton
 import com.vnteam.talktoai.presentation.ui.components.LinkButton
 import com.vnteam.talktoai.presentation.ui.components.OrDivider
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
-import com.vnteam.talktoai.presentation.ui.components.ProgressVisibilityHandler
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SignUpViewModel
@@ -41,7 +39,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SignUpContent(
-    screenState: ScreenState
+    screenState: ScreenState,
+    onScreenStateUpdate: (ScreenState?) -> Unit
 ) {
     val viewModel = koinViewModel<SignUpViewModel>()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
@@ -69,7 +68,7 @@ fun SignUpContent(
             viewModel.insertRemoteUser(RemoteUser())
         }
         signUpUiState.createCurrentUser?.let {
-            screenState.currentScreenRoute = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"
+            onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"))
         }
     }
 
@@ -124,7 +123,7 @@ fun SignUpContent(
                 text = LocalStringResources.current.AUTHORIZATION_ENTRANCE,
                 modifier = Modifier.wrapContentSize()
             ) {
-                screenState.currentScreenRoute = NavigationScreen.LoginScreen.route
+                onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.LoginScreen.route))
             }
         }
         PrimaryButton(
@@ -142,11 +141,6 @@ fun SignUpContent(
             showAccountExistDialog.value = false
         }) {
         showAccountExistDialog.value = false
-        screenState.currentScreenRoute = NavigationScreen.LoginScreen.route
+        onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.LoginScreen.route))
     }
-    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(
-        mutableStateOf(screenState.isProgressVisible),
-        viewModel.progressVisibilityLiveData
-    )
 }

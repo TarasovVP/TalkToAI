@@ -28,13 +28,11 @@ import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.Constants.DESTINATION_CHAT_SCREEN
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
-import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.components.GoogleButton
 import com.vnteam.talktoai.presentation.ui.components.OrDivider
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
-import com.vnteam.talktoai.presentation.ui.components.ProgressVisibilityHandler
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Primary300
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
@@ -43,9 +41,9 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SettingsSignUpContent(
-    screenState: ScreenState
+    screenState: ScreenState,
+    onScreenStateUpdate: (ScreenState?) -> Unit
 ) {
-
     val viewModel: SettingsSignUpViewModel = koinViewModel()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
@@ -100,7 +98,7 @@ fun SettingsSignUpContent(
     val successRemoteUserState = viewModel.successRemoteUserLiveData.collectAsState()
     LaunchedEffect(successRemoteUserState.value) {
         if (successRemoteUserState.value) {
-            screenState.currentScreenRoute = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"
+            onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"))
         }
     }
 
@@ -163,11 +161,6 @@ fun SettingsSignUpContent(
         )
         showAccountExistDialog.value = false
     }
-    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(
-        mutableStateOf(screenState.isProgressVisible),
-        viewModel.progressVisibilityLiveData
-    )
 }
 
 @Composable

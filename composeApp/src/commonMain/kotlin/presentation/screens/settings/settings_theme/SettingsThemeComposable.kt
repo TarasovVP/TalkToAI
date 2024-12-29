@@ -18,7 +18,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral500
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
@@ -27,7 +26,7 @@ import com.vnteam.talktoai.presentation.viewmodels.SettingsThemeViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SettingsThemeContent(screenState: ScreenState) {
+fun SettingsThemeContent(screenState: ScreenState, onScreenStateUpdate: (ScreenState?) -> Unit) {
 
     val viewModel: SettingsThemeViewModel = koinViewModel()
 
@@ -55,7 +54,6 @@ fun SettingsThemeContent(screenState: ScreenState) {
             viewModel.setIsDarkTheme(true)
         }
     }
-    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
 }
 
 @Composable

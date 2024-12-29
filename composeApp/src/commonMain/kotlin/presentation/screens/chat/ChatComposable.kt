@@ -51,7 +51,6 @@ import com.vnteam.talktoai.data.network.request.ApiRequest
 import com.vnteam.talktoai.data.network.request.MessageApi
 import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.models.Chat
-import com.vnteam.talktoai.domain.models.InfoMessage
 import com.vnteam.talktoai.domain.sealed_classes.MessageAction
 import com.vnteam.talktoai.ic_chat_add
 import com.vnteam.talktoai.ic_checked_check_box
@@ -62,8 +61,6 @@ import com.vnteam.talktoai.ic_share
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.CreateChatDialog
 import com.vnteam.talktoai.presentation.ui.components.EmptyState
-import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
-import com.vnteam.talktoai.presentation.ui.components.ProgressVisibilityHandler
 import com.vnteam.talktoai.presentation.ui.components.TextFieldWithButton
 import com.vnteam.talktoai.presentation.ui.components.TextIconButton
 import com.vnteam.talktoai.presentation.ui.components.TruncatableText
@@ -93,7 +90,8 @@ import textToAction
 fun ChatContent(
     chatId: Long,
     isMessageActionModeState: MutableState<Boolean?> = mutableStateOf(false),
-    screenState: ScreenState?
+    screenState: ScreenState,
+    onScreenStateChange: (ScreenState?) -> Unit
 ) {
     val viewModel = koinViewModel<ChatViewModel>()
     val currentChatState = viewModel.currentChatLiveData.collectAsState()
@@ -107,8 +105,8 @@ fun ChatContent(
         viewModel.getAnimationResource()
     }
 
-    LaunchedEffect(screenState?.currentScreenRoute) {
-        println("ChatContent: LaunchedEffect(screenState.currentScreenState.value) ${screenState?.currentScreenRoute}")
+    LaunchedEffect(screenState.currentScreenRoute) {
+        println("ChatContent: LaunchedEffect(screenState.currentScreenState.value) ${screenState.currentScreenRoute}")
         viewModel.getCurrentChat(chatId)
     }
 
@@ -141,7 +139,7 @@ fun ChatContent(
                     isMessageActionModeState,
                     showMessageActionDialog
                 )
-                screenState?.infoMessageState?.value = InfoMessage(messageCopy)
+                //screenState.appMessageState?.value = InfoMessage(messageCopy)
             }
 
             MessageAction.Share().value -> {
@@ -253,7 +251,7 @@ fun ChatContent(
                     isMessageActionModeState,
                     showMessageActionDialog
                 )
-                screenState?.infoMessageState?.value = InfoMessage(messageDelete)
+                //screenState.value?.infoMessageState?.value = InfoMessage(messageDelete)
             }
 
             MessageAction.Transfer().value -> {
@@ -264,7 +262,7 @@ fun ChatContent(
                     isMessageActionModeState,
                     showMessageActionDialog
                 )
-                screenState?.infoMessageState?.value = InfoMessage(messageTransfer)
+                //screenState.value?.infoMessageState?.value = InfoMessage(messageTransfer)
             }
 
             else -> {
@@ -278,10 +276,6 @@ fun ChatContent(
         }
     }
 
-    ExceptionMessageHandler(screenState?.infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(
-        mutableStateOf(screenState?.isProgressVisible.isTrue()), viewModel.progressVisibilityLiveData
-    )
     CreateChatDialog(
         currentChatState.value?.name.orEmpty(),
         showCreateChatDialogue

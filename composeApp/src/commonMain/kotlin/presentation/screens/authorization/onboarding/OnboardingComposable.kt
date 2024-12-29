@@ -35,8 +35,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun OnboardingContent(screenState: ScreenState) {
-
+fun OnboardingContent(screenState: ScreenState, onScreenStateUpdate: (ScreenState?) -> Unit) {
     val viewModel: OnBoardingViewModel = koinViewModel()
     val pageState = remember {
         mutableIntStateOf(0)
@@ -44,7 +43,7 @@ fun OnboardingContent(screenState: ScreenState) {
     val onBoardingSeenState = viewModel.onBoardingSeenLiveData.collectAsState()
     LaunchedEffect(onBoardingSeenState.value) {
         if (onBoardingSeenState.value) {
-            screenState.currentScreenRoute = NavigationScreen.LoginScreen.route
+            onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.LoginScreen.route))
             viewModel.onBoardingSeenLiveData.value = false
         }
     }

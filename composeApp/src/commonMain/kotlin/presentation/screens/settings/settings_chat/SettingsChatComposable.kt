@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
@@ -16,6 +15,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun SettingsChatContent(
     screenState: ScreenState,
+    onScreenStateUpdate: (ScreenState?) -> Unit,
 ) {
 
     val viewModel: SettingsChatViewModel = koinViewModel()
@@ -30,5 +30,4 @@ fun SettingsChatContent(
             modifier = Modifier,
             onClick = {})
     }
-    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
 }

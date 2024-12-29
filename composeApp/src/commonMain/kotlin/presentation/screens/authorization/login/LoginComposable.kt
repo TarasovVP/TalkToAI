@@ -21,20 +21,15 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.CommonExtensions.isTrue
-import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
-import com.vnteam.talktoai.Constants.DESTINATION_CHAT_SCREEN
-import com.vnteam.talktoai.domain.models.InfoMessage
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.DataEditDialog
-import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.components.GoogleButton
 import com.vnteam.talktoai.presentation.ui.components.LinkButton
 import com.vnteam.talktoai.presentation.ui.components.OrDivider
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
-import com.vnteam.talktoai.presentation.ui.components.ProgressVisibilityHandler
 import com.vnteam.talktoai.presentation.ui.components.SecondaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
@@ -43,7 +38,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoginContent(
-    screenState: ScreenState
+    screenState: ScreenState,
+    onScreenStateUpdate: (ScreenState?) -> Unit
 ) {
     val viewModel = koinViewModel<LoginViewModel>()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
@@ -79,14 +75,13 @@ fun LoginContent(
     val successPasswordResetState = viewModel.successPasswordResetLiveData.collectAsState()
     LaunchedEffect(successPasswordResetState.value) {
         if (successPasswordResetState.value.isTrue()) {
-            screenState.infoMessageState.value = InfoMessage(resetPasswordText)
+            //screenState.infoMessageState.value = InfoMessage(resetPasswordText)
         }
     }
     val successSignInState = viewModel.successSignInLiveData.collectAsState()
     LaunchedEffect(successSignInState.value) {
-        println("AppTAG LoginComposable successSignInState: ${successSignInState.value}")
         if (successSignInState.value.isTrue()) {
-            screenState.currentScreenRoute = "${DESTINATION_CHAT_SCREEN}/$DEFAULT_CHAT_ID"
+            //screenState.currentScreenRoute = "${DESTINATION_CHAT_SCREEN}/$DEFAULT_CHAT_ID"
         }
     }
 
@@ -140,7 +135,7 @@ fun LoginContent(
                     .wrapContentSize()
                     .padding(start = 16.dp)
             ) {
-                screenState.currentScreenRoute = NavigationScreen.SignUpScreen.route
+                onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.SignUpScreen.route))
             }
             Spacer(modifier = Modifier.weight(0.5f))
             LinkButton(
@@ -189,7 +184,7 @@ fun LoginContent(
             showAccountExistDialog.value = false
         }) {
         showAccountExistDialog.value = false
-        screenState.currentScreenRoute = NavigationScreen.SignUpScreen.route
+        onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.SignUpScreen.route))
     }
 
     ConfirmationDialog(
@@ -201,9 +196,4 @@ fun LoginContent(
         viewModel.signInAnonymously()
         showUnauthorizedEnterDialog.value = false
     }
-    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
-    ProgressVisibilityHandler(
-        mutableStateOf(screenState.isProgressVisible),
-        viewModel.progressVisibilityLiveData
-    )
 }

@@ -103,7 +103,6 @@ class LoginViewModel(
         println("NetworkTAG networkState.isNetworkAvailable() = ${networkState.isNetworkAvailable()}")
         if (networkState.isNetworkAvailable()) {
             showProgress()
-            println("AppTAG LoginViewModel signInAnonymously: successSignInLiveData.value ${successSignInLiveData.value}")
             // TODO remove this and uncomment below
             successSignInLiveData.value = true
             launch {

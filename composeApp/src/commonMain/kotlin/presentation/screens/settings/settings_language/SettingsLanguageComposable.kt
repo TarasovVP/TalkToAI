@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.ic_flag_en
-import com.vnteam.talktoai.presentation.ui.components.ExceptionMessageHandler
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral500
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
@@ -35,7 +34,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SettingsLanguageContent(
-    screenState: ScreenState
+    screenState: ScreenState,
+    onScreenStateUpdate: (ScreenState?) -> Unit
 ) {
 
     val viewModel: SettingsLanguageViewModel = koinViewModel()
@@ -70,7 +70,6 @@ fun SettingsLanguageContent(
             viewModel.setAppLanguage(Constants.APP_LANG_UK)
         }
     }
-    ExceptionMessageHandler(screenState.infoMessageState, viewModel.exceptionLiveData)
 }
 
 @Composable

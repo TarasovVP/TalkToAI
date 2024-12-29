@@ -25,6 +25,7 @@ import com.vnteam.talktoai.CommonExtensions.isNull
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.Res
+import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.empty_state
 import com.vnteam.talktoai.ic_chat
@@ -51,6 +52,23 @@ fun ChatListComposable(
     onChatClick: (Long) -> Unit
 ) {
     val viewModel = koinViewModel<ChatListViewModel>()
+    val authState = viewModel.authState.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.addAuthStateListener()
+    }
+    LaunchedEffect(authState.value) {
+        authState.value?.let { authStateValue ->
+            when (authStateValue) {
+                AuthState.UNAUTHORISED -> viewModel.removeRemoteUserListeners()
+                AuthState.AUTHORISED_ANONYMOUSLY -> viewModel.getChats()
+                else -> {
+                    viewModel.getChats()
+                    viewModel.addRemoteChatListener()
+                    viewModel.addRemoteMessageListener()
+                }
+            }
+        }
+    }
     val chatsState = viewModel.chatsList.collectAsState()
     val showCreateChatDialog = remember { mutableStateOf(false) }
     val showDeleteChatDialog = remember { mutableStateOf(false) }

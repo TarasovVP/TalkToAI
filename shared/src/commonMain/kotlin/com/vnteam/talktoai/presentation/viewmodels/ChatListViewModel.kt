@@ -4,7 +4,6 @@ import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.usecase.MainUseCase
-import com.vnteam.talktoai.utils.AnimationUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,8 +11,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class ChatListViewModel(
-    private val mainUseCase: MainUseCase,
-    val animationUtils: AnimationUtils
+    private val mainUseCase: MainUseCase
 ) : BaseViewModel() {
 
     private val _chatsList = MutableStateFlow<List<Chat>?>(null)
