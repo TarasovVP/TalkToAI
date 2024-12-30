@@ -9,7 +9,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
-import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.viewmodels.SettingsChatViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.updateScreenState
@@ -19,7 +18,7 @@ fun SettingsChatContent() {
 
     val viewModel: SettingsChatViewModel = koinViewModel()
 
-    updateScreenState(viewModel.progressVisibilityState.collectAsState().value, AppMessage(isMessageError = true, message = viewModel.exceptionMessage.collectAsState().value))
+    updateScreenState(viewModel.progressVisibilityState.collectAsState().value, viewModel.exceptionMessage.collectAsState().value)
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -30,7 +29,7 @@ fun SettingsChatContent() {
             text = LocalStringResources.current.BUTTON_OK,
             modifier = Modifier,
             onClick = {
-                viewModel.testProgressVisibilityChange()
+                viewModel.testExceptionMessage()
             })
     }
 }

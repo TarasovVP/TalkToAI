@@ -17,4 +17,8 @@ class SettingsChatViewModel(
             hideProgress()
         }
     }
+
+    fun testExceptionMessage() {
+        showMessage("Test exception message")
+    }
 }

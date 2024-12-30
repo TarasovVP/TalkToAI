@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.CommonExtensions.isNotTrue
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Constants
@@ -133,7 +134,7 @@ fun AppSnackBar(screenState: ScreenState?, scope: CoroutineScope) {
         scope.launch {
             snackBarHostState.showSnackbar(
                 message = infoMessage.message,
-                //actionLabel = infoMessage.isMessageError,
+                actionLabel = if (infoMessage.isMessageError) Constants.ERROR_MESSAGE else String.EMPTY,
                 duration = SnackbarDuration.Short
             )
         }

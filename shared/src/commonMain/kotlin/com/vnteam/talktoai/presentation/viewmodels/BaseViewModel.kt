@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -27,6 +28,14 @@ open class BaseViewModel : ViewModel() {
 
     fun hideProgress() {
         _progressVisibilityState.value = false
+    }
+
+    fun showMessage(message: String) {
+        launch {
+            _exceptionMessage.value = message
+            delay(4000)
+            _exceptionMessage.value = String.EMPTY
+        }
     }
 
     fun checkNetworkAvailable(networkAvailableResult: () -> Unit) {

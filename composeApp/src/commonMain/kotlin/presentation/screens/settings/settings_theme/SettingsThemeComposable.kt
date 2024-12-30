@@ -1,6 +1,5 @@
 package presentation.screens.settings.settings_theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +17,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.vnteam.talktoai.CommonExtensions.isNotTrue
+import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral500
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
@@ -34,7 +35,7 @@ fun SettingsThemeContent() {
     LaunchedEffect(Unit) {
         viewModel.getIsDarkTheme()
     }
-    val appTheme = viewModel.isDarkTheme.collectAsState()
+    val isDarkTheme = viewModel.isDarkTheme.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -44,13 +45,13 @@ fun SettingsThemeContent() {
     ) {
         SettingsThemeItem(
             LocalStringResources.current.SETTINGS_THEME_DAY,
-            isSystemInDarkTheme() == appTheme.value
+            isDarkTheme.value.isNotTrue()
         ) {
             viewModel.setIsDarkTheme(false)
         }
         SettingsThemeItem(
             LocalStringResources.current.SETTINGS_THEME_NIGHT,
-            isSystemInDarkTheme() != appTheme.value
+            isDarkTheme.value.isTrue()
         ) {
             viewModel.setIsDarkTheme(true)
         }

@@ -1,7 +1,6 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.domain.usecase.SettingsThemeUseCase
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,8 +14,6 @@ class SettingsThemeViewModel(
 
     fun getIsDarkTheme() {
         launch {
-            _progressVisibilityState.value = true
-            delay(2000)
             settingsThemeUseCase.getAppTheme().collect { appTheme ->
                 _isDarkTheme.value = appTheme
             }

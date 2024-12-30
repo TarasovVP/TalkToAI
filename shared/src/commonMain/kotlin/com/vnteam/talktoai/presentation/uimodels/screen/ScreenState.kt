@@ -7,7 +7,7 @@ import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.NavigationScreen.Companion.isSettingsScreen
 
 data class ScreenState(
-    var appMessage: AppMessage? = AppMessage(),
+    var appMessage: AppMessage? = null,
     var isDarkTheme: Boolean? = false,
     var language: String? = null,
     var isLoggedInUser: Boolean? = false,
