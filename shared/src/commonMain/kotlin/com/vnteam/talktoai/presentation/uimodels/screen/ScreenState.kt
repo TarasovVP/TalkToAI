@@ -2,8 +2,10 @@ package com.vnteam.talktoai.presentation.uimodels.screen
 
 import androidx.compose.runtime.mutableStateOf
 import com.vnteam.talktoai.CommonExtensions.isNotNull
+import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
+import com.vnteam.talktoai.presentation.ui.NavigationScreen.Companion.CHAT_DESTINATION
 import com.vnteam.talktoai.presentation.ui.NavigationScreen.Companion.isSettingsScreen
 
 data class ScreenState(
@@ -23,7 +25,7 @@ data class ScreenState(
         get() = isDarkTheme.isNotNull() && language.isNotNull() && isLoggedInUser.isNotNull() && isOnboardingSeen.isNotNull()
 
     val isChatScreen: Boolean
-        get() = currentScreenRoute == NavigationScreen.ChatScreen.route
+        get() = currentScreenRoute?.contains(CHAT_DESTINATION).isTrue()
 
     val isSettingsScreen: Boolean
         get() = isSettingsScreen(currentScreenRoute)

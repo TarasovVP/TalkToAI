@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.CommonExtensions.isNull
 import com.vnteam.talktoai.CommonExtensions.isTrue
-import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.models.Chat
@@ -49,7 +48,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ChatListComposable(
-    onChatClick: (Long) -> Unit
+    onChatClick: (Chat?) -> Unit
 ) {
     val viewModel = koinViewModel<ChatListViewModel>()
     val authState = viewModel.authState.collectAsState()
@@ -57,6 +56,7 @@ fun ChatListComposable(
         viewModel.addAuthStateListener()
     }
     LaunchedEffect(authState.value) {
+        println("appTAG ChatListComposable authState: ${authState.value}")
         authState.value?.let { authStateValue ->
             when (authStateValue) {
                 AuthState.UNAUTHORISED -> viewModel.removeRemoteUserListeners()
@@ -122,7 +122,7 @@ fun ChatListComposable(
                             showDeleteChatDialog.value = true
                         }
                     },
-                    onItemClick = { if (isDragging.not()) onChatClick.invoke(chat.id) })
+                    onItemClick = { if (isDragging.not()) onChatClick.invoke(chat) })
             }
         }
         TextIconButton(
@@ -152,7 +152,7 @@ fun ChatListComposable(
                 name = it
             }?.let { viewModel.updateChat(it) }
         }
-        onChatClick.invoke(currentChatState.value?.id ?: DEFAULT_CHAT_ID)
+        onChatClick.invoke(currentChatState.value)
     }
 
     ConfirmationDialog(

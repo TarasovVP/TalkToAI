@@ -2,13 +2,13 @@ package presentation.screens.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,34 +31,33 @@ import presentation.screens.settings.settings_list.SettingsListComposable
 
 @Composable
 fun DrawerContent(screenState: ScreenState, onScreenStateUpdate: (ScreenState, Boolean) -> Unit) {
-    ModalDrawerSheet {
-        DrawerHeader(screenState.isSettingsScreen.isTrue()) { settingsDrawerModeState ->
-            onScreenStateUpdate(
-                screenState.copy(
-                    currentScreenRoute = if (settingsDrawerModeState) {
-                        NavigationScreen.SettingsChatScreen.route
-                    } else {
-                        NavigationScreen.ChatScreen.route
-                    }
-                ), false
-            )
-        }
-        if (screenState.isSettingsScreen.isTrue()) {
-            SettingsListComposable(screenState.currentScreenRoute) { route ->
-                onScreenStateUpdate(screenState.copy(currentScreenRoute = route), true)
-            }
-        } else {
-            ChatListComposable(
-                onChatClick = { chatId ->
-                    onScreenStateUpdate(
-                        screenState.copy(
-                            currentScreenRoute = "${NavigationScreen.ChatScreen.route}/$chatId"
-                        ),
-                        false
-                    )
+    DrawerHeader(screenState.isSettingsScreen.isTrue()) { settingsDrawerModeState ->
+        onScreenStateUpdate(
+            screenState.copy(
+                currentScreenRoute = if (settingsDrawerModeState) {
+                    NavigationScreen.SettingsChatScreen.route
+                } else {
+                    NavigationScreen.ChatScreen.route
                 }
-            )
+            ), false
+        )
+    }
+    if (screenState.isSettingsScreen.isTrue()) {
+        SettingsListComposable(screenState.currentScreenRoute) { route ->
+            onScreenStateUpdate(screenState.copy(currentScreenRoute = route), true)
         }
+    } else {
+        ChatListComposable(
+            onChatClick = { chat ->
+                onScreenStateUpdate(
+                    screenState.copy(
+                        currentChat = chat,
+                        currentScreenRoute = NavigationScreen.ChatScreen.route.replace("/{chatId}", "/${chat?.id}")
+                    ),
+                    false
+                )
+            }
+        )
     }
 }
 
@@ -84,11 +83,13 @@ fun DrawerHeader(isSettingsDrawerMode: Boolean, onDrawerModeClick: (Boolean) -> 
         IconButton(onClick = {
             onDrawerModeClick.invoke(isSettingsDrawerMode.not())
         }) {
-            Image(
-                painter = painterResource(if (isSettingsDrawerMode) Res.drawable.ic_chat else Res.drawable.ic_settings),
-                contentDescription = LocalStringResources.current.NAVIGATION_ICON,
-                modifier = Modifier.padding(end = 16.dp, top = 16.dp).size(24.dp)
-            )
+            Box(contentAlignment = Alignment.Center) {
+                Image(
+                    painter = painterResource(if (isSettingsDrawerMode) Res.drawable.ic_chat else Res.drawable.ic_settings),
+                    contentDescription = LocalStringResources.current.NAVIGATION_ICON,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
     }
 }

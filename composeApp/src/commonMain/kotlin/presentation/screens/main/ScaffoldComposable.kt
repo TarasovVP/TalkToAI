@@ -40,6 +40,7 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun AppTopBar(screenState: ScreenState?, onNavigationIconClick: () -> Unit) {
+    println("AppTopBarTAG: screenState: $screenState")
     when {
         screenState?.isLoggedInUser.isNotTrue() -> Unit
         screenState?.isMessageActionModeState?.value.isTrue() -> DeleteModeTopBar(

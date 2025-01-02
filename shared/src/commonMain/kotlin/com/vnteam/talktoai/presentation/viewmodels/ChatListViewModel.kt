@@ -40,6 +40,7 @@ class ChatListViewModel(
             _authState.value = authState
         }
         authStateListener?.let { mainUseCase.addAuthStateListener(it) }*/
+        _authState.value = AuthState.AUTHORISED_ANONYMOUSLY
     }
 
     fun isLoggedInUser(): Boolean {

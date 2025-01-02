@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
@@ -40,11 +41,13 @@ fun AppContent(appViewModel: AppViewModel) {
         drawerState = drawerState,
         gesturesEnabled = screenState.value.isLoggedInUser.isTrue(),
         drawerContent = {
-            DrawerContent(screenState.value) { newScreenState, isDrawerClose ->
-                appViewModel.updateScreenState(newScreenState)
-                if (isDrawerClose) {
-                    scope.launch {
-                        drawerState.close()
+            ModalDrawerSheet {
+                DrawerContent(screenState.value) { newScreenState, isDrawerClose ->
+                    appViewModel.updateScreenState(newScreenState)
+                    if (isDrawerClose) {
+                        scope.launch {
+                            drawerState.close()
+                        }
                     }
                 }
             }
@@ -77,9 +80,9 @@ fun AppContent(appViewModel: AppViewModel) {
                     println("AppTAG AppNavigation updatedScreenState: $updatedScreenState")
                     appViewModel.updateScreenState(updatedScreenState)
                 }
-                if (screenState.value?.isProgressVisible.isTrue()) {
+                if (screenState.value.isProgressVisible) {
                     val animationResourceState = appViewModel.animationResource.collectAsState()
-                    println("AppTAG AppNavigation screenState.value?.isProgressVisible.isTrue(): ${screenState.value?.isProgressVisible.isTrue()}")
+                    println("AppTAG AppNavigation screenState.value?.isProgressVisible.isTrue(): ${screenState.value.isProgressVisible.isTrue()}")
                     appViewModel.animationUtils.MainProgressAnimation(
                         animationResourceState.value.orEmpty()
                     )

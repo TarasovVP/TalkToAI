@@ -3,8 +3,10 @@ package presentation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import presentation.screens.authorization.login.LoginContent
@@ -35,8 +37,14 @@ fun AppNavigation(
         composable(NavigationScreen.SIGN_UP_SCREEN) {
             SignUpContent(screenState, onScreenStateUpdate)
         }
-        composable(NavigationScreen.CHAT_SCREEN) {
-            ChatContent(-1L, mutableStateOf(false), screenState, onScreenStateUpdate)
+        composable(route = NavigationScreen.CHAT_SCREEN,
+            arguments = listOf(navArgument(CHAT_ID) {
+                type = NavType.LongType
+            }
+            )
+        ) { backStackEntry ->
+            val chatId = backStackEntry.arguments?.getLong(CHAT_ID) ?: 0L
+            ChatContent(chatId, mutableStateOf(false), screenState, onScreenStateUpdate)
         }
         composable(NavigationScreen.SETTINGS_CHAT_SCREEN) {
             SettingsChatContent()
@@ -61,3 +69,4 @@ fun AppNavigation(
         }
     }
 }
+const val CHAT_ID = "chatId"
