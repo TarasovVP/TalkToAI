@@ -38,12 +38,13 @@ fun AppNavigation(
             SignUpContent(screenState, onScreenStateUpdate)
         }
         composable(route = NavigationScreen.CHAT_SCREEN,
-            arguments = listOf(navArgument(CHAT_ID) {
-                type = NavType.LongType
-            }
+            arguments = listOf(
+                navArgument(NavigationScreen.CHAT_ID) {
+                    type = NavType.LongType
+                }
             )
         ) { backStackEntry ->
-            val chatId = backStackEntry.arguments?.getLong(CHAT_ID) ?: 0L
+            val chatId = backStackEntry.arguments?.getLong(NavigationScreen.CHAT_ID) ?: -1L
             ChatContent(chatId, mutableStateOf(false), screenState, onScreenStateUpdate)
         }
         composable(NavigationScreen.SETTINGS_CHAT_SCREEN) {
@@ -69,4 +70,3 @@ fun AppNavigation(
         }
     }
 }
-const val CHAT_ID = "chatId"

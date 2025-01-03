@@ -122,7 +122,10 @@ fun ChatListComposable(
                             showDeleteChatDialog.value = true
                         }
                     },
-                    onItemClick = { if (isDragging.not()) onChatClick.invoke(chat) })
+                    onItemClick = { if (isDragging.not()) {
+                        currentChatState.value = chat
+                        onChatClick.invoke(chat)
+                    } })
             }
         }
         TextIconButton(
@@ -137,6 +140,7 @@ fun ChatListComposable(
         currentChatState.value?.name.orEmpty(),
         showCreateChatDialog
     ) {
+        println("appTAG ChatListComposable CreateChatDialog: currentChatState.value?.name ${currentChatState.value?.name.orEmpty()}")
         if (currentChatState.value?.name.isNullOrEmpty()) {
             viewModel.insertChat(
                 Chat(
