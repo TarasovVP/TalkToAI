@@ -15,13 +15,13 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.vnteam.talktoai.CommonExtensions.isNull
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.domain.enums.AuthState
@@ -47,7 +47,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun ChatListComposable(
+fun ChatListScreen(
     onChatClick: (Chat?) -> Unit
 ) {
     val viewModel = koinViewModel<ChatListViewModel>()
@@ -78,17 +78,53 @@ fun ChatListComposable(
 
     LaunchedEffect(chatsState.value) {
         chatsState.value?.let { chats ->
-            when {
-                currentChatState.value.isNull() -> currentChatState.value = chats.firstOrNull()
-                chats.contains(currentChatState.value).not() -> {
-                    currentChatState.value = chats.firstOrNull()
-                    /*chatsState.value?.currentScreenState?.value =
-                        "$DESTINATION_CHAT_SCREEN/${currentChatState.value?.id ?: DEFAULT_CHAT_ID}"*/
-                }
-            }
+            currentChatState.value = chats.firstOrNull()
+            onChatClick.invoke(chats.firstOrNull())
         }
     }
 
+    ChatListContent(
+        viewModel = viewModel,
+        chatsState = mutableStateOf(chatsState.value),
+        currentChatState = currentChatState,
+        showCreateChatDialog = showCreateChatDialog,
+        showDeleteChatDialog = showDeleteChatDialog,
+        deleteChatState = deleteChatState,
+        onChatClick = onChatClick
+    )
+    CreateChatDialog(
+        currentChatState.value?.name.orEmpty(),
+        showCreateChatDialog
+    ) { chatName ->
+        viewModel.insertChat(
+            Chat(
+                id = Clock.System.now().dateToMilliseconds(),
+                name = chatName,
+                updated = Clock.System.now().dateToMilliseconds(),
+                listOrder = (chatsState.value.orEmpty().size + 1).toLong()
+            )
+        )
+    }
+
+    ConfirmationDialog(
+        LocalStringResources.current.CHAT_DELETE_TITLE,
+        showDeleteChatDialog
+    ) {
+        deleteChatState.value?.let { viewModel.deleteChat(it) }
+        deleteChatState.value = null
+    }
+}
+
+@Composable
+fun ChatListContent(
+    viewModel: ChatListViewModel,
+    chatsState: MutableState<List<Chat>?>,
+    currentChatState: MutableState<Chat?>,
+    showCreateChatDialog: MutableState<Boolean>,
+    showDeleteChatDialog: MutableState<Boolean>,
+    deleteChatState: MutableState<Chat?>,
+    onChatClick: (Chat) -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize().background(Primary900), Arrangement.Top
     ) {
@@ -96,11 +132,11 @@ fun ChatListComposable(
             Image(
                 painter = painterResource(Res.drawable.empty_state),
                 contentDescription = LocalStringResources.current.CHAT_EMPTY_STATE,
-                modifier = Modifier.fillMaxWidth().weight(1f).padding(top = 16.dp)
+                modifier = Modifier.fillMaxWidth().weight(1f).padding(top = 8.dp)
             )
         } else {
             DragDropColumn(
-                modifier = Modifier.weight(1f).padding(horizontal = 16.dp, vertical = 24.dp),
+                modifier = Modifier.weight(1f).padding(vertical = 16.dp),
                 items = chatsState.value.orEmpty(),
                 onSwap = { firstIndex, secondIndex ->
                     viewModel.swapChats(firstIndex, secondIndex)
@@ -138,36 +174,6 @@ fun ChatListComposable(
             showCreateChatDialog.value = true
         }
     }
-    CreateChatDialog(
-        currentChatState.value?.name.orEmpty(),
-        showCreateChatDialog
-    ) {
-        println("appTAG ChatListComposable CreateChatDialog: currentChatState.value?.name ${currentChatState.value?.name.orEmpty()}")
-        if (currentChatState.value?.name.isNullOrEmpty()) {
-            viewModel.insertChat(
-                Chat(
-                    id = Clock.System.now().dateToMilliseconds(),
-                    name = it,
-                    updated = Clock.System.now().dateToMilliseconds(),
-                    listOrder = (chatsState.value.orEmpty().size + 1).toLong()
-                )
-            )
-            currentChatState.value = null
-        } else {
-            currentChatState.value?.apply {
-                name = it
-            }?.let { viewModel.updateChat(it) }
-        }
-        onChatClick.invoke(currentChatState.value)
-    }
-
-    ConfirmationDialog(
-        LocalStringResources.current.CHAT_DELETE_TITLE,
-        showDeleteChatDialog
-    ) {
-        deleteChatState.value?.let { viewModel.deleteChat(it) }
-        deleteChatState.value = null
-    }
 }
 
 @Composable
@@ -179,12 +185,12 @@ fun ChatItem(
     elevation: Dp? = null,
     isIconClick: Boolean? = false,
     onIconClick: () -> Unit = {},
-    onItemClick: () -> Unit,
+    onItemClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
+            .padding(top = 8.dp, start = 8.dp, end = 8.dp)
             .let { modifier ->
                 if (isCurrent.not()) {
                     modifier.clickable {
@@ -223,7 +229,8 @@ fun ChatItem(
                         } else {
                             it
                         }
-                    })
+                    }
+                )
             }
         }
     }

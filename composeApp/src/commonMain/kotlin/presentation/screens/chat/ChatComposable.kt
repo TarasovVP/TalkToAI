@@ -86,11 +86,9 @@ import org.koin.compose.viewmodel.koinViewModel
 import textToAction
 
 @Composable
-fun ChatContent(
-    chatId: Long,
-    isMessageActionModeState: MutableState<Boolean?> = mutableStateOf(false)
-) {
+fun ChatContent(chatId: Long) {
     val viewModel = koinViewModel<ChatViewModel>()
+    val isMessageActionModeState: MutableState<Boolean?> = mutableStateOf(false)
     val currentChatState = viewModel.currentChatLiveData.collectAsState()
     val messagesState = viewModel.messagesLiveData.collectAsState()
     val showCreateChatDialogue: MutableState<Boolean> = mutableStateOf(false)
@@ -232,12 +230,14 @@ fun ChatContent(
 
     val messageDelete = LocalStringResources.current.MESSAGE_ACTION_DELETE
     val messageTransfer = LocalStringResources.current.MESSAGE_ACTION_TRANSFER
-    ConfirmationDialog(title = when (messageActionState.value) {
-        MessageAction.Delete().value -> LocalStringResources.current.MESSAGE_DELETE_CONFIRMATION
-        MessageAction.Transfer().value -> LocalStringResources.current.MESSAGE_TRANSFER_CONFIRMATION
-        else -> String.EMPTY
-    },
-        showDialog = showMessageActionDialog) {
+    ConfirmationDialog(
+        title = when (messageActionState.value) {
+            MessageAction.Delete().value -> LocalStringResources.current.MESSAGE_DELETE_CONFIRMATION
+            MessageAction.Transfer().value -> LocalStringResources.current.MESSAGE_TRANSFER_CONFIRMATION
+            else -> String.EMPTY
+        },
+        showDialog = showMessageActionDialog
+    ) {
         when (messageActionState.value) {
             MessageAction.Delete().value -> {
                 viewModel.deleteMessages(messagesState.value.filter { it.isCheckedToDelete.value }

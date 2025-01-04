@@ -27,11 +27,11 @@ import com.vnteam.talktoai.presentation.ui.theme.Neutral50
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import org.jetbrains.compose.resources.painterResource
-import presentation.screens.chat_list.ChatListComposable
+import presentation.screens.chat_list.ChatListScreen
 import presentation.screens.settings.settings_list.SettingsListComposable
 
 @Composable
-fun DrawerContent(screenState: ScreenState, onScreenStateUpdate: (ScreenState, Boolean) -> Unit) {
+fun DrawerContent(screenState: ScreenState, onScreenStateUpdate: (ScreenState) -> Unit) {
     DrawerHeader(screenState.isSettingsScreen.isTrue()) { settingsDrawerModeState ->
         onScreenStateUpdate(
             screenState.copy(
@@ -42,22 +42,21 @@ fun DrawerContent(screenState: ScreenState, onScreenStateUpdate: (ScreenState, B
                         screenState.currentChat?.id ?: Constants.DEFAULT_CHAT_ID
                     }"
                 }
-            ), false
+            )
         )
     }
     if (screenState.isSettingsScreen.isTrue()) {
         SettingsListComposable(screenState.currentScreenRoute) { route ->
-            onScreenStateUpdate(screenState.copy(currentScreenRoute = route), true)
+            onScreenStateUpdate(screenState.copy(currentScreenRoute = route))
         }
     } else {
-        ChatListComposable(
+        ChatListScreen(
             onChatClick = { chat ->
                 onScreenStateUpdate(
                     screenState.copy(
                         currentChat = chat,
                         currentScreenRoute = NavigationScreen.ChatScreen.route.replace("/{chatId}", "/${chat?.id}")
-                    ),
-                    false
+                    )
                 )
             }
         )

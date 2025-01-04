@@ -42,12 +42,10 @@ fun AppContent(appViewModel: AppViewModel) {
         gesturesEnabled = screenState.value.isLoggedInUser.isTrue(),
         drawerContent = {
             ModalDrawerSheet {
-                DrawerContent(screenState.value) { newScreenState, isDrawerClose ->
+                DrawerContent(screenState.value) { newScreenState ->
                     appViewModel.updateScreenState(newScreenState)
-                    if (isDrawerClose) {
-                        scope.launch {
-                            drawerState.close()
-                        }
+                    scope.launch {
+                        drawerState.close()
                     }
                 }
             }
