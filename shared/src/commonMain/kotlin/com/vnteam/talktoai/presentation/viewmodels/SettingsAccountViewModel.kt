@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class SettingsAccountViewModel(
     private val settingsAccountUseCase: SettingsAccountUseCase,
-    private val networkState: NetworkState,
-    //val googleSignInClient: GoogleSignInClient
+    private val networkState: NetworkState
 ) : BaseViewModel() {
 
     val reAuthenticateLiveData = MutableStateFlow(false)
@@ -105,5 +104,9 @@ class SettingsAccountViewModel(
         launch {
             settingsAccountUseCase.clearDataInDB()
         }
+    }
+
+    fun googleSignIn() {
+        settingsAccountUseCase.googleSignIn()
     }
 }

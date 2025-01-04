@@ -38,4 +38,12 @@ class LoginUseCaseImpl(private val authRepository: AuthRepository) :
         authRepository.signInAnonymously { authResult ->
             result.invoke(authResult)
         }
+
+    override fun googleSignOut() {
+        authRepository.googleSignOut()
+    }
+
+    override fun googleSignIn() {
+        authRepository.googleSignIn()
+    }
 }

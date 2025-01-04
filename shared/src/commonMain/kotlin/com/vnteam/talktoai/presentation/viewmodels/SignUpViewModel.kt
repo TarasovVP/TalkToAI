@@ -12,8 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class SignUpViewModel(
     private val signUpUseCase: SignUpUseCase,
-    private val networkState: NetworkState,
-    //val googleSignInClient: GoogleSignInClient,
+    private val networkState: NetworkState
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUIState())
@@ -99,5 +98,13 @@ class SignUpViewModel(
 
     private fun updateUIState(newUIState: SignUpUIState) {
         _uiState.value = newUIState
+    }
+
+    fun googleSignOut() {
+        signUpUseCase.googleSignOut()
+    }
+
+    fun googleSignIn() {
+        signUpUseCase.googleSignIn()
     }
 }

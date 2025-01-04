@@ -11,8 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
     private val networkState: NetworkState,
-    //val googleSignInClient: GoogleSignInClient,
-    // TODO remove
     private val preferencesRepository: PreferencesRepository
 ) : BaseViewModel() {
 
@@ -115,8 +113,7 @@ class LoginViewModel(
                 when (authResult) {
                     is NetworkResult.Success -> successSignInLiveData.value = true
                     is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        exceptionLiveData.value =
-                            it
+                        _exceptionMessage.value = it
                     }
                 }
                 hideProgress()
@@ -124,5 +121,13 @@ class LoginViewModel(
         } else {
             _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
+    }
+
+    fun googleSignOut() {
+        loginUseCase.googleSignOut()
+    }
+
+    fun googleSignIn() {
+        loginUseCase.googleSignIn()
     }
 }

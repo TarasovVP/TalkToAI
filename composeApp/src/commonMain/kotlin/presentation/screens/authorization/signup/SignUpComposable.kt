@@ -51,7 +51,7 @@ fun SignUpContent(
 
     LaunchedEffect(signUpUiState) {
         signUpUiState.accountExist?.let {
-            //viewModel.googleSignInClient.signOut()
+            viewModel.googleSignOut()
             showAccountExistDialog.value = true
             signUpUiState.accountExist = null
         }
@@ -71,18 +71,6 @@ fun SignUpContent(
             onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"))
         }
     }
-
-    /*val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
-            } catch (e: ApiException) {
-                viewModel.googleSignInClient.signOut()
-                viewModel.exceptionLiveData.value = CommonStatusCodes.getStatusCodeString(e.statusCode)
-            }
-        }*/
 
     Column(
         modifier = Modifier
@@ -107,7 +95,7 @@ fun SignUpContent(
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
         ) {
-            //launcher.launch(viewModel.googleSignInClient.signInIntent)
+            viewModel.googleSignIn()
         }
         OrDivider(modifier = Modifier)
         PrimaryTextField(
@@ -136,11 +124,8 @@ fun SignUpContent(
     }
     ConfirmationDialog(
         LocalStringResources.current.AUTHORIZATION_ACCOUNT_EXIST,
-        showAccountExistDialog,
-        onDismiss = {
-            showAccountExistDialog.value = false
-        }) {
-        showAccountExistDialog.value = false
+        showAccountExistDialog
+    ) {
         onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.LoginScreen.route))
     }
 }

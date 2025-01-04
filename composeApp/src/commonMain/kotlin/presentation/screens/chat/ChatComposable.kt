@@ -240,8 +240,7 @@ fun ChatContent(
         MessageAction.Transfer().value -> LocalStringResources.current.MESSAGE_TRANSFER_CONFIRMATION
         else -> String.EMPTY
     },
-        showDialog = showMessageActionDialog,
-        onDismiss = { showMessageActionDialog.value = false }) {
+        showDialog = showMessageActionDialog) {
         when (messageActionState.value) {
             MessageAction.Delete().value -> {
                 viewModel.deleteMessages(messagesState.value.filter { it.isCheckedToDelete.value }

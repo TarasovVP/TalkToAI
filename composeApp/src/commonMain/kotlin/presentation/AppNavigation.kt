@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
-import presentation.screens.authorization.login.LoginContent
+import presentation.screens.authorization.login.LoginScreen
 import presentation.screens.authorization.onboarding.OnboardingScreen
 import presentation.screens.authorization.signup.SignUpContent
 import presentation.screens.chat.ChatContent
@@ -32,7 +32,7 @@ fun AppNavigation(
             OnboardingScreen()
         }
         composable(NavigationScreen.LOGIN_SCREEN) {
-            LoginContent(screenState, onScreenStateUpdate)
+            LoginScreen()
         }
         composable(NavigationScreen.SIGN_UP_SCREEN) {
             SignUpContent(screenState, onScreenStateUpdate)

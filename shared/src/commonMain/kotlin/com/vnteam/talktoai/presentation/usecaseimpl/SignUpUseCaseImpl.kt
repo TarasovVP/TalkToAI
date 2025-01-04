@@ -6,7 +6,6 @@ import com.vnteam.talktoai.domain.repositories.AuthRepository
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnteam.talktoai.domain.usecase.SignUpUseCase
 
-
 class SignUpUseCaseImpl(
     private val authRepository: AuthRepository,
     private val realDataBaseRepository: RealDataBaseRepository,
@@ -37,4 +36,12 @@ class SignUpUseCaseImpl(
         realDataBaseRepository.insertRemoteUser(remoteUser) { authResult ->
             result.invoke(authResult)
         }
+
+    override fun googleSignOut() {
+        authRepository.googleSignOut()
+    }
+
+    override fun googleSignIn() {
+        authRepository.googleSignIn()
+    }
 }

@@ -17,4 +17,8 @@ interface LoginUseCase {
     fun signInAuthWithGoogle(idToken: String, result: (NetworkResult<Unit>) -> Unit)
 
     fun signInAnonymously(result: (NetworkResult<Unit>) -> Unit)
+
+    fun googleSignOut()
+
+    fun googleSignIn()
 }

@@ -48,4 +48,8 @@ interface AuthRepository {
     fun deleteUser(result: (NetworkResult<Unit>) -> Unit)
 
     fun signOut(result: (NetworkResult<Unit>) -> Unit)
+
+    fun googleSignOut()
+
+    fun googleSignIn()
 }

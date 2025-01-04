@@ -16,4 +16,8 @@ interface SignUpUseCase {
     )
 
     fun insertRemoteUser(remoteUser: RemoteUser, result: (NetworkResult<Unit>) -> Unit)
+
+    fun googleSignOut()
+
+    fun googleSignIn()
 }

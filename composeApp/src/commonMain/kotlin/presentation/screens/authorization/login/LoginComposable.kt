@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,7 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.CommonExtensions.isTrue
+import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.DataEditDialog
@@ -32,15 +35,14 @@ import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
 import com.vnteam.talktoai.presentation.ui.components.SecondaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
+import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.viewmodels.LoginViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.updateScreenState
 
 @Composable
-fun LoginContent(
-    screenState: ScreenState,
-    onScreenStateUpdate: (ScreenState) -> Unit
-) {
+fun LoginScreen() {
+
     val viewModel = koinViewModel<LoginViewModel>()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
@@ -48,10 +50,16 @@ fun LoginContent(
     val showAccountExistDialog = remember { mutableStateOf(false) }
     val showUnauthorizedEnterDialog = remember { mutableStateOf(false) }
 
+    val updatedScreenRoute = remember { mutableStateOf(String.EMPTY) }
+    if (updatedScreenRoute.value.isNotEmpty()) {
+        updateScreenState(screenRoute = updatedScreenRoute.value)
+        updatedScreenRoute.value = String.EMPTY
+    }
+
     val accountExistState = viewModel.accountExistLiveData.collectAsState()
     LaunchedEffect(accountExistState.value) {
         if (accountExistState.value.isTrue()) {
-            //viewModel.googleSignInClient.signOut()
+            viewModel.googleSignOut()
             showAccountExistDialog.value = true
             viewModel.accountExistLiveData.value = false
         }
@@ -73,30 +81,58 @@ fun LoginContent(
     }
     val resetPasswordText = LocalStringResources.current.AUTHORIZATION_PASSWORD_RESET_SUCCESS
     val successPasswordResetState = viewModel.successPasswordResetLiveData.collectAsState()
-    LaunchedEffect(successPasswordResetState.value) {
-        if (successPasswordResetState.value.isTrue()) {
-            //screenState.infoMessageState.value = InfoMessage(resetPasswordText)
-        }
+    if (successPasswordResetState.value.isTrue()) {
+        updateScreenState(appMessage = AppMessage(false, resetPasswordText))
     }
     val successSignInState = viewModel.successSignInLiveData.collectAsState()
-    LaunchedEffect(successSignInState.value) {
-        if (successSignInState.value.isTrue()) {
-            //screenState.currentScreenRoute = "${DESTINATION_CHAT_SCREEN}/$DEFAULT_CHAT_ID"
-        }
+    if (successSignInState.value.isTrue()) {
+        updateScreenState(screenRoute = "${NavigationScreen.CHAT_DESTINATION}/$DEFAULT_CHAT_ID")
     }
 
-    /*val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
-            } catch (e: ApiException) {
-                viewModel.googleSignInClient.signOut()
-                viewModel.exceptionLiveData.value = e.getStatusCodeText()
-            }
-        }*/
+    LoginContent(
+        viewModel,
+        emailInputValue,
+        passwordInputValue,
+        showForgotPasswordDialog,
+        showAccountExistDialog,
+        showUnauthorizedEnterDialog,
+        updatedScreenRoute
+    )
 
+    DataEditDialog(
+        LocalStringResources.current.AUTHORIZATION_FORGOT_PASSWORD_TITLE,
+        LocalStringResources.current.AUTHORIZATION_EMAIL,
+        emailInputValue,
+        showForgotPasswordDialog) { email ->
+        viewModel.sendPasswordResetEmail(email)
+        showForgotPasswordDialog.value = false
+    }
+
+    ConfirmationDialog(
+        LocalStringResources.current.AUTHORIZATION_ACCOUNT_NOT_EXIST,
+        showAccountExistDialog
+    ) {
+        updatedScreenRoute.value = NavigationScreen.SignUpScreen.route
+    }
+
+    ConfirmationDialog(
+        LocalStringResources.current.AUTHORIZATION_UNAUTHORIZED_ENTER,
+        showUnauthorizedEnterDialog
+    ) {
+        viewModel.signInAnonymously()
+    }
+}
+
+@Composable
+fun LoginContent(
+    viewModel: LoginViewModel,
+    emailInputValue: MutableState<TextFieldValue>,
+    passwordInputValue: MutableState<TextFieldValue>,
+    showForgotPasswordDialog: MutableState<Boolean>,
+    showAccountExistDialog: MutableState<Boolean>,
+    showUnauthorizedEnterDialog: MutableState<Boolean>,
+    updatedScreenRoute: MutableState<String>
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -120,7 +156,7 @@ fun LoginContent(
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
         ) {
-            //launcher.launch(viewModel.googleSignInClient.signInIntent)
+            viewModel.googleSignIn()
         }
         OrDivider(modifier = Modifier)
         PrimaryTextField(LocalStringResources.current.AUTHORIZATION_EMAIL, emailInputValue)
@@ -135,7 +171,7 @@ fun LoginContent(
                     .wrapContentSize()
                     .padding(start = 16.dp)
             ) {
-                onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.SignUpScreen.route))
+                updatedScreenRoute.value = NavigationScreen.SignUpScreen.route
             }
             Spacer(modifier = Modifier.weight(0.5f))
             LinkButton(
@@ -163,37 +199,5 @@ fun LoginContent(
         ) {
             showUnauthorizedEnterDialog.value = true
         }
-    }
-
-    DataEditDialog(
-        LocalStringResources.current.AUTHORIZATION_FORGOT_PASSWORD_TITLE,
-        LocalStringResources.current.AUTHORIZATION_EMAIL,
-        emailInputValue,
-        showForgotPasswordDialog,
-        onDismiss = {
-            showForgotPasswordDialog.value = false
-        }) { email ->
-        viewModel.sendPasswordResetEmail(email)
-        showForgotPasswordDialog.value = false
-    }
-
-    ConfirmationDialog(
-        LocalStringResources.current.AUTHORIZATION_ACCOUNT_NOT_EXIST,
-        showAccountExistDialog,
-        onDismiss = {
-            showAccountExistDialog.value = false
-        }) {
-        showAccountExistDialog.value = false
-        onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.SignUpScreen.route))
-    }
-
-    ConfirmationDialog(
-        LocalStringResources.current.AUTHORIZATION_UNAUTHORIZED_ENTER,
-        showUnauthorizedEnterDialog,
-        onDismiss = {
-            showUnauthorizedEnterDialog.value = false
-        }) {
-        viewModel.signInAnonymously()
-        showUnauthorizedEnterDialog.value = false
     }
 }

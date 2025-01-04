@@ -122,10 +122,12 @@ fun ChatListComposable(
                             showDeleteChatDialog.value = true
                         }
                     },
-                    onItemClick = { if (isDragging.not()) {
-                        currentChatState.value = chat
-                        onChatClick.invoke(chat)
-                    } })
+                    onItemClick = {
+                        if (isDragging.not()) {
+                            currentChatState.value = chat
+                            onChatClick.invoke(chat)
+                        }
+                    })
             }
         }
         TextIconButton(
@@ -161,12 +163,9 @@ fun ChatListComposable(
 
     ConfirmationDialog(
         LocalStringResources.current.CHAT_DELETE_TITLE,
-        showDeleteChatDialog,
-        onDismiss = {
-            showDeleteChatDialog.value = false
-        }) {
+        showDeleteChatDialog
+    ) {
         deleteChatState.value?.let { viewModel.deleteChat(it) }
-        showDeleteChatDialog.value = false
         deleteChatState.value = null
     }
 }
@@ -187,14 +186,14 @@ fun ChatItem(
             .fillMaxWidth()
             .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
             .let { modifier ->
-            if (isCurrent.not()) {
-                modifier.clickable {
-                    onItemClick.invoke()
+                if (isCurrent.not()) {
+                    modifier.clickable {
+                        onItemClick.invoke()
+                    }
+                } else {
+                    modifier
                 }
-            } else {
-                modifier
-            }
-        }, colors = CardDefaults.cardColors(
+            }, colors = CardDefaults.cardColors(
             containerColor = if (isCurrent) Primary800 else Primary900
         ), elevation = CardDefaults.cardElevation(
             defaultElevation = elevation ?: 1.dp

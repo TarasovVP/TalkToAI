@@ -154,4 +154,12 @@ class AuthRepositoryImpl :
             result.invoke(Result.Failure(exception.localizedMessage))
         }*/
     }
+
+    override fun googleSignOut() {
+        // TODO implement
+    }
+
+    override fun googleSignIn() {
+        // TODO implement
+    }
 }

@@ -55,7 +55,7 @@ fun SettingsSignUpContent(
     val accountExistState = viewModel.accountExistLiveData.collectAsState()
     LaunchedEffect(accountExistState.value) {
         accountExistState.value.takeIf { it.isNotEmpty() }?.let {
-            //viewModel.googleSignInClient.signOut()
+            viewModel.googleSign()
             showAccountExistDialog.value = true
         }
     }
@@ -90,9 +90,9 @@ fun SettingsSignUpContent(
     LaunchedEffect(localUserState.value) {
         localUserState.value?.let { userState ->
             if (userState.first) {
-                userState.second?.let { it -> viewModel.updateRemoteCurrentUser(it) }
+                userState.second?.let { viewModel.updateRemoteCurrentUser(it) }
             } else {
-                userState.second?.let { it -> viewModel.insertRemoteCurrentUser(it) }
+                userState.second?.let { viewModel.insertRemoteCurrentUser(it) }
             }
         }
     }
@@ -103,18 +103,6 @@ fun SettingsSignUpContent(
             onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"))
         }
     }
-
-    /*val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                account.email?.let { viewModel.fetchSignInMethodsForEmail(it, account.idToken) }
-            } catch (e: ApiException) {
-                viewModel.googleSignInClient.signOut()
-                viewModel.exceptionLiveData.value = CommonStatusCodes.getStatusCodeString(e.statusCode)
-            }
-        }*/
 
     Column(
         modifier = Modifier
@@ -134,7 +122,7 @@ fun SettingsSignUpContent(
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
         ) {
-            //launcher.launch(viewModel.googleSignInClient.signInIntent)
+            viewModel.googleSign()
         }
         OrDivider(modifier = Modifier)
         PrimaryTextField(LocalStringResources.current.AUTHORIZATION_EMAIL, emailInputValue)
@@ -150,11 +138,8 @@ fun SettingsSignUpContent(
     }
     ConfirmationDialog(
         LocalStringResources.current.SETTINGS_ACCOUNT_EXIST,
-        showAccountExistDialog,
-        onDismiss = {
-            //viewModel.googleSignInClient.signOut()
-            showAccountExistDialog.value = false
-        }) {
+        showAccountExistDialog
+    ) {
         viewModel.accountExistLiveData.value.takeIf { it.isNotEmpty() }?.let { idToken ->
             viewModel.createUserWithGoogle(idToken, true)
         } ?: viewModel.signInWithEmailAndPassword(

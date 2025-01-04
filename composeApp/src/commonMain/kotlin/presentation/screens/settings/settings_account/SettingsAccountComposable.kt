@@ -30,7 +30,6 @@ import androidx.compose.ui.window.Dialog
 import com.vnteam.talktoai.Constants.REVIEW_VOTE
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.domain.enums.AuthState
-import com.vnteam.talktoai.domain.models.InfoMessage
 import com.vnteam.talktoai.ic_avatar_anonymous
 import com.vnteam.talktoai.ic_avatar_email
 import com.vnteam.talktoai.ic_avatar_google
@@ -46,6 +45,7 @@ import com.vnteam.talktoai.presentation.ui.components.ShapeableImage
 import com.vnteam.talktoai.presentation.ui.components.SubmitButtons
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
+import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsAccountViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -56,7 +56,7 @@ fun SettingsAccountContent(
     screenState: ScreenState,
     onScreenStateUpdate: (ScreenState) -> Unit
 ) {
-    val viewModel: SettingsAccountViewModel = koinViewModel()
+    val viewModel = koinViewModel<SettingsAccountViewModel>()
     updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
     val authState = remember { mutableStateOf<AuthState?>(null) }
     val showLogOutDialog = remember { mutableStateOf(false) }
@@ -75,13 +75,14 @@ fun SettingsAccountContent(
         }
     }
 
-    val successChangePasswordMessage =
-        InfoMessage(LocalStringResources.current.SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED)
     val successChangePasswordState = viewModel.successChangePasswordLiveData.collectAsState()
-    LaunchedEffect(successChangePasswordState.value) {
-        if (successChangePasswordState.value) {
-            //screenState.infoMessageState.value = successChangePasswordMessage
-        }
+    if (successChangePasswordState.value) {
+        updateScreenState(
+            appMessage = AppMessage(
+                false,
+                LocalStringResources.current.SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED
+            )
+        )
     }
 
     val successState = viewModel.successLiveData.collectAsState()
@@ -92,21 +93,6 @@ fun SettingsAccountContent(
             onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.LoginScreen.route))
         }
     }
-
-    /*val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                account.idToken?.let { idToken ->
-                    val authCredential = GoogleAuthProvider.getCredential(idToken, null)
-                    viewModel.reAuthenticate(authCredential)
-                }
-            } catch (e: ApiException) {
-                viewModel.googleSignInClient.signOut()
-                viewModel.exceptionLiveData.value = CommonStatusCodes.getStatusCodeString(e.statusCode)
-            }
-        }*/
 
     Column(
         modifier = Modifier
@@ -159,21 +145,17 @@ fun SettingsAccountContent(
         when (authState.value) {
             AuthState.AUTHORISED_ANONYMOUSLY -> LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED_LOG_OUT
             else -> LocalStringResources.current.SETTINGS_ACCOUNT_LOG_OUT
-        }, showLogOutDialog, onDismiss = {
-            showLogOutDialog.value = false
-        }) {
+        },
+        showLogOutDialog
+    ) {
         viewModel.signOut()
-        showLogOutDialog.value = false
     }
 
     ConfirmationDialog(
         LocalStringResources.current.SETTINGS_ACCOUNT_GOOGLE_DELETE,
-        showDeleteGoogleAccountDialog,
-        onDismiss = {
-            showDeleteGoogleAccountDialog.value = false
-        }) {
-        //launcher.launch(viewModel.googleSignInClient.signInIntent)
-        showDeleteGoogleAccountDialog.value = false
+        showDeleteGoogleAccountDialog
+    ) {
+        viewModel.googleSignIn()
     }
 
     DataEditDialog(
@@ -182,12 +164,9 @@ fun SettingsAccountContent(
         remember {
             mutableStateOf(TextFieldValue())
         },
-        showDeleteEmailAccountDialog,
-        onDismiss = {
-            showDeleteEmailAccountDialog.value = false
-        }) { password ->
-        /*val authCredential = EmailAuthProvider.getCredential(viewModel.currentUserEmail(), password)
-        viewModel.reAuthenticate(authCredential)*/
+        showDeleteEmailAccountDialog
+    ) { password ->
+        viewModel.reAuthenticate()
         showDeleteEmailAccountDialog.value = false
     }
 }

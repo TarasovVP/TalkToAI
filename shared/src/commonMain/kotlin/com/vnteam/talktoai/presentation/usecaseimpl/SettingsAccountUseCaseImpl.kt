@@ -51,4 +51,8 @@ class SettingsAccountUseCaseImpl(
     override suspend fun clearDataInDB() {
         TODO("Not yet implemented")
     }
+
+    override fun googleSignIn() {
+        authRepository.googleSignIn()
+    }
 }

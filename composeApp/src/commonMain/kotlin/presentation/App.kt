@@ -44,8 +44,8 @@ val LocalScreenState = compositionLocalOf<MutableState<ScreenState>> {
 }
 
 @Composable
-fun updateScreenState(isProgressVisible: Boolean = false, appMessage: AppMessage? = null) {
+fun updateScreenState(isProgressVisible: Boolean = false, appMessage: AppMessage? = null, screenRoute: String? = null) {
     val localScreenState = LocalScreenState.current
-    localScreenState.value = localScreenState.value.copy(isProgressVisible = isProgressVisible, appMessage = appMessage)
+    localScreenState.value = localScreenState.value.copy(isProgressVisible = isProgressVisible, appMessage = appMessage, currentScreenRoute = screenRoute ?: localScreenState.value.currentScreenRoute)
 }
 

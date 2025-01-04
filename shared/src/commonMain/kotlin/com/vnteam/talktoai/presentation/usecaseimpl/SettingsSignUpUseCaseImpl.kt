@@ -63,4 +63,8 @@ class SettingsSignUpUseCaseImpl(
         realDataBaseRepository.updateRemoteUser(remoteUser) { authResult ->
             result.invoke(authResult)
         }
+
+    override fun googleSign() {
+        authRepository.googleSignIn()
+    }
 }

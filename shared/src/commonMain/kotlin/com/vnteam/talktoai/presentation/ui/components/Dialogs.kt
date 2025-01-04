@@ -20,22 +20,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.vnteam.talktoai.CommonExtensions.EMPTY
-import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
-import kotlinx.coroutines.launch
 
 @Composable
 fun ConfirmationDialog(
     title: String,
     showDialog: MutableState<Boolean>,
-    onDismiss: () -> Unit,
     onConfirmationClick: () -> Unit,
 ) {
     if (showDialog.value) {
         Column {
             Dialog(
-                onDismissRequest = onDismiss,
+                onDismissRequest = {
+                    showDialog.value = false
+                },
                 content = {
                     Column(
                         modifier = Modifier
@@ -51,7 +50,13 @@ fun ConfirmationDialog(
                                 .padding(16.dp),
                             textAlign = TextAlign.Center,
                         )
-                        SubmitButtons(true, onDismiss, onConfirmationClick)
+                        SubmitButtons(true, {
+                            showDialog.value = false
+                        }, {
+                            showDialog.value = false
+                            onConfirmationClick.invoke()
+                        }
+                        )
                     }
                 }
             )
@@ -65,13 +70,14 @@ fun DataEditDialog(
     placeHolder: String,
     inputValue: MutableState<TextFieldValue>,
     showDialog: MutableState<Boolean>,
-    onDismiss: () -> Unit,
     onConfirmationClick: (String) -> Unit,
 ) {
     if (showDialog.value) {
         Column {
             Dialog(
-                onDismissRequest = onDismiss,
+                onDismissRequest = {
+                    showDialog.value = false
+                },
                 content = {
                     Column(
                         modifier = Modifier
@@ -88,7 +94,9 @@ fun DataEditDialog(
                             textAlign = TextAlign.Center,
                         )
                         SecondaryTextField(inputValue, placeHolder)
-                        SubmitButtons(inputValue.value.text.isNotEmpty(), onDismiss) {
+                        SubmitButtons(inputValue.value.text.isNotEmpty(), {
+                            showDialog.value = false
+                        }) {
                             onConfirmationClick.invoke(inputValue.value.text)
                         }
                     }
@@ -110,10 +118,7 @@ fun CreateChatDialog(
         remember {
             mutableStateOf(TextFieldValue(currentChatName))
         },
-        showDialog,
-        onDismiss = {
-            showDialog.value = false
-        }) { newChatName ->
+        showDialog) { newChatName ->
         showDialog.value = false
         onConfirmationClick.invoke(newChatName)
     }

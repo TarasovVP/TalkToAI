@@ -28,4 +28,6 @@ interface SettingsAccountUseCase {
     suspend fun clearDataByKeys(keys: List<String>)
 
     suspend fun clearDataInDB()
+
+    fun googleSignIn()
 }

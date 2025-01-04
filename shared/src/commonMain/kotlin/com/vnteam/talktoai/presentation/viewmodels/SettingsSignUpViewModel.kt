@@ -154,4 +154,8 @@ class SettingsSignUpViewModel(
             _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
+
+    fun googleSign() {
+        settingsSignUpUseCase.googleSign()
+    }
 }

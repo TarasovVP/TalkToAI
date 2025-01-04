@@ -31,4 +31,6 @@ interface SettingsSignUpUseCase {
     fun insertRemoteCurrentUser(remoteUser: RemoteUser, result: (NetworkResult<Unit>) -> Unit)
 
     fun updateRemoteCurrentUser(remoteUser: RemoteUser, result: (NetworkResult<Unit>) -> Unit)
+
+    fun googleSign()
 }
