@@ -128,7 +128,7 @@ fun ProgressVisibilityHandler(
 }
 
 @Composable
-fun OrDivider(modifier: Modifier) {
+fun OrDivider(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()

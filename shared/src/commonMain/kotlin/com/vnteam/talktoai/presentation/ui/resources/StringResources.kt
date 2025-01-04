@@ -192,7 +192,7 @@ class StringResourcesEN : StringResources(
     AUTHORIZATION_PASSWORD_RESET_SUCCESS =
     "An email has been sent to your Email. Check in your inbox.",
     AUTHORIZATION_SIGN_UP_TITLE = "Haven`t got an account?&#160;",
-    AUTHORIZATION_ENTRANCE_TITLE = "Got an account?&#160;",
+    AUTHORIZATION_ENTRANCE_TITLE = "Got an account?",
     AUTHORIZATION_SIGNING_UP = "Sign Up",
     AUTHORIZATION_ACCOUNT_NOT_EXIST =
     "There is no user with this email address. First you need to create an account. Go to the registration screen?",
@@ -351,7 +351,7 @@ class StringResourcesUK : StringResources(
     AUTHORIZATION_PASSWORD_RESET_SUCCESS =
     "Лист надіслано на ваш Email. Перевірте у вхідних.",
     AUTHORIZATION_SIGN_UP_TITLE = "Ще немає облікового запису?&#160;",
-    AUTHORIZATION_ENTRANCE_TITLE = "Є обліковий запис?&#160;",
+    AUTHORIZATION_ENTRANCE_TITLE = "Є обліковий запис?",
     AUTHORIZATION_SIGNING_UP = "Зареєструватися",
     AUTHORIZATION_ACCOUNT_NOT_EXIST =
     "Користувача з електронною поштою не існує. Спочатку необхідно створити обліковий запис. Перейти на екран реєстрації?",

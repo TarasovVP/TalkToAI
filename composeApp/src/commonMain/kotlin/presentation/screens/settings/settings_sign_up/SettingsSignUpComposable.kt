@@ -25,8 +25,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
-import com.vnteam.talktoai.Constants.DESTINATION_CHAT_SCREEN
 import com.vnteam.talktoai.domain.models.RemoteUser
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.GoogleButton
 import com.vnteam.talktoai.presentation.ui.components.OrDivider
@@ -35,16 +35,12 @@ import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Primary300
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsSignUpViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.updateScreenState
 
 @Composable
-fun SettingsSignUpContent(
-    screenState: ScreenState,
-    onScreenStateUpdate: (ScreenState) -> Unit
-) {
+fun SettingsSignUpScreen() {
     val viewModel: SettingsSignUpViewModel = koinViewModel()
     updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
@@ -98,12 +94,38 @@ fun SettingsSignUpContent(
     }
 
     val successRemoteUserState = viewModel.successRemoteUserLiveData.collectAsState()
-    LaunchedEffect(successRemoteUserState.value) {
-        if (successRemoteUserState.value) {
-            onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"))
-        }
+    if (successRemoteUserState.value) {
+        updateScreenState(screenRoute = "${NavigationScreen.CHAT_DESTINATION}/${DEFAULT_CHAT_ID}")
     }
 
+    SettingsSignUpContent(
+        viewModel,
+        emailInputValue,
+        passwordInputValue,
+        transferDataState
+    )
+
+    ConfirmationDialog(
+        LocalStringResources.current.SETTINGS_ACCOUNT_EXIST,
+        showAccountExistDialog
+    ) {
+        viewModel.accountExistLiveData.value.takeIf { it.isNotEmpty() }?.let { idToken ->
+            viewModel.createUserWithGoogle(idToken, true)
+        } ?: viewModel.signInWithEmailAndPassword(
+            emailInputValue.value.text,
+            passwordInputValue.value.text
+        )
+        showAccountExistDialog.value = false
+    }
+}
+
+@Composable
+fun SettingsSignUpContent(
+    viewModel: SettingsSignUpViewModel,
+    emailInputValue: MutableState<TextFieldValue>,
+    passwordInputValue: MutableState<TextFieldValue>,
+    transferDataState: MutableState<Boolean>
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -135,18 +157,6 @@ fun SettingsSignUpContent(
             viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
         }
         TransferDataCard(transferDataState)
-    }
-    ConfirmationDialog(
-        LocalStringResources.current.SETTINGS_ACCOUNT_EXIST,
-        showAccountExistDialog
-    ) {
-        viewModel.accountExistLiveData.value.takeIf { it.isNotEmpty() }?.let { idToken ->
-            viewModel.createUserWithGoogle(idToken, true)
-        } ?: viewModel.signInWithEmailAndPassword(
-            emailInputValue.value.text,
-            passwordInputValue.value.text
-        )
-        showAccountExistDialog.value = false
     }
 }
 
@@ -185,4 +195,3 @@ fun TransferDataCard(transferDataState: MutableState<Boolean>) {
         }
     }
 }
-

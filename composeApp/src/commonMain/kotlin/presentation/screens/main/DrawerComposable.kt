@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnteam.talktoai.CommonExtensions.isTrue
+import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.avatar_ai
 import com.vnteam.talktoai.ic_chat
@@ -37,7 +38,9 @@ fun DrawerContent(screenState: ScreenState, onScreenStateUpdate: (ScreenState, B
                 currentScreenRoute = if (settingsDrawerModeState) {
                     NavigationScreen.SettingsChatScreen.route
                 } else {
-                    NavigationScreen.ChatScreen.route
+                   "${NavigationScreen.CHAT_DESTINATION}/${
+                        screenState.currentChat?.id ?: Constants.DEFAULT_CHAT_ID
+                    }"
                 }
             ), false
         )

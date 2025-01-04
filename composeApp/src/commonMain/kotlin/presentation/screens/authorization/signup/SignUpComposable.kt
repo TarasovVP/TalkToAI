@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,8 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
-import com.vnteam.talktoai.Constants.DESTINATION_CHAT_SCREEN
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
@@ -33,21 +34,24 @@ import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SignUpViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.updateScreenState
 
 @Composable
-fun SignUpContent(
-    screenState: ScreenState,
-    onScreenStateUpdate: (ScreenState) -> Unit
-) {
+fun SignUpScreen() {
     val viewModel = koinViewModel<SignUpViewModel>()
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
     val showAccountExistDialog = remember { mutableStateOf(false) }
 
     val signUpUiState by viewModel.uiState.collectAsState()
+
+    val updatedScreenRoute = remember { mutableStateOf(String.EMPTY) }
+    if (updatedScreenRoute.value.isNotEmpty()) {
+        updateScreenState(screenRoute = updatedScreenRoute.value)
+        updatedScreenRoute.value = String.EMPTY
+    }
 
     LaunchedEffect(signUpUiState) {
         signUpUiState.accountExist?.let {
@@ -68,10 +72,32 @@ fun SignUpContent(
             viewModel.insertRemoteUser(RemoteUser())
         }
         signUpUiState.createCurrentUser?.let {
-            onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = "${DESTINATION_CHAT_SCREEN}/${DEFAULT_CHAT_ID}"))
+            updatedScreenRoute.value = "${NavigationScreen.CHAT_DESTINATION}/${DEFAULT_CHAT_ID}"
         }
     }
 
+    SignUpContent(
+        viewModel = viewModel,
+        emailInputValue = emailInputValue,
+        passwordInputValue = passwordInputValue,
+        updatedScreenRoute = updatedScreenRoute
+    )
+
+    ConfirmationDialog(
+        LocalStringResources.current.AUTHORIZATION_ACCOUNT_EXIST,
+        showAccountExistDialog
+    ) {
+        updatedScreenRoute.value = NavigationScreen.LoginScreen.route
+    }
+}
+
+@Composable
+fun SignUpContent(
+    viewModel: SignUpViewModel,
+    emailInputValue: MutableState<TextFieldValue>,
+    passwordInputValue: MutableState<TextFieldValue>,
+    updatedScreenRoute: MutableState<String>
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -111,7 +137,7 @@ fun SignUpContent(
                 text = LocalStringResources.current.AUTHORIZATION_ENTRANCE,
                 modifier = Modifier.wrapContentSize()
             ) {
-                onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.LoginScreen.route))
+                updatedScreenRoute.value = NavigationScreen.LoginScreen.route
             }
         }
         PrimaryButton(
@@ -121,11 +147,5 @@ fun SignUpContent(
         ) {
             viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
         }
-    }
-    ConfirmationDialog(
-        LocalStringResources.current.AUTHORIZATION_ACCOUNT_EXIST,
-        showAccountExistDialog
-    ) {
-        onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.LoginScreen.route))
     }
 }

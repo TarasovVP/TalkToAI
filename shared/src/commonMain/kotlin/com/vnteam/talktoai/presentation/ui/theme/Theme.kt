@@ -36,7 +36,7 @@ fun AppTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable ()
         typography = Typography(),
         content = {
             ProvideTextStyle(
-                value = TextStyle(color = White),
+                value = TextStyle(color = if (darkTheme) White else Primary800),
                 content = content
             )
         }

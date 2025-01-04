@@ -27,6 +27,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Constants.REVIEW_VOTE
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.domain.enums.AuthState
@@ -46,16 +47,12 @@ import com.vnteam.talktoai.presentation.ui.components.SubmitButtons
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsAccountViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.updateScreenState
 
 @Composable
-fun SettingsAccountContent(
-    screenState: ScreenState,
-    onScreenStateUpdate: (ScreenState) -> Unit
-) {
+fun SettingsAccountScreen() {
     val viewModel = koinViewModel<SettingsAccountViewModel>()
     updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
     val authState = remember { mutableStateOf<AuthState?>(null) }
@@ -63,6 +60,12 @@ fun SettingsAccountContent(
     val showChangePasswordDialog = remember { mutableStateOf(false) }
     val showDeleteGoogleAccountDialog = remember { mutableStateOf(false) }
     val showDeleteEmailAccountDialog = remember { mutableStateOf(false) }
+
+    val updatedScreenRoute = remember { mutableStateOf(String.EMPTY) }
+    if (updatedScreenRoute.value.isNotEmpty()) {
+        updateScreenState(screenRoute = updatedScreenRoute.value)
+        updatedScreenRoute.value = String.EMPTY
+    }
 
     LaunchedEffect(Unit) {
         authState.value = viewModel.getAuthState()
@@ -90,10 +93,64 @@ fun SettingsAccountContent(
         if (successState.value) {
             viewModel.clearDataByKeys(listOf(REVIEW_VOTE))
             viewModel.clearDataBase()
-            onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.LoginScreen.route))
+            updatedScreenRoute.value = NavigationScreen.LoginScreen.route
         }
     }
 
+    SettingsAccountContent(
+        viewModel,
+        authState,
+        showLogOutDialog,
+        showChangePasswordDialog,
+        showDeleteGoogleAccountDialog,
+        showDeleteEmailAccountDialog,
+        updatedScreenRoute
+    )
+
+    ChangePasswordDialog(showChangePasswordDialog) { password ->
+        viewModel.changePassword(password.first, password.second)
+    }
+
+    ConfirmationDialog(
+        when (authState.value) {
+            AuthState.AUTHORISED_ANONYMOUSLY -> LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED_LOG_OUT
+            else -> LocalStringResources.current.SETTINGS_ACCOUNT_LOG_OUT
+        },
+        showLogOutDialog
+    ) {
+        viewModel.signOut()
+    }
+
+    ConfirmationDialog(
+        LocalStringResources.current.SETTINGS_ACCOUNT_GOOGLE_DELETE,
+        showDeleteGoogleAccountDialog
+    ) {
+        viewModel.googleSignIn()
+    }
+
+    DataEditDialog(
+        LocalStringResources.current.SETTINGS_ACCOUNT_EMAIL_DELETE,
+        placeHolder = LocalStringResources.current.SETTINGS_ACCOUNT_ENTER_CURRENT_PASSWORD,
+        remember {
+            mutableStateOf(TextFieldValue())
+        },
+        showDeleteEmailAccountDialog
+    ) { password ->
+        viewModel.reAuthenticate()
+        showDeleteEmailAccountDialog.value = false
+    }
+}
+
+@Composable
+fun SettingsAccountContent(
+    viewModel: SettingsAccountViewModel,
+    authState: MutableState<AuthState?>,
+    showLogOutDialog: MutableState<Boolean>,
+    showChangePasswordDialog: MutableState<Boolean>,
+    showDeleteGoogleAccountDialog: MutableState<Boolean>,
+    showDeleteEmailAccountDialog: MutableState<Boolean>,
+    updateScreenRoute: MutableState<String>
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -128,46 +185,13 @@ fun SettingsAccountContent(
                 text = LocalStringResources.current.AUTHORIZATION_SIGNING_UP,
                 modifier = Modifier
             ) {
-                onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.SettingsSignUpScreen.route))
+                updateScreenRoute.value = NavigationScreen.SettingsSignUpScreen.route
             }
             EmptyState(
                 text = LocalStringResources.current.EMPTY_STATE_ACCOUNT,
                 modifier = Modifier
             )
         }
-    }
-
-    ChangePasswordDialog(showChangePasswordDialog) { password ->
-        viewModel.changePassword(password.first, password.second)
-    }
-
-    ConfirmationDialog(
-        when (authState.value) {
-            AuthState.AUTHORISED_ANONYMOUSLY -> LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED_LOG_OUT
-            else -> LocalStringResources.current.SETTINGS_ACCOUNT_LOG_OUT
-        },
-        showLogOutDialog
-    ) {
-        viewModel.signOut()
-    }
-
-    ConfirmationDialog(
-        LocalStringResources.current.SETTINGS_ACCOUNT_GOOGLE_DELETE,
-        showDeleteGoogleAccountDialog
-    ) {
-        viewModel.googleSignIn()
-    }
-
-    DataEditDialog(
-        LocalStringResources.current.SETTINGS_ACCOUNT_EMAIL_DELETE,
-        placeHolder = LocalStringResources.current.SETTINGS_ACCOUNT_ENTER_CURRENT_PASSWORD,
-        remember {
-            mutableStateOf(TextFieldValue())
-        },
-        showDeleteEmailAccountDialog
-    ) { password ->
-        viewModel.reAuthenticate()
-        showDeleteEmailAccountDialog.value = false
     }
 }
 

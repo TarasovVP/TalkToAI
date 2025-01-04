@@ -191,7 +191,7 @@ fun LoginContent(
         ) {
             viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
         }
-        OrDivider(modifier = Modifier)
+        OrDivider()
         SecondaryButton(
             text = LocalStringResources.current.AUTHORIZATION_CONTINUE_WITHOUT_ACCOUNT,
             false,

@@ -76,10 +76,7 @@ fun AppContent(appViewModel: AppViewModel) {
                     .padding(paddingValues)
                     .fillMaxSize()
             ) {
-                AppNavigation(navController, screenState.value) { updatedScreenState ->
-                    println("AppTAG AppNavigation updatedScreenState: $updatedScreenState")
-                    appViewModel.updateScreenState(updatedScreenState)
-                }
+                AppNavigation(navController, screenState.value.startDestination)
                 if (screenState.value.isProgressVisible) {
                     val animationResourceState = appViewModel.animationResource.collectAsState()
                     println("AppTAG AppNavigation screenState.value?.isProgressVisible.isTrue(): ${screenState.value.isProgressVisible.isTrue()}")

@@ -76,7 +76,6 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import com.vnteam.talktoai.presentation.ui.theme.Primary600
 import com.vnteam.talktoai.presentation.ui.theme.Primary900
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.ChatViewModel
 import com.vnteam.talktoai.utils.screenWidth
 import dateToMilliseconds
@@ -89,9 +88,7 @@ import textToAction
 @Composable
 fun ChatContent(
     chatId: Long,
-    isMessageActionModeState: MutableState<Boolean?> = mutableStateOf(false),
-    screenState: ScreenState,
-    onScreenStateChange: (ScreenState) -> Unit
+    isMessageActionModeState: MutableState<Boolean?> = mutableStateOf(false)
 ) {
     val viewModel = koinViewModel<ChatViewModel>()
     val currentChatState = viewModel.currentChatLiveData.collectAsState()
@@ -105,8 +102,8 @@ fun ChatContent(
         viewModel.getAnimationResource()
     }
 
-    LaunchedEffect(screenState.currentScreenRoute) {
-        println("ChatContent: LaunchedEffect(screenState.currentScreenState.value) ${screenState.currentScreenRoute}")
+    LaunchedEffect(chatId) {
+        println("ChatContent: LaunchedEffect(chatId) $chatId")
         viewModel.getCurrentChat(chatId)
     }
 
