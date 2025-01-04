@@ -2,13 +2,13 @@ package presentation.screens.settings.settings_feedback
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +21,7 @@ import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.domain.models.Feedback
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.viewmodels.SettingsFeedbackViewModel
 import kotlinx.datetime.Clock
 import org.koin.compose.viewmodel.koinViewModel
@@ -34,15 +35,14 @@ fun SettingsFeedbackContent() {
     val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }
 
     val successFeedbackState = viewModel.successFeedbackLiveData.collectAsState()
-    val feedbackSendSuccess = LocalStringResources.current.SETTINGS_FEEDBACK_SEND_SUCCESS
-    LaunchedEffect(successFeedbackState.value) {
-        if (successFeedbackState.value) {
-            //screenState.infoMessageState.value = InfoMessage(message = feedbackSendSuccess)
-        }
+    if (successFeedbackState.value) {
+        updateScreenState(appMessage = AppMessage(false, LocalStringResources.current.SETTINGS_FEEDBACK_SEND_SUCCESS))
+        viewModel.successFeedbackLiveData.value = false
     }
+
     Column(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Top
     ) {
         Text(

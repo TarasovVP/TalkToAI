@@ -11,43 +11,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.vnteam.talktoai.Res
-import com.vnteam.talktoai.ic_tab_four
-import com.vnteam.talktoai.ic_tab_one
-import com.vnteam.talktoai.ic_tab_three
-import com.vnteam.talktoai.ic_tab_two
-import com.vnteam.talktoai.onboarding_intro
-import com.vnteam.talktoai.presentation.ui.NavigationScreen
+import com.vnteam.talktoai.domain.sealed_classes.OnboardingPage
+import com.vnteam.talktoai.domain.sealed_classes.OnboardingPage.Companion.getOnboardingPageDescription
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.OnBoardingViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun OnboardingContent(screenState: ScreenState, onScreenStateUpdate: (ScreenState) -> Unit) {
-    val viewModel: OnBoardingViewModel = koinViewModel()
+fun OnboardingScreen() {
+    val viewModel = koinViewModel<OnBoardingViewModel>()
     val pageState = remember {
         mutableIntStateOf(0)
     }
-    val onBoardingSeenState = viewModel.onBoardingSeenLiveData.collectAsState()
-    LaunchedEffect(onBoardingSeenState.value) {
-        if (onBoardingSeenState.value) {
-            onScreenStateUpdate.invoke(screenState.copy(currentScreenRoute = NavigationScreen.LoginScreen.route))
-            viewModel.onBoardingSeenLiveData.value = false
-        }
-    }
-    OnboardingPage(pageState.value) {
+    val onboardingPage = OnboardingPage.getOnboardingPage(pageState.value)
+    OnboardingContent(onboardingPage) {
         if (pageState.value == 3) {
             viewModel.setOnBoardingSeen()
         } else {
@@ -57,7 +43,7 @@ fun OnboardingContent(screenState: ScreenState, onScreenStateUpdate: (ScreenStat
 }
 
 @Composable
-fun OnboardingPage(page: Int, onClick: () -> Unit) {
+fun OnboardingContent(onboardingPage: OnboardingPage, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -71,12 +57,7 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
                 .background(color = Primary500, shape = RoundedCornerShape(16.dp))
         ) {
             Text(
-                text = when (page) {
-                    1 -> LocalStringResources.current.ONBOARDING_INTRO
-                    2 -> LocalStringResources.current.ONBOARDING_FILTER_CONDITIONS
-                    3 -> LocalStringResources.current.ONBOARDING_INFO
-                    else -> LocalStringResources.current.ONBOARDING_PERMISSIONS
-                },
+                text = onboardingPage.getOnboardingPageDescription(LocalStringResources.current),
                 textAlign = TextAlign.Center,
                 color = Neutral50,
                 modifier = Modifier
@@ -85,7 +66,7 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
             )
         }
         Image(
-            painter = painterResource(Res.drawable.onboarding_intro),
+            painter = painterResource(onboardingPage.mainImage),
             contentDescription = LocalStringResources.current.ONBOARDING_ICON,
             modifier = Modifier
                 .fillMaxWidth()
@@ -93,20 +74,13 @@ fun OnboardingPage(page: Int, onClick: () -> Unit) {
                 .padding(top = 16.dp)
         )
         Image(
-            painter = painterResource(
-                when (page) {
-                    1 -> Res.drawable.ic_tab_two
-                    2 -> Res.drawable.ic_tab_three
-                    3 -> Res.drawable.ic_tab_four
-                    else -> Res.drawable.ic_tab_one
-                }
-            ),
-            contentDescription = "${LocalStringResources.current.ONBOARDING_SCREEN} $page",
+            painter = painterResource(onboardingPage.tabImage),
+            contentDescription = "${LocalStringResources.current.ONBOARDING_SCREEN} ${onboardingPage.page}",
             modifier = Modifier
                 .fillMaxWidth()
         )
         PrimaryButton(
-            text = if (page == 3) LocalStringResources.current.AUTHORIZATION_ENTER else LocalStringResources.current.BUTTON_NEXT,
+            text = if (onboardingPage.page == 3) LocalStringResources.current.AUTHORIZATION_ENTER else LocalStringResources.current.BUTTON_NEXT,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 40.dp),

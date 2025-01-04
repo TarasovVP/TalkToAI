@@ -8,23 +8,18 @@ import androidx.compose.runtime.remember
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Constants.PRIVACY_POLICY
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
-import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.SettingsPrivacyPolicyViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.updateScreenState
 
 @Composable
-fun SettingsPrivacyPolicyContent(
-    screenState: ScreenState,
-    onScreenStateUpdate: (ScreenState) -> Unit
-) {
+fun SettingsPrivacyPolicyContent() {
 
     val viewModel: SettingsPrivacyPolicyViewModel = koinViewModel()
     updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
     val privacyPolicyUrlState = remember { mutableStateOf(String.EMPTY) }
 
     LaunchedEffect(Unit) {
-        onScreenStateUpdate.invoke(screenState.copy(isProgressVisible = true))
         viewModel.getAppLanguage()
     }
     val appLanguageState = viewModel.appLanguageLiveData.collectAsState()
@@ -43,7 +38,7 @@ fun SettingsPrivacyPolicyContent(
     }
     privacyPolicyState.value.takeIf { it.isNotEmpty() }?.let { url ->
         AppWebView(url) {
-            onScreenStateUpdate.invoke(screenState.copy(isProgressVisible = false))
+
         }
     }
 }

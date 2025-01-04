@@ -18,8 +18,7 @@ fun SettingsChatContent() {
 
     val viewModel: SettingsChatViewModel = koinViewModel()
 
-    updateScreenState(viewModel.progressVisibilityState.collectAsState().value, viewModel.exceptionMessage.collectAsState().value)
-
+    updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center

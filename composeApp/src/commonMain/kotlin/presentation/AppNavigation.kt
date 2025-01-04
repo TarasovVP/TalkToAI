@@ -10,7 +10,7 @@ import androidx.navigation.navArgument
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import presentation.screens.authorization.login.LoginContent
-import presentation.screens.authorization.onboarding.OnboardingContent
+import presentation.screens.authorization.onboarding.OnboardingScreen
 import presentation.screens.authorization.signup.SignUpContent
 import presentation.screens.chat.ChatContent
 import presentation.screens.settings.settings_account.SettingsAccountContent
@@ -29,7 +29,7 @@ fun AppNavigation(
 ) {
     NavHost(navController = navController, startDestination = screenState.startDestination) {
         composable(NavigationScreen.ONBOARDING_SCREEN) {
-            OnboardingContent(screenState, onScreenStateUpdate)
+            OnboardingScreen()
         }
         composable(NavigationScreen.LOGIN_SCREEN) {
             LoginContent(screenState, onScreenStateUpdate)
@@ -63,7 +63,7 @@ fun AppNavigation(
             SettingsFeedbackContent()
         }
         composable(NavigationScreen.SETTINGS_PRIVACY_POLICY_SCREEN) {
-            SettingsPrivacyPolicyContent(screenState, onScreenStateUpdate)
+            SettingsPrivacyPolicyContent()
         }
         composable(NavigationScreen.SETTINGS_SIGN_UP_SCREEN) {
             SettingsSignUpContent(screenState, onScreenStateUpdate)
