@@ -151,6 +151,8 @@ class ChatListViewModel(
         } else {
             launch {
                 mainUseCase.insertChat(chat)
+                // TODO add temporary
+                getChats()
             }
         }
     }

@@ -46,8 +46,10 @@ class AppViewModel(
                 _loggedInUser,
                 _onBoardingSeen
             ) { isDarkTheme, language, loggedInUser, onBoardingSeen ->
+                println("appTAG AppViewModel combineFlows isDarkTheme $isDarkTheme language $language loggedInUser $loggedInUser onBoardingSeen $onBoardingSeen")
                 ScreenState(isDarkTheme = isDarkTheme, language = language, isLoggedInUser = loggedInUser, isOnboardingSeen = onBoardingSeen)
             }.collect { newState ->
+                println("appTAG AppViewModel combineFlows $newState")
                 _screenState.value = _screenState.value?.copy(
                     isDarkTheme = newState.isDarkTheme,
                     language = newState.language,

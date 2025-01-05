@@ -135,6 +135,8 @@ class ChatViewModel(
         } else {
             launch {
                 chatUseCase.insertMessage(messageUIMapper.mapFromImplModel(message))
+                // TODO add temporary
+                getMessagesFromChat(message.chatId)
             }
         }
     }

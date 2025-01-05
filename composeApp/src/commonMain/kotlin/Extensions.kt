@@ -1,3 +1,6 @@
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.navigation.NavHostController
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
@@ -37,5 +40,20 @@ fun Instant.isDefineSecondsLater(seconds: Int, updated: Long): Boolean {
     val targetTime = this.plus(seconds, kotlinx.datetime.DateTimeUnit.SECOND, TimeZone.UTC)
     val updatedTime = Instant.fromEpochSeconds(updated)
     return targetTime < updatedTime
+}
+
+@Composable
+fun NavHostController.checkCurrentDestUpdateWithStartDest(
+    startDestination: String
+) {
+    LaunchedEffect(startDestination) {
+        if (currentBackStackEntry?.destination?.route != startDestination) {
+            navigate(startDestination) {
+                popUpTo(graph.startDestinationRoute.orEmpty()) {
+                    inclusive = true
+                }
+            }
+        }
+    }
 }
 

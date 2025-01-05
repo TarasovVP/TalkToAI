@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import checkCurrentDestUpdateWithStartDest
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import presentation.screens.authorization.login.LoginScreen
@@ -25,6 +26,8 @@ fun AppNavigation(
     navController: NavHostController,
     startDestination: String
 ) {
+    println("AppNavigationTAG: startDestination: $startDestination")
+    navController.checkCurrentDestUpdateWithStartDest(startDestination)
     NavHost(navController = navController, startDestination = startDestination) {
         composable(NavigationScreen.ONBOARDING_SCREEN) {
             OnboardingScreen()

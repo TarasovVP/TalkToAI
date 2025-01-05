@@ -33,6 +33,7 @@ class PreferencesRepositoryImpl(private val preferencesFactory: PreferencesFacto
 
     override suspend fun setOnBoardingSeen(isOnBoardingSeen: Boolean) {
         preferencesFactory.putBoolean(IS_ONBOARDING_SEEN, isOnBoardingSeen)
+        println("appTAG PreferencesRepositoryImpl setOnBoardingSeen $isOnBoardingSeen")
     }
 
     override suspend fun getIsLoggedInUser(): Flow<Boolean?> {
