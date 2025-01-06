@@ -79,7 +79,6 @@ fun ChatListScreen(
     LaunchedEffect(chatsState.value) {
         chatsState.value?.let { chats ->
             currentChatState.value = chats.firstOrNull()
-            onChatClick.invoke(chats.firstOrNull())
         }
     }
 

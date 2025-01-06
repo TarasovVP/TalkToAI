@@ -211,10 +211,10 @@ val appModule = module {
         SignUpViewModel(get(), get())
     }
     viewModel {
-        ChatListViewModel(get())
+        ChatListViewModel(get(), get())
     }
     viewModel {
-        ChatViewModel(get(), get(), get(), get(), get())
+        ChatViewModel(get(), get(), get(), get(), get(), get())
     }
     viewModel {
         SettingsAccountViewModel(

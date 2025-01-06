@@ -99,7 +99,7 @@ class LoginViewModel(
 
     fun signInAnonymously() {
         println("NetworkTAG networkState.isNetworkAvailable() = ${networkState.isNetworkAvailable()}")
-        if (networkState.isNetworkAvailable()) {
+        launch(networkState) {
             showProgress()
             // TODO remove this and uncomment below
             successSignInLiveData.value = true
@@ -118,8 +118,6 @@ class LoginViewModel(
                 }
                 hideProgress()
             }*/
-        } else {
-            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 

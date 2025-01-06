@@ -41,6 +41,7 @@ import presentation.updateScreenState
 @Composable
 fun SignUpScreen() {
     val viewModel = koinViewModel<SignUpViewModel>()
+
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
     val showAccountExistDialog = remember { mutableStateOf(false) }

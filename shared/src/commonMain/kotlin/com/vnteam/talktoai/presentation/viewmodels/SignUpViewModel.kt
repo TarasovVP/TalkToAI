@@ -19,7 +19,7 @@ class SignUpViewModel(
     val uiState: StateFlow<SignUpUIState> = _uiState.asStateFlow()
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
-        if (networkState.isNetworkAvailable()) {
+        launch(networkState) {
             showProgress()
             signUpUseCase.fetchSignInMethodsForEmail(email) { authResult ->
                 when (authResult) {
@@ -37,12 +37,13 @@ class SignUpViewModel(
                 }
                 hideProgress()
             }
-        } else {
-            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
     fun createUserWithGoogle(idToken: String) {
+        launch(networkState) {
+
+        }
         if (networkState.isNetworkAvailable()) {
             showProgress()
             signUpUseCase.createUserWithGoogle(idToken) { operationResult ->
@@ -61,7 +62,7 @@ class SignUpViewModel(
     }
 
     fun createUserWithEmailAndPassword(email: String, password: String) {
-        if (networkState.isNetworkAvailable()) {
+        launch(networkState) {
             showProgress()
             signUpUseCase.createUserWithEmailAndPassword(email, password) { operationResult ->
                 when (operationResult) {
@@ -73,13 +74,11 @@ class SignUpViewModel(
                 }
                 hideProgress()
             }
-        } else {
-            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
     fun insertRemoteUser(remoteUser: RemoteUser) {
-        if (networkState.isNetworkAvailable()) {
+        launch(networkState) {
             showProgress()
             signUpUseCase.insertRemoteUser(remoteUser) { operationResult ->
                 when (operationResult) {
@@ -91,8 +90,6 @@ class SignUpViewModel(
                 }
                 hideProgress()
             }
-        } else {
-            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 

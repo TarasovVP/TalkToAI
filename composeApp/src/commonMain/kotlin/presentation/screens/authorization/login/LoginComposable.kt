@@ -44,6 +44,7 @@ import presentation.updateScreenState
 fun LoginScreen() {
 
     val viewModel = koinViewModel<LoginViewModel>()
+
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
     val showForgotPasswordDialog = remember { mutableStateOf(false) }

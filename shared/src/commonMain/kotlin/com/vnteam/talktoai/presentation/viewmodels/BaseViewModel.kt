@@ -3,7 +3,8 @@ package com.vnteam.talktoai.presentation.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vnteam.talktoai.CommonExtensions.EMPTY
-import com.vnteam.talktoai.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
+import com.vnteam.talktoai.Constants
+import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,20 +39,18 @@ open class BaseViewModel : ViewModel() {
         }
     }
 
-    fun checkNetworkAvailable(networkAvailableResult: () -> Unit) {
-        if (true /*application.isNetworkAvailable()*/) {
-            networkAvailableResult.invoke()
-        } else {
-            _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
-        }
-    }
-
     protected fun launch(
+        networkState: NetworkState? = null,
         onError: (Throwable, suspend CoroutineScope.() -> Unit) -> Any? = ::onError,
-        block: suspend CoroutineScope.() -> Unit,
+        block: suspend CoroutineScope.() -> Unit
     ): Job = viewModelScope.launch(CoroutineExceptionHandler { _, exception ->
         onError(exception, block)
     }) {
+        networkState?.let {
+            if (it.isNetworkAvailable().not()) {
+                throw Exception(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
+            }
+        }
         withContext(Dispatchers.Unconfined) {
             block()
         }

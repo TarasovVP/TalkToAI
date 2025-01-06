@@ -12,6 +12,7 @@ import com.vnteam.talktoai.domain.usecase.ChatUseCase
 import com.vnteam.talktoai.presentation.uimodels.ChatUI
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
 import com.vnteam.talktoai.utils.AnimationUtils
+import com.vnteam.talktoai.utils.NetworkState
 import com.vnteam.talktoai.utils.ShareUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,8 +24,10 @@ class ChatViewModel(
     private val messageUIMapper: MessageUIMapper,
     private val chatUIMapper: ChatUIMapper,
     private val shareUtils: ShareUtils,
+    private val networkState: NetworkState,
     val animationUtils: AnimationUtils
-) : BaseViewModel() {
+
+    ) : BaseViewModel() {
 
     val currentChatLiveData = MutableStateFlow<ChatUI?>(null)
     val messagesLiveData = MutableStateFlow<List<MessageUI>>(listOf())
@@ -34,7 +37,7 @@ class ChatViewModel(
 
     fun insertChat(chat: Chat) {
         if (chatUseCase.isAuthorisedUser()) {
-            checkNetworkAvailable {
+            launch(networkState) {
                 showProgress()
                 chatUseCase.insertRemoteChat(chat) { authResult ->
                     when (authResult) {
@@ -117,7 +120,7 @@ class ChatViewModel(
 
     fun insertMessage(message: MessageUI) {
         if (chatUseCase.isAuthorisedUser()) {
-            checkNetworkAvailable {
+            launch(networkState) {
                 showProgress()
                 chatUseCase.insertRemoteMessage(messageUIMapper.mapFromImplModel(message)) { authResult ->
                     when (authResult) {
@@ -143,7 +146,7 @@ class ChatViewModel(
 
     fun updateMessage(message: MessageUI) {
         if (chatUseCase.isAuthorisedUser()) {
-            checkNetworkAvailable {
+            launch(networkState) {
                 showProgress()
                 chatUseCase.insertRemoteMessage(messageUIMapper.mapFromImplModel(message)) { authResult ->
                     when (authResult) {
@@ -168,7 +171,7 @@ class ChatViewModel(
     fun deleteMessages(messageIds: List<Long>) {
         showProgress()
         if (chatUseCase.isAuthorisedUser()) {
-            checkNetworkAvailable {
+            launch(networkState) {
                 showProgress()
                 chatUseCase.deleteRemoteMessages(messageIds) { authResult ->
                     when (authResult) {

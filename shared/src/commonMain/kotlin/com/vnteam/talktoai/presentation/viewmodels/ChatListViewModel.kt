@@ -4,14 +4,15 @@ import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.usecase.MainUseCase
+import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.launch
 
 class ChatListViewModel(
-    private val mainUseCase: MainUseCase
+    private val mainUseCase: MainUseCase,
+    private val networkState: NetworkState
 ) : BaseViewModel() {
 
     private val _chatsList = MutableStateFlow<List<Chat>?>(null)
@@ -106,34 +107,32 @@ class ChatListViewModel(
     }
 
     fun updateChats(chats: List<Chat>) {
-        launch {
-            if (mainUseCase.isAuthorisedUser()) {
-                checkNetworkAvailable {
-                    showProgress()
-                    mainUseCase.updateRemoteChats(chats) { authResult ->
-                        when (authResult) {
-                            is NetworkResult.Success -> {
+        if (mainUseCase.isAuthorisedUser()) {
+            launch(networkState) {
+                showProgress()
+                mainUseCase.updateRemoteChats(chats) { authResult ->
+                    when (authResult) {
+                        is NetworkResult.Success -> {
 
-                            }
-
-                            is NetworkResult.Failure -> authResult.errorMessage?.let {
-                                _exceptionMessage.value = it
-                            }
                         }
-                        hideProgress()
+
+                        is NetworkResult.Failure -> authResult.errorMessage?.let {
+                            _exceptionMessage.value = it
+                        }
                     }
+                    hideProgress()
                 }
-            } else {
-                launch {
-                    mainUseCase.updateChats(_chatsList.value.orEmpty())
-                }
+            }
+        } else {
+            launch {
+                mainUseCase.updateChats(_chatsList.value.orEmpty())
             }
         }
     }
 
     fun insertChat(chat: Chat) {
         if (mainUseCase.isAuthorisedUser()) {
-            checkNetworkAvailable {
+            launch(networkState) {
                 showProgress()
                 mainUseCase.insertRemoteChat(chat) { authResult ->
                     when (authResult) {
@@ -159,7 +158,7 @@ class ChatListViewModel(
 
     fun updateChat(chat: Chat) {
         if (mainUseCase.isAuthorisedUser()) {
-            checkNetworkAvailable {
+            launch(networkState) {
                 showProgress()
                 mainUseCase.updateRemoteChat(chat) { authResult ->
                     when (authResult) {
@@ -183,7 +182,7 @@ class ChatListViewModel(
 
     fun deleteChat(chat: Chat) {
         if (mainUseCase.isAuthorisedUser()) {
-            checkNetworkAvailable {
+            launch(networkState) {
                 showProgress()
                 mainUseCase.deleteRemoteChat(chat) { authResult ->
                     when (authResult) {
