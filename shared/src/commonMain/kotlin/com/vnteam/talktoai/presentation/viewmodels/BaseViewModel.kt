@@ -25,10 +25,12 @@ open class BaseViewModel : ViewModel() {
 
     fun showProgress() {
         _progressVisibilityState.value = true
+        println("appTAG BaseViewModel showProgress: progressVisibilityState ${progressVisibilityState.value}")
     }
 
     fun hideProgress() {
         _progressVisibilityState.value = false
+        println("appTAG BaseViewModel hideProgress: progressVisibilityState ${progressVisibilityState.value}")
     }
 
     fun showMessage(message: String) {
@@ -41,24 +43,34 @@ open class BaseViewModel : ViewModel() {
 
     protected fun launch(
         networkState: NetworkState? = null,
-        onError: (Throwable, suspend CoroutineScope.() -> Unit) -> Any? = ::onError,
+        isProgressNeeded: Boolean = true,
+        onError: (Throwable) -> Any? = ::onError,
         block: suspend CoroutineScope.() -> Unit
     ): Job = viewModelScope.launch(CoroutineExceptionHandler { _, exception ->
-        onError(exception, block)
+        onError(exception)
     }) {
+        if (isProgressNeeded) {
+            println("appTAG BaseViewModel launch showProgress() progressVisibilityState ${progressVisibilityState.value}")
+            showProgress()
+        }
+        delay(2000)
         networkState?.let {
             if (it.isNetworkAvailable().not()) {
-                throw Exception(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
+                onError(Exception(Constants.APP_NETWORK_UNAVAILABLE_REPEAT))
             }
         }
         withContext(Dispatchers.Unconfined) {
             block()
         }
+        if (isProgressNeeded) {
+            //hideProgress()
+        }
     }
 
-    protected open fun onError(throwable: Throwable, block: suspend CoroutineScope.() -> Unit) {
+    protected open fun onError(throwable: Throwable) {
+        println("appTAG BaseViewModel onError: progressVisibilityState ${progressVisibilityState.value}")
         hideProgress()
         throwable.printStackTrace()
-        _exceptionMessage.value = throwable.message.orEmpty()
+        showMessage(throwable.message.orEmpty())
     }
 }

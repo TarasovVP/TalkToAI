@@ -1,7 +1,6 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.CommonExtensions.EMPTY
-import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.usecase.LoginUseCase
@@ -21,7 +20,7 @@ class LoginViewModel(
     val successSignInLiveData = MutableStateFlow<Boolean?>(null)
 
     fun sendPasswordResetEmail(email: String) {
-        if (networkState.isNetworkAvailable()) {
+        launch(networkState) {
             showProgress()
             loginUseCase.sendPasswordResetEmail(email) { authResult ->
                 when (authResult) {
@@ -33,13 +32,11 @@ class LoginViewModel(
                 }
                 hideProgress()
             }
-        } else {
-            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
-        if (networkState.isNetworkAvailable()) {
+        launch(networkState) {
             showProgress()
             loginUseCase.fetchSignInMethodsForEmail(email) { authResult ->
                 when (authResult) {
@@ -56,13 +53,11 @@ class LoginViewModel(
                 }
                 hideProgress()
             }
-        } else {
-            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
     fun signInWithEmailAndPassword(email: String, password: String) {
-        if (networkState.isNetworkAvailable()) {
+        launch(networkState) {
             showProgress()
             loginUseCase.signInWithEmailAndPassword(email, password) { authResult ->
                 when (authResult) {
@@ -74,13 +69,11 @@ class LoginViewModel(
                 }
                 hideProgress()
             }
-        } else {
-            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
     fun signInAuthWithGoogle(idToken: String) {
-        if (networkState.isNetworkAvailable()) {
+        launch(networkState) {
             showProgress()
             loginUseCase.signInAuthWithGoogle(idToken) { operationResult ->
                 when (operationResult) {
@@ -92,21 +85,15 @@ class LoginViewModel(
                 }
                 hideProgress()
             }
-        } else {
-            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
     fun signInAnonymously() {
         println("NetworkTAG networkState.isNetworkAvailable() = ${networkState.isNetworkAvailable()}")
         launch(networkState) {
-            showProgress()
             // TODO remove this and uncomment below
-            successSignInLiveData.value = true
-            launch {
-                preferencesRepository.setLoggedInUser(true)
-            }
-            hideProgress()
+            /*successSignInLiveData.value = true
+            preferencesRepository.setLoggedInUser(true)*/
             /*loginUseCase.signInAnonymously { authResult ->
 
 

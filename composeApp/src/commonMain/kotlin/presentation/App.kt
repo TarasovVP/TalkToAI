@@ -26,7 +26,7 @@ fun App(appViewModel: AppViewModel) {
         CompositionLocalProvider(
             LocalStringResources provides getStringResourcesByLocale(
                 screenState.value.language.orEmpty()
-            ), LocalScreenState provides mutableStateOf( screenState.value)
+            ), LocalScreenState provides mutableStateOf(screenState.value)
         ) {
             AppTheme(screenState.value.isDarkTheme.isTrue()) {
                 AppContent(appViewModel)
@@ -44,8 +44,16 @@ val LocalScreenState = compositionLocalOf<MutableState<ScreenState>> {
 }
 
 @Composable
-fun updateScreenState(isProgressVisible: Boolean = false, appMessage: AppMessage? = null, screenRoute: String? = null) {
+fun updateScreenState(
+    isProgressVisible: Boolean = false,
+    appMessage: AppMessage? = null,
+    screenRoute: String? = null
+) {
     val localScreenState = LocalScreenState.current
-    localScreenState.value = localScreenState.value.copy(isProgressVisible = isProgressVisible, appMessage = appMessage, currentScreenRoute = screenRoute ?: localScreenState.value.currentScreenRoute)
+    localScreenState.value = localScreenState.value.copy(
+        isProgressVisible = isProgressVisible,
+        appMessage = appMessage ?: localScreenState.value.appMessage,
+        currentScreenRoute = screenRoute ?: localScreenState.value.currentScreenRoute
+    )
 }
 

@@ -1,6 +1,5 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
-import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.usecase.SignUpUseCase
@@ -42,9 +41,6 @@ class SignUpViewModel(
 
     fun createUserWithGoogle(idToken: String) {
         launch(networkState) {
-
-        }
-        if (networkState.isNetworkAvailable()) {
             showProgress()
             signUpUseCase.createUserWithGoogle(idToken) { operationResult ->
                 when (operationResult) {
@@ -56,8 +52,6 @@ class SignUpViewModel(
                 }
                 hideProgress()
             }
-        } else {
-            _exceptionMessage.value = Constants.APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 

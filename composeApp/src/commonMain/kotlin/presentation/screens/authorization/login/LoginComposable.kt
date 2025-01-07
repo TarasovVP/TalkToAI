@@ -57,6 +57,17 @@ fun LoginScreen() {
         updatedScreenRoute.value = String.EMPTY
     }
 
+    val exceptionMessage = viewModel.exceptionMessage.collectAsState()
+    val progress = viewModel.progressVisibilityState.collectAsState()
+    println("appTAG LoginComposable exceptionMessage: ${exceptionMessage.value} progress: ${progress.value}")
+    updateScreenState(
+        isProgressVisible = progress.value,
+        appMessage = if (exceptionMessage.value.isNotEmpty()) AppMessage(
+            true,
+            exceptionMessage.value
+        ) else null
+    )
+
     val accountExistState = viewModel.accountExistLiveData.collectAsState()
     LaunchedEffect(accountExistState.value) {
         if (accountExistState.value.isTrue()) {
@@ -104,7 +115,8 @@ fun LoginScreen() {
         LocalStringResources.current.AUTHORIZATION_FORGOT_PASSWORD_TITLE,
         LocalStringResources.current.AUTHORIZATION_EMAIL,
         emailInputValue,
-        showForgotPasswordDialog) { email ->
+        showForgotPasswordDialog
+    ) { email ->
         viewModel.sendPasswordResetEmail(email)
         showForgotPasswordDialog.value = false
     }
