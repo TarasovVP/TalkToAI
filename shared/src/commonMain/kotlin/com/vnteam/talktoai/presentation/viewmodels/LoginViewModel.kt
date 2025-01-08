@@ -90,7 +90,8 @@ class LoginViewModel(
 
     fun signInAnonymously() {
         println("NetworkTAG networkState.isNetworkAvailable() = ${networkState.isNetworkAvailable()}")
-        launch(networkState) {
+        launch(networkState, true) {
+            println("appTAG LoginViewModel signInAnonymously() progressVisibilityState ${progressVisibilityState.value}")
             // TODO remove this and uncomment below
             /*successSignInLiveData.value = true
             preferencesRepository.setLoggedInUser(true)*/
