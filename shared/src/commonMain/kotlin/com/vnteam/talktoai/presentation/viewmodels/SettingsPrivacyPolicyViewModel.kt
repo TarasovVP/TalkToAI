@@ -15,7 +15,7 @@ class SettingsPrivacyPolicyViewModel(
     val privacyPolicyLiveData = MutableStateFlow(String.EMPTY)
 
     fun getAppLanguage() {
-        launch {
+        launchWithConditions {
             settingsPrivacyPolicyUseCase.getAppLanguage().collect { appLang ->
                 appLanguageLiveData.value = appLang ?: Locale.current.language
             }
@@ -24,7 +24,7 @@ class SettingsPrivacyPolicyViewModel(
 
     fun getPrivacyPolicy(appLang: String) {
         showProgress()
-        launch {
+        launchWithConditions {
             settingsPrivacyPolicyUseCase.getPrivacyPolicy(appLang) { operationResult ->
                 when (operationResult) {
                     is NetworkResult.Success -> privacyPolicyLiveData.value =

@@ -13,7 +13,7 @@ class SettingsThemeViewModel(
     val isDarkTheme: StateFlow<Boolean?> = _isDarkTheme.asStateFlow()
 
     fun getIsDarkTheme() {
-        launch {
+        launchWithConditions {
             settingsThemeUseCase.getAppTheme().collect { appTheme ->
                 _isDarkTheme.value = appTheme
             }
@@ -21,7 +21,7 @@ class SettingsThemeViewModel(
     }
 
     fun setIsDarkTheme(isDarkTheme: Boolean) {
-        launch {
+        launchWithConditions {
             settingsThemeUseCase.setAppTheme(isDarkTheme)
             _isDarkTheme.value = isDarkTheme
         }

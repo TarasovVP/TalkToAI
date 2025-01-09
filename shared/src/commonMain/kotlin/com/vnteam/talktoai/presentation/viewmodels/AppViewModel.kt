@@ -39,7 +39,7 @@ class AppViewModel(
     }
 
     private fun combineFlows() {
-        launch {
+        launchWithConditions {
             combine(
                 _isDarkTheme,
                 _language,
@@ -62,14 +62,14 @@ class AppViewModel(
 
     @OptIn(ExperimentalResourceApi::class)
     fun getAnimationResource() {
-        launch {
+        launchWithConditions {
             val resource = Res.readBytes("files/main_progress.json").decodeToString()
             _animationResource.value = resource
         }
     }
 
     private fun getIsLoggedInUser() {
-        launch {
+        launchWithConditions {
             appUseCase.getIsLoggedInUser().collect { isLoggedInUser ->
                 _loggedInUser.value = isLoggedInUser.isTrue()
             }
@@ -77,7 +77,7 @@ class AppViewModel(
     }
 
     private fun getOnBoardingSeen() {
-        launch {
+        launchWithConditions {
             appUseCase.getIsBoardingSeen().collect { isOnBoardingSeen ->
                 _onBoardingSeen.value = isOnBoardingSeen.isTrue()
             }

@@ -13,7 +13,7 @@ class SettingsLanguageViewModel(
 
 
     fun getAppLanguage() {
-        launch {
+        launchWithConditions {
             settingsLanguageUseCase.getAppLanguage().collect { appLang ->
                 appLanguageLiveData.value = appLang ?: Locale.current.language
             }
@@ -21,7 +21,7 @@ class SettingsLanguageViewModel(
     }
 
     fun setAppLanguage(appLang: String) {
-        launch {
+        launchWithConditions {
             settingsLanguageUseCase.setAppLanguage(appLang)
             appLanguageLiveData.value = appLang
         }

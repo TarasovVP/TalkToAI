@@ -95,13 +95,13 @@ class SettingsAccountViewModel(
     }
 
     fun clearDataByKeys(keys: List<String>) {
-        launch {
+        launchWithConditions {
             settingsAccountUseCase.clearDataByKeys(keys)
         }
     }
 
     fun clearDataBase() {
-        launch {
+        launchWithConditions {
             settingsAccountUseCase.clearDataInDB()
         }
     }

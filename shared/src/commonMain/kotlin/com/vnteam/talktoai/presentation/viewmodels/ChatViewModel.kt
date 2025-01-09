@@ -37,7 +37,7 @@ class ChatViewModel(
 
     fun insertChat(chat: Chat) {
         if (chatUseCase.isAuthorisedUser()) {
-            launch(networkState) {
+            launchWithConditions(networkState) {
                 showProgress()
                 chatUseCase.insertRemoteChat(chat) { authResult ->
                     when (authResult) {
@@ -53,7 +53,7 @@ class ChatViewModel(
                 }
             }
         } else {
-            launch {
+            launchWithConditions {
                 chatUseCase.insertChat(chat)
             }
         }
@@ -61,7 +61,7 @@ class ChatViewModel(
 
     fun getCurrentChat(chatId: Long) {
         showProgress()
-        launch {
+        launchWithConditions {
             chatUseCase.getCurrentChat(chatId).catch {
                 hideProgress()
             }.collect { chat ->
@@ -78,7 +78,7 @@ class ChatViewModel(
     fun getMessagesFromChat(chatId: Long) {
         showProgress()
         messagesFlowSubscription?.cancel()
-        messagesFlowSubscription = launch {
+        messagesFlowSubscription = launchWithConditions {
             chatUseCase.getMessagesFromChat(chatId).catch {
                 hideProgress()
             }.collect { result ->
@@ -90,7 +90,7 @@ class ChatViewModel(
 
     fun sendRequest(temporaryMessage: MessageUI, apiRequest: ApiRequest) {
         showProgress()
-        launch {
+        launchWithConditions {
             chatUseCase.sendRequest(apiRequest).catch {
                 hideProgress()
 
@@ -120,7 +120,7 @@ class ChatViewModel(
 
     fun insertMessage(message: MessageUI) {
         if (chatUseCase.isAuthorisedUser()) {
-            launch(networkState) {
+            launchWithConditions(networkState) {
                 showProgress()
                 chatUseCase.insertRemoteMessage(messageUIMapper.mapFromImplModel(message)) { authResult ->
                     when (authResult) {
@@ -136,7 +136,7 @@ class ChatViewModel(
                 }
             }
         } else {
-            launch {
+            launchWithConditions {
                 chatUseCase.insertMessage(messageUIMapper.mapFromImplModel(message))
                 // TODO add temporary
                 getMessagesFromChat(message.chatId)
@@ -146,7 +146,7 @@ class ChatViewModel(
 
     fun updateMessage(message: MessageUI) {
         if (chatUseCase.isAuthorisedUser()) {
-            launch(networkState) {
+            launchWithConditions(networkState) {
                 showProgress()
                 chatUseCase.insertRemoteMessage(messageUIMapper.mapFromImplModel(message)) { authResult ->
                     when (authResult) {
@@ -162,7 +162,7 @@ class ChatViewModel(
                 }
             }
         } else {
-            launch {
+            launchWithConditions {
                 chatUseCase.insertMessage(messageUIMapper.mapFromImplModel(message))
             }
         }
@@ -171,7 +171,7 @@ class ChatViewModel(
     fun deleteMessages(messageIds: List<Long>) {
         showProgress()
         if (chatUseCase.isAuthorisedUser()) {
-            launch(networkState) {
+            launchWithConditions(networkState) {
                 showProgress()
                 chatUseCase.deleteRemoteMessages(messageIds) { authResult ->
                     when (authResult) {
@@ -187,7 +187,7 @@ class ChatViewModel(
                 }
             }
         } else {
-            launch {
+            launchWithConditions {
                 chatUseCase.deleteMessages(messageIds)
             }
         }
@@ -200,7 +200,7 @@ class ChatViewModel(
 
     @OptIn(ExperimentalResourceApi::class)
     fun getAnimationResource() {
-        launch {
+        launchWithConditions {
             val resource = Res.readBytes("files/message_typing.json").decodeToString()
             animationResource.value = resource
         }

@@ -95,7 +95,7 @@ class ChatListViewModel(
     fun getChats() {
         showProgress()
         chatsFlowSubscription?.cancel()
-        chatsFlowSubscription = launch {
+        chatsFlowSubscription = launchWithConditions {
             mainUseCase.getChats().catch {
                 hideProgress()
 
@@ -108,7 +108,7 @@ class ChatListViewModel(
 
     fun updateChats(chats: List<Chat>) {
         if (mainUseCase.isAuthorisedUser()) {
-            launch(networkState) {
+            launchWithConditions(networkState) {
                 showProgress()
                 mainUseCase.updateRemoteChats(chats) { authResult ->
                     when (authResult) {
@@ -124,7 +124,7 @@ class ChatListViewModel(
                 }
             }
         } else {
-            launch {
+            launchWithConditions {
                 mainUseCase.updateChats(_chatsList.value.orEmpty())
             }
         }
@@ -132,7 +132,7 @@ class ChatListViewModel(
 
     fun insertChat(chat: Chat) {
         if (mainUseCase.isAuthorisedUser()) {
-            launch(networkState) {
+            launchWithConditions(networkState) {
                 showProgress()
                 mainUseCase.insertRemoteChat(chat) { authResult ->
                     when (authResult) {
@@ -148,7 +148,7 @@ class ChatListViewModel(
                 }
             }
         } else {
-            launch {
+            launchWithConditions {
                 mainUseCase.insertChat(chat)
                 // TODO add temporary
                 getChats()
@@ -158,7 +158,7 @@ class ChatListViewModel(
 
     fun updateChat(chat: Chat) {
         if (mainUseCase.isAuthorisedUser()) {
-            launch(networkState) {
+            launchWithConditions(networkState) {
                 showProgress()
                 mainUseCase.updateRemoteChat(chat) { authResult ->
                     when (authResult) {
@@ -174,7 +174,7 @@ class ChatListViewModel(
                 }
             }
         } else {
-            launch {
+            launchWithConditions {
                 mainUseCase.updateChat(chat)
             }
         }
@@ -182,7 +182,7 @@ class ChatListViewModel(
 
     fun deleteChat(chat: Chat) {
         if (mainUseCase.isAuthorisedUser()) {
-            launch(networkState) {
+            launchWithConditions(networkState) {
                 showProgress()
                 mainUseCase.deleteRemoteChat(chat) { authResult ->
                     when (authResult) {
@@ -198,7 +198,7 @@ class ChatListViewModel(
                 }
             }
         } else {
-            launch {
+            launchWithConditions {
                 mainUseCase.deleteChat(chat)
             }
         }

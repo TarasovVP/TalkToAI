@@ -20,7 +20,7 @@ class LoginViewModel(
     val successSignInLiveData = MutableStateFlow<Boolean?>(null)
 
     fun sendPasswordResetEmail(email: String) {
-        launch(networkState) {
+        launchWithConditions(networkState) {
             showProgress()
             loginUseCase.sendPasswordResetEmail(email) { authResult ->
                 when (authResult) {
@@ -36,7 +36,7 @@ class LoginViewModel(
     }
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
-        launch(networkState) {
+        launchWithConditions(networkState) {
             showProgress()
             loginUseCase.fetchSignInMethodsForEmail(email) { authResult ->
                 when (authResult) {
@@ -57,7 +57,7 @@ class LoginViewModel(
     }
 
     fun signInWithEmailAndPassword(email: String, password: String) {
-        launch(networkState) {
+        launchWithConditions(networkState = networkState) {
             showProgress()
             loginUseCase.signInWithEmailAndPassword(email, password) { authResult ->
                 when (authResult) {
@@ -73,7 +73,7 @@ class LoginViewModel(
     }
 
     fun signInAuthWithGoogle(idToken: String) {
-        launch(networkState) {
+        launchWithConditions(networkState = networkState) {
             showProgress()
             loginUseCase.signInAuthWithGoogle(idToken) { operationResult ->
                 when (operationResult) {
@@ -90,12 +90,20 @@ class LoginViewModel(
 
     fun signInAnonymously() {
         println("NetworkTAG networkState.isNetworkAvailable() = ${networkState.isNetworkAvailable()}")
-        launch(networkState, true) {
+        /*launchWithConditionsTest<Unit>(networkState, true) (
+            {
+                loginUseCase.signInAnonymously(Unit)
+        },
+            {
+
+            }
+        )*/
+        /*{
             println("appTAG LoginViewModel signInAnonymously() progressVisibilityState ${progressVisibilityState.value}")
             // TODO remove this and uncomment below
-            /*successSignInLiveData.value = true
-            preferencesRepository.setLoggedInUser(true)*/
-            /*loginUseCase.signInAnonymously { authResult ->
+            *//*successSignInLiveData.value = true
+            preferencesRepository.setLoggedInUser(true)*//*
+            *//*loginUseCase.signInAnonymously { authResult ->
 
 
                 when (authResult) {
@@ -105,8 +113,8 @@ class LoginViewModel(
                     }
                 }
                 hideProgress()
-            }*/
-        }
+            }*//*
+        }*/
     }
 
     fun googleSignOut() {

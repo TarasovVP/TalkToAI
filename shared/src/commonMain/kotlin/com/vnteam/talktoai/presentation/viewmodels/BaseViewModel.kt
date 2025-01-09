@@ -3,9 +3,8 @@ package com.vnteam.talktoai.presentation.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vnteam.talktoai.CommonExtensions.EMPTY
-import com.vnteam.talktoai.CommonExtensions.isNotNull
-import com.vnteam.talktoai.CommonExtensions.isNotTrue
 import com.vnteam.talktoai.Constants
+import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -36,14 +35,14 @@ open class BaseViewModel : ViewModel() {
     }
 
     fun showMessage(message: String) {
-        launch {
-            _exceptionMessage.value = message
-            delay(4000)
+        _exceptionMessage.value = message
+        viewModelScope.launch {
+            delay(Constants.APP_MESSAGE_DELAY)
             _exceptionMessage.value = String.EMPTY
         }
     }
 
-    protected fun launch(
+    protected fun launchWithConditions(
         networkState: NetworkState? = null,
         isProgressNeeded: Boolean = false,
         onError: (Throwable) -> Any? = ::onError,
@@ -51,36 +50,60 @@ open class BaseViewModel : ViewModel() {
     ): Job = viewModelScope.launch(CoroutineExceptionHandler { _, exception ->
         onError(exception)
     }) {
-        println("appTAG BaseViewModel launch start networkState $networkState isProgressNeeded $isProgressNeeded")
         if (isProgressNeeded) {
-            println("appTAG BaseViewModel launch showProgress() progressVisibilityState ${progressVisibilityState.value}")
             showProgress()
         }
         delay(2000)
 
         networkState?.let {
             if (it.isNetworkAvailable().not()) {
-                onError(Exception(Constants.APP_NETWORK_UNAVAILABLE_REPEAT))
-                println("appTAG BaseViewModel launch networkState.isNetworkAvailable().not()")
+                throw Exception(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
         }
-        val isNetworkNeededAndAvailable = isProgressNeeded && networkState.isNotNull() && networkState?.isNetworkAvailable().isNotTrue()
-        println("appTAG BaseViewModel isNetworkNeededAndAvailable $isNetworkNeededAndAvailable")
-        if (isNetworkNeededAndAvailable.not()) {
-            withContext(Dispatchers.Unconfined) {
-                println("appTAG BaseViewModel launchblock() progressVisibilityState ${progressVisibilityState.value}")
-                block()
+
+        withContext(Dispatchers.Unconfined) {
+            block()
+        }
+        if (isProgressNeeded) {
+            hideProgress()
+        }
+    }
+
+    protected fun <T> launchWithConditionsTest(
+        networkState: NetworkState? = null,
+        isProgressNeeded: Boolean = false,
+        block: suspend CoroutineScope.() -> NetworkResult<T>,
+        onSuccess: (T?) -> Unit,
+        onError: (Throwable) -> Any? = ::onError,
+    ): Job = viewModelScope.launch(CoroutineExceptionHandler { _, exception ->
+        onError(exception)
+    }) {
+        if (isProgressNeeded) {
+            showProgress()
+        }
+        delay(2000)
+
+        networkState?.let {
+            if (it.isNetworkAvailable().not()) {
+                throw Exception(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
-            if (isProgressNeeded) {
-                hideProgress()
-            }
+        }
+
+        val result = withContext(Dispatchers.Unconfined) {
+            block()
+        }
+        when (result) {
+            is NetworkResult.Success -> onSuccess(result.data)
+            is NetworkResult.Failure -> throw Exception(result.errorMessage)
+        }
+        if (isProgressNeeded) {
+            hideProgress()
         }
     }
 
     protected open fun onError(throwable: Throwable) {
-        println("appTAG BaseViewModel onError: progressVisibilityState ${progressVisibilityState.value}")
-        hideProgress()
         throwable.printStackTrace()
         showMessage(throwable.message.orEmpty())
+        hideProgress()
     }
 }

@@ -107,7 +107,7 @@ class SettingsSignUpViewModel(
 
     fun createRemoteUser(isExistUser: Boolean) {
         showProgress()
-        launch {
+        launchWithConditions {
             val chats = settingsSignUpUseCase.getChats().first()
             val messages = settingsSignUpUseCase.getMessages().first()
             val remoteUser = RemoteUser().apply {

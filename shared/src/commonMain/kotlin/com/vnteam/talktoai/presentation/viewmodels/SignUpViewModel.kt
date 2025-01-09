@@ -18,7 +18,7 @@ class SignUpViewModel(
     val uiState: StateFlow<SignUpUIState> = _uiState.asStateFlow()
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
-        launch(networkState) {
+        launchWithConditions(networkState) {
             showProgress()
             signUpUseCase.fetchSignInMethodsForEmail(email) { authResult ->
                 when (authResult) {
@@ -40,7 +40,7 @@ class SignUpViewModel(
     }
 
     fun createUserWithGoogle(idToken: String) {
-        launch(networkState) {
+        launchWithConditions(networkState) {
             showProgress()
             signUpUseCase.createUserWithGoogle(idToken) { operationResult ->
                 when (operationResult) {
@@ -56,7 +56,7 @@ class SignUpViewModel(
     }
 
     fun createUserWithEmailAndPassword(email: String, password: String) {
-        launch(networkState) {
+        launchWithConditions(networkState) {
             showProgress()
             signUpUseCase.createUserWithEmailAndPassword(email, password) { operationResult ->
                 when (operationResult) {
@@ -72,7 +72,7 @@ class SignUpViewModel(
     }
 
     fun insertRemoteUser(remoteUser: RemoteUser) {
-        launch(networkState) {
+        launchWithConditions(networkState) {
             showProgress()
             signUpUseCase.insertRemoteUser(remoteUser) { operationResult ->
                 when (operationResult) {
