@@ -73,31 +73,28 @@ class LoginViewModel(
     }
 
     fun signInAuthWithGoogle(idToken: String) {
-        launchWithConditions(networkState = networkState) {
-            showProgress()
-            loginUseCase.signInAuthWithGoogle(idToken) { operationResult ->
-                when (operationResult) {
-                    is NetworkResult.Success -> successSignInLiveData.value = true
-                    is NetworkResult.Failure -> operationResult.errorMessage?.let {
-                        _exceptionMessage.value =
-                            it
-                    }
-                }
-                hideProgress()
-            }
-        }
+        launchWithConditionsTest(
+            networkState = networkState,
+            isProgressNeeded = true,
+            block = {
+                loginUseCase.signInAuthWithGoogle(idToken)
+            },
+            onSuccess = { successSignInLiveData.value = true }
+        )
     }
 
     fun signInAnonymously() {
         println("NetworkTAG networkState.isNetworkAvailable() = ${networkState.isNetworkAvailable()}")
-        /*launchWithConditionsTest<Unit>(networkState, true) (
-            {
-                loginUseCase.signInAnonymously(Unit)
-        },
-            {
-
+        launchWithConditionsTest(
+            networkState = networkState,
+            isProgressNeeded = true,
+            block = {
+                loginUseCase.signInAnonymously()
+            },
+            onSuccess = {
+                successSignInLiveData.value = true
             }
-        )*/
+        )
         /*{
             println("appTAG LoginViewModel signInAnonymously() progressVisibilityState ${progressVisibilityState.value}")
             // TODO remove this and uncomment below

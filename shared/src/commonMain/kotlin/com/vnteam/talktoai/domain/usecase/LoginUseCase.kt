@@ -1,6 +1,7 @@
 package com.vnteam.talktoai.domain.usecase
 
 import com.vnteam.talktoai.data.network.NetworkResult
+import kotlinx.coroutines.flow.Flow
 
 interface LoginUseCase {
 
@@ -14,9 +15,9 @@ interface LoginUseCase {
         result: (NetworkResult<Unit>) -> Unit
     )
 
-    fun signInAuthWithGoogle(idToken: String, result: (NetworkResult<Unit>) -> Unit)
+    fun signInAuthWithGoogle(idToken: String): Flow<NetworkResult<Unit>>
 
-    fun signInAnonymously(result: (NetworkResult<Unit>) -> Unit)
+    suspend fun signInAnonymously(): Flow<NetworkResult<Unit>>
 
     fun googleSignOut()
 

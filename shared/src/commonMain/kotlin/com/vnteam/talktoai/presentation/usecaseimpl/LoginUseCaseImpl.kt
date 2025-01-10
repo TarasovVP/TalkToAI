@@ -3,6 +3,7 @@ package com.vnteam.talktoai.presentation.usecaseimpl
 import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import com.vnteam.talktoai.domain.usecase.LoginUseCase
+import kotlinx.coroutines.flow.Flow
 
 
 class LoginUseCaseImpl(private val authRepository: AuthRepository) :
@@ -29,15 +30,11 @@ class LoginUseCaseImpl(private val authRepository: AuthRepository) :
         result.invoke(authResult)
     }
 
-    override fun signInAuthWithGoogle(idToken: String, result: (NetworkResult<Unit>) -> Unit) =
-        authRepository.signInWithGoogle(idToken) { authResult ->
-            result.invoke(authResult)
-        }
+    override fun signInAuthWithGoogle(idToken: String): Flow<NetworkResult<Unit>> =
+        authRepository.signInWithGoogle(idToken)
 
-    override fun signInAnonymously(result: (NetworkResult<Unit>) -> Unit) =
-        authRepository.signInAnonymously { authResult ->
-            result.invoke(authResult)
-        }
+    override suspend fun signInAnonymously(): Flow<NetworkResult<Unit>> =
+        authRepository.signInAnonymously()
 
     override fun googleSignOut() {
         authRepository.googleSignOut()

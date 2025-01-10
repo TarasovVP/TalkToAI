@@ -3,6 +3,8 @@ package com.vnteam.talktoai.data.repositoryimpl
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.repositories.AuthRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 
 class AuthRepositoryImpl :
     AuthRepository {
@@ -77,7 +79,7 @@ class AuthRepositoryImpl :
             }*/
     }
 
-    override fun signInWithGoogle(idToken: String, result: (NetworkResult<Unit>) -> Unit) {
+    override fun signInWithGoogle(idToken: String): Flow<NetworkResult<Unit>> = callbackFlow {
         /*val credential = GoogleAuthProvider.getCredential(idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnSuccessListener {
@@ -87,12 +89,16 @@ class AuthRepositoryImpl :
             }*/
     }
 
-    override fun signInAnonymously(result: (NetworkResult<Unit>) -> Unit) {
+    override suspend fun signInAnonymously(): Flow<NetworkResult<Unit>> = callbackFlow {
+        // TODO remove mock, uncomment below code
+        trySend(NetworkResult.Success(Unit))
         /*firebaseAuth.signInAnonymously()
             .addOnSuccessListener {
-                result.invoke(Result.Success())
+                trySend(NetworkResult.Success(Unit))
+                close()
             }.addOnFailureListener { exception ->
-                result.invoke(Result.Failure(exception.localizedMessage))
+                trySend(NetworkResult.Failure(exception.localizedMessage))
+                close()
             }*/
     }
 

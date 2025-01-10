@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -72,8 +73,8 @@ open class BaseViewModel : ViewModel() {
     protected fun <T> launchWithConditionsTest(
         networkState: NetworkState? = null,
         isProgressNeeded: Boolean = false,
-        block: suspend CoroutineScope.() -> NetworkResult<T>,
-        onSuccess: (T?) -> Unit,
+        block: suspend CoroutineScope.() -> Flow<NetworkResult<T>>,
+        onSuccess: (T?) -> Unit = {},
         onError: (Throwable) -> Any? = ::onError,
     ): Job = viewModelScope.launch(CoroutineExceptionHandler { _, exception ->
         onError(exception)
@@ -89,12 +90,11 @@ open class BaseViewModel : ViewModel() {
             }
         }
 
-        val result = withContext(Dispatchers.Unconfined) {
-            block()
-        }
-        when (result) {
-            is NetworkResult.Success -> onSuccess(result.data)
-            is NetworkResult.Failure -> throw Exception(result.errorMessage)
+        block().collect { result ->
+            when (result) {
+                is NetworkResult.Success -> onSuccess(result.data)
+                is NetworkResult.Failure -> throw Exception(result.errorMessage)
+            }
         }
         if (isProgressNeeded) {
             hideProgress()
