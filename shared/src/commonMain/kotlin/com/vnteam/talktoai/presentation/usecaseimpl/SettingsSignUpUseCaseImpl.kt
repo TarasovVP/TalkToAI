@@ -37,12 +37,8 @@ class SettingsSignUpUseCaseImpl(
         realDataBaseRepository.insertRemoteUser(remoteUser)
 
     override fun updateRemoteCurrentUser(
-        remoteUser: RemoteUser,
-        result: (NetworkResult<Unit>) -> Unit
-    ) =
-        realDataBaseRepository.updateRemoteUser(remoteUser) { authResult ->
-            result.invoke(authResult)
-        }
+        remoteUser: RemoteUser): Flow<NetworkResult<Unit>> =
+        realDataBaseRepository.updateRemoteUser(remoteUser)
 
     override fun googleSign() {
         authRepository.googleSignIn()

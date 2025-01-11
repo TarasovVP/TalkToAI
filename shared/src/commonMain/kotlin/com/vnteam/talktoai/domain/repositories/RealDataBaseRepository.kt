@@ -11,11 +11,11 @@ interface RealDataBaseRepository {
 
     fun insertRemoteUser(remoteUser: RemoteUser): Flow<NetworkResult<Unit>>
 
-    fun updateRemoteUser(remoteUser: RemoteUser, result: (NetworkResult<Unit>) -> Unit)
+    fun updateRemoteUser(remoteUser: RemoteUser): Flow<NetworkResult<Unit>>
 
-    fun deleteRemoteUser(result: (NetworkResult<Unit>) -> Unit)
+    fun deleteRemoteUser(): Flow<NetworkResult<Unit>>
 
-    fun updateRemoteChats(chats: List<Chat>, result: (NetworkResult<Unit>) -> Unit)
+    fun updateRemoteChats(chats: List<Chat>): Flow<NetworkResult<Unit>>
 
     fun addRemoteChatListener()
 
@@ -25,21 +25,21 @@ interface RealDataBaseRepository {
 
     fun removeRemoteMessageListener()
 
-    fun insertChat(chat: Chat, result: (NetworkResult<Unit>) -> Unit)
+    fun insertChat(chat: Chat): Flow<NetworkResult<Unit>>
 
-    fun updateChat(chat: Chat, result: (NetworkResult<Unit>) -> Unit)
+    fun updateChat(chat: Chat): Flow<NetworkResult<Unit>>
 
-    fun deleteChat(chat: Chat, result: (NetworkResult<Unit>) -> Unit)
+    fun deleteChat(chat: Chat): Flow<NetworkResult<Unit>>
 
-    fun insertMessage(message: Message, result: (NetworkResult<Unit>) -> Unit)
+    fun insertMessage(message: Message): Flow<NetworkResult<Unit>>
 
-    fun deleteMessages(messageIds: List<String>, result: (NetworkResult<Unit>) -> Unit)
+    fun deleteMessages(messageIds: List<String>): Flow<NetworkResult<Unit>>
 
-    fun deleteMessagesByChatId(chatId: Long, result: (NetworkResult<Unit>) -> Unit)
+    fun deleteMessagesByChatId(chatId: Long): Flow<NetworkResult<Unit>>
 
-    fun setReviewVoted(result: (NetworkResult<Unit>) -> Unit)
+    fun setReviewVoted(): Flow<NetworkResult<Unit>>
 
-    fun insertFeedback(feedback: Feedback, result: (NetworkResult<Unit>) -> Unit)
+    fun insertFeedback(feedback: Feedback): Flow<NetworkResult<Unit>>
 
-    fun getPrivacyPolicy(appLang: String, result: (NetworkResult<String>) -> Unit)
+    fun getPrivacyPolicy(appLang: String): Flow<NetworkResult<String>>
 }

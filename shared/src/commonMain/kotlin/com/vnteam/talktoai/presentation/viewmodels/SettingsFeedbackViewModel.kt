@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
-import com.vnteam.talktoai.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
+import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.models.Feedback
 import com.vnteam.talktoai.domain.usecase.SettingsListUseCase
 import com.vnteam.talktoai.utils.NetworkState
@@ -19,18 +19,10 @@ class SettingsFeedbackViewModel(
     }
 
     fun insertFeedback(feedback: Feedback) {
-        if (networkState.isNetworkAvailable()) {
-            showProgress()
-            settingsListUseCase.insertFeedback(feedback) { result ->
-                /*when (result) {
-                    is NetworkResult.Success -> successFeedbackLiveData.value = true
-                    is NetworkResult.Failure -> _exceptionMessage.value =
-                        result.errorMessage.orEmpty()
-                }*/
+        launchWithNetworkCheck(networkState) {
+            settingsListUseCase.insertFeedback(feedback).onSuccess {
+                successFeedbackLiveData.value = true
             }
-            hideProgress()
-        } else {
-            _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 }

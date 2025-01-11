@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
-import com.vnteam.talktoai.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
+import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.usecase.SettingsAccountUseCase
 import com.vnteam.talktoai.utils.NetworkState
@@ -29,78 +29,45 @@ class SettingsAccountViewModel(
 
     fun signOut() {
         successLiveData.value = true
-        // TODO uncomment
-        /*if (networkState.isNetworkAvailable()) {
-            showProgress()
-            settingsAccountUseCase.signOut { result ->
-                when (result) {
-                    is NetworkResult.Success -> successLiveData.value = true
-                    is NetworkResult.Failure -> exceptionLiveData.value =
-                        result.errorMessage.orEmpty()
-                }
+        launchWithNetworkCheck(networkState) {
+            settingsAccountUseCase.signOut().onSuccess {
+                successLiveData.value = true
             }
-            hideProgress()
-        } else {
-            exceptionLiveData.value = APP_NETWORK_UNAVAILABLE_REPEAT
-        }*/
+        }
     }
 
     fun changePassword(currentPassword: String, newPassword: String) {
-        if (networkState.isNetworkAvailable()) {
-            showProgress()
-            settingsAccountUseCase.changePassword(currentPassword, newPassword) { result ->
-               /* when (result) {
-                    is NetworkResult.Success -> successChangePasswordLiveData.value = true
-                    is NetworkResult.Failure -> _exceptionMessage.value =
-                        result.errorMessage.orEmpty()
-                }*/
-                hideProgress()
+        launchWithNetworkCheck(networkState) {
+            settingsAccountUseCase.changePassword(currentPassword, newPassword).onSuccess {
+                successChangePasswordLiveData.value = true
             }
-        } else {
-            _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
     fun reAuthenticate(/*authCredential: AuthCredential*/) {
-        if (networkState.isNetworkAvailable()) {
-            showProgress()
-            settingsAccountUseCase.reAuthenticate { result ->
-                /*when (result) {
-                    is NetworkResult.Success -> reAuthenticateLiveData.value = true
-                    is NetworkResult.Failure -> _exceptionMessage.value =
-                        result.errorMessage.orEmpty()
-                }*/
-                hideProgress()
+        launchWithNetworkCheck(networkState) {
+            settingsAccountUseCase.reAuthenticate().onSuccess {
+                reAuthenticateLiveData.value = true
             }
-        } else {
-            _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
     fun deleteUser() {
-        if (networkState.isNetworkAvailable()) {
-            showProgress()
-            settingsAccountUseCase.deleteUser { result ->
-                /*when (result) {
-                    is NetworkResult.Success -> successLiveData.value = true
-                    is NetworkResult.Failure -> _exceptionMessage.value =
-                        result.errorMessage.orEmpty()
-                }*/
-                hideProgress()
+        launchWithNetworkCheck(networkState) {
+            settingsAccountUseCase.deleteUser().onSuccess {
+                successLiveData.value = true
             }
-        } else {
-            _exceptionMessage.value = APP_NETWORK_UNAVAILABLE_REPEAT
         }
     }
 
     fun clearDataByKeys(keys: List<String>) {
-        launchWithConditions {
+        launchWithErrorHandling {
             settingsAccountUseCase.clearDataByKeys(keys)
         }
     }
 
     fun clearDataBase() {
-        launchWithConditions {
+        launchWithErrorHandling {
             settingsAccountUseCase.clearDataInDB()
         }
     }

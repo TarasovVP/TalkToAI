@@ -10,7 +10,6 @@ import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
 import kotlinx.coroutines.flow.Flow
 
-
 class MainUseCaseImpl(
     private val authRepository: AuthRepository,
     private val dataStoreRepository: PreferencesRepository,
@@ -19,7 +18,7 @@ class MainUseCaseImpl(
     private val messageRepository: MessageRepository,
 ) : MainUseCase {
 
-    override suspend fun getOnBoardingSeen(): Flow<Boolean?> =
+    override suspend fun getOnBoardingSeen(): Flow<NetworkResult<Boolean?>> =
         dataStoreRepository.getIsBoardingSeen()
 
     override fun addAuthStateListener(/*authStateListener: FirebaseAuth.AuthStateListener*/) =
@@ -60,28 +59,28 @@ class MainUseCaseImpl(
 
     override suspend fun updateChats(chats: List<Chat>) = chatRepository.updateChats(chats)
 
-    override fun updateRemoteChats(chats: List<Chat>, result: (NetworkResult<Unit>) -> Unit) =
-        realDataBaseRepository.updateRemoteChats(chats, result)
+    override fun updateRemoteChats(chats: List<Chat>): Flow<NetworkResult<Unit>> =
+        realDataBaseRepository.updateRemoteChats(chats)
 
     override suspend fun insertChat(chat: Chat) = chatRepository.insertChat(chat)
 
-    override fun insertRemoteChat(chat: Chat, result: (NetworkResult<Unit>) -> Unit) =
-        realDataBaseRepository.insertChat(chat, result)
+    override fun insertRemoteChat(chat: Chat): Flow<NetworkResult<Unit>> =
+        realDataBaseRepository.insertChat(chat)
 
     override suspend fun updateChat(chat: Chat) = chatRepository.updateChat(chat)
 
-    override fun updateRemoteChat(chat: Chat, result: (NetworkResult<Unit>) -> Unit) =
-        realDataBaseRepository.updateChat(chat, result)
+    override fun updateRemoteChat(chat: Chat): Flow<NetworkResult<Unit>> =
+        realDataBaseRepository.updateChat(chat)
 
     override suspend fun deleteChat(chat: Chat) {
         chatRepository.deleteChat(chat)
         messageRepository.deleteMessagesFromChat(chat.id)
     }
 
-    override fun deleteRemoteChat(chat: Chat, result: (NetworkResult<Unit>) -> Unit) {
-        realDataBaseRepository.deleteMessagesByChatId(chat.id) {
-            realDataBaseRepository.deleteChat(chat, result)
-        }
+    override fun deleteRemoteChat(chat: Chat): Flow<NetworkResult<Unit>> {
+        return realDataBaseRepository.deleteMessagesByChatId(chat.id)/* {
+            realDataBaseRepository.deleteChat(chat)
+        }*/
     }
 
     override suspend fun updateMessages(messages: List<Message>) =

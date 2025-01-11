@@ -22,7 +22,7 @@ interface SettingsSignUpUseCase {
 
     fun insertRemoteCurrentUser(remoteUser: RemoteUser): Flow<NetworkResult<Unit>>
 
-    fun updateRemoteCurrentUser(remoteUser: RemoteUser, result: (NetworkResult<Unit>) -> Unit)
+    fun updateRemoteCurrentUser(remoteUser: RemoteUser): Flow<NetworkResult<Unit>>
 
     fun googleSign()
 }

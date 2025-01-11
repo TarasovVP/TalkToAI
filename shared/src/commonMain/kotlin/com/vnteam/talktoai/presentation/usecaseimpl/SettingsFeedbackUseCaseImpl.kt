@@ -5,6 +5,7 @@ import com.vnteam.talktoai.domain.models.Feedback
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnteam.talktoai.domain.usecase.SettingsListUseCase
+import kotlinx.coroutines.flow.Flow
 
 
 class SettingsFeedbackUseCaseImpl(
@@ -14,8 +15,6 @@ class SettingsFeedbackUseCaseImpl(
 
     override fun currentUserEmail() = authRepository.currentUserEmail()
 
-    override fun insertFeedback(feedback: Feedback, result: (NetworkResult<Unit>) -> Unit) =
-        realDataBaseRepository.insertFeedback(feedback) {
-            result.invoke(it)
-        }
+    override fun insertFeedback(feedback: Feedback): Flow<NetworkResult<Unit>> =
+        realDataBaseRepository.insertFeedback(feedback)
 }

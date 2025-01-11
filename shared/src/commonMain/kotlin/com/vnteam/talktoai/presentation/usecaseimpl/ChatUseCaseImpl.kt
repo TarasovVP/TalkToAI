@@ -34,11 +34,11 @@ class ChatUseCaseImpl(
 
     override fun isAuthorisedUser() = authRepository.isAuthorisedUser()
 
-    override fun insertRemoteChat(chat: Chat, result: (NetworkResult<Unit>) -> Unit) =
-        realDataBaseRepository.insertChat(chat, result)
+    override fun insertRemoteChat(chat: Chat): Flow<NetworkResult<Unit>> =
+        realDataBaseRepository.insertChat(chat)
 
-    override fun insertRemoteMessage(message: Message, result: (NetworkResult<Unit>) -> Unit) {
-        realDataBaseRepository.insertMessage(message, result)
+    override fun insertRemoteMessage(message: Message): Flow<NetworkResult<Unit>> {
+        return realDataBaseRepository.insertMessage(message)
     }
 
     override suspend fun insertMessage(message: Message) {
@@ -49,9 +49,8 @@ class ChatUseCaseImpl(
         messageRepository.deleteMessages(messageIds)
 
     override fun deleteRemoteMessages(
-        messageIds: List<Long>,
-        result: (NetworkResult<Unit>) -> Unit
-    ) = realDataBaseRepository.deleteMessages(messageIds.map { it.toString() }, result)
+        messageIds: List<Long>): Flow<NetworkResult<Unit>> =
+        realDataBaseRepository.deleteMessages(messageIds.map { it.toString() })
 
     override suspend fun getMessagesFromChat(chatId: Long): Flow<List<Message>> =
         messageRepository.getMessagesFromChat(chatId)

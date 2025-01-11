@@ -8,14 +8,12 @@ import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 open class BaseViewModel : ViewModel() {
 
@@ -46,56 +44,41 @@ open class BaseViewModel : ViewModel() {
         }
     }
 
-    protected fun launchWithConditions(
-        networkState: NetworkState? = null,
-        isProgressNeeded: Boolean = false,
-        onError: (Throwable) -> Any? = ::onError,
-        block: suspend CoroutineScope.() -> Unit
-    ): Job = viewModelScope.launch(CoroutineExceptionHandler { _, exception ->
-        onError(exception)
-    }) {
-        _progressVisibilityState.value = isProgressNeeded
-        delay(2000)
-
-        networkState?.let {
-            if (it.isNetworkAvailable().not()) {
-                throw Exception(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
-            }
-        }
-
-        withContext(Dispatchers.Unconfined) {
-            block()
-        }
-        _progressVisibilityState.value = false
-    }
-
     protected fun <T> launchWithNetworkCheck(
         networkState: NetworkState? = null,
         block: suspend CoroutineScope.() -> Flow<NetworkResult<T>>
-    ): Job = viewModelScope.launch(CoroutineExceptionHandler { _, exception ->
-        onError(exception)
-    }) {
+    ): Job {
         networkState?.let {
             if (it.isNetworkAvailable().not()) {
-                throw Exception(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
+                onError(Exception(Constants.APP_NETWORK_UNAVAILABLE_REPEAT))
+                return launchWithErrorHandling { }
             }
         }
-        launchWithResultHandling(block)
+        return launchWithResultHandling(block)
     }
-
 
     protected fun <T> launchWithResultHandling(
         block: suspend CoroutineScope.() -> Flow<NetworkResult<T>>
-    ): Job = viewModelScope.launch(CoroutineExceptionHandler { _, exception ->
-        onError(exception)
-    }) {
+    ): Job = launchWithErrorHandling {
         block().collect { result ->
             println("appTAG BaseViewModel launchWithConditionsTest: result $result")
             when (result) {
                 is NetworkResult.Success -> hideProgress()
-                is NetworkResult.Failure -> throw Exception(result.errorMessage)
+                is NetworkResult.Failure -> onError(Exception(result.errorMessage))
                 is NetworkResult.Loading -> showProgress()
             }
+        }
+    }
+
+    protected fun launchWithErrorHandling(
+        block: suspend CoroutineScope.() -> Unit
+    ): Job = viewModelScope.launch(CoroutineExceptionHandler { _, exception ->
+        onError(exception)
+    }) {
+        try {
+            block()
+        } catch (e: Exception) {
+            onError(e)
         }
     }
 

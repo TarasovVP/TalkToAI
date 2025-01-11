@@ -28,19 +28,21 @@ interface AuthRepository {
 
     suspend fun signInAnonymously(): Flow<NetworkResult<Unit>>
 
-    fun createUserWithEmailAndPassword(email: String, password: String): Flow<NetworkResult<List<String>>>
+    fun createUserWithEmailAndPassword(
+        email: String,
+        password: String
+    ): Flow<NetworkResult<List<String>>>
 
     fun changePassword(
         currentPassword: String,
-        newPassword: String,
-        result: (NetworkResult<Unit>) -> Unit
-    )
+        newPassword: String
+    ): Flow<NetworkResult<Unit>>
 
-    fun reAuthenticate()
+    fun reAuthenticate(): Flow<NetworkResult<Unit>>
 
-    fun deleteUser(result: (NetworkResult<Unit>) -> Unit)
+    fun deleteUser(): Flow<NetworkResult<Unit>>
 
-    fun signOut(result: (NetworkResult<Unit>) -> Unit)
+    fun signOut(): Flow<NetworkResult<Unit>>
 
     fun googleSignOut()
 

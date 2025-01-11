@@ -125,9 +125,7 @@ class AuthRepositoryImpl :
 
     override fun changePassword(
         currentPassword: String,
-        newPassword: String,
-        result: (NetworkResult<Unit>) -> Unit
-    ) {
+        newPassword: String): Flow<NetworkResult<Unit>> = callbackFlow {
         /*val user = firebaseAuth.currentUser
         val credential = EmailAuthProvider.getCredential(user?.email.orEmpty(), currentPassword)
         user?.reauthenticateAndRetrieveData(credential)
@@ -142,7 +140,7 @@ class AuthRepositoryImpl :
             }*/
     }
 
-    override fun reAuthenticate(/*authCredential: AuthCredential, result: (Result<Unit>) -> Unit*/) {
+    override fun reAuthenticate(/*authCredential: AuthCredential*/): Flow<NetworkResult<Unit>> = callbackFlow {
         /*firebaseAuth.currentUser?.reauthenticate(authCredential)
             ?.addOnSuccessListener {
                 result.invoke(Result.Success())
@@ -151,7 +149,7 @@ class AuthRepositoryImpl :
             }*/
     }
 
-    override fun deleteUser(result: (NetworkResult<Unit>) -> Unit) {
+    override fun deleteUser(): Flow<NetworkResult<Unit>> = callbackFlow {
         /*firebaseAuth.currentUser?.delete()
             ?.addOnSuccessListener {
                 signOut(result)
@@ -160,7 +158,7 @@ class AuthRepositoryImpl :
             }*/
     }
 
-    override fun signOut(result: (NetworkResult<Unit>) -> Unit) {
+    override fun signOut(): Flow<NetworkResult<Unit>> = callbackFlow {
         /*googleSignInClient.signOut().addOnSuccessListener {
             firebaseAuth.signOut()
             result.invoke(Result.Success())

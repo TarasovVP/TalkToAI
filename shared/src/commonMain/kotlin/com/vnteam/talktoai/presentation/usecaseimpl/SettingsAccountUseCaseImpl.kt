@@ -7,6 +7,7 @@ import com.vnteam.talktoai.domain.repositories.MessageRepository
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnteam.talktoai.domain.usecase.SettingsAccountUseCase
+import kotlinx.coroutines.flow.Flow
 
 class SettingsAccountUseCaseImpl(
     private val authRepository: AuthRepository,
@@ -24,26 +25,20 @@ class SettingsAccountUseCaseImpl(
 
     override fun currentUserEmail() = authRepository.currentUserEmail()
 
-    override fun signOut(result: (NetworkResult<Unit>) -> Unit) =
-        authRepository.signOut { authResult ->
-            result.invoke(authResult)
-        }
+    override fun signOut(): Flow<NetworkResult<Unit>> =
+        authRepository.signOut()
 
     override fun changePassword(
         currentPassword: String,
-        newPassword: String,
-        result: (NetworkResult<Unit>) -> Unit,
-    ) = authRepository.changePassword(currentPassword, newPassword) { authResult ->
-        result.invoke(authResult)
-    }
+        newPassword: String): Flow<NetworkResult<Unit>> = authRepository.changePassword(currentPassword, newPassword)
 
-    override fun reAuthenticate(/*authCredential: AuthCredential, */result: (NetworkResult<Unit>) -> Unit) =
+    override fun reAuthenticate(/*authCredential: AuthCredential, */): Flow<NetworkResult<Unit>> =
         authRepository.reAuthenticate()
 
-    override fun deleteUser(result: (NetworkResult<Unit>) -> Unit) =
-        realDataBaseRepository.deleteRemoteUser {
+    override fun deleteUser(): Flow<NetworkResult<Unit>> =
+        realDataBaseRepository.deleteRemoteUser()/* {
             authRepository.deleteUser(result)
-        }
+        }*/
 
     override suspend fun clearDataByKeys(keys: List<String>) =
         preferencesRepository.clearDataByKeys(keys)

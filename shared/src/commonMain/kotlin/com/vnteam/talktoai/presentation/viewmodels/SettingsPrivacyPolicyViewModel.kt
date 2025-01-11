@@ -3,7 +3,7 @@ package com.vnteam.talktoai.presentation.viewmodels
 import androidx.compose.ui.text.intl.Locale
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Constants.PRIVACY_POLICY
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.usecase.SettingsPrivacyPolicyUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -15,8 +15,8 @@ class SettingsPrivacyPolicyViewModel(
     val privacyPolicyLiveData = MutableStateFlow(String.EMPTY)
 
     fun getAppLanguage() {
-        launchWithConditions {
-            settingsPrivacyPolicyUseCase.getAppLanguage().collect { appLang ->
+        launchWithResultHandling {
+            settingsPrivacyPolicyUseCase.getAppLanguage().onSuccess { appLang ->
                 appLanguageLiveData.value = appLang ?: Locale.current.language
             }
         }
@@ -24,17 +24,10 @@ class SettingsPrivacyPolicyViewModel(
 
     fun getPrivacyPolicy(appLang: String) {
         showProgress()
-        launchWithConditions {
-            settingsPrivacyPolicyUseCase.getPrivacyPolicy(appLang) { operationResult ->
-                /*when (operationResult) {
-                    is NetworkResult.Success -> privacyPolicyLiveData.value =
-                        operationResult.data ?: PRIVACY_POLICY
-
-                    is NetworkResult.Failure -> _exceptionMessage.value =
-                        operationResult.errorMessage.orEmpty()
-                }*/
+        launchWithResultHandling {
+            settingsPrivacyPolicyUseCase.getPrivacyPolicy(appLang).onSuccess { result ->
+                privacyPolicyLiveData.value = result ?: PRIVACY_POLICY
             }
-            hideProgress()
         }
     }
 }

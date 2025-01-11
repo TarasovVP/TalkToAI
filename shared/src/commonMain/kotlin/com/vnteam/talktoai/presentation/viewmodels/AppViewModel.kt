@@ -1,16 +1,15 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
-import androidx.lifecycle.viewModelScope
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.data.APP_LANG_EN
+import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.usecase.AppUseCase
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.utils.AnimationUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class AppViewModel(
@@ -39,7 +38,7 @@ class AppViewModel(
     }
 
     private fun combineFlows() {
-        launchWithConditions {
+        launchWithErrorHandling {
             combine(
                 _isDarkTheme,
                 _language,
@@ -55,38 +54,38 @@ class AppViewModel(
                     language = newState.language,
                     isLoggedInUser = newState.isLoggedInUser,
                     isOnboardingSeen = newState.isOnboardingSeen
-                ) ?: newState
+                )  ?: newState
             }
         }
     }
 
     @OptIn(ExperimentalResourceApi::class)
     fun getAnimationResource() {
-        launchWithConditions {
+        launchWithErrorHandling {
             val resource = Res.readBytes("files/main_progress.json").decodeToString()
             _animationResource.value = resource
         }
     }
 
     private fun getIsLoggedInUser() {
-        launchWithConditions {
-            appUseCase.getIsLoggedInUser().collect { isLoggedInUser ->
+        launchWithResultHandling {
+            appUseCase.getIsLoggedInUser().onSuccess { isLoggedInUser ->
                 _loggedInUser.value = isLoggedInUser.isTrue()
             }
         }
     }
 
     private fun getOnBoardingSeen() {
-        launchWithConditions {
-            appUseCase.getIsBoardingSeen().collect { isOnBoardingSeen ->
+        launchWithResultHandling {
+            appUseCase.getIsBoardingSeen().onSuccess { isOnBoardingSeen ->
                 _onBoardingSeen.value = isOnBoardingSeen.isTrue()
             }
         }
     }
 
     private fun getIsDarkTheme() {
-        viewModelScope.launch {
-            appUseCase.getIsDarkTheme().collect {
+        launchWithResultHandling {
+            appUseCase.getIsDarkTheme().onSuccess {
                 _isDarkTheme.value = it
             }
         }
@@ -94,15 +93,15 @@ class AppViewModel(
 
     fun setIsDarkTheme(isDarkTheme: Boolean) {
         showProgress()
-        viewModelScope.launch {
+        launchWithErrorHandling {
             hideProgress()
             appUseCase.setIsDarkTheme(isDarkTheme)
         }
     }
 
     private fun getLanguage() {
-        viewModelScope.launch {
-            appUseCase.getLanguage().collect {
+        launchWithResultHandling {
+            appUseCase.getLanguage().onSuccess {
                 _language.value = it ?: APP_LANG_EN
             }
         }
@@ -110,7 +109,7 @@ class AppViewModel(
 
     fun setLanguage(language: String) {
         showProgress()
-        viewModelScope.launch {
+        launchWithErrorHandling {
             hideProgress()
             appUseCase.setLanguage(language)
         }

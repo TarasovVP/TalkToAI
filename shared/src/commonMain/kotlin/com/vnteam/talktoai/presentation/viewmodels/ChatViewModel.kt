@@ -1,6 +1,5 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
-import com.vnteam.talktoai.CommonExtensions.isNull
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.data.network.request.ApiRequest
 import com.vnteam.talktoai.domain.mappers.ChatUIMapper
@@ -14,7 +13,6 @@ import com.vnteam.talktoai.utils.NetworkState
 import com.vnteam.talktoai.utils.ShareUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.catch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class ChatViewModel(
@@ -34,11 +32,11 @@ class ChatViewModel(
     private var messagesFlowSubscription: Job? = null
 
     fun insertChat(chat: Chat) {
-        if (chatUseCase.isAuthorisedUser()) {
+        /*if (chatUseCase.isAuthorisedUser()) {
             launchWithConditions(networkState) {
                 showProgress()
                 chatUseCase.insertRemoteChat(chat) { authResult ->
-                    /*when (authResult) {
+                    *//*when (authResult) {
                         is NetworkResult.Success -> {
 
                         }
@@ -47,18 +45,18 @@ class ChatViewModel(
                             _exceptionMessage.value = it
                         }
                     }
-                    hideProgress()*/
+                    hideProgress()*//*
                 }
             }
         } else {
             launchWithConditions {
                 chatUseCase.insertChat(chat)
             }
-        }
+        }*/
     }
 
     fun getCurrentChat(chatId: Long) {
-        showProgress()
+        /*showProgress()
         launchWithConditions {
             chatUseCase.getCurrentChat(chatId).catch {
                 hideProgress()
@@ -70,11 +68,11 @@ class ChatViewModel(
                 }
                 hideProgress()
             }
-        }
+        }*/
     }
 
     fun getMessagesFromChat(chatId: Long) {
-        showProgress()
+        /*showProgress()
         messagesFlowSubscription?.cancel()
         messagesFlowSubscription = launchWithConditions {
             chatUseCase.getMessagesFromChat(chatId).catch {
@@ -83,17 +81,17 @@ class ChatViewModel(
                 messagesLiveData.value = messageUIMapper.mapToImplModelList(result)
                 hideProgress()
             }
-        }
+        }*/
     }
 
     fun sendRequest(temporaryMessage: MessageUI, apiRequest: ApiRequest) {
-        showProgress()
+        /*showProgress()
         launchWithConditions {
             chatUseCase.sendRequest(apiRequest).catch {
                 hideProgress()
 
             }.collect { result ->
-               /* when (result) {
+               *//* when (result) {
                     is NetworkResult.Success -> result.data?.let { apiResponse ->
                         insertMessage(temporaryMessage.apply {
                             author = apiResponse.model.orEmpty()
@@ -110,18 +108,18 @@ class ChatViewModel(
                             println("Error when api request: ${result.errorMessage}")
                         })
                     }
-                }*/
+                }*//*
                 hideProgress()
             }
-        }
+        }*/
     }
 
     fun insertMessage(message: MessageUI) {
-        if (chatUseCase.isAuthorisedUser()) {
+        /*if (chatUseCase.isAuthorisedUser()) {
             launchWithConditions(networkState) {
                 showProgress()
                 chatUseCase.insertRemoteMessage(messageUIMapper.mapFromImplModel(message)) { authResult ->
-                   /* when (authResult) {
+                   *//* when (authResult) {
                         is NetworkResult.Success -> {
 
                         }
@@ -129,7 +127,7 @@ class ChatViewModel(
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
                             _exceptionMessage.value = it
                         }
-                    }*/
+                    }*//*
                     hideProgress()
                 }
             }
@@ -139,15 +137,15 @@ class ChatViewModel(
                 // TODO add temporary
                 getMessagesFromChat(message.chatId)
             }
-        }
+        }*/
     }
 
     fun updateMessage(message: MessageUI) {
-        if (chatUseCase.isAuthorisedUser()) {
+        /*if (chatUseCase.isAuthorisedUser()) {
             launchWithConditions(networkState) {
                 showProgress()
                 chatUseCase.insertRemoteMessage(messageUIMapper.mapFromImplModel(message)) { authResult ->
-                   /* when (authResult) {
+                   *//* when (authResult) {
                         is NetworkResult.Success -> {
 
                         }
@@ -155,7 +153,7 @@ class ChatViewModel(
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
                             _exceptionMessage.value = it
                         }
-                    }*/
+                    }*//*
                     hideProgress()
                 }
             }
@@ -163,16 +161,16 @@ class ChatViewModel(
             launchWithConditions {
                 chatUseCase.insertMessage(messageUIMapper.mapFromImplModel(message))
             }
-        }
+        }*/
     }
 
     fun deleteMessages(messageIds: List<Long>) {
-        showProgress()
+        /*showProgress()
         if (chatUseCase.isAuthorisedUser()) {
             launchWithConditions(networkState) {
                 showProgress()
                 chatUseCase.deleteRemoteMessages(messageIds) { authResult ->
-                    /*when (authResult) {
+                    *//*when (authResult) {
                         is NetworkResult.Success -> {
 
                         }
@@ -180,7 +178,7 @@ class ChatViewModel(
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
                             _exceptionMessage.value = it
                         }
-                    }*/
+                    }*//*
                     hideProgress()
                 }
             }
@@ -189,7 +187,7 @@ class ChatViewModel(
                 chatUseCase.deleteMessages(messageIds)
             }
         }
-        hideProgress()
+        hideProgress()*/
     }
 
     fun shareLink(text: String) {
@@ -198,7 +196,7 @@ class ChatViewModel(
 
     @OptIn(ExperimentalResourceApi::class)
     fun getAnimationResource() {
-        launchWithConditions {
+        launchWithErrorHandling {
             val resource = Res.readBytes("files/message_typing.json").decodeToString()
             animationResource.value = resource
         }

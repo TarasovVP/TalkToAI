@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
+import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.usecase.SettingsThemeUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,15 +14,15 @@ class SettingsThemeViewModel(
     val isDarkTheme: StateFlow<Boolean?> = _isDarkTheme.asStateFlow()
 
     fun getIsDarkTheme() {
-        launchWithConditions {
-            settingsThemeUseCase.getAppTheme().collect { appTheme ->
-                _isDarkTheme.value = appTheme
+        launchWithResultHandling {
+            settingsThemeUseCase.getAppTheme().onSuccess {
+                _isDarkTheme.value = it
             }
         }
     }
 
     fun setIsDarkTheme(isDarkTheme: Boolean) {
-        launchWithConditions {
+        launchWithErrorHandling {
             settingsThemeUseCase.setAppTheme(isDarkTheme)
             _isDarkTheme.value = isDarkTheme
         }

@@ -71,4 +71,10 @@ class LoginViewModel(
     fun googleSignIn() {
         loginUseCase.googleSignIn()
     }
+
+    fun setLoggedInUser() {
+        launchWithErrorHandling {
+            preferencesRepository.setLoggedInUser(true)
+        }
+    }
 }

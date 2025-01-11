@@ -11,14 +11,12 @@ class SettingsPrivacyPolicyUseCaseImpl(
     private val realDataBaseRepository: RealDataBaseRepository,
 ) : SettingsPrivacyPolicyUseCase {
 
-    override suspend fun getAppLanguage(): Flow<String?> {
+    override suspend fun getAppLanguage(): Flow<NetworkResult<String?>> {
         return preferencesRepository.getLanguage()
     }
 
     override suspend fun getPrivacyPolicy(
-        appLang: String,
-        result: (NetworkResult<String>) -> Unit
-    ) {
-        return realDataBaseRepository.getPrivacyPolicy(appLang, result)
+        appLang: String): Flow<NetworkResult<String>> {
+        return realDataBaseRepository.getPrivacyPolicy(appLang)
     }
 }

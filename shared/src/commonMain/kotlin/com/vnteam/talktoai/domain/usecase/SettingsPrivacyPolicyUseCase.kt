@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface SettingsPrivacyPolicyUseCase {
 
-    suspend fun getAppLanguage(): Flow<String?>
+    suspend fun getAppLanguage(): Flow<NetworkResult<String?>>
 
-    suspend fun getPrivacyPolicy(appLang: String, result: (NetworkResult<String>) -> Unit)
+    suspend fun getPrivacyPolicy(appLang: String): Flow<NetworkResult<String>>
 }

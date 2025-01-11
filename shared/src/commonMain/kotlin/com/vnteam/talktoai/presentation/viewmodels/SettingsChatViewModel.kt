@@ -11,7 +11,7 @@ class SettingsChatViewModel(
     val chatSettingsLiveData = MutableStateFlow(false)
 
     fun testProgressVisibilityChange() {
-        launchWithConditions {
+        launchWithErrorHandling {
             showProgress()
             delay(3000)
             hideProgress()

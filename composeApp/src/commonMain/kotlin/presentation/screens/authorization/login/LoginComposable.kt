@@ -109,6 +109,7 @@ fun LoginScreen() {
     val successSignInState = viewModel.successSignInLiveData.collectAsState()
     if (successSignInState.value.isTrue()) {
         updateScreenState(screenRoute = "${NavigationScreen.CHAT_DESTINATION}/$DEFAULT_CHAT_ID")
+        viewModel.setLoggedInUser()
     }
 
     LoginContent(

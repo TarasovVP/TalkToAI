@@ -8,7 +8,7 @@ class OnBoardingViewModel(
 
 
     fun setOnBoardingSeen() {
-        launchWithConditions {
+        launchWithErrorHandling {
             println("appTAG OnBoardingViewModel setOnBoardingSeen")
             onBoardingUseCase.setOnBoardingSeen(true)
         }

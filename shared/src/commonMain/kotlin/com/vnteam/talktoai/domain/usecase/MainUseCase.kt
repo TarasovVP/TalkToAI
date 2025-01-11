@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MainUseCase {
 
-    suspend fun getOnBoardingSeen(): Flow<Boolean?>
+    suspend fun getOnBoardingSeen(): Flow<NetworkResult<Boolean?>>
 
     fun addAuthStateListener()
 
@@ -35,19 +35,19 @@ interface MainUseCase {
 
     suspend fun updateChats(chats: List<Chat>)
 
-    fun updateRemoteChats(chats: List<Chat>, result: (NetworkResult<Unit>) -> Unit)
+    fun updateRemoteChats(chats: List<Chat>): Flow<NetworkResult<Unit>>
 
     suspend fun insertChat(chat: Chat)
 
-    fun insertRemoteChat(chat: Chat, result: (NetworkResult<Unit>) -> Unit)
+    fun insertRemoteChat(chat: Chat): Flow<NetworkResult<Unit>>
 
     suspend fun updateChat(chat: Chat)
 
-    fun updateRemoteChat(chat: Chat, result: (NetworkResult<Unit>) -> Unit)
+    fun updateRemoteChat(chat: Chat): Flow<NetworkResult<Unit>>
 
     suspend fun deleteChat(chat: Chat)
 
-    fun deleteRemoteChat(chat: Chat, result: (NetworkResult<Unit>) -> Unit)
+    fun deleteRemoteChat(chat: Chat): Flow<NetworkResult<Unit>>
 
     suspend fun updateMessages(messages: List<Message>)
 }
