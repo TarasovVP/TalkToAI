@@ -3,7 +3,7 @@ package com.vnteam.talktoai.presentation.viewmodels
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.usecase.SignUpUseCase
-import com.vnteam.talktoai.presentation.SignUpUIState
+import com.vnteam.talktoai.presentation.uistates.SignUpUIState
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

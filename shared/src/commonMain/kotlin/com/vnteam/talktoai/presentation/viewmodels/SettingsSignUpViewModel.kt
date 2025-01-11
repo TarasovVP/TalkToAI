@@ -1,11 +1,13 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
-import com.vnteam.talktoai.CommonExtensions.EMPTY
+import com.vnteam.talktoai.data.network.getDataOrNull
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.usecase.SettingsSignUpUseCase
+import com.vnteam.talktoai.presentation.uistates.SettingsSignUpUIState
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsSignUpViewModel(
     private val settingsSignUpUseCase: SettingsSignUpUseCase,
@@ -13,20 +15,16 @@ class SettingsSignUpViewModel(
     //val googleSignInClient: GoogleSignInClient,
 ) : BaseViewModel() {
 
-    val accountExistLiveData = MutableStateFlow(String.EMPTY)
-    val createEmailAccountLiveData = MutableStateFlow(false)
-    val createGoogleAccountLiveData = MutableStateFlow(String.EMPTY)
-    val successAuthorisationLiveData = MutableStateFlow<Boolean?>(null)
-    val remoteUserLiveData = MutableStateFlow<Pair<Boolean, RemoteUser?>?>(null)
-    val successRemoteUserLiveData = MutableStateFlow(false)
+    private val _uiState = MutableStateFlow(SettingsSignUpUIState())
+    val uiState = _uiState.asStateFlow()
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
         launchWithNetworkCheck(networkState) {
             settingsSignUpUseCase.fetchSignInMethodsForEmail(email).onSuccess { result ->
                 when {
-                    result.isNullOrEmpty().not() -> accountExistLiveData.value = idToken.orEmpty()
-                    idToken.isNullOrEmpty() -> createEmailAccountLiveData.value = true
-                    else -> idToken.let { createGoogleAccountLiveData.value = it }
+                    result.isNullOrEmpty().not() -> updateUIState(SettingsSignUpUIState(accountExist = idToken.orEmpty()))
+                    idToken.isNullOrEmpty() -> updateUIState(SettingsSignUpUIState(createEmailAccount = true))
+                    else -> updateUIState(SettingsSignUpUIState(createGoogleAccount = idToken))
                 }
             }
         }
@@ -35,7 +33,7 @@ class SettingsSignUpViewModel(
     fun createUserWithGoogle(idToken: String, isExistUser: Boolean) {
         launchWithNetworkCheck(networkState) {
             settingsSignUpUseCase.createUserWithGoogle(idToken).onSuccess {
-                successAuthorisationLiveData.value = isExistUser
+                updateUIState(SettingsSignUpUIState(successAuthorisation = isExistUser))
             }
         }
     }
@@ -43,7 +41,7 @@ class SettingsSignUpViewModel(
     fun createUserWithEmailAndPassword(email: String, password: String) {
         launchWithNetworkCheck(networkState) {
             settingsSignUpUseCase.createUserWithEmailAndPassword(email, password).onSuccess {
-                successAuthorisationLiveData.value = false
+                updateUIState(SettingsSignUpUIState(successAuthorisation = false))
             }
         }
     }
@@ -51,30 +49,28 @@ class SettingsSignUpViewModel(
     fun signInWithEmailAndPassword(email: String, password: String) {
         launchWithNetworkCheck(networkState) {
             settingsSignUpUseCase.signInWithEmailAndPassword(email, password).onSuccess {
-                successAuthorisationLiveData.value = true
+                updateUIState(SettingsSignUpUIState(successAuthorisation = true))
             }
 
         }
     }
 
     fun createRemoteUser(isExistUser: Boolean) {
-        showProgress()
-        /*launchWithConditions {
-            val chats = settingsSignUpUseCase.getChats().first()
-            val messages = settingsSignUpUseCase.getMessages().first()
+        launchWithErrorHandling {
+            val chats = settingsSignUpUseCase.getChats().getDataOrNull()
+            val messages = settingsSignUpUseCase.getMessages().getDataOrNull()
             val remoteUser = RemoteUser().apply {
-                this.chats.addAll(chats)
-                this.messages.addAll(messages)
+                this.chats.addAll(chats.orEmpty())
+                this.messages.addAll(messages.orEmpty())
             }
-            remoteUserLiveData.value = Pair(isExistUser, remoteUser)
-            hideProgress()
-        }*/
+            updateUIState(SettingsSignUpUIState(remoteUser = Pair(isExistUser, remoteUser)))
+        }
     }
 
     fun insertRemoteCurrentUser(remoteUser: RemoteUser) {
         launchWithNetworkCheck(networkState) {
             settingsSignUpUseCase.insertRemoteCurrentUser(remoteUser).onSuccess {
-                successRemoteUserLiveData.value = true
+                updateUIState(SettingsSignUpUIState(successRemoteUser = true))
             }
 
         }
@@ -83,12 +79,16 @@ class SettingsSignUpViewModel(
     fun updateRemoteCurrentUser(remoteUser: RemoteUser) {
         launchWithNetworkCheck(networkState) {
             settingsSignUpUseCase.updateRemoteCurrentUser(remoteUser).onSuccess {
-                successRemoteUserLiveData.value = true
+                updateUIState(SettingsSignUpUIState(successRemoteUser = true))
             }
         }
     }
 
     fun googleSign() {
         settingsSignUpUseCase.googleSign()
+    }
+
+    private fun updateUIState(newUIState: SettingsSignUpUIState) {
+        _uiState.value = newUIState
     }
 }

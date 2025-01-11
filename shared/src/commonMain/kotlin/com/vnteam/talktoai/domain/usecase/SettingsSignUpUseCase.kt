@@ -16,9 +16,9 @@ interface SettingsSignUpUseCase {
 
     fun signInWithEmailAndPassword(email: String, password: String): Flow<NetworkResult<Unit>>
 
-    suspend fun getChats(): Flow<List<Chat>>
+    suspend fun getChats(): Flow<NetworkResult<List<Chat>>>
 
-    suspend fun getMessages(): Flow<List<Message>>
+    suspend fun getMessages(): Flow<NetworkResult<List<Message>>>
 
     fun insertRemoteCurrentUser(remoteUser: RemoteUser): Flow<NetworkResult<Unit>>
 

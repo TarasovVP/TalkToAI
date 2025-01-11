@@ -1,11 +1,12 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
-import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.usecase.LoginUseCase
+import com.vnteam.talktoai.presentation.uistates.LoginUIState
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
@@ -13,16 +14,13 @@ class LoginViewModel(
     private val preferencesRepository: PreferencesRepository
 ) : BaseViewModel() {
 
-    val accountExistLiveData = MutableStateFlow<Boolean?>(null)
-    val isEmailAccountExistLiveData = MutableStateFlow<Boolean?>(null)
-    val isGoogleAccountExistLiveData = MutableStateFlow(String.EMPTY)
-    val successPasswordResetLiveData = MutableStateFlow<Boolean?>(null)
-    val successSignInLiveData = MutableStateFlow<Boolean?>(null)
+    private val _uiState = MutableStateFlow(LoginUIState())
+    val uiState = _uiState.asStateFlow()
 
     fun sendPasswordResetEmail(email: String) {
         launchWithNetworkCheck(networkState = networkState) {
             loginUseCase.sendPasswordResetEmail(email).onSuccess {
-                successPasswordResetLiveData.value = true
+                updateUIState(LoginUIState(successPasswordReset = true))
             }
         }
     }
@@ -31,11 +29,10 @@ class LoginViewModel(
         launchWithNetworkCheck(networkState = networkState) {
             loginUseCase.fetchSignInMethodsForEmail(email).onSuccess { data ->
                 when {
-                    data.isNullOrEmpty() -> accountExistLiveData.value = true
-                    idToken.isNullOrEmpty() -> isEmailAccountExistLiveData.value = true
-                    else -> idToken.let { isGoogleAccountExistLiveData.value = it }
+                    data.isNullOrEmpty() -> updateUIState(LoginUIState(isAccountExist = true))
+                    idToken.isNullOrEmpty() -> updateUIState(LoginUIState(isEmailAccountExist = true))
+                    else -> updateUIState(LoginUIState(isGoogleAccountExist = idToken))
                 }
-                successSignInLiveData.value = true
             }
         }
     }
@@ -43,7 +40,7 @@ class LoginViewModel(
     fun signInWithEmailAndPassword(email: String, password: String) {
         launchWithNetworkCheck(networkState = networkState) {
             loginUseCase.signInWithEmailAndPassword(email, password).onSuccess {
-                successSignInLiveData.value = true
+                updateUIState(LoginUIState(successSignIn = true))
             }
         }
     }
@@ -51,7 +48,7 @@ class LoginViewModel(
     fun signInAuthWithGoogle(idToken: String) {
         launchWithNetworkCheck(networkState = networkState) {
             loginUseCase.signInAuthWithGoogle(idToken).onSuccess {
-                successSignInLiveData.value = true
+                updateUIState(LoginUIState(successSignIn = true))
             }
         }
     }
@@ -59,7 +56,7 @@ class LoginViewModel(
     fun signInAnonymously() {
         launchWithNetworkCheck(networkState = networkState) {
             loginUseCase.signInAnonymously().onSuccess {
-                successSignInLiveData.value = true
+                updateUIState(LoginUIState(successSignIn = true))
             }
         }
     }
@@ -76,5 +73,9 @@ class LoginViewModel(
         launchWithErrorHandling {
             preferencesRepository.setLoggedInUser(true)
         }
+    }
+
+    private fun updateUIState(newUIState: LoginUIState) {
+        _uiState.value = newUIState
     }
 }

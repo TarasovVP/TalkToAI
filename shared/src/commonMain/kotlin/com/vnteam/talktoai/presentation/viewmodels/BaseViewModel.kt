@@ -17,13 +17,13 @@ import kotlinx.coroutines.launch
 
 open class BaseViewModel : ViewModel() {
 
-    val _exceptionMessage = MutableStateFlow(String.EMPTY)
+    private val _exceptionMessage = MutableStateFlow(String.EMPTY)
     val exceptionMessage = _exceptionMessage.asStateFlow()
 
-    val _progressVisibilityState = MutableStateFlow(false)
+    private val _progressVisibilityState = MutableStateFlow(false)
     val progressVisibilityState = _progressVisibilityState.asStateFlow()
 
-    val _innerProgress = MutableStateFlow(false)
+    private val _innerProgress = MutableStateFlow(false)
     val innerProgress = _innerProgress.asStateFlow()
 
     fun showProgress() {

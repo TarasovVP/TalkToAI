@@ -31,15 +31,15 @@ class MessageRepositoryImpl(
         messageDao.insertMessage(messageDB)
     }
 
-    override suspend fun getMessages(): Flow<List<Message>> {
+    override suspend fun getMessages(): Flow<NetworkResult<List<Message>>> {
         return messageDao.getMessages().map { messages ->
-            messages.map { messageDBMapper.mapFromImplModel(it) }
+            NetworkResult.Success(messages.map { messageDBMapper.mapFromImplModel(it) })
         }
     }
 
-    override suspend fun getMessagesFromChat(chatId: Long): Flow<List<Message>> {
+    override suspend fun getMessagesFromChat(chatId: Long): Flow<NetworkResult<List<Message>>> {
         return messageDao.getMessagesFromChat(chatId).map { messages ->
-            messages.map { messageDBMapper.mapFromImplModel(it) }
+            NetworkResult.Success(messages.map { messageDBMapper.mapFromImplModel(it) })
         }
     }
 
@@ -58,6 +58,6 @@ class MessageRepositoryImpl(
 
     override suspend fun sendRequest(apiRequest: ApiRequest) = flow {
         val httpResponse = apiService.sendRequest(apiRequest)
-        emit(httpResponse.handleResponse<ApiResponse>())
+        emit(NetworkResult.Success(httpResponse.handleResponse<ApiResponse>()))
     }
 }

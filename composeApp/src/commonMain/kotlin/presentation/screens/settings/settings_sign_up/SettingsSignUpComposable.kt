@@ -24,9 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
-import com.vnteam.talktoai.domain.models.RemoteUser
-import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.GoogleButton
 import com.vnteam.talktoai.presentation.ui.components.OrDivider
@@ -48,54 +45,38 @@ fun SettingsSignUpScreen() {
     val showAccountExistDialog = remember { mutableStateOf(false) }
     val transferDataState = remember { mutableStateOf(true) }
 
-    val accountExistState = viewModel.accountExistLiveData.collectAsState()
-    LaunchedEffect(accountExistState.value) {
-        accountExistState.value.takeIf { it.isNotEmpty() }?.let {
+    val settingsSignUpUIStateState = viewModel.uiState.collectAsState()
+    LaunchedEffect(settingsSignUpUIStateState) {
+        settingsSignUpUIStateState.value.accountExist?.let {
             viewModel.googleSign()
             showAccountExistDialog.value = true
         }
-    }
-    val isEmailAccountExistState = viewModel.createEmailAccountLiveData.collectAsState()
-    LaunchedEffect(isEmailAccountExistState.value) {
-        if (isEmailAccountExistState.value) {
+        settingsSignUpUIStateState.value.createEmailAccount?.let {
             viewModel.createUserWithEmailAndPassword(
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
             )
         }
-    }
-    val isGoogleAccountExistState = viewModel.createGoogleAccountLiveData.collectAsState()
-    LaunchedEffect(isGoogleAccountExistState.value) {
-        isGoogleAccountExistState.value.takeIf { it.isNotEmpty() }?.let { idToken ->
+        settingsSignUpUIStateState.value.createGoogleAccount?.let { idToken ->
             viewModel.createUserWithGoogle(idToken, false)
         }
-    }
-
-    val successAuthorisationState = viewModel.successAuthorisationLiveData.collectAsState()
-    LaunchedEffect(successAuthorisationState.value) {
-        successAuthorisationState.value?.let { isExistUser ->
+        settingsSignUpUIStateState.value.successAuthorisation?.let { isExistUser ->
             if (transferDataState.value) {
                 viewModel.createRemoteUser(isExistUser)
-            } else {
-                viewModel.remoteUserLiveData.value = Pair(isExistUser, RemoteUser())
             }
         }
-    }
-
-    val localUserState = viewModel.remoteUserLiveData.collectAsState()
-    LaunchedEffect(localUserState.value) {
-        localUserState.value?.let { userState ->
+        settingsSignUpUIStateState.value.remoteUser?.let { userState ->
             if (userState.first) {
                 userState.second?.let { viewModel.updateRemoteCurrentUser(it) }
             } else {
                 userState.second?.let { viewModel.insertRemoteCurrentUser(it) }
             }
         }
-    }
-
-    val successRemoteUserState = viewModel.successRemoteUserLiveData.collectAsState()
-    if (successRemoteUserState.value) {
-        updateScreenState(screenRoute = "${NavigationScreen.CHAT_DESTINATION}/${DEFAULT_CHAT_ID}")
+        settingsSignUpUIStateState.value.successRemoteUser?.let { successRemoteUser ->
+            if (successRemoteUser) {
+                //updateScreenState(screenRoute = "${NavigationScreen.CHAT_DESTINATION}/${DEFAULT_CHAT_ID}")
+            }
+        }
     }
 
     SettingsSignUpContent(
@@ -109,9 +90,9 @@ fun SettingsSignUpScreen() {
         LocalStringResources.current.SETTINGS_ACCOUNT_EXIST,
         showAccountExistDialog
     ) {
-        viewModel.accountExistLiveData.value.takeIf { it.isNotEmpty() }?.let { idToken ->
+        /*viewModel.accountExistLiveData.value.takeIf { it.isNotEmpty() }?.let { idToken ->
             viewModel.createUserWithGoogle(idToken, true)
-        } ?: viewModel.signInWithEmailAndPassword(
+        } ?:*/ viewModel.signInWithEmailAndPassword(
             emailInputValue.value.text,
             passwordInputValue.value.text
         )

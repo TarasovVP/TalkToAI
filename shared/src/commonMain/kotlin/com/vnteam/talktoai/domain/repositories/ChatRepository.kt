@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.domain.repositories
 
+import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.models.Chat
 import kotlinx.coroutines.flow.Flow
 
@@ -7,17 +8,17 @@ interface ChatRepository {
 
     suspend fun clearChats()
 
-    suspend fun getChatById(chatId: String): Flow<Chat?>
+    suspend fun getChatById(chatId: String): Flow<NetworkResult<Chat?>>
 
-    suspend fun deleteChatById(chatId: String): Flow<Unit>
+    suspend fun deleteChatById(chatId: String): Flow<NetworkResult<Unit>>
 
     suspend fun insertChats(chats: List<Chat>)
 
     suspend fun insertChat(chat: Chat)
 
-    suspend fun getChats(): Flow<List<Chat>>
+    suspend fun getChats(): Flow<NetworkResult<List<Chat>>>
 
-    suspend fun getLastUpdatedChat(): Flow<Chat?>
+    suspend fun getLastUpdatedChat(): Flow<NetworkResult<Chat?>>
 
     suspend fun updateChat(chat: Chat)
 

@@ -24,8 +24,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.CommonExtensions.EMPTY
-import com.vnteam.talktoai.CommonExtensions.isTrue
-import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.DataEditDialog
@@ -78,38 +76,28 @@ fun LoginScreen() {
         ) else null
     )
 
-    val accountExistState = viewModel.accountExistLiveData.collectAsState()
-    LaunchedEffect(accountExistState.value) {
-        if (accountExistState.value.isTrue()) {
+    val uiState = viewModel.uiState.collectAsState()
+    LaunchedEffect(uiState) {
+        uiState.value.isAccountExist?.let {
             viewModel.googleSignOut()
             showAccountExistDialog.value = true
-            viewModel.accountExistLiveData.value = false
         }
-    }
-    val isEmailAccountExistState = viewModel.isEmailAccountExistLiveData.collectAsState()
-    LaunchedEffect(isEmailAccountExistState.value) {
-        if (isEmailAccountExistState.value.isTrue()) {
+        uiState.value.isEmailAccountExist?.let {
             viewModel.signInWithEmailAndPassword(
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
             )
         }
-    }
-    val isGoogleAccountExistState = viewModel.isGoogleAccountExistLiveData.collectAsState()
-    LaunchedEffect(isGoogleAccountExistState.value) {
-        isGoogleAccountExistState.value.takeIf { it.isNotEmpty() }?.let { idToken ->
+        uiState.value.isGoogleAccountExist?.let { idToken ->
             viewModel.signInAuthWithGoogle(idToken)
         }
-    }
-    val resetPasswordText = LocalStringResources.current.AUTHORIZATION_PASSWORD_RESET_SUCCESS
-    val successPasswordResetState = viewModel.successPasswordResetLiveData.collectAsState()
-    if (successPasswordResetState.value.isTrue()) {
-        updateScreenState(appMessage = AppMessage(false, resetPasswordText))
-    }
-    val successSignInState = viewModel.successSignInLiveData.collectAsState()
-    if (successSignInState.value.isTrue()) {
-        updateScreenState(screenRoute = "${NavigationScreen.CHAT_DESTINATION}/$DEFAULT_CHAT_ID")
-        viewModel.setLoggedInUser()
+        uiState.value.successPasswordReset?.let {
+            //updateScreenState(appMessage = AppMessage(false, LocalStringResources.current.AUTHORIZATION_PASSWORD_RESET_SUCCESS))
+        }
+        uiState.value.successSignIn?.let {
+            //updateScreenState(screenRoute = "${NavigationScreen.CHAT_DESTINATION}/$DEFAULT_CHAT_ID")
+            viewModel.setLoggedInUser()
+        }
     }
 
     LoginContent(
@@ -117,7 +105,6 @@ fun LoginScreen() {
         emailInputValue,
         passwordInputValue,
         showForgotPasswordDialog,
-        showAccountExistDialog,
         showUnauthorizedEnterDialog,
         updatedScreenRoute
     )
@@ -153,7 +140,6 @@ fun LoginContent(
     emailInputValue: MutableState<TextFieldValue>,
     passwordInputValue: MutableState<TextFieldValue>,
     showForgotPasswordDialog: MutableState<Boolean>,
-    showAccountExistDialog: MutableState<Boolean>,
     showUnauthorizedEnterDialog: MutableState<Boolean>,
     updatedScreenRoute: MutableState<String>
 ) {

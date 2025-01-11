@@ -1,4 +1,4 @@
-package com.vnteam.talktoai.presentation
+package com.vnteam.talktoai.presentation.uistates
 
 data class SignUpUIState(
     var accountExist: Boolean? = null,

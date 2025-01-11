@@ -1,6 +1,7 @@
 package com.vnteam.talktoai.data.network
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 sealed class NetworkResult<out T> {
@@ -21,4 +22,11 @@ fun <T> Flow<NetworkResult<T>>.onError(action: (String?) -> Unit): Flow<NetworkR
         action(result.errorMessage)
     }
     result
+}
+
+suspend fun <T> Flow<NetworkResult<T>>.getDataOrNull(): T? {
+    return when (val result = this.firstOrNull()) {
+        is NetworkResult.Success -> result.data
+        else -> null
+    }
 }
