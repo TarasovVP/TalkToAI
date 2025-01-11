@@ -5,10 +5,11 @@ import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.models.Feedback
 import com.vnteam.talktoai.domain.models.Message
 import com.vnteam.talktoai.domain.models.RemoteUser
+import kotlinx.coroutines.flow.Flow
 
 interface RealDataBaseRepository {
 
-    fun insertRemoteUser(remoteUser: RemoteUser, result: (NetworkResult<Unit>) -> Unit)
+    fun insertRemoteUser(remoteUser: RemoteUser): Flow<NetworkResult<Unit>>
 
     fun updateRemoteUser(remoteUser: RemoteUser, result: (NetworkResult<Unit>) -> Unit)
 

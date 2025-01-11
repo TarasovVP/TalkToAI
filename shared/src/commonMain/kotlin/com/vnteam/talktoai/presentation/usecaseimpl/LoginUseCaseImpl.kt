@@ -9,26 +9,14 @@ import kotlinx.coroutines.flow.Flow
 class LoginUseCaseImpl(private val authRepository: AuthRepository) :
     LoginUseCase {
 
-    override fun sendPasswordResetEmail(email: String, result: (NetworkResult<Unit>) -> Unit) =
-        authRepository.sendPasswordResetEmail(email) { authResult ->
-            result.invoke(authResult)
-        }
+    override fun sendPasswordResetEmail(email: String): Flow<NetworkResult<Unit>> =
+        authRepository.sendPasswordResetEmail(email)
 
-    override fun fetchSignInMethodsForEmail(
-        email: String,
-        result: (NetworkResult<List<String>>) -> Unit
-    ) =
-        authRepository.fetchSignInMethodsForEmail(email) { authResult ->
-            result.invoke(authResult)
-        }
+    override fun fetchSignInMethodsForEmail(email: String): Flow<NetworkResult<List<String>>> =
+        authRepository.fetchSignInMethodsForEmail(email)
 
-    override fun signInWithEmailAndPassword(
-        email: String,
-        password: String,
-        result: (NetworkResult<Unit>) -> Unit,
-    ) = authRepository.signInWithEmailAndPassword(email, password) { authResult ->
-        result.invoke(authResult)
-    }
+    override fun signInWithEmailAndPassword(email: String, password: String): Flow<NetworkResult<Unit>> =
+        authRepository.signInWithEmailAndPassword(email, password)
 
     override fun signInAuthWithGoogle(idToken: String): Flow<NetworkResult<Unit>> =
         authRepository.signInWithGoogle(idToken)

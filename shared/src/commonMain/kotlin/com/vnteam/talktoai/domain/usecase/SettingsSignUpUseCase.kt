@@ -8,27 +8,19 @@ import kotlinx.coroutines.flow.Flow
 
 interface SettingsSignUpUseCase {
 
-    fun fetchSignInMethodsForEmail(email: String, result: (NetworkResult<List<String>>) -> Unit)
+    fun fetchSignInMethodsForEmail(email: String): Flow<NetworkResult<List<String>>>
 
-    fun createUserWithGoogle(idToken: String, result: (NetworkResult<Unit>) -> Unit)
+    fun createUserWithGoogle(idToken: String): Flow<NetworkResult<Unit>>
 
-    fun createUserWithEmailAndPassword(
-        email: String,
-        password: String,
-        result: (NetworkResult<String>) -> Unit,
-    )
+    fun createUserWithEmailAndPassword(email: String, password: String): Flow<NetworkResult<List<String>>>
 
-    fun signInWithEmailAndPassword(
-        email: String,
-        password: String,
-        result: (NetworkResult<Unit>) -> Unit
-    )
+    fun signInWithEmailAndPassword(email: String, password: String): Flow<NetworkResult<Unit>>
 
     suspend fun getChats(): Flow<List<Chat>>
 
     suspend fun getMessages(): Flow<List<Message>>
 
-    fun insertRemoteCurrentUser(remoteUser: RemoteUser, result: (NetworkResult<Unit>) -> Unit)
+    fun insertRemoteCurrentUser(remoteUser: RemoteUser): Flow<NetworkResult<Unit>>
 
     fun updateRemoteCurrentUser(remoteUser: RemoteUser, result: (NetworkResult<Unit>) -> Unit)
 

@@ -1,7 +1,6 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.Constants.APP_NETWORK_UNAVAILABLE_REPEAT
-import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.usecase.SettingsAccountUseCase
 import com.vnteam.talktoai.utils.NetworkState
@@ -50,11 +49,11 @@ class SettingsAccountViewModel(
         if (networkState.isNetworkAvailable()) {
             showProgress()
             settingsAccountUseCase.changePassword(currentPassword, newPassword) { result ->
-                when (result) {
+               /* when (result) {
                     is NetworkResult.Success -> successChangePasswordLiveData.value = true
                     is NetworkResult.Failure -> _exceptionMessage.value =
                         result.errorMessage.orEmpty()
-                }
+                }*/
                 hideProgress()
             }
         } else {
@@ -66,11 +65,11 @@ class SettingsAccountViewModel(
         if (networkState.isNetworkAvailable()) {
             showProgress()
             settingsAccountUseCase.reAuthenticate { result ->
-                when (result) {
+                /*when (result) {
                     is NetworkResult.Success -> reAuthenticateLiveData.value = true
                     is NetworkResult.Failure -> _exceptionMessage.value =
                         result.errorMessage.orEmpty()
-                }
+                }*/
                 hideProgress()
             }
         } else {
@@ -82,11 +81,11 @@ class SettingsAccountViewModel(
         if (networkState.isNetworkAvailable()) {
             showProgress()
             settingsAccountUseCase.deleteUser { result ->
-                when (result) {
+                /*when (result) {
                     is NetworkResult.Success -> successLiveData.value = true
                     is NetworkResult.Failure -> _exceptionMessage.value =
                         result.errorMessage.orEmpty()
-                }
+                }*/
                 hideProgress()
             }
         } else {

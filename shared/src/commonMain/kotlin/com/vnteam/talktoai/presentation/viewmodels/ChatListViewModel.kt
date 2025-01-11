@@ -1,6 +1,5 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
-import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.usecase.MainUseCase
@@ -111,7 +110,7 @@ class ChatListViewModel(
             launchWithConditions(networkState) {
                 showProgress()
                 mainUseCase.updateRemoteChats(chats) { authResult ->
-                    when (authResult) {
+                    /*when (authResult) {
                         is NetworkResult.Success -> {
 
                         }
@@ -120,7 +119,7 @@ class ChatListViewModel(
                             _exceptionMessage.value = it
                         }
                     }
-                    hideProgress()
+                    hideProgress()*/
                 }
             }
         } else {
@@ -135,7 +134,7 @@ class ChatListViewModel(
             launchWithConditions(networkState) {
                 showProgress()
                 mainUseCase.insertRemoteChat(chat) { authResult ->
-                    when (authResult) {
+                    /*when (authResult) {
                         is NetworkResult.Success -> {
 
                         }
@@ -143,7 +142,7 @@ class ChatListViewModel(
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
                             _exceptionMessage.value = it
                         }
-                    }
+                    }*/
                     hideProgress()
                 }
             }
@@ -161,7 +160,7 @@ class ChatListViewModel(
             launchWithConditions(networkState) {
                 showProgress()
                 mainUseCase.updateRemoteChat(chat) { authResult ->
-                    when (authResult) {
+                    /*when (authResult) {
                         is NetworkResult.Success -> {
 
                         }
@@ -169,7 +168,7 @@ class ChatListViewModel(
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
                             _exceptionMessage.value = it
                         }
-                    }
+                    }*/
                     hideProgress()
                 }
             }
@@ -185,7 +184,7 @@ class ChatListViewModel(
             launchWithConditions(networkState) {
                 showProgress()
                 mainUseCase.deleteRemoteChat(chat) { authResult ->
-                    when (authResult) {
+                   /* when (authResult) {
                         is NetworkResult.Success -> {
 
                         }
@@ -193,7 +192,7 @@ class ChatListViewModel(
                         is NetworkResult.Failure -> authResult.errorMessage?.let {
                             _exceptionMessage.value = it
                         }
-                    }
+                    }*/
                     hideProgress()
                 }
             }

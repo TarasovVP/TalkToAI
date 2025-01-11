@@ -26,13 +26,13 @@ class SettingsPrivacyPolicyViewModel(
         showProgress()
         launchWithConditions {
             settingsPrivacyPolicyUseCase.getPrivacyPolicy(appLang) { operationResult ->
-                when (operationResult) {
+                /*when (operationResult) {
                     is NetworkResult.Success -> privacyPolicyLiveData.value =
                         operationResult.data ?: PRIVACY_POLICY
 
                     is NetworkResult.Failure -> _exceptionMessage.value =
                         operationResult.errorMessage.orEmpty()
-                }
+                }*/
             }
             hideProgress()
         }

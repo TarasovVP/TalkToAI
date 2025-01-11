@@ -1,6 +1,7 @@
 package presentation.screens.authorization.login
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,6 +57,14 @@ fun LoginScreen() {
     if (updatedScreenRoute.value.isNotEmpty()) {
         updateScreenState(screenRoute = updatedScreenRoute.value)
         updatedScreenRoute.value = String.EMPTY
+    }
+
+    val innerProgress = viewModel.innerProgress.collectAsState()
+    println("appTAG LoginComposable innerProgress: ${innerProgress.value}")
+    if (innerProgress.value) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
     }
 
     val exceptionMessage = viewModel.exceptionMessage.collectAsState()

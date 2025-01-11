@@ -3,8 +3,12 @@ package com.vnteam.talktoai.data.repositoryimpl
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.repositories.AuthRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
 
 class AuthRepositoryImpl :
     AuthRepository {
@@ -43,7 +47,7 @@ class AuthRepositoryImpl :
         return String.EMPTY
     }
 
-    override fun sendPasswordResetEmail(email: String, result: (NetworkResult<Unit>) -> Unit) {
+    override fun sendPasswordResetEmail(email: String): Flow<NetworkResult<Unit>> = callbackFlow {
         /*firebaseAuth.sendPasswordResetEmail(email)
             .addOnSuccessListener {
                 result.invoke(Result.Success())
@@ -52,25 +56,22 @@ class AuthRepositoryImpl :
             }*/
     }
 
-    override fun fetchSignInMethodsForEmail(
-        email: String,
-        result: (NetworkResult<List<String>>) -> Unit
-    ) {
-        /*firebaseAuth.fetchSignInMethodsForEmail(email)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    result.invoke(Result.Success(task.result?.signInMethods))
-                }
-            }.addOnFailureListener { exception ->
-                result.invoke(Result.Failure(exception.localizedMessage))
-            }*/
-    }
+    override fun fetchSignInMethodsForEmail(email: String): Flow<NetworkResult<List<String>>> =
+        callbackFlow {
+            /*firebaseAuth.fetchSignInMethodsForEmail(email)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        result.invoke(Result.Success(task.result?.signInMethods))
+                    }
+                }.addOnFailureListener { exception ->
+                    result.invoke(Result.Failure(exception.localizedMessage))
+                }*/
+        }
 
     override fun signInWithEmailAndPassword(
         email: String,
-        password: String,
-        result: (NetworkResult<Unit>) -> Unit,
-    ) {
+        password: String
+    ): Flow<NetworkResult<Unit>> = callbackFlow {
         /*firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 result.invoke(Result.Success())
@@ -91,7 +92,15 @@ class AuthRepositoryImpl :
 
     override suspend fun signInAnonymously(): Flow<NetworkResult<Unit>> = callbackFlow {
         // TODO remove mock, uncomment below code
-        trySend(NetworkResult.Success(Unit))
+        trySend(NetworkResult.Loading)
+
+        CoroutineScope(coroutineContext).launch {
+            delay(3000)
+            trySend(NetworkResult.Success(Unit))
+            close()
+        }
+
+        awaitClose {}
         /*firebaseAuth.signInAnonymously()
             .addOnSuccessListener {
                 trySend(NetworkResult.Success(Unit))
@@ -104,9 +113,8 @@ class AuthRepositoryImpl :
 
     override fun createUserWithEmailAndPassword(
         email: String,
-        password: String,
-        result: (NetworkResult<String>) -> Unit,
-    ) {
+        password: String
+    ): Flow<NetworkResult<List<String>>> = callbackFlow {
         /*firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) result.invoke(Result.Success(task.result.user?.uid.orEmpty()))
@@ -118,7 +126,7 @@ class AuthRepositoryImpl :
     override fun changePassword(
         currentPassword: String,
         newPassword: String,
-        result: (NetworkResult<Unit>) -> Unit,
+        result: (NetworkResult<Unit>) -> Unit
     ) {
         /*val user = firebaseAuth.currentUser
         val credential = EmailAuthProvider.getCredential(user?.email.orEmpty(), currentPassword)

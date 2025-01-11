@@ -1,6 +1,5 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
-import com.vnteam.talktoai.data.network.NetworkResult
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.usecase.SignUpUseCase
 import com.vnteam.talktoai.presentation.SignUpUIState
@@ -20,7 +19,7 @@ class SignUpViewModel(
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
         launchWithConditions(networkState) {
             showProgress()
-            signUpUseCase.fetchSignInMethodsForEmail(email) { authResult ->
+            /*signUpUseCase.fetchSignInMethodsForEmail(email) { authResult ->
                 when (authResult) {
                     is NetworkResult.Success -> when {
                         authResult.data.isNullOrEmpty()
@@ -35,12 +34,12 @@ class SignUpViewModel(
                     }
                 }
                 hideProgress()
-            }
+            }*/
         }
     }
 
     fun createUserWithGoogle(idToken: String) {
-        launchWithConditions(networkState) {
+        /*launchWithConditions(networkState) {
             showProgress()
             signUpUseCase.createUserWithGoogle(idToken) { operationResult ->
                 when (operationResult) {
@@ -52,11 +51,11 @@ class SignUpViewModel(
                 }
                 hideProgress()
             }
-        }
+        }*/
     }
 
     fun createUserWithEmailAndPassword(email: String, password: String) {
-        launchWithConditions(networkState) {
+        /*launchWithConditions(networkState) {
             showProgress()
             signUpUseCase.createUserWithEmailAndPassword(email, password) { operationResult ->
                 when (operationResult) {
@@ -68,11 +67,11 @@ class SignUpViewModel(
                 }
                 hideProgress()
             }
-        }
+        }*/
     }
 
     fun insertRemoteUser(remoteUser: RemoteUser) {
-        launchWithConditions(networkState) {
+        /*launchWithConditions(networkState) {
             showProgress()
             signUpUseCase.insertRemoteUser(remoteUser) { operationResult ->
                 when (operationResult) {
@@ -84,7 +83,7 @@ class SignUpViewModel(
                 }
                 hideProgress()
             }
-        }
+        }*/
     }
 
     private fun updateUIState(newUIState: SignUpUIState) {

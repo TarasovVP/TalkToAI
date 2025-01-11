@@ -18,25 +18,17 @@ interface AuthRepository {
 
     fun currentUserEmail(): String
 
-    fun sendPasswordResetEmail(email: String, result: (NetworkResult<Unit>) -> Unit)
+    fun sendPasswordResetEmail(email: String): Flow<NetworkResult<Unit>>
 
-    fun fetchSignInMethodsForEmail(email: String, result: (NetworkResult<List<String>>) -> Unit)
+    fun fetchSignInMethodsForEmail(email: String): Flow<NetworkResult<List<String>>>
 
-    fun signInWithEmailAndPassword(
-        email: String,
-        password: String,
-        result: (NetworkResult<Unit>) -> Unit
-    )
+    fun signInWithEmailAndPassword(email: String, password: String): Flow<NetworkResult<Unit>>
 
     fun signInWithGoogle(idToken: String): Flow<NetworkResult<Unit>>
 
     suspend fun signInAnonymously(): Flow<NetworkResult<Unit>>
 
-    fun createUserWithEmailAndPassword(
-        email: String,
-        password: String,
-        result: (NetworkResult<String>) -> Unit,
-    )
+    fun createUserWithEmailAndPassword(email: String, password: String): Flow<NetworkResult<List<String>>>
 
     fun changePassword(
         currentPassword: String,

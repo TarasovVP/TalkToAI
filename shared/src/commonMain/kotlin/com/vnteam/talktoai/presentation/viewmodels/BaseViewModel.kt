@@ -25,13 +25,16 @@ open class BaseViewModel : ViewModel() {
     val _progressVisibilityState = MutableStateFlow(false)
     val progressVisibilityState = _progressVisibilityState.asStateFlow()
 
+    val _innerProgress = MutableStateFlow(false)
+    val innerProgress = _innerProgress.asStateFlow()
+
     fun showProgress() {
-        _progressVisibilityState.value = true
+        _innerProgress.value = true
         println("appTAG BaseViewModel showProgress: progressVisibilityState ${progressVisibilityState.value}")
     }
 
     fun hideProgress() {
-        _progressVisibilityState.value = false
+        _innerProgress.value = false
         println("appTAG BaseViewModel hideProgress: progressVisibilityState ${progressVisibilityState.value}")
     }
 
@@ -51,9 +54,7 @@ open class BaseViewModel : ViewModel() {
     ): Job = viewModelScope.launch(CoroutineExceptionHandler { _, exception ->
         onError(exception)
     }) {
-        if (isProgressNeeded) {
-            showProgress()
-        }
+        _progressVisibilityState.value = isProgressNeeded
         delay(2000)
 
         networkState?.let {
@@ -65,39 +66,36 @@ open class BaseViewModel : ViewModel() {
         withContext(Dispatchers.Unconfined) {
             block()
         }
-        if (isProgressNeeded) {
-            hideProgress()
-        }
+        _progressVisibilityState.value = false
     }
 
-    protected fun <T> launchWithConditionsTest(
+    protected fun <T> launchWithNetworkCheck(
         networkState: NetworkState? = null,
-        isProgressNeeded: Boolean = false,
-        block: suspend CoroutineScope.() -> Flow<NetworkResult<T>>,
-        onSuccess: (T?) -> Unit = {},
-        onError: (Throwable) -> Any? = ::onError,
+        block: suspend CoroutineScope.() -> Flow<NetworkResult<T>>
     ): Job = viewModelScope.launch(CoroutineExceptionHandler { _, exception ->
         onError(exception)
     }) {
-        if (isProgressNeeded) {
-            showProgress()
-        }
-        delay(2000)
-
         networkState?.let {
             if (it.isNetworkAvailable().not()) {
                 throw Exception(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
         }
+        launchWithResultHandling(block)
+    }
 
+
+    protected fun <T> launchWithResultHandling(
+        block: suspend CoroutineScope.() -> Flow<NetworkResult<T>>
+    ): Job = viewModelScope.launch(CoroutineExceptionHandler { _, exception ->
+        onError(exception)
+    }) {
         block().collect { result ->
+            println("appTAG BaseViewModel launchWithConditionsTest: result $result")
             when (result) {
-                is NetworkResult.Success -> onSuccess(result.data)
+                is NetworkResult.Success -> hideProgress()
                 is NetworkResult.Failure -> throw Exception(result.errorMessage)
+                is NetworkResult.Loading -> showProgress()
             }
-        }
-        if (isProgressNeeded) {
-            hideProgress()
         }
     }
 

@@ -8,12 +8,14 @@ import com.vnteam.talktoai.domain.models.Feedback
 import com.vnteam.talktoai.domain.models.Message
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 
 
 class RealDataBaseRepositoryImpl :
     RealDataBaseRepository {
 
-    override fun insertRemoteUser(remoteUser: RemoteUser, result: (NetworkResult<Unit>) -> Unit) {
+    override fun insertRemoteUser(remoteUser: RemoteUser): Flow<NetworkResult<Unit>> = callbackFlow {
         val currentUserMap = hashMapOf<String, Any>()
         remoteUser.chats.forEach { chat ->
             currentUserMap["$CHATS/${chat.id}"] = chat
@@ -21,6 +23,7 @@ class RealDataBaseRepositoryImpl :
         remoteUser.messages.forEach { message ->
             currentUserMap["$MESSAGES/${message.id}"] = message
         }
+
         /*firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .setValue(remoteUser)
             .addOnSuccessListener {

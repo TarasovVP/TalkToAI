@@ -1,7 +1,7 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.CommonExtensions.EMPTY
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.usecase.LoginUseCase
 import com.vnteam.talktoai.utils.NetworkState
@@ -20,98 +20,48 @@ class LoginViewModel(
     val successSignInLiveData = MutableStateFlow<Boolean?>(null)
 
     fun sendPasswordResetEmail(email: String) {
-        launchWithConditions(networkState) {
-            showProgress()
-            loginUseCase.sendPasswordResetEmail(email) { authResult ->
-                when (authResult) {
-                    is NetworkResult.Success -> successPasswordResetLiveData.value = true
-                    is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        _exceptionMessage.value =
-                            it
-                    }
-                }
-                hideProgress()
+        launchWithNetworkCheck(networkState = networkState) {
+            loginUseCase.sendPasswordResetEmail(email).onSuccess {
+                successPasswordResetLiveData.value = true
             }
         }
     }
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
-        launchWithConditions(networkState) {
-            showProgress()
-            loginUseCase.fetchSignInMethodsForEmail(email) { authResult ->
-                when (authResult) {
-                    is NetworkResult.Success -> when {
-                        authResult.data.isNullOrEmpty() -> accountExistLiveData.value = true
-                        idToken.isNullOrEmpty() -> isEmailAccountExistLiveData.value = true
-                        else -> idToken.let { isGoogleAccountExistLiveData.value = it }
-                    }
-
-                    is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        _exceptionMessage.value =
-                            it
-                    }
+        launchWithNetworkCheck(networkState = networkState) {
+            loginUseCase.fetchSignInMethodsForEmail(email).onSuccess { data ->
+                when {
+                    data.isNullOrEmpty() -> accountExistLiveData.value = true
+                    idToken.isNullOrEmpty() -> isEmailAccountExistLiveData.value = true
+                    else -> idToken.let { isGoogleAccountExistLiveData.value = it }
                 }
-                hideProgress()
+                successSignInLiveData.value = true
             }
         }
     }
 
     fun signInWithEmailAndPassword(email: String, password: String) {
-        launchWithConditions(networkState = networkState) {
-            showProgress()
-            loginUseCase.signInWithEmailAndPassword(email, password) { authResult ->
-                when (authResult) {
-                    is NetworkResult.Success -> successSignInLiveData.value = true
-                    is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        _exceptionMessage.value =
-                            it
-                    }
-                }
-                hideProgress()
+        launchWithNetworkCheck(networkState = networkState) {
+            loginUseCase.signInWithEmailAndPassword(email, password).onSuccess {
+                successSignInLiveData.value = true
             }
         }
     }
 
     fun signInAuthWithGoogle(idToken: String) {
-        launchWithConditionsTest(
-            networkState = networkState,
-            isProgressNeeded = true,
-            block = {
-                loginUseCase.signInAuthWithGoogle(idToken)
-            },
-            onSuccess = { successSignInLiveData.value = true }
-        )
+        launchWithNetworkCheck(networkState = networkState) {
+            loginUseCase.signInAuthWithGoogle(idToken).onSuccess {
+                successSignInLiveData.value = true
+            }
+        }
     }
 
     fun signInAnonymously() {
-        println("NetworkTAG networkState.isNetworkAvailable() = ${networkState.isNetworkAvailable()}")
-        launchWithConditionsTest(
-            networkState = networkState,
-            isProgressNeeded = true,
-            block = {
-                loginUseCase.signInAnonymously()
-            },
-            onSuccess = {
+        launchWithNetworkCheck(networkState = networkState) {
+            loginUseCase.signInAnonymously().onSuccess {
                 successSignInLiveData.value = true
             }
-        )
-        /*{
-            println("appTAG LoginViewModel signInAnonymously() progressVisibilityState ${progressVisibilityState.value}")
-            // TODO remove this and uncomment below
-            *//*successSignInLiveData.value = true
-            preferencesRepository.setLoggedInUser(true)*//*
-            *//*loginUseCase.signInAnonymously { authResult ->
-
-
-                when (authResult) {
-                    is NetworkResult.Success -> successSignInLiveData.value = true
-                    is NetworkResult.Failure -> authResult.errorMessage?.let {
-                        _exceptionMessage.value = it
-                    }
-                }
-                hideProgress()
-            }*//*
-        }*/
+        }
     }
 
     fun googleSignOut() {
