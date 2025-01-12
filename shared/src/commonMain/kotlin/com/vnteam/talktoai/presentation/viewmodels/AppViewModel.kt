@@ -4,8 +4,11 @@ import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.data.APP_LANG_EN
 import com.vnteam.talktoai.data.network.onSuccess
-import com.vnteam.talktoai.domain.usecase.AppUseCase
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
+import com.vnteam.talktoai.presentation.usecaseimpl.LanguageUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.OnboardingUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.ThemeUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.UserSessionUseCase
 import com.vnteam.talktoai.utils.AnimationUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,7 +16,10 @@ import kotlinx.coroutines.flow.combine
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class AppViewModel(
-    private val appUseCase: AppUseCase,
+    private val themeUseCase: ThemeUseCase,
+    private val languageUseCase: LanguageUseCase,
+    private val userSessionUseCase: UserSessionUseCase,
+    private val onboardingUseCase: OnboardingUseCase,
     val animationUtils: AnimationUtils
 ) : BaseViewModel() {
 
@@ -69,7 +75,7 @@ class AppViewModel(
 
     private fun getIsLoggedInUser() {
         launchWithResultHandling {
-            appUseCase.getIsLoggedInUser().onSuccess { isLoggedInUser ->
+            userSessionUseCase.getIsLoggedInUser().onSuccess { isLoggedInUser ->
                 _loggedInUser.value = isLoggedInUser.isTrue()
             }
         }
@@ -77,7 +83,7 @@ class AppViewModel(
 
     private fun getOnBoardingSeen() {
         launchWithResultHandling {
-            appUseCase.getIsBoardingSeen().onSuccess { isOnBoardingSeen ->
+            onboardingUseCase.getIsBoardingSeen().onSuccess { isOnBoardingSeen ->
                 _onBoardingSeen.value = isOnBoardingSeen.isTrue()
             }
         }
@@ -85,33 +91,17 @@ class AppViewModel(
 
     private fun getIsDarkTheme() {
         launchWithResultHandling {
-            appUseCase.getIsDarkTheme().onSuccess {
+            themeUseCase.getIsDarkTheme().onSuccess {
                 _isDarkTheme.value = it
             }
         }
     }
 
-    fun setIsDarkTheme(isDarkTheme: Boolean) {
-        showProgress()
-        launchWithErrorHandling {
-            hideProgress()
-            appUseCase.setIsDarkTheme(isDarkTheme)
-        }
-    }
-
     private fun getLanguage() {
         launchWithResultHandling {
-            appUseCase.getLanguage().onSuccess {
+            languageUseCase.getLanguage().onSuccess {
                 _language.value = it ?: APP_LANG_EN
             }
-        }
-    }
-
-    fun setLanguage(language: String) {
-        showProgress()
-        launchWithErrorHandling {
-            hideProgress()
-            appUseCase.setLanguage(language)
         }
     }
 

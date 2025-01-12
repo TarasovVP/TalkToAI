@@ -3,28 +3,29 @@ package com.vnteam.talktoai.presentation.viewmodels
 import androidx.compose.ui.text.intl.Locale
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.data.network.onSuccess
-import com.vnteam.talktoai.domain.usecase.SettingsLanguageUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.LanguageUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsLanguageViewModel(
-    private val settingsLanguageUseCase: SettingsLanguageUseCase,
+    private val languageUseCase: LanguageUseCase,
 ) : BaseViewModel() {
 
-    val appLanguageLiveData = MutableStateFlow(String.EMPTY)
-
+    private val _appLanguage = MutableStateFlow(String.EMPTY)
+    val appLanguage = _appLanguage.asStateFlow()
 
     fun getAppLanguage() {
         launchWithResultHandling {
-            settingsLanguageUseCase.getAppLanguage().onSuccess { appLang ->
-                appLanguageLiveData.value = appLang ?: Locale.current.language
+            languageUseCase.getLanguage().onSuccess { appLang ->
+                _appLanguage.value = appLang ?: Locale.current.language
             }
         }
     }
 
     fun setAppLanguage(appLang: String) {
         launchWithErrorHandling {
-            settingsLanguageUseCase.setAppLanguage(appLang)
-            appLanguageLiveData.value = appLang
+            languageUseCase.setLanguage(appLang)
+            _appLanguage.value = appLang
         }
     }
 }

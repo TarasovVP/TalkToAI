@@ -1,16 +1,15 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
-import com.vnteam.talktoai.domain.usecase.OnBoardingUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.OnboardingUseCase
 
 class OnBoardingViewModel(
-    private val onBoardingUseCase: OnBoardingUseCase,
+    private val onboardingUseCase: OnboardingUseCase,
 ) : BaseViewModel() {
-
 
     fun setOnBoardingSeen() {
         launchWithErrorHandling {
             println("appTAG OnBoardingViewModel setOnBoardingSeen")
-            onBoardingUseCase.setOnBoardingSeen(true)
+            onboardingUseCase.setOnBoardingSeen(true)
         }
     }
 }

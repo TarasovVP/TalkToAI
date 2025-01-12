@@ -7,8 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface MainUseCase {
 
-    suspend fun getOnBoardingSeen(): Flow<Result<Boolean?>>
-
     fun addAuthStateListener()
 
     fun removeAuthStateListener()
@@ -24,8 +22,6 @@ interface MainUseCase {
     fun removeRemoteChatListener()
 
     fun removeRemoteMessageListener()
-
-    suspend fun setReviewVoted(isReviewVoted: Boolean)
 
     suspend fun insertChats(chats: List<Chat>)
 

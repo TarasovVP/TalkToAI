@@ -42,7 +42,7 @@ fun SettingsLanguageContent() {
     LaunchedEffect(Unit) {
         viewModel.getAppLanguage()
     }
-    val appLanguage = viewModel.appLanguageLiveData.collectAsState()
+    val appLanguage = viewModel.appLanguage.collectAsState()
     LaunchedEffect(appLanguage.value) {
         appLanguageState.value = appLanguage.value
     }

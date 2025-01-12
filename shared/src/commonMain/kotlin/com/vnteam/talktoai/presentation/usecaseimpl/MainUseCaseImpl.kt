@@ -7,19 +7,15 @@ import com.vnteam.talktoai.domain.repositories.AuthRepository
 import com.vnteam.talktoai.domain.repositories.ChatRepository
 import com.vnteam.talktoai.domain.repositories.MessageRepository
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
-import com.vnteam.talktoai.domain.usecase.AppUseCase
 import com.vnteam.talktoai.domain.usecase.MainUseCase
 import kotlinx.coroutines.flow.Flow
 
 class MainUseCaseImpl(
     private val authRepository: AuthRepository,
-    private val appUseCase: AppUseCase,
     private val realDataBaseRepository: RealDataBaseRepository,
     private val chatRepository: ChatRepository,
     private val messageRepository: MessageRepository,
 ) : MainUseCase {
-
-    override suspend fun getOnBoardingSeen(): Flow<Result<Boolean?>> = appUseCase.getIsBoardingSeen()
 
     override fun addAuthStateListener() = authRepository.addAuthStateListener()
 
@@ -44,9 +40,6 @@ class MainUseCaseImpl(
     override fun removeRemoteMessageListener() {
         //realDataBaseRepository.removeRemoteMessageListener(remoteMessageListener)
     }
-
-    override suspend fun setReviewVoted(isReviewVoted: Boolean) =
-        appUseCase.setReviewVoted(isReviewVoted)
 
     override suspend fun insertChats(chats: List<Chat>) = chatRepository.insertChats(chats)
 

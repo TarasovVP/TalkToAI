@@ -159,7 +159,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun setReviewVoted(): Flow<Result<Unit>> = callbackFlow {
+    override fun setReviewVoted(): Flow<Unit> = callbackFlow {
         /*firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .child(REVIEW_VOTE).setValue(true)
             .addOnSuccessListener {
@@ -169,7 +169,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun getPrivacyPolicy(appLang: String): Flow<Result<String>> = callbackFlow {
+    override fun getPrivacyPolicy(appLang: String): Flow<String> = callbackFlow {
         /*firebaseDatabase.reference.child(PRIVACY_POLICY).child(appLang).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) result.invoke(Result.Success(task.result.value as? String))
@@ -178,7 +178,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun insertFeedback(feedback: Feedback): Flow<Result<Unit>> = callbackFlow {
+    override fun insertFeedback(feedback: Feedback): Flow<Unit> = callbackFlow {
         /*firebaseDatabase.reference.child(FEEDBACK).child(feedback.time.toString())
             .setValue(feedback)
             .addOnSuccessListener {

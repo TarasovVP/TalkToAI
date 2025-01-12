@@ -37,9 +37,9 @@ interface RealDataBaseRepository {
 
     fun deleteMessagesByChatId(chatId: Long): Flow<Result<Unit>>
 
-    fun setReviewVoted(): Flow<Result<Unit>>
+    fun setReviewVoted(): Flow<Unit>
 
-    fun insertFeedback(feedback: Feedback): Flow<Result<Unit>>
+    fun insertFeedback(feedback: Feedback): Flow<Unit>
 
-    fun getPrivacyPolicy(appLang: String): Flow<Result<String>>
+    fun getPrivacyPolicy(appLang: String): Flow<String>
 }

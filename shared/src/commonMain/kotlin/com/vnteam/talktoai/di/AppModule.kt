@@ -22,34 +22,29 @@ import com.vnteam.talktoai.domain.repositories.ChatRepository
 import com.vnteam.talktoai.domain.repositories.MessageRepository
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
-import com.vnteam.talktoai.domain.usecase.AppUseCase
 import com.vnteam.talktoai.domain.usecase.ChatUseCase
 import com.vnteam.talktoai.domain.usecase.LoginUseCase
 import com.vnteam.talktoai.domain.usecase.MainUseCase
-import com.vnteam.talktoai.domain.usecase.OnBoardingUseCase
 import com.vnteam.talktoai.domain.usecase.SettingsAccountUseCase
 import com.vnteam.talktoai.domain.usecase.SettingsChatUseCase
-import com.vnteam.talktoai.domain.usecase.SettingsLanguageUseCase
 import com.vnteam.talktoai.domain.usecase.SettingsListUseCase
-import com.vnteam.talktoai.domain.usecase.SettingsPrivacyPolicyUseCase
 import com.vnteam.talktoai.domain.usecase.SettingsSignUpUseCase
-import com.vnteam.talktoai.domain.usecase.SettingsThemeUseCase
 import com.vnteam.talktoai.domain.usecase.SignUpUseCase
 import com.vnteam.talktoai.presentation.mapperimpls.ChatUIMapperImpl
 import com.vnteam.talktoai.presentation.mapperimpls.MessageUIMapperImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.AppUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.ChatUseCaseImpl
+import com.vnteam.talktoai.presentation.usecaseimpl.LanguageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.LoginUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.MainUseCaseImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.OnBoardingUseCaseImpl
+import com.vnteam.talktoai.presentation.usecaseimpl.OnboardingUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.ReviewUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.SettingsAccountUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.SettingsChatUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.SettingsFeedbackUseCaseImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.SettingsLanguageUseCaseImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.SettingsPrivacyPolicyUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.SettingsSignUpUseCaseImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.SettingsThemeUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.SignUpUseCaseImpl
+import com.vnteam.talktoai.presentation.usecaseimpl.ThemeUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.UserSessionUseCase
 import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
 import com.vnteam.talktoai.presentation.viewmodels.ChatListViewModel
 import com.vnteam.talktoai.presentation.viewmodels.ChatViewModel
@@ -141,9 +136,15 @@ val appModule = module {
 
     single<MessageUIMapper> { MessageUIMapperImpl() }
 
-    single<AppUseCase> { AppUseCaseImpl(get()) }
+    single<ThemeUseCase> { ThemeUseCase(get()) }
 
-    single<OnBoardingUseCase> { OnBoardingUseCaseImpl(get()) }
+    single<LanguageUseCase> { LanguageUseCase(get()) }
+
+    single<OnboardingUseCase> { OnboardingUseCase(get()) }
+
+    single<UserSessionUseCase> { UserSessionUseCase(get()) }
+
+    single<ReviewUseCase> { ReviewUseCase(get()) }
 
     single<LoginUseCase> { LoginUseCaseImpl(get()) }
 
@@ -151,7 +152,7 @@ val appModule = module {
 
     single<ChatUseCase> { ChatUseCaseImpl(get(), get(), get(), get(), get(), get()) }
 
-    single<MainUseCase> { MainUseCaseImpl(get(), get(), get(), get(), get()) }
+    single<MainUseCase> { MainUseCaseImpl(get(), get(), get(), get()) }
 
     single<SettingsListUseCase> {
         SettingsFeedbackUseCaseImpl(
@@ -160,10 +161,7 @@ val appModule = module {
         )
     }
     single<SettingsChatUseCase> {
-        SettingsChatUseCaseImpl(
-            preferencesRepository = get(),
-            realDataBaseRepository = get()
-        )
+        SettingsChatUseCaseImpl(get(), get())
     }
     single<SettingsAccountUseCase> {
         SettingsAccountUseCaseImpl(
@@ -182,24 +180,8 @@ val appModule = module {
             realDataBaseRepository = get()
         )
     }
-    single<SettingsLanguageUseCase> {
-        SettingsLanguageUseCaseImpl(
-            preferencesRepository = get()
-        )
-    }
-    single<SettingsThemeUseCase> {
-        SettingsThemeUseCaseImpl(
-            preferencesRepository = get()
-        )
-    }
-    single<SettingsPrivacyPolicyUseCase> {
-        SettingsPrivacyPolicyUseCaseImpl(
-            preferencesRepository = get(),
-            realDataBaseRepository = get()
-        )
-    }
     viewModel {
-        AppViewModel(get(), get())
+        AppViewModel(get(), get(), get(), get(), get())
     }
     viewModel {
         OnBoardingViewModel(get())
@@ -217,38 +199,24 @@ val appModule = module {
         ChatViewModel(get(), get(), get(), get(), get(), get())
     }
     viewModel {
-        SettingsAccountViewModel(
-            settingsAccountUseCase = get(), get()
-        )
+        SettingsAccountViewModel(get(), get())
     }
     viewModel {
-        SettingsChatViewModel(
-            settingsChatUseCase = get()
-        )
+        SettingsChatViewModel(get())
     }
     viewModel {
-        SettingsFeedbackViewModel(
-            settingsListUseCase = get(), get()
-        )
+        SettingsFeedbackViewModel(get(), get())
     }
     viewModel {
-        SettingsLanguageViewModel(
-            settingsLanguageUseCase = get()
-        )
+        SettingsLanguageViewModel(get())
     }
     viewModel {
-        SettingsPrivacyPolicyViewModel(
-            settingsPrivacyPolicyUseCase = get()
-        )
+        SettingsPrivacyPolicyViewModel(get(), get())
     }
     viewModel {
-        SettingsSignUpViewModel(
-            settingsSignUpUseCase = get(), get()
-        )
+        SettingsSignUpViewModel(get(), get())
     }
     viewModel {
-        SettingsThemeViewModel(
-            settingsThemeUseCase = get()
-        )
+        SettingsThemeViewModel(get())
     }
 }

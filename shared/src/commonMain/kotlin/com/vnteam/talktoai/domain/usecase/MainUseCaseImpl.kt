@@ -18,9 +18,6 @@ class MainUseCaseImpl(
     private val messageRepository: MessageRepository,
 ) : MainUseCase {
 
-    override suspend fun getOnBoardingSeen(): Flow<Result<Boolean?>> =
-        dataStoreRepository.getIsBoardingSeen()
-
     override fun addAuthStateListener(/*authStateListener: FirebaseAuth.AuthStateListener*/) =
         authRepository.addAuthStateListener(/*authStateListener*/)
 
@@ -46,9 +43,6 @@ class MainUseCaseImpl(
     override fun removeRemoteMessageListener(/*remoteMessageListener: ValueEventListener*/) {
         //realDataBaseRepository.removeRemoteMessageListener(remoteMessageListener)
     }
-
-    override suspend fun setReviewVoted(isReviewVoted: Boolean) =
-        dataStoreRepository.setReviewVoted(isReviewVoted)
 
     override suspend fun insertChats(chats: List<Chat>) = chatRepository.insertChats(chats)
 
