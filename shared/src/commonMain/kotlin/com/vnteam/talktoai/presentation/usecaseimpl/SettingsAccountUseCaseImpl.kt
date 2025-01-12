@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.presentation.usecaseimpl
 
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import com.vnteam.talktoai.domain.repositories.ChatRepository
 import com.vnteam.talktoai.domain.repositories.MessageRepository
@@ -25,17 +25,17 @@ class SettingsAccountUseCaseImpl(
 
     override fun currentUserEmail() = authRepository.currentUserEmail()
 
-    override fun signOut(): Flow<NetworkResult<Unit>> =
+    override fun signOut(): Flow<Result<Unit>> =
         authRepository.signOut()
 
     override fun changePassword(
         currentPassword: String,
-        newPassword: String): Flow<NetworkResult<Unit>> = authRepository.changePassword(currentPassword, newPassword)
+        newPassword: String): Flow<Result<Unit>> = authRepository.changePassword(currentPassword, newPassword)
 
-    override fun reAuthenticate(/*authCredential: AuthCredential, */): Flow<NetworkResult<Unit>> =
+    override fun reAuthenticate(/*authCredential: AuthCredential, */): Flow<Result<Unit>> =
         authRepository.reAuthenticate()
 
-    override fun deleteUser(): Flow<NetworkResult<Unit>> =
+    override fun deleteUser(): Flow<Result<Unit>> =
         realDataBaseRepository.deleteRemoteUser()/* {
             authRepository.deleteUser(result)
         }*/

@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.domain.usecase
 
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import kotlinx.coroutines.flow.Flow
 
 
@@ -14,15 +14,15 @@ interface SettingsAccountUseCase {
 
     fun currentUserEmail(): String
 
-    fun signOut(): Flow<NetworkResult<Unit>>
+    fun signOut(): Flow<Result<Unit>>
 
     fun changePassword(
         currentPassword: String,
-        newPassword: String): Flow<NetworkResult<Unit>>
+        newPassword: String): Flow<Result<Unit>>
 
-    fun reAuthenticate(/*authCredential: AuthCredential, */): Flow<NetworkResult<Unit>>
+    fun reAuthenticate(/*authCredential: AuthCredential, */): Flow<Result<Unit>>
 
-    fun deleteUser(): Flow<NetworkResult<Unit>>
+    fun deleteUser(): Flow<Result<Unit>>
 
     suspend fun clearDataByKeys(keys: List<String>)
 

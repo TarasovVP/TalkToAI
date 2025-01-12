@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.domain.repositories
 
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.request.ApiRequest
 import com.vnteam.talktoai.data.network.responses.ApiResponse
 import com.vnteam.talktoai.domain.models.Message
@@ -12,9 +12,9 @@ interface MessageRepository {
 
     suspend fun insertMessage(message: Message)
 
-    suspend fun getMessages(): Flow<NetworkResult<List<Message>>>
+    suspend fun getMessages(): Flow<Result<List<Message>>>
 
-    suspend fun getMessagesFromChat(chatId: Long): Flow<NetworkResult<List<Message>>>
+    suspend fun getMessagesFromChat(chatId: Long): Flow<Result<List<Message>>>
 
     suspend fun deleteMessage(id: Long)
 
@@ -24,5 +24,5 @@ interface MessageRepository {
 
     suspend fun updateMessages(messages: List<Message>)
 
-    suspend fun sendRequest(apiRequest: ApiRequest): Flow<NetworkResult<NetworkResult<ApiResponse>>>
+    suspend fun sendRequest(apiRequest: ApiRequest): Flow<Result<ApiResponse>>
 }

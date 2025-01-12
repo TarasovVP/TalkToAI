@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.presentation.usecaseimpl
 
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.usecase.AppUseCase
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +11,7 @@ class AppUseCaseImpl(private val preferencesRepository: PreferencesRepository) :
         preferencesRepository.setIsDarkTheme(isDarkTheme)
     }
 
-    override suspend fun getIsDarkTheme(): Flow<NetworkResult<Boolean>> {
+    override suspend fun getIsDarkTheme(): Flow<Result<Boolean>> {
         return preferencesRepository.getIsDarkTheme()
     }
 
@@ -19,7 +19,7 @@ class AppUseCaseImpl(private val preferencesRepository: PreferencesRepository) :
         preferencesRepository.setLanguage(language)
     }
 
-    override suspend fun getLanguage(): Flow<NetworkResult<String?>> {
+    override suspend fun getLanguage(): Flow<Result<String?>> {
         return preferencesRepository.getLanguage()
     }
 
@@ -27,11 +27,11 @@ class AppUseCaseImpl(private val preferencesRepository: PreferencesRepository) :
         preferencesRepository.setOnBoardingSeen(isOnBoardingSeen)
     }
 
-    override suspend fun getIsLoggedInUser(): Flow<NetworkResult<Boolean?>> {
+    override suspend fun getIsLoggedInUser(): Flow<Result<Boolean?>> {
         return preferencesRepository.getIsLoggedInUser()
     }
 
-    override suspend fun getIsBoardingSeen(): Flow<NetworkResult<Boolean?>> {
+    override suspend fun getIsBoardingSeen(): Flow<Result<Boolean?>> {
         return preferencesRepository.getIsBoardingSeen()
     }
 
@@ -39,7 +39,7 @@ class AppUseCaseImpl(private val preferencesRepository: PreferencesRepository) :
         preferencesRepository.setReviewVoted(isReviewVoted)
     }
 
-    override suspend fun getReviewVoted(): Flow<NetworkResult<Boolean?>> {
+    override suspend fun getReviewVoted(): Flow<Result<Boolean?>> {
         return preferencesRepository.getIsReviewVoted()
     }
 }

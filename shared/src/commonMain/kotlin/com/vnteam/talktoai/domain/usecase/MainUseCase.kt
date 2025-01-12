@@ -1,13 +1,13 @@
 package com.vnteam.talktoai.domain.usecase
 
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.models.Message
 import kotlinx.coroutines.flow.Flow
 
 interface MainUseCase {
 
-    suspend fun getOnBoardingSeen(): Flow<NetworkResult<Boolean?>>
+    suspend fun getOnBoardingSeen(): Flow<Result<Boolean?>>
 
     fun addAuthStateListener()
 
@@ -31,23 +31,23 @@ interface MainUseCase {
 
     suspend fun insertMessages(messages: List<Message>)
 
-    suspend fun getChats(): Flow<List<Chat>>
+    suspend fun getChats(): Flow<Result<List<Chat>>>
 
     suspend fun updateChats(chats: List<Chat>)
 
-    fun updateRemoteChats(chats: List<Chat>): Flow<NetworkResult<Unit>>
+    fun updateRemoteChats(chats: List<Chat>): Flow<Result<Unit>>
 
     suspend fun insertChat(chat: Chat)
 
-    fun insertRemoteChat(chat: Chat): Flow<NetworkResult<Unit>>
+    fun insertRemoteChat(chat: Chat): Flow<Result<Unit>>
 
     suspend fun updateChat(chat: Chat)
 
-    fun updateRemoteChat(chat: Chat): Flow<NetworkResult<Unit>>
+    fun updateRemoteChat(chat: Chat): Flow<Result<Unit>>
 
     suspend fun deleteChat(chat: Chat)
 
-    fun deleteRemoteChat(chat: Chat): Flow<NetworkResult<Unit>>
+    fun deleteRemoteChat(chat: Chat): Flow<Result<Unit>>
 
     suspend fun updateMessages(messages: List<Message>)
 }

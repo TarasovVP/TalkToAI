@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.presentation.usecaseimpl
 
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnteam.talktoai.domain.usecase.SettingsChatUseCase
@@ -13,7 +13,7 @@ class SettingsChatUseCaseImpl(
     /*private val firebaseAuth: FirebaseAuth,*/
 ) : SettingsChatUseCase {
 
-    override suspend fun getChatSettings(): Flow<NetworkResult<Boolean?>> {
+    override suspend fun getChatSettings(): Flow<Result<Boolean?>> {
         return preferencesRepository.getIsBoardingSeen()
     }
 }

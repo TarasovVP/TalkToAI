@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.presentation.usecaseimpl
 
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.models.Feedback
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
@@ -15,6 +15,6 @@ class SettingsFeedbackUseCaseImpl(
 
     override fun currentUserEmail() = authRepository.currentUserEmail()
 
-    override fun insertFeedback(feedback: Feedback): Flow<NetworkResult<Unit>> =
+    override fun insertFeedback(feedback: Feedback): Flow<Result<Unit>> =
         realDataBaseRepository.insertFeedback(feedback)
 }

@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -45,34 +46,34 @@ fun SettingsSignUpScreen() {
     val showAccountExistDialog = remember { mutableStateOf(false) }
     val transferDataState = remember { mutableStateOf(true) }
 
-    val settingsSignUpUIStateState = viewModel.uiState.collectAsState()
+    val settingsSignUpUIStateState by viewModel.uiState.collectAsState()
     LaunchedEffect(settingsSignUpUIStateState) {
-        settingsSignUpUIStateState.value.accountExist?.let {
+        settingsSignUpUIStateState.accountExist?.let {
             viewModel.googleSign()
             showAccountExistDialog.value = true
         }
-        settingsSignUpUIStateState.value.createEmailAccount?.let {
+        settingsSignUpUIStateState.createEmailAccount?.let {
             viewModel.createUserWithEmailAndPassword(
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
             )
         }
-        settingsSignUpUIStateState.value.createGoogleAccount?.let { idToken ->
+        settingsSignUpUIStateState.createGoogleAccount?.let { idToken ->
             viewModel.createUserWithGoogle(idToken, false)
         }
-        settingsSignUpUIStateState.value.successAuthorisation?.let { isExistUser ->
+        settingsSignUpUIStateState.successAuthorisation?.let { isExistUser ->
             if (transferDataState.value) {
                 viewModel.createRemoteUser(isExistUser)
             }
         }
-        settingsSignUpUIStateState.value.remoteUser?.let { userState ->
+        settingsSignUpUIStateState.remoteUser?.let { userState ->
             if (userState.first) {
                 userState.second?.let { viewModel.updateRemoteCurrentUser(it) }
             } else {
                 userState.second?.let { viewModel.insertRemoteCurrentUser(it) }
             }
         }
-        settingsSignUpUIStateState.value.successRemoteUser?.let { successRemoteUser ->
+        settingsSignUpUIStateState.successRemoteUser?.let { successRemoteUser ->
             if (successRemoteUser) {
                 //updateScreenState(screenRoute = "${NavigationScreen.CHAT_DESTINATION}/${DEFAULT_CHAT_ID}")
             }

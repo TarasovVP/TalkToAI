@@ -7,25 +7,25 @@ import io.ktor.client.statement.bodyAsText
 const val CONNECTION_EXCEPTION = "Connection Exception. Check if the server is running."
 const val UNKNOWN_ERROR = "Unknown error"
 
-suspend inline fun <reified T> HttpResponse?.handleResponse(): NetworkResult<T> {
+suspend inline fun <reified T> HttpResponse?.handleResponse(): Result<T> {
     return when {
-        this == null -> NetworkResult.Failure(UNKNOWN_ERROR)
+        this == null -> Result.Failure(UNKNOWN_ERROR)
         status.value in 400..405 -> {
             println("Error ${bodyAsText()}")
-            NetworkResult.Failure(CONNECTION_EXCEPTION)
+            Result.Failure(CONNECTION_EXCEPTION)
         }
 
         status.value !in 200..299 -> {
             val error = bodyAsText()
-            NetworkResult.Failure(error)
+            Result.Failure(error)
         }
 
         else -> {
             try {
                 val result = body<T>()
-                NetworkResult.Success(result)
+                Result.Success(result)
             } catch (e: Exception) {
-                NetworkResult.Failure(e.message ?: UNKNOWN_ERROR)
+                Result.Failure(e.message ?: UNKNOWN_ERROR)
             }
         }
     }

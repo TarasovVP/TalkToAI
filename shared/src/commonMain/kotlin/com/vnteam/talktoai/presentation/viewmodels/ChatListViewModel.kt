@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
+import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.usecase.MainUseCase
@@ -91,115 +92,63 @@ class ChatListViewModel(
     }
 
     fun getChats() {
-        showProgress()
         chatsFlowSubscription?.cancel()
-        /*chatsFlowSubscription = launchWithResultHandling {
-            mainUseCase.getChats().catch {
-                hideProgress()
-
-            }.collect { chats ->
+        chatsFlowSubscription = launchWithResultHandling {
+            mainUseCase.getChats().onSuccess { chats ->
                 _chatsList.value = chats
                 hideProgress()
             }
-        }*/
+        }
     }
 
     fun updateChats(chats: List<Chat>) {
-        /*if (mainUseCase.isAuthorisedUser()) {
-            launchWithResultHandling(networkState) {
-
-                mainUseCase.updateRemoteChats(chats) { authResult ->
-                    *//*when (authResult) {
-                        is NetworkResult.Success -> {
-
-                        }
-
-                        is NetworkResult.Failure -> authResult.errorMessage?.let {
-                            _exceptionMessage.value = it
-                        }
-                    }
-                    hideProgress()*//*
-                }
+        if (mainUseCase.isAuthorisedUser()) {
+            launchWithNetworkCheck(networkState) {
+                mainUseCase.updateRemoteChats(chats)
             }
         } else {
-            launchWithConditions {
+            launchWithErrorHandling {
                 mainUseCase.updateChats(_chatsList.value.orEmpty())
             }
-        }*/
+        }
     }
 
     fun insertChat(chat: Chat) {
-        /*if (mainUseCase.isAuthorisedUser()) {
-            launchWithConditions(networkState) {
-                showProgress()
-                mainUseCase.insertRemoteChat(chat) { authResult ->
-                    *//*when (authResult) {
-                        is NetworkResult.Success -> {
-
-                        }
-
-                        is NetworkResult.Failure -> authResult.errorMessage?.let {
-                            _exceptionMessage.value = it
-                        }
-                    }*//*
-                    hideProgress()
-                }
+        if (mainUseCase.isAuthorisedUser()) {
+            launchWithNetworkCheck(networkState) {
+                mainUseCase.insertRemoteChat(chat)
             }
         } else {
-            launchWithConditions {
+            launchWithErrorHandling {
                 mainUseCase.insertChat(chat)
                 // TODO add temporary
                 getChats()
             }
-        }*/
+        }
     }
 
     fun updateChat(chat: Chat) {
-        /*if (mainUseCase.isAuthorisedUser()) {
-            launchWithConditions(networkState) {
-                showProgress()
-                mainUseCase.updateRemoteChat(chat) { authResult ->
-                    *//*when (authResult) {
-                        is NetworkResult.Success -> {
-
-                        }
-
-                        is NetworkResult.Failure -> authResult.errorMessage?.let {
-                            _exceptionMessage.value = it
-                        }
-                    }*//*
-                    hideProgress()
-                }
+        if (mainUseCase.isAuthorisedUser()) {
+            launchWithNetworkCheck(networkState) {
+                mainUseCase.updateRemoteChat(chat)
             }
         } else {
-            launchWithConditions {
+            launchWithErrorHandling {
                 mainUseCase.updateChat(chat)
             }
-        }*/
+        }
     }
 
     fun deleteChat(chat: Chat) {
-        /*if (mainUseCase.isAuthorisedUser()) {
-            launchWithConditions(networkState) {
-                showProgress()
-                mainUseCase.deleteRemoteChat(chat) { authResult ->
-                   *//* when (authResult) {
-                        is NetworkResult.Success -> {
-
-                        }
-
-                        is NetworkResult.Failure -> authResult.errorMessage?.let {
-                            _exceptionMessage.value = it
-                        }
-                    }*//*
-                    hideProgress()
-                }
+        if (mainUseCase.isAuthorisedUser()) {
+            launchWithNetworkCheck(networkState) {
+                mainUseCase.deleteRemoteChat(chat)
             }
         } else {
-            launchWithConditions {
+            launchWithErrorHandling {
                 mainUseCase.deleteChat(chat)
             }
-        }*/
+        }
     }
 
     private fun removeAuthStateListener() {

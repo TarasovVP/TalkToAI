@@ -1,7 +1,7 @@
 package com.vnteam.talktoai.data.repositoryimpl
 
 import com.vnteam.talktoai.data.database.dao.ChatDao
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.mappers.ChatDBMapper
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.repositories.ChatRepository
@@ -24,14 +24,14 @@ class ChatRepositoryImpl(private val chatDao: ChatDao, private val chatDBMapper:
         chatDao.insertChat(chatDBMapper.mapToImplModel(chat))
     }
 
-    override suspend fun getChats(): Flow<NetworkResult<List<Chat>>> =
+    override suspend fun getChats(): Flow<Result<List<Chat>>> =
         chatDao.getChats().map { demoObjectWithOwners ->
-            NetworkResult.Success(chatDBMapper.mapFromImplModelList(demoObjectWithOwners))
+            Result.Success(chatDBMapper.mapFromImplModelList(demoObjectWithOwners))
         }
 
-    override suspend fun getLastUpdatedChat(): Flow<NetworkResult<Chat?>> {
+    override suspend fun getLastUpdatedChat(): Flow<Result<Chat?>> {
         return chatDao.getLastUpdatedChat().map { chat ->
-            NetworkResult.Success(chat?.let { chatDBMapper.mapFromImplModel(it) })
+            Result.Success(chat?.let { chatDBMapper.mapFromImplModel(it) })
         }
     }
 
@@ -48,13 +48,13 @@ class ChatRepositoryImpl(private val chatDao: ChatDao, private val chatDBMapper:
     }
 
 
-    override suspend fun getChatById(chatId: String): Flow<NetworkResult<Chat?>> =
+    override suspend fun getChatById(chatId: String): Flow<Result<Chat?>> =
         chatDao.getChatById(chatId.toLong()).map { chat ->
-            NetworkResult.Success(chat?.let { chatDBMapper.mapFromImplModel(it) })
+            Result.Success(chat?.let { chatDBMapper.mapFromImplModel(it) })
         }
 
-    override suspend fun deleteChatById(chatId: String): Flow<NetworkResult<Unit>> = flow {
+    override suspend fun deleteChatById(chatId: String): Flow<Result<Unit>> = flow {
         chatDao.deleteChatById(chatId.toLong())
-        emit(NetworkResult.Success(Unit))
+        emit(Result.Success(Unit))
     }
 }

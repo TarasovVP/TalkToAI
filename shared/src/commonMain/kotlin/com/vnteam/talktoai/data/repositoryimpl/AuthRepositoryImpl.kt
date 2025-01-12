@@ -1,7 +1,7 @@
 package com.vnteam.talktoai.data.repositoryimpl
 
 import com.vnteam.talktoai.CommonExtensions.EMPTY
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
@@ -47,7 +47,7 @@ class AuthRepositoryImpl :
         return String.EMPTY
     }
 
-    override fun sendPasswordResetEmail(email: String): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun sendPasswordResetEmail(email: String): Flow<Result<Unit>> = callbackFlow {
         /*firebaseAuth.sendPasswordResetEmail(email)
             .addOnSuccessListener {
                 result.invoke(Result.Success())
@@ -56,7 +56,7 @@ class AuthRepositoryImpl :
             }*/
     }
 
-    override fun fetchSignInMethodsForEmail(email: String): Flow<NetworkResult<List<String>>> =
+    override fun fetchSignInMethodsForEmail(email: String): Flow<Result<List<String>>> =
         callbackFlow {
             /*firebaseAuth.fetchSignInMethodsForEmail(email)
                 .addOnCompleteListener { task ->
@@ -71,7 +71,7 @@ class AuthRepositoryImpl :
     override fun signInWithEmailAndPassword(
         email: String,
         password: String
-    ): Flow<NetworkResult<Unit>> = callbackFlow {
+    ): Flow<Result<Unit>> = callbackFlow {
         /*firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 result.invoke(Result.Success())
@@ -80,7 +80,7 @@ class AuthRepositoryImpl :
             }*/
     }
 
-    override fun signInWithGoogle(idToken: String): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun signInWithGoogle(idToken: String): Flow<Result<Unit>> = callbackFlow {
         /*val credential = GoogleAuthProvider.getCredential(idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnSuccessListener {
@@ -90,13 +90,13 @@ class AuthRepositoryImpl :
             }*/
     }
 
-    override suspend fun signInAnonymously(): Flow<NetworkResult<Unit>> = callbackFlow {
+    override suspend fun signInAnonymously(): Flow<Result<Unit>> = callbackFlow {
         // TODO remove mock, uncomment below code
-        trySend(NetworkResult.Loading)
+        trySend(Result.Loading)
 
         CoroutineScope(coroutineContext).launch {
             delay(3000)
-            trySend(NetworkResult.Success(Unit))
+            trySend(Result.Success(Unit))
             close()
         }
 
@@ -114,7 +114,7 @@ class AuthRepositoryImpl :
     override fun createUserWithEmailAndPassword(
         email: String,
         password: String
-    ): Flow<NetworkResult<List<String>>> = callbackFlow {
+    ): Flow<Result<List<String>>> = callbackFlow {
         /*firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) result.invoke(Result.Success(task.result.user?.uid.orEmpty()))
@@ -125,7 +125,7 @@ class AuthRepositoryImpl :
 
     override fun changePassword(
         currentPassword: String,
-        newPassword: String): Flow<NetworkResult<Unit>> = callbackFlow {
+        newPassword: String): Flow<Result<Unit>> = callbackFlow {
         /*val user = firebaseAuth.currentUser
         val credential = EmailAuthProvider.getCredential(user?.email.orEmpty(), currentPassword)
         user?.reauthenticateAndRetrieveData(credential)
@@ -140,7 +140,7 @@ class AuthRepositoryImpl :
             }*/
     }
 
-    override fun reAuthenticate(/*authCredential: AuthCredential*/): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun reAuthenticate(/*authCredential: AuthCredential*/): Flow<Result<Unit>> = callbackFlow {
         /*firebaseAuth.currentUser?.reauthenticate(authCredential)
             ?.addOnSuccessListener {
                 result.invoke(Result.Success())
@@ -149,7 +149,7 @@ class AuthRepositoryImpl :
             }*/
     }
 
-    override fun deleteUser(): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun deleteUser(): Flow<Result<Unit>> = callbackFlow {
         /*firebaseAuth.currentUser?.delete()
             ?.addOnSuccessListener {
                 signOut(result)
@@ -158,7 +158,7 @@ class AuthRepositoryImpl :
             }*/
     }
 
-    override fun signOut(): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun signOut(): Flow<Result<Unit>> = callbackFlow {
         /*googleSignInClient.signOut().addOnSuccessListener {
             firebaseAuth.signOut()
             result.invoke(Result.Success())

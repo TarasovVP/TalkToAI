@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Constants
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -46,7 +46,7 @@ open class BaseViewModel : ViewModel() {
 
     protected fun <T> launchWithNetworkCheck(
         networkState: NetworkState? = null,
-        block: suspend CoroutineScope.() -> Flow<NetworkResult<T>>
+        block: suspend CoroutineScope.() -> Flow<Result<T>>
     ): Job {
         networkState?.let {
             if (it.isNetworkAvailable().not()) {
@@ -58,14 +58,14 @@ open class BaseViewModel : ViewModel() {
     }
 
     protected fun <T> launchWithResultHandling(
-        block: suspend CoroutineScope.() -> Flow<NetworkResult<T>>
+        block: suspend CoroutineScope.() -> Flow<Result<T>>
     ): Job = launchWithErrorHandling {
         block().collect { result ->
             println("appTAG BaseViewModel launchWithConditionsTest: result $result")
             when (result) {
-                is NetworkResult.Success -> hideProgress()
-                is NetworkResult.Failure -> onError(Exception(result.errorMessage))
-                is NetworkResult.Loading -> showProgress()
+                is Result.Success -> hideProgress()
+                is Result.Failure -> onError(Exception(result.errorMessage))
+                is Result.Loading -> showProgress()
             }
         }
     }

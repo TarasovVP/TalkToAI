@@ -1,20 +1,20 @@
 package com.vnteam.talktoai.domain.usecase
 
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.models.RemoteUser
 import kotlinx.coroutines.flow.Flow
 
 interface SignUpUseCase {
 
-    fun fetchSignInMethodsForEmail(email: String): Flow<NetworkResult<List<String>>>
+    fun fetchSignInMethodsForEmail(email: String): Flow<Result<List<String>>>
 
-    fun createUserWithGoogle(idToken: String): Flow<NetworkResult<Unit>>
+    fun createUserWithGoogle(idToken: String): Flow<Result<Unit>>
 
     fun createUserWithEmailAndPassword(
         email: String,
-        password: String): Flow<NetworkResult<List<String>>>
+        password: String): Flow<Result<List<String>>>
 
-    fun insertRemoteUser(remoteUser: RemoteUser): Flow<NetworkResult<Unit>>
+    fun insertRemoteUser(remoteUser: RemoteUser): Flow<Result<Unit>>
 
     fun googleSignOut()
 

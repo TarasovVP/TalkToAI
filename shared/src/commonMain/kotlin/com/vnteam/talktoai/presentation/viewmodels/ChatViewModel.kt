@@ -1,7 +1,11 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
+import com.vnteam.talktoai.CommonExtensions.isNull
 import com.vnteam.talktoai.Res
+import com.vnteam.talktoai.data.network.onError
+import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.data.network.request.ApiRequest
+import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.mappers.ChatUIMapper
 import com.vnteam.talktoai.domain.mappers.MessageUIMapper
 import com.vnteam.talktoai.domain.models.Chat
@@ -22,8 +26,7 @@ class ChatViewModel(
     private val shareUtils: ShareUtils,
     private val networkState: NetworkState,
     val animationUtils: AnimationUtils
-
-    ) : BaseViewModel() {
+) : BaseViewModel() {
 
     val currentChatLiveData = MutableStateFlow<ChatUI?>(null)
     val messagesLiveData = MutableStateFlow<List<MessageUI>>(listOf())
@@ -32,162 +35,102 @@ class ChatViewModel(
     private var messagesFlowSubscription: Job? = null
 
     fun insertChat(chat: Chat) {
-        /*if (chatUseCase.isAuthorisedUser()) {
-            launchWithConditions(networkState) {
-                showProgress()
-                chatUseCase.insertRemoteChat(chat) { authResult ->
-                    *//*when (authResult) {
-                        is NetworkResult.Success -> {
+        if (chatUseCase.isAuthorisedUser()) {
+            launchWithNetworkCheck(networkState) {
+                chatUseCase.insertRemoteChat(chat).onSuccess {
 
-                        }
-
-                        is NetworkResult.Failure -> authResult.errorMessage?.let {
-                            _exceptionMessage.value = it
-                        }
-                    }
-                    hideProgress()*//*
                 }
             }
         } else {
-            launchWithConditions {
+            launchWithErrorHandling {
                 chatUseCase.insertChat(chat)
             }
-        }*/
+        }
     }
 
     fun getCurrentChat(chatId: Long) {
-        /*showProgress()
-        launchWithConditions {
-            chatUseCase.getCurrentChat(chatId).catch {
-                hideProgress()
-            }.collect { chat ->
+        launchWithResultHandling {
+            chatUseCase.getCurrentChat(chatId).onSuccess { chat ->
                 if (chat.isNull()) {
                     currentChatLiveData.value = ChatUI()
                 } else {
                     currentChatLiveData.value = chat?.let { chatUIMapper.mapToImplModel(it) }
                 }
-                hideProgress()
             }
-        }*/
+        }
     }
 
     fun getMessagesFromChat(chatId: Long) {
-        /*showProgress()
+        showProgress()
         messagesFlowSubscription?.cancel()
-        messagesFlowSubscription = launchWithConditions {
-            chatUseCase.getMessagesFromChat(chatId).catch {
-                hideProgress()
-            }.collect { result ->
-                messagesLiveData.value = messageUIMapper.mapToImplModelList(result)
-                hideProgress()
+        messagesFlowSubscription = launchWithResultHandling {
+            chatUseCase.getMessagesFromChat(chatId).onSuccess { result ->
+                messagesLiveData.value = messageUIMapper.mapToImplModelList(result.orEmpty())
             }
-        }*/
+        }
     }
 
     fun sendRequest(temporaryMessage: MessageUI, apiRequest: ApiRequest) {
-        /*showProgress()
-        launchWithConditions {
-            chatUseCase.sendRequest(apiRequest).catch {
-                hideProgress()
-
-            }.collect { result ->
-               *//* when (result) {
-                    is NetworkResult.Success -> result.data?.let { apiResponse ->
-                        insertMessage(temporaryMessage.apply {
-                            author = apiResponse.model.orEmpty()
-                            message = apiResponse.choices?.firstOrNull()?.message?.content.orEmpty()
-                            updatedAt = apiResponse.created?.toLongOrNull() ?: 0
-                            status = MessageStatus.SUCCESS
-                        })
-                    }
-
-                    is NetworkResult.Failure -> {
-                        insertMessage(temporaryMessage.apply {
-                            status = MessageStatus.ERROR
-                            errorMessage = result.errorMessage.orEmpty()
-                            println("Error when api request: ${result.errorMessage}")
-                        })
-                    }
-                }*//*
-                hideProgress()
+        launchWithNetworkCheck(networkState) {
+            chatUseCase.sendRequest(apiRequest).onSuccess { apiResponse ->
+                insertMessage(temporaryMessage.apply {
+                    author = apiResponse?.model.orEmpty()
+                    message = apiResponse?.choices?.firstOrNull()?.message?.content.orEmpty()
+                    updatedAt = apiResponse?.created?.toLongOrNull() ?: 0
+                    status = MessageStatus.SUCCESS
+                })
+            }.onError { error ->
+                insertMessage(temporaryMessage.apply {
+                    status = MessageStatus.ERROR
+                    errorMessage = error.orEmpty()
+                    println("Error when api request: $error")
+                })
             }
-        }*/
+        }
     }
 
     fun insertMessage(message: MessageUI) {
-        /*if (chatUseCase.isAuthorisedUser()) {
-            launchWithConditions(networkState) {
-                showProgress()
-                chatUseCase.insertRemoteMessage(messageUIMapper.mapFromImplModel(message)) { authResult ->
-                   *//* when (authResult) {
-                        is NetworkResult.Success -> {
+        if (chatUseCase.isAuthorisedUser()) {
+            launchWithNetworkCheck(networkState) {
+                chatUseCase.insertRemoteMessage(messageUIMapper.mapFromImplModel(message)).onSuccess {
 
-                        }
-
-                        is NetworkResult.Failure -> authResult.errorMessage?.let {
-                            _exceptionMessage.value = it
-                        }
-                    }*//*
-                    hideProgress()
                 }
             }
         } else {
-            launchWithConditions {
+            launchWithErrorHandling {
                 chatUseCase.insertMessage(messageUIMapper.mapFromImplModel(message))
                 // TODO add temporary
                 getMessagesFromChat(message.chatId)
             }
-        }*/
+        }
     }
 
     fun updateMessage(message: MessageUI) {
-        /*if (chatUseCase.isAuthorisedUser()) {
-            launchWithConditions(networkState) {
-                showProgress()
-                chatUseCase.insertRemoteMessage(messageUIMapper.mapFromImplModel(message)) { authResult ->
-                   *//* when (authResult) {
-                        is NetworkResult.Success -> {
+        if (chatUseCase.isAuthorisedUser()) {
+            launchWithNetworkCheck(networkState) {
+                chatUseCase.insertRemoteMessage(messageUIMapper.mapFromImplModel(message)).onSuccess {
 
-                        }
-
-                        is NetworkResult.Failure -> authResult.errorMessage?.let {
-                            _exceptionMessage.value = it
-                        }
-                    }*//*
-                    hideProgress()
                 }
             }
         } else {
-            launchWithConditions {
+            launchWithErrorHandling {
                 chatUseCase.insertMessage(messageUIMapper.mapFromImplModel(message))
             }
-        }*/
+        }
     }
 
     fun deleteMessages(messageIds: List<Long>) {
-        /*showProgress()
         if (chatUseCase.isAuthorisedUser()) {
-            launchWithConditions(networkState) {
-                showProgress()
-                chatUseCase.deleteRemoteMessages(messageIds) { authResult ->
-                    *//*when (authResult) {
-                        is NetworkResult.Success -> {
+            launchWithNetworkCheck(networkState) {
+                chatUseCase.deleteRemoteMessages(messageIds).onSuccess {
 
-                        }
-
-                        is NetworkResult.Failure -> authResult.errorMessage?.let {
-                            _exceptionMessage.value = it
-                        }
-                    }*//*
-                    hideProgress()
                 }
             }
         } else {
-            launchWithConditions {
+            launchWithErrorHandling {
                 chatUseCase.deleteMessages(messageIds)
             }
         }
-        hideProgress()*/
     }
 
     fun shareLink(text: String) {

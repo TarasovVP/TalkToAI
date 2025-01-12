@@ -1,7 +1,7 @@
 package com.vnteam.talktoai.presentation.usecaseimpl
 
 import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.request.ApiRequest
 import com.vnteam.talktoai.domain.mappers.ChatUIMapper
 import com.vnteam.talktoai.domain.mappers.MessageUIMapper
@@ -25,7 +25,7 @@ class ChatUseCaseImpl(
 
     override suspend fun insertChat(chat: Chat) = chatRepository.insertChat(chat)
 
-    override suspend fun getCurrentChat(chatId: Long): Flow<Chat?> {
+    override suspend fun getCurrentChat(chatId: Long): Flow<Result<Chat?>> {
         return when (chatId) {
             DEFAULT_CHAT_ID -> chatRepository.getLastUpdatedChat()
             else -> chatRepository.getChatById(chatId.toString())
@@ -34,10 +34,10 @@ class ChatUseCaseImpl(
 
     override fun isAuthorisedUser() = authRepository.isAuthorisedUser()
 
-    override fun insertRemoteChat(chat: Chat): Flow<NetworkResult<Unit>> =
+    override fun insertRemoteChat(chat: Chat): Flow<Result<Unit>> =
         realDataBaseRepository.insertChat(chat)
 
-    override fun insertRemoteMessage(message: Message): Flow<NetworkResult<Unit>> {
+    override fun insertRemoteMessage(message: Message): Flow<Result<Unit>> {
         return realDataBaseRepository.insertMessage(message)
     }
 
@@ -49,10 +49,10 @@ class ChatUseCaseImpl(
         messageRepository.deleteMessages(messageIds)
 
     override fun deleteRemoteMessages(
-        messageIds: List<Long>): Flow<NetworkResult<Unit>> =
+        messageIds: List<Long>): Flow<Result<Unit>> =
         realDataBaseRepository.deleteMessages(messageIds.map { it.toString() })
 
-    override suspend fun getMessagesFromChat(chatId: Long): Flow<List<Message>> =
+    override suspend fun getMessagesFromChat(chatId: Long): Flow<Result<List<Message>>> =
         messageRepository.getMessagesFromChat(chatId)
 
     override suspend fun sendRequest(apiRequest: ApiRequest) =

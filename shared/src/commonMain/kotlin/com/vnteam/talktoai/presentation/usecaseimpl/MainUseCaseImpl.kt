@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.presentation.usecaseimpl
 
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.models.Message
 import com.vnteam.talktoai.domain.repositories.AuthRepository
@@ -19,7 +19,7 @@ class MainUseCaseImpl(
     private val messageRepository: MessageRepository,
 ) : MainUseCase {
 
-    override suspend fun getOnBoardingSeen(): Flow<NetworkResult<Boolean?>> = appUseCase.getIsBoardingSeen()
+    override suspend fun getOnBoardingSeen(): Flow<Result<Boolean?>> = appUseCase.getIsBoardingSeen()
 
     override fun addAuthStateListener() = authRepository.addAuthStateListener()
 
@@ -53,21 +53,21 @@ class MainUseCaseImpl(
     override suspend fun insertMessages(messages: List<Message>) =
         messageRepository.insertMessages(messages)
 
-    override suspend fun getChats(): Flow<List<Chat>> = chatRepository.getChats()
+    override suspend fun getChats(): Flow<Result<List<Chat>>> = chatRepository.getChats()
 
     override suspend fun updateChats(chats: List<Chat>) = chatRepository.updateChats(chats)
 
-    override fun updateRemoteChats(chats: List<Chat>): Flow<NetworkResult<Unit>> =
+    override fun updateRemoteChats(chats: List<Chat>): Flow<Result<Unit>> =
         realDataBaseRepository.updateRemoteChats(chats)
 
     override suspend fun insertChat(chat: Chat) = chatRepository.insertChat(chat)
 
-    override fun insertRemoteChat(chat: Chat): Flow<NetworkResult<Unit>> =
+    override fun insertRemoteChat(chat: Chat): Flow<Result<Unit>> =
         realDataBaseRepository.insertChat(chat)
 
     override suspend fun updateChat(chat: Chat) = chatRepository.updateChat(chat)
 
-    override fun updateRemoteChat(chat: Chat): Flow<NetworkResult<Unit>> =
+    override fun updateRemoteChat(chat: Chat): Flow<Result<Unit>> =
         realDataBaseRepository.updateChat(chat)
 
     override suspend fun deleteChat(chat: Chat) {
@@ -75,7 +75,7 @@ class MainUseCaseImpl(
         messageRepository.deleteMessagesFromChat(chat.id)
     }
 
-    override fun deleteRemoteChat(chat: Chat): Flow<NetworkResult<Unit>> {
+    override fun deleteRemoteChat(chat: Chat): Flow<Result<Unit>> {
         return realDataBaseRepository.deleteMessagesByChatId(chat.id)/* {
             realDataBaseRepository.deleteChat(chat)
         }*/

@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.presentation.usecaseimpl
 
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import com.vnteam.talktoai.domain.repositories.ChatRepository
@@ -33,11 +33,11 @@ class SettingsSignUpUseCaseImpl(
     override suspend fun getMessages() = messageRepository.getMessages()
 
     override fun insertRemoteCurrentUser(
-        remoteUser: RemoteUser): Flow<NetworkResult<Unit>> =
+        remoteUser: RemoteUser): Flow<Result<Unit>> =
         realDataBaseRepository.insertRemoteUser(remoteUser)
 
     override fun updateRemoteCurrentUser(
-        remoteUser: RemoteUser): Flow<NetworkResult<Unit>> =
+        remoteUser: RemoteUser): Flow<Result<Unit>> =
         realDataBaseRepository.updateRemoteUser(remoteUser)
 
     override fun googleSign() {

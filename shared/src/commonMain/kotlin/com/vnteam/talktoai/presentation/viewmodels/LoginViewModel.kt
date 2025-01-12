@@ -56,6 +56,7 @@ class LoginViewModel(
     fun signInAnonymously() {
         launchWithNetworkCheck(networkState = networkState) {
             loginUseCase.signInAnonymously().onSuccess {
+                println("appTAG LoginViewModel signInAnonymously success")
                 updateUIState(LoginUIState(successSignIn = true))
             }
         }

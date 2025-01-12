@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -76,25 +77,25 @@ fun LoginScreen() {
         ) else null
     )
 
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(uiState) {
-        uiState.value.isAccountExist?.let {
+        uiState.isAccountExist?.let {
             viewModel.googleSignOut()
             showAccountExistDialog.value = true
         }
-        uiState.value.isEmailAccountExist?.let {
+        uiState.isEmailAccountExist?.let {
             viewModel.signInWithEmailAndPassword(
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
             )
         }
-        uiState.value.isGoogleAccountExist?.let { idToken ->
+        uiState.isGoogleAccountExist?.let { idToken ->
             viewModel.signInAuthWithGoogle(idToken)
         }
-        uiState.value.successPasswordReset?.let {
+        uiState.successPasswordReset?.let {
             //updateScreenState(appMessage = AppMessage(false, LocalStringResources.current.AUTHORIZATION_PASSWORD_RESET_SUCCESS))
         }
-        uiState.value.successSignIn?.let {
+        uiState.successSignIn?.let {
             //updateScreenState(screenRoute = "${NavigationScreen.CHAT_DESTINATION}/$DEFAULT_CHAT_ID")
             viewModel.setLoggedInUser()
         }

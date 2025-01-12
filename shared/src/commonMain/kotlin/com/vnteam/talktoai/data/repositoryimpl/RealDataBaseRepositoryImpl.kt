@@ -2,7 +2,7 @@ package com.vnteam.talktoai.data.repositoryimpl
 
 import com.vnteam.talktoai.Constants.CHATS
 import com.vnteam.talktoai.Constants.MESSAGES
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.models.Feedback
 import com.vnteam.talktoai.domain.models.Message
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.callbackFlow
 class RealDataBaseRepositoryImpl :
     RealDataBaseRepository {
 
-    override fun insertRemoteUser(remoteUser: RemoteUser): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun insertRemoteUser(remoteUser: RemoteUser): Flow<Result<Unit>> = callbackFlow {
         val currentUserMap = hashMapOf<String, Any>()
         remoteUser.chats.forEach { chat ->
             currentUserMap["$CHATS/${chat.id}"] = chat
@@ -32,7 +32,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun updateRemoteUser(remoteUser: RemoteUser): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun updateRemoteUser(remoteUser: RemoteUser): Flow<Result<Unit>> = callbackFlow {
         val updatesMap = hashMapOf<String, Any>()
         remoteUser.chats.forEach { chat ->
             updatesMap["$CHATS/${chat.id}"] = chat
@@ -49,7 +49,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun updateRemoteChats(chats: List<Chat>): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun updateRemoteChats(chats: List<Chat>): Flow<Result<Unit>> = callbackFlow {
         val updatesMap = hashMapOf<String, Any>()
         chats.forEach { chat ->
             updatesMap["$CHATS/${chat.id}"] = chat
@@ -63,7 +63,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun deleteRemoteUser(): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun deleteRemoteUser(): Flow<Result<Unit>> = callbackFlow {
         /*firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .removeValue()
             .addOnSuccessListener {
@@ -89,7 +89,7 @@ class RealDataBaseRepositoryImpl :
         //firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty()).child(MESSAGES).removeEventListener(remoteMessageListener)
     }
 
-    override fun insertChat(chat: Chat): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun insertChat(chat: Chat): Flow<Result<Unit>> = callbackFlow {
         /*firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .child(CHATS).child(chat.id.toString()).setValue(chat)
             .addOnSuccessListener {
@@ -99,7 +99,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun updateChat(chat: Chat): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun updateChat(chat: Chat): Flow<Result<Unit>> = callbackFlow {
         /*firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .child(CHATS).child(chat.id.toString()).updateChildren(mapOf("name" to chat.name, "updated" to chat.updated))
             .addOnSuccessListener {
@@ -109,7 +109,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun deleteChat(chat: Chat): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun deleteChat(chat: Chat): Flow<Result<Unit>> = callbackFlow {
         /*firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .child(CHATS).child(chat.id.toString()).removeValue()
             .addOnCompleteListener {
@@ -119,7 +119,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun insertMessage(message: Message): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun insertMessage(message: Message): Flow<Result<Unit>> = callbackFlow {
         /*firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .child(MESSAGES).child(message.id.toString()).setValue(message)
             .addOnSuccessListener {
@@ -129,7 +129,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun deleteMessages(messageIds: List<String>): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun deleteMessages(messageIds: List<String>): Flow<Result<Unit>> = callbackFlow {
         /*firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .child(MESSAGES).get()
             .addOnCompleteListener { task ->
@@ -144,7 +144,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun deleteMessagesByChatId(chatId: Long): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun deleteMessagesByChatId(chatId: Long): Flow<Result<Unit>> = callbackFlow {
         /*firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .child(MESSAGES).get()
             .addOnCompleteListener { task ->
@@ -159,7 +159,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun setReviewVoted(): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun setReviewVoted(): Flow<Result<Unit>> = callbackFlow {
         /*firebaseDatabase.reference.child(USERS).child(firebaseAuth.currentUser?.uid.orEmpty())
             .child(REVIEW_VOTE).setValue(true)
             .addOnSuccessListener {
@@ -169,7 +169,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun getPrivacyPolicy(appLang: String): Flow<NetworkResult<String>> = callbackFlow {
+    override fun getPrivacyPolicy(appLang: String): Flow<Result<String>> = callbackFlow {
         /*firebaseDatabase.reference.child(PRIVACY_POLICY).child(appLang).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) result.invoke(Result.Success(task.result.value as? String))
@@ -178,7 +178,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun insertFeedback(feedback: Feedback): Flow<NetworkResult<Unit>> = callbackFlow {
+    override fun insertFeedback(feedback: Feedback): Flow<Result<Unit>> = callbackFlow {
         /*firebaseDatabase.reference.child(FEEDBACK).child(feedback.time.toString())
             .setValue(feedback)
             .addOnSuccessListener {

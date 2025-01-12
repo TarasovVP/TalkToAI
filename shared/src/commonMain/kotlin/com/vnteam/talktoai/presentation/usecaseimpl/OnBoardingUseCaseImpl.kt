@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.presentation.usecaseimpl
 
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.usecase.OnBoardingUseCase
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +13,7 @@ class OnBoardingUseCaseImpl(
         preferencesRepository.setOnBoardingSeen(onBoardingSeen)
     }
 
-    override suspend fun getIsBoardingSeen(): Flow<NetworkResult<Boolean?>> {
+    override suspend fun getIsBoardingSeen(): Flow<Result<Boolean?>> {
         return preferencesRepository.getIsBoardingSeen()
     }
 }

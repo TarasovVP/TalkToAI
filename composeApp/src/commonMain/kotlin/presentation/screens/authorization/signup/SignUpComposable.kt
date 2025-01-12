@@ -46,14 +46,13 @@ fun SignUpScreen() {
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
     val showAccountExistDialog = remember { mutableStateOf(false) }
 
-    val signUpUiState by viewModel.uiState.collectAsState()
-
     val updatedScreenRoute = remember { mutableStateOf(String.EMPTY) }
     if (updatedScreenRoute.value.isNotEmpty()) {
         updateScreenState(screenRoute = updatedScreenRoute.value)
         updatedScreenRoute.value = String.EMPTY
     }
 
+    val signUpUiState by viewModel.uiState.collectAsState()
     LaunchedEffect(signUpUiState) {
         signUpUiState.accountExist?.let {
             viewModel.googleSignOut()

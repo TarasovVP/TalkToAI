@@ -3,7 +3,7 @@ package com.vnteam.talktoai.data.repositoryimpl
 import com.vnteam.talktoai.CommonExtensions.orZero
 import com.vnteam.talktoai.data.database.dao.MessageDao
 import com.vnteam.talktoai.data.network.ApiService
-import com.vnteam.talktoai.data.network.NetworkResult
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.handleResponse
 import com.vnteam.talktoai.data.network.request.ApiRequest
 import com.vnteam.talktoai.data.network.responses.ApiResponse
@@ -13,7 +13,6 @@ import com.vnteam.talktoai.domain.repositories.MessageRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-
 
 class MessageRepositoryImpl(
     private val messageDao: MessageDao,
@@ -31,15 +30,15 @@ class MessageRepositoryImpl(
         messageDao.insertMessage(messageDB)
     }
 
-    override suspend fun getMessages(): Flow<NetworkResult<List<Message>>> {
+    override suspend fun getMessages(): Flow<Result<List<Message>>> {
         return messageDao.getMessages().map { messages ->
-            NetworkResult.Success(messages.map { messageDBMapper.mapFromImplModel(it) })
+            Result.Success(messages.map { messageDBMapper.mapFromImplModel(it) })
         }
     }
 
-    override suspend fun getMessagesFromChat(chatId: Long): Flow<NetworkResult<List<Message>>> {
+    override suspend fun getMessagesFromChat(chatId: Long): Flow<Result<List<Message>>> {
         return messageDao.getMessagesFromChat(chatId).map { messages ->
-            NetworkResult.Success(messages.map { messageDBMapper.mapFromImplModel(it) })
+            Result.Success(messages.map { messageDBMapper.mapFromImplModel(it) })
         }
     }
 
@@ -58,6 +57,6 @@ class MessageRepositoryImpl(
 
     override suspend fun sendRequest(apiRequest: ApiRequest) = flow {
         val httpResponse = apiService.sendRequest(apiRequest)
-        emit(NetworkResult.Success(httpResponse.handleResponse<ApiResponse>()))
+        emit(httpResponse.handleResponse<ApiResponse>())
     }
 }
