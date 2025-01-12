@@ -13,27 +13,10 @@ class SettingsAccountUseCaseImpl(
     private val authRepository: AuthRepository,
     private val realDataBaseRepository: RealDataBaseRepository,
     private val preferencesRepository: PreferencesRepository,
-    private val chatRepository: ChatRepository,
-    private val messageRepository: MessageRepository
 ) : SettingsAccountUseCase {
-
-    override fun isLoggedInUser() = authRepository.isLoggedInUser()
-
-    override fun isAuthorisedUser() = authRepository.isAuthorisedUser()
-
-    override fun isGoogleAuthUser() = authRepository.isGoogleAuthUser()
-
-    override fun currentUserEmail() = authRepository.currentUserEmail()
 
     override fun signOut(): Flow<Result<Unit>> =
         authRepository.signOut()
-
-    override fun changePassword(
-        currentPassword: String,
-        newPassword: String): Flow<Result<Unit>> = authRepository.changePassword(currentPassword, newPassword)
-
-    override fun reAuthenticate(/*authCredential: AuthCredential, */): Flow<Result<Unit>> =
-        authRepository.reAuthenticate()
 
     override fun deleteUser(): Flow<Result<Unit>> =
         realDataBaseRepository.deleteRemoteUser()/* {
@@ -45,9 +28,5 @@ class SettingsAccountUseCaseImpl(
 
     override suspend fun clearDataInDB() {
         TODO("Not yet implemented")
-    }
-
-    override fun googleSignIn() {
-        authRepository.googleSignIn()
     }
 }

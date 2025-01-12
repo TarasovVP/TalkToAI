@@ -28,7 +28,7 @@ fun SettingsChatContent() {
             text = LocalStringResources.current.BUTTON_OK,
             modifier = Modifier,
             onClick = {
-                viewModel.testExceptionMessage()
+                viewModel.clearUserData()
             })
     }
 }

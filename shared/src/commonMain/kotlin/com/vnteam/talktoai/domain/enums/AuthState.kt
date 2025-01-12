@@ -6,3 +6,7 @@ enum class AuthState {
     AUTHORISED_EMAIL,
     AUTHORISED_GOOGLE
 }
+
+fun AuthState?.isAuthorisedUser(): Boolean {
+    return this == AuthState.AUTHORISED_EMAIL || this == AuthState.AUTHORISED_GOOGLE
+}

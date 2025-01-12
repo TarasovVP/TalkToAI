@@ -1,9 +1,13 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
+import com.vnteam.talktoai.data.ANONYMOUS_USER
+import com.vnteam.talktoai.data.GOOGLE_USER
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.enums.AuthState
+import com.vnteam.talktoai.domain.enums.isAuthorisedUser
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.usecase.MainUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +15,9 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class ChatListViewModel(
     private val mainUseCase: MainUseCase,
-    private val networkState: NetworkState
+    private val networkState: NetworkState,
+
+    private val userLoginUseCase: UserLoginUseCase
 ) : BaseViewModel() {
 
     private val _chatsList = MutableStateFlow<List<Chat>?>(null)
@@ -22,33 +28,21 @@ class ChatListViewModel(
     val animationResource = _animationResource.asStateFlow()
 
     /*private var remoteChatListener: ValueEventListener? = null
-    private var remoteMessageListener: ValueEventListener? = null
-    private var authStateListener: FirebaseAuth.AuthStateListener? = null*/
+    private var remoteMessageListener: ValueEventListener? = null*/
     private var chatsFlowSubscription: Job? = null
 
-    fun addAuthStateListener() {
-        /*authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            val user = firebaseAuth.currentUser
-            val authState = when {
-                user?.isAnonymous.isTrue() -> AuthState.AUTHORISED_ANONYMOUSLY
-                user.isNotNull() -> AuthState.AUTHORISED_EMAIL
-                else -> {
-                    chatsFlowSubscription?.cancel()
-                    AuthState.UNAUTHORISED
+
+    fun getUserLogin() {
+        launchWithResultHandling {
+            userLoginUseCase.getUserLogin().onSuccess { userLogin ->
+                _authState.value = when {
+                    userLogin.isNullOrEmpty() -> AuthState.UNAUTHORISED
+                    userLogin == ANONYMOUS_USER -> AuthState.AUTHORISED_ANONYMOUSLY
+                    userLogin.contains(GOOGLE_USER) -> AuthState.AUTHORISED_GOOGLE
+                    else -> AuthState.AUTHORISED_EMAIL
                 }
             }
-            _authState.value = authState
         }
-        authStateListener?.let { mainUseCase.addAuthStateListener(it) }*/
-        _authState.value = AuthState.AUTHORISED_ANONYMOUSLY
-    }
-
-    fun isLoggedInUser(): Boolean {
-        return mainUseCase.isLoggedInUser()
-    }
-
-    fun isAuthorisedUser(): Boolean {
-        return mainUseCase.isAuthorisedUser()
     }
 
     fun addRemoteChatListener() {
@@ -102,7 +96,7 @@ class ChatListViewModel(
     }
 
     fun updateChats(chats: List<Chat>) {
-        if (mainUseCase.isAuthorisedUser()) {
+        if (authState.value.isAuthorisedUser()) {
             launchWithNetworkCheck(networkState) {
                 mainUseCase.updateRemoteChats(chats)
             }
@@ -114,7 +108,7 @@ class ChatListViewModel(
     }
 
     fun insertChat(chat: Chat) {
-        if (mainUseCase.isAuthorisedUser()) {
+        if (authState.value.isAuthorisedUser()) {
             launchWithNetworkCheck(networkState) {
                 mainUseCase.insertRemoteChat(chat)
             }
@@ -128,7 +122,7 @@ class ChatListViewModel(
     }
 
     fun updateChat(chat: Chat) {
-        if (mainUseCase.isAuthorisedUser()) {
+        if (authState.value.isAuthorisedUser()) {
             launchWithNetworkCheck(networkState) {
                 mainUseCase.updateRemoteChat(chat)
             }
@@ -140,7 +134,7 @@ class ChatListViewModel(
     }
 
     fun deleteChat(chat: Chat) {
-        if (mainUseCase.isAuthorisedUser()) {
+        if (authState.value.isAuthorisedUser()) {
             launchWithNetworkCheck(networkState) {
                 mainUseCase.deleteRemoteChat(chat)
             }
@@ -151,10 +145,6 @@ class ChatListViewModel(
         }
     }
 
-    private fun removeAuthStateListener() {
-        //authStateListener?.let { mainUseCase.removeAuthStateListener(it) }
-    }
-
     fun removeRemoteUserListeners() {
         /*remoteChatListener?.let { mainUseCase.removeRemoteChatListener(it) }
         remoteMessageListener?.let { mainUseCase.removeRemoteMessageListener(it) }*/
@@ -163,7 +153,6 @@ class ChatListViewModel(
     override fun onCleared() {
         super.onCleared()
         removeRemoteUserListeners()
-        removeAuthStateListener()
         chatsFlowSubscription?.cancel()
     }
 

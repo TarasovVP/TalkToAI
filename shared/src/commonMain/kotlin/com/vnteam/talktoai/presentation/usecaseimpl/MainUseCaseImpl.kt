@@ -17,14 +17,6 @@ class MainUseCaseImpl(
     private val messageRepository: MessageRepository,
 ) : MainUseCase {
 
-    override fun addAuthStateListener() = authRepository.addAuthStateListener()
-
-    override fun removeAuthStateListener() = authRepository.removeAuthStateListener()
-
-    override fun isLoggedInUser() = authRepository.isLoggedInUser()
-
-    override fun isAuthorisedUser() = authRepository.isAuthorisedUser()
-
     override fun addRemoteChatListener() {
         //realDataBaseRepository.addRemoteChatListener(remoteChatListener)
     }

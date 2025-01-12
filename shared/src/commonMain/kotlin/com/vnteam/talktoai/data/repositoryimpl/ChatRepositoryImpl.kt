@@ -1,7 +1,6 @@
 package com.vnteam.talktoai.data.repositoryimpl
 
 import com.vnteam.talktoai.data.database.dao.ChatDao
-import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.mappers.ChatDBMapper
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.repositories.ChatRepository
@@ -24,14 +23,14 @@ class ChatRepositoryImpl(private val chatDao: ChatDao, private val chatDBMapper:
         chatDao.insertChat(chatDBMapper.mapToImplModel(chat))
     }
 
-    override suspend fun getChats(): Flow<Result<List<Chat>>> =
+    override suspend fun getChats(): Flow<List<Chat>> =
         chatDao.getChats().map { demoObjectWithOwners ->
-            Result.Success(chatDBMapper.mapFromImplModelList(demoObjectWithOwners))
+            chatDBMapper.mapFromImplModelList(demoObjectWithOwners)
         }
 
-    override suspend fun getLastUpdatedChat(): Flow<Result<Chat?>> {
+    override suspend fun getLastUpdatedChat(): Flow<Chat?> {
         return chatDao.getLastUpdatedChat().map { chat ->
-            Result.Success(chat?.let { chatDBMapper.mapFromImplModel(it) })
+            chat?.let { chatDBMapper.mapFromImplModel(it) }
         }
     }
 
@@ -48,13 +47,13 @@ class ChatRepositoryImpl(private val chatDao: ChatDao, private val chatDBMapper:
     }
 
 
-    override suspend fun getChatById(chatId: String): Flow<Result<Chat?>> =
+    override fun getChatById(chatId: String): Flow<Chat?> =
         chatDao.getChatById(chatId.toLong()).map { chat ->
-            Result.Success(chat?.let { chatDBMapper.mapFromImplModel(it) })
+            chat?.let { chatDBMapper.mapFromImplModel(it) }
         }
 
-    override suspend fun deleteChatById(chatId: String): Flow<Result<Unit>> = flow {
+    override fun deleteChatById(chatId: String): Flow<Unit> = flow {
         chatDao.deleteChatById(chatId.toLong())
-        emit(Result.Success(Unit))
+        emit(Unit)
     }
 }

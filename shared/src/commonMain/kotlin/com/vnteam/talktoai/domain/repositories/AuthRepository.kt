@@ -1,6 +1,5 @@
 package com.vnteam.talktoai.domain.repositories
 
-import com.vnteam.talktoai.data.network.Result
 import kotlinx.coroutines.flow.Flow
 
 
@@ -10,39 +9,33 @@ interface AuthRepository {
 
     fun removeAuthStateListener()
 
-    fun isLoggedInUser(): Boolean
+    fun fetchSignInMethodsForEmail(email: String): Flow<List<String>>
 
-    fun isAuthorisedUser(): Boolean
+    fun resetPassword(email: String): Flow<Unit>
 
-    fun isGoogleAuthUser(): Boolean
+    fun signInWithEmailAndPassword(email: String, password: String): Flow<String>
 
-    fun currentUserEmail(): String
+    fun signInWithGoogle(idToken: String): Flow<String>
 
-    fun sendPasswordResetEmail(email: String): Flow<Result<Unit>>
-
-    fun fetchSignInMethodsForEmail(email: String): Flow<Result<List<String>>>
-
-    fun signInWithEmailAndPassword(email: String, password: String): Flow<Result<Unit>>
-
-    fun signInWithGoogle(idToken: String): Flow<Result<Unit>>
-
-    suspend fun signInAnonymously(): Flow<Result<Unit>>
+    fun signInAnonymously(): Flow<String>
 
     fun createUserWithEmailAndPassword(
         email: String,
         password: String
-    ): Flow<Result<List<String>>>
+    ): Flow<List<String>>
 
     fun changePassword(
         currentPassword: String,
         newPassword: String
-    ): Flow<Result<Unit>>
+    ): Flow<Unit>
 
-    fun reAuthenticate(): Flow<Result<Unit>>
+    fun reAuthenticate(): Flow<Unit>
 
-    fun deleteUser(): Flow<Result<Unit>>
+    fun deleteUser(): Flow<Unit>
 
-    fun signOut(): Flow<Result<Unit>>
+    fun signOut(): Flow<Unit>
+
+    fun isGoogleAuthUser(): Boolean
 
     fun googleSignOut()
 

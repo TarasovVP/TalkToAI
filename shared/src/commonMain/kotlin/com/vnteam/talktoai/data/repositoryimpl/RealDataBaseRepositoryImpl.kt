@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.callbackFlow
 class RealDataBaseRepositoryImpl :
     RealDataBaseRepository {
 
-    override fun insertRemoteUser(remoteUser: RemoteUser): Flow<Result<Unit>> = callbackFlow {
+    override fun insertRemoteUser(remoteUser: RemoteUser): Flow<Unit> = callbackFlow {
         val currentUserMap = hashMapOf<String, Any>()
         remoteUser.chats.forEach { chat ->
             currentUserMap["$CHATS/${chat.id}"] = chat
@@ -186,5 +186,9 @@ class RealDataBaseRepositoryImpl :
             }.addOnFailureListener { exception ->
                 result.invoke(Result.Failure(exception.localizedMessage))
             }*/
+    }
+
+    override fun getFeedbacks(): Flow<List<String>> {
+        TODO("Not yet implemented")
     }
 }

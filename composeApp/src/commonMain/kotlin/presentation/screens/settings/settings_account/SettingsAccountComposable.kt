@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -28,8 +29,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.vnteam.talktoai.CommonExtensions.EMPTY
+import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Constants.REVIEW_VOTE
 import com.vnteam.talktoai.Res
+import com.vnteam.talktoai.data.ANONYMOUS_USER
+import com.vnteam.talktoai.data.GOOGLE_USER
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.ic_avatar_anonymous
 import com.vnteam.talktoai.ic_avatar_email
@@ -55,6 +59,7 @@ import presentation.updateScreenState
 fun SettingsAccountScreen() {
     val viewModel = koinViewModel<SettingsAccountViewModel>()
     updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
+
     val authState = remember { mutableStateOf<AuthState?>(null) }
     val showLogOutDialog = remember { mutableStateOf(false) }
     val showChangePasswordDialog = remember { mutableStateOf(false) }
@@ -67,8 +72,18 @@ fun SettingsAccountScreen() {
         updatedScreenRoute.value = String.EMPTY
     }
 
-    LaunchedEffect(Unit) {
-        authState.value = viewModel.getAuthState()
+    val userLogin by viewModel.userLogin.collectAsState()
+    LaunchedEffect(userLogin) {
+        if (userLogin.isNullOrEmpty()) {
+            viewModel.currentUserEmail()
+        } else {
+            authState.value = when {
+                userLogin.isNullOrEmpty() -> AuthState.UNAUTHORISED
+                userLogin == ANONYMOUS_USER -> AuthState.AUTHORISED_ANONYMOUSLY
+                userLogin?.contains(GOOGLE_USER).isTrue() -> AuthState.AUTHORISED_GOOGLE
+                else -> AuthState.AUTHORISED_EMAIL
+            }
+        }
     }
 
     val reAuthenticateState = viewModel.reAuthenticateLiveData.collectAsState()
@@ -98,7 +113,7 @@ fun SettingsAccountScreen() {
     }
 
     SettingsAccountContent(
-        viewModel,
+        userLogin,
         authState,
         showLogOutDialog,
         showChangePasswordDialog,
@@ -143,7 +158,7 @@ fun SettingsAccountScreen() {
 
 @Composable
 fun SettingsAccountContent(
-    viewModel: SettingsAccountViewModel,
+    userLogin: String?,
     authState: MutableState<AuthState?>,
     showLogOutDialog: MutableState<Boolean>,
     showChangePasswordDialog: MutableState<Boolean>,
@@ -157,7 +172,7 @@ fun SettingsAccountContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        AccountCard(authState.value, viewModel.currentUserEmail()) {
+        AccountCard(authState.value, userLogin) {
             showLogOutDialog.value = true
         }
         if (authState.value == AuthState.AUTHORISED_EMAIL) {
@@ -196,7 +211,7 @@ fun SettingsAccountContent(
 }
 
 @Composable
-fun AccountCard(authState: AuthState?, email: String, onClick: () -> Unit) {
+fun AccountCard(authState: AuthState?, email: String?, onClick: () -> Unit) {
     Card(modifier = Modifier.fillMaxWidth(), elevation = CardDefaults.cardElevation(1.dp)) {
         Row(
             modifier = Modifier
@@ -217,7 +232,7 @@ fun AccountCard(authState: AuthState?, email: String, onClick: () -> Unit) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) email else LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED,
+                    text = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) email.orEmpty() else LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 8.dp, top = 8.dp)

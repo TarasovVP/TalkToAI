@@ -1,24 +1,21 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
-import com.vnteam.talktoai.domain.usecase.SettingsChatUseCase
-import kotlinx.coroutines.delay
+import com.vnteam.talktoai.CommonExtensions.EMPTY
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class SettingsChatViewModel(
-    private val settingsChatUseCase: SettingsChatUseCase,
+    private val onboardingUseCase: OnboardingUseCase,
+    private val userLoginUseCase: UserLoginUseCase
 ) : BaseViewModel() {
 
     val chatSettingsLiveData = MutableStateFlow(false)
 
-    fun testProgressVisibilityChange() {
+    fun clearUserData() {
         launchWithErrorHandling {
-            showProgress()
-            delay(3000)
-            hideProgress()
+            onboardingUseCase.setOnBoardingSeen(false)
+            userLoginUseCase.setUserLogin(String.EMPTY)
         }
-    }
-
-    fun testExceptionMessage() {
-        showMessage("Test exception message")
     }
 }

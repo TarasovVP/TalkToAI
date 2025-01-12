@@ -2,7 +2,7 @@ package com.vnteam.talktoai.data.repositoryimpl
 
 import com.vnteam.talktoai.data.APP_LANGUAGE
 import com.vnteam.talktoai.data.IS_DARK_THEME
-import com.vnteam.talktoai.data.IS_LOGGED_IN_USER
+import com.vnteam.talktoai.data.USER_LOGIN
 import com.vnteam.talktoai.data.IS_ONBOARDING_SEEN
 import com.vnteam.talktoai.data.IS_REVIEW_VOTE
 import com.vnteam.talktoai.data.local.PreferencesFactory
@@ -36,12 +36,12 @@ class PreferencesRepositoryImpl(private val preferencesFactory: PreferencesFacto
         println("appTAG PreferencesRepositoryImpl setOnBoardingSeen $isOnBoardingSeen")
     }
 
-    override fun getIsLoggedInUser(): Flow<Boolean?> {
-        return preferencesFactory.getBoolean(IS_LOGGED_IN_USER)
+    override fun getUserLogin(): Flow<String?> {
+        return preferencesFactory.getString(USER_LOGIN)
     }
 
-    override suspend fun setLoggedInUser(isLoggedInUser: Boolean) {
-        preferencesFactory.putBoolean(IS_LOGGED_IN_USER, isLoggedInUser)
+    override suspend fun setUserLogin(userLogin: String) {
+        preferencesFactory.putString(USER_LOGIN, userLogin)
     }
 
     override fun getIsReviewVoted(): Flow<Boolean?> {

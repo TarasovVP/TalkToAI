@@ -7,14 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface MainUseCase {
 
-    fun addAuthStateListener()
-
-    fun removeAuthStateListener()
-
-    fun isLoggedInUser(): Boolean
-
-    fun isAuthorisedUser(): Boolean
-
     fun addRemoteChatListener()
 
     fun addRemoteMessageListener()

@@ -16,9 +16,9 @@ interface PreferencesRepository {
 
     suspend fun setOnBoardingSeen(isOnBoardingSeen: Boolean)
 
-    fun getIsLoggedInUser(): Flow<Boolean?>
+    fun getUserLogin(): Flow<String?>
 
-    suspend fun setLoggedInUser(isLoggedInUser: Boolean)
+    suspend fun setUserLogin(userLogin: String)
 
     fun getIsReviewVoted(): Flow<Boolean?>
 

@@ -39,9 +39,9 @@ fun AppContent(appViewModel: AppViewModel) {
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = screenState.value.isLoggedInUser.isTrue(),
+        gesturesEnabled = screenState.value.userLogin.isTrue(),
         drawerContent = {
-            if (screenState.value.isLoggedInUser.isTrue()) {
+            if (screenState.value.userLogin.isTrue()) {
                 ModalDrawerSheet {
                     DrawerContent(screenState.value) { newScreenState ->
                         println("AppTAG DrawerContent newScreenState: $newScreenState")

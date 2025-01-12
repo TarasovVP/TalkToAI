@@ -24,10 +24,6 @@ class MainUseCaseImpl(
     override fun removeAuthStateListener(/*authStateListener: FirebaseAuth.AuthStateListener*/) =
         authRepository.removeAuthStateListener(/*authStateListener*/)
 
-    override fun isLoggedInUser() = authRepository.isLoggedInUser()
-
-    override fun isAuthorisedUser() = authRepository.isAuthorisedUser()
-
     override fun addRemoteChatListener(/*remoteChatListener: ValueEventListener*/) {
         //realDataBaseRepository.addRemoteChatListener(remoteChatListener)
     }

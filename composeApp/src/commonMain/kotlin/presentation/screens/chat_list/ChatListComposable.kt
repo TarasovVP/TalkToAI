@@ -52,9 +52,11 @@ fun ChatListScreen(
 ) {
     val viewModel = koinViewModel<ChatListViewModel>()
     val authState = viewModel.authState.collectAsState()
+
     LaunchedEffect(Unit) {
-        viewModel.addAuthStateListener()
+        viewModel.getUserLogin()
     }
+
     LaunchedEffect(authState.value) {
         println("appTAG ChatListComposable authState: ${authState.value}")
         authState.value?.let { authStateValue ->

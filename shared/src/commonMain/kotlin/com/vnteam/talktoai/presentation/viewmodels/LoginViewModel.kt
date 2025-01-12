@@ -1,25 +1,35 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.data.network.onSuccess
-import com.vnteam.talktoai.domain.repositories.PreferencesRepository
-import com.vnteam.talktoai.domain.usecase.LoginUseCase
 import com.vnteam.talktoai.presentation.uistates.LoginUIState
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchSignInMethodsForEmailUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ResetPasswordUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithGoogleUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class LoginViewModel(
-    private val loginUseCase: LoginUseCase,
     private val networkState: NetworkState,
-    private val preferencesRepository: PreferencesRepository
+    private val resetPasswordUseCase: ResetPasswordUseCase,
+    private val fetchSignInMethodsForEmailUseCase: FetchSignInMethodsForEmailUseCase,
+    private val signInWithEmailAndPasswordUseCase: SignInWithEmailAndPasswordUseCase,
+    private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
+    private val signInAnonymouslyUseCase: SignInAnonymouslyUseCase,
+    private val userLoginUseCase: UserLoginUseCase,
+    private val googleUseCase: GoogleUseCase
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUIState())
     val uiState = _uiState.asStateFlow()
 
-    fun sendPasswordResetEmail(email: String) {
+    fun resetPassword(email: String) {
         launchWithNetworkCheck(networkState = networkState) {
-            loginUseCase.sendPasswordResetEmail(email).onSuccess {
+            resetPasswordUseCase.execute(email).onSuccess {
                 updateUIState(LoginUIState(successPasswordReset = true))
             }
         }
@@ -27,7 +37,7 @@ class LoginViewModel(
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
         launchWithNetworkCheck(networkState = networkState) {
-            loginUseCase.fetchSignInMethodsForEmail(email).onSuccess { data ->
+            fetchSignInMethodsForEmailUseCase.execute(email).onSuccess { data ->
                 when {
                     data.isNullOrEmpty() -> updateUIState(LoginUIState(isAccountExist = true))
                     idToken.isNullOrEmpty() -> updateUIState(LoginUIState(isEmailAccountExist = true))
@@ -39,40 +49,40 @@ class LoginViewModel(
 
     fun signInWithEmailAndPassword(email: String, password: String) {
         launchWithNetworkCheck(networkState = networkState) {
-            loginUseCase.signInWithEmailAndPassword(email, password).onSuccess {
-                updateUIState(LoginUIState(successSignIn = true))
+            signInWithEmailAndPasswordUseCase.execute(email, password).onSuccess { userLogin ->
+                updateUIState(LoginUIState(userLogin = userLogin))
             }
         }
     }
 
     fun signInAuthWithGoogle(idToken: String) {
         launchWithNetworkCheck(networkState = networkState) {
-            loginUseCase.signInAuthWithGoogle(idToken).onSuccess {
-                updateUIState(LoginUIState(successSignIn = true))
+            signInWithGoogleUseCase.execute(idToken).onSuccess { userLogin ->
+                updateUIState(LoginUIState(userLogin = userLogin))
             }
         }
     }
 
     fun signInAnonymously() {
         launchWithNetworkCheck(networkState = networkState) {
-            loginUseCase.signInAnonymously().onSuccess {
+            signInAnonymouslyUseCase.execute().onSuccess { userLogin ->
                 println("appTAG LoginViewModel signInAnonymously success")
-                updateUIState(LoginUIState(successSignIn = true))
+                updateUIState(LoginUIState(userLogin = userLogin))
             }
         }
     }
 
     fun googleSignOut() {
-        loginUseCase.googleSignOut()
+        googleUseCase.googleSignOut()
     }
 
     fun googleSignIn() {
-        loginUseCase.googleSignIn()
+        googleUseCase.googleSignIn()
     }
 
-    fun setLoggedInUser() {
+    fun setUserLogin(userLogin: String) {
         launchWithErrorHandling {
-            preferencesRepository.setLoggedInUser(true)
+            userLoginUseCase.setUserLogin(userLogin)
         }
     }
 

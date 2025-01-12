@@ -34,10 +34,10 @@ fun SettingsFeedbackContent() {
     updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
     val inputValue = remember { mutableStateOf(TextFieldValue(String.EMPTY)) }
 
-    val successFeedbackState = viewModel.successFeedbackLiveData.collectAsState()
+    val successFeedbackState = viewModel.successFeedback.collectAsState()
     if (successFeedbackState.value) {
         updateScreenState(appMessage = AppMessage(false, LocalStringResources.current.SETTINGS_FEEDBACK_SEND_SUCCESS))
-        viewModel.successFeedbackLiveData.value = false
+        viewModel.successFeedback.value = false
     }
 
     Column(
@@ -73,7 +73,7 @@ fun SettingsFeedbackContent() {
         ) {
             viewModel.insertFeedback(
                 Feedback(
-                    viewModel.currentUserEmail(),
+                    viewModel.getCurrentUserLogin(),
                     inputValue.value.text,
                     Clock.System.now().toEpochMilliseconds()
                 )

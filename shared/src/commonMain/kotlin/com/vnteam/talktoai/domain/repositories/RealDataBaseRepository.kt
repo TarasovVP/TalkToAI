@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface RealDataBaseRepository {
 
-    fun insertRemoteUser(remoteUser: RemoteUser): Flow<Result<Unit>>
+    fun insertRemoteUser(remoteUser: RemoteUser): Flow<Unit>
 
-    fun updateRemoteUser(remoteUser: RemoteUser): Flow<Result<Unit>>
+    fun updateRemoteUser(remoteUser: RemoteUser): Flow<Unit>
 
     fun deleteRemoteUser(): Flow<Result<Unit>>
 
@@ -40,6 +40,8 @@ interface RealDataBaseRepository {
     fun setReviewVoted(): Flow<Unit>
 
     fun insertFeedback(feedback: Feedback): Flow<Unit>
+
+    fun getFeedbacks(): Flow<List<String>>
 
     fun getPrivacyPolicy(appLang: String): Flow<String>
 }

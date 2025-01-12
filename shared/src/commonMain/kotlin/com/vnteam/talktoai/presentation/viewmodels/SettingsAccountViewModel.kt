@@ -1,30 +1,39 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.data.network.onSuccess
-import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.usecase.SettingsAccountUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ChangePasswordUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ReAuthenticateUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsAccountViewModel(
     private val settingsAccountUseCase: SettingsAccountUseCase,
-    private val networkState: NetworkState
+    private val networkState: NetworkState,
+
+
+    private val userLoginUseCase: UserLoginUseCase,
+    private val changePasswordUseCase: ChangePasswordUseCase,
+    private val reAuthenticateUseCase: ReAuthenticateUseCase,
+    private val googleUseCase: GoogleUseCase
 ) : BaseViewModel() {
+
+    private val _userLogin = MutableStateFlow<String?>(null)
+    val userLogin = _userLogin.asStateFlow()
 
     val reAuthenticateLiveData = MutableStateFlow(false)
     val successLiveData = MutableStateFlow(false)
     val successChangePasswordLiveData = MutableStateFlow(false)
 
-    fun getAuthState(): AuthState {
-        return when {
-            settingsAccountUseCase.isGoogleAuthUser() -> AuthState.AUTHORISED_GOOGLE
-            settingsAccountUseCase.isAuthorisedUser() -> AuthState.AUTHORISED_EMAIL
-            else -> AuthState.AUTHORISED_ANONYMOUSLY
+    fun currentUserEmail() {
+        launchWithResultHandling {
+            userLoginUseCase.getUserLogin().onSuccess {
+                _userLogin.value = it
+            }
         }
-    }
-
-    fun currentUserEmail(): String {
-        return settingsAccountUseCase.currentUserEmail()
     }
 
     fun signOut() {
@@ -38,7 +47,7 @@ class SettingsAccountViewModel(
 
     fun changePassword(currentPassword: String, newPassword: String) {
         launchWithNetworkCheck(networkState) {
-            settingsAccountUseCase.changePassword(currentPassword, newPassword).onSuccess {
+            changePasswordUseCase.execute(currentPassword, newPassword).onSuccess {
                 successChangePasswordLiveData.value = true
             }
         }
@@ -46,7 +55,7 @@ class SettingsAccountViewModel(
 
     fun reAuthenticate(/*authCredential: AuthCredential*/) {
         launchWithNetworkCheck(networkState) {
-            settingsAccountUseCase.reAuthenticate().onSuccess {
+            reAuthenticateUseCase.execute().onSuccess {
                 reAuthenticateLiveData.value = true
             }
         }
@@ -73,6 +82,6 @@ class SettingsAccountViewModel(
     }
 
     fun googleSignIn() {
-        settingsAccountUseCase.googleSignIn()
+        googleUseCase.googleSignIn()
     }
 }

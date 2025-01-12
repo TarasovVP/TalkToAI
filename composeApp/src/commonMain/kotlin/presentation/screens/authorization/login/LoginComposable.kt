@@ -95,9 +95,9 @@ fun LoginScreen() {
         uiState.successPasswordReset?.let {
             //updateScreenState(appMessage = AppMessage(false, LocalStringResources.current.AUTHORIZATION_PASSWORD_RESET_SUCCESS))
         }
-        uiState.successSignIn?.let {
+        uiState.userLogin?.let {
             //updateScreenState(screenRoute = "${NavigationScreen.CHAT_DESTINATION}/$DEFAULT_CHAT_ID")
-            viewModel.setLoggedInUser()
+            viewModel.setUserLogin()
         }
     }
 
@@ -116,7 +116,7 @@ fun LoginScreen() {
         emailInputValue,
         showForgotPasswordDialog
     ) { email ->
-        viewModel.sendPasswordResetEmail(email)
+        viewModel.resetPassword(email)
         showForgotPasswordDialog.value = false
     }
 

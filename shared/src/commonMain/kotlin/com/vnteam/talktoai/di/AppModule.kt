@@ -23,28 +23,28 @@ import com.vnteam.talktoai.domain.repositories.MessageRepository
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnteam.talktoai.domain.usecase.ChatUseCase
-import com.vnteam.talktoai.domain.usecase.LoginUseCase
 import com.vnteam.talktoai.domain.usecase.MainUseCase
 import com.vnteam.talktoai.domain.usecase.SettingsAccountUseCase
-import com.vnteam.talktoai.domain.usecase.SettingsChatUseCase
-import com.vnteam.talktoai.domain.usecase.SettingsListUseCase
-import com.vnteam.talktoai.domain.usecase.SettingsSignUpUseCase
-import com.vnteam.talktoai.domain.usecase.SignUpUseCase
 import com.vnteam.talktoai.presentation.mapperimpls.ChatUIMapperImpl
 import com.vnteam.talktoai.presentation.mapperimpls.MessageUIMapperImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.ChatUseCaseImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.LanguageUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.LoginUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.MainUseCaseImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.OnboardingUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.ReviewUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.SettingsAccountUseCaseImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.SettingsChatUseCaseImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.SettingsFeedbackUseCaseImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.SettingsSignUpUseCaseImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.SignUpUseCaseImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.ThemeUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.UserSessionUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.FeedbackUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchSignInMethodsForEmailUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ResetPasswordUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ReviewUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithGoogleUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ThemeUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
 import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
 import com.vnteam.talktoai.presentation.viewmodels.ChatListViewModel
 import com.vnteam.talktoai.presentation.viewmodels.ChatViewModel
@@ -136,50 +136,46 @@ val appModule = module {
 
     single<MessageUIMapper> { MessageUIMapperImpl() }
 
+    // UseCases
     single<ThemeUseCase> { ThemeUseCase(get()) }
 
     single<LanguageUseCase> { LanguageUseCase(get()) }
 
     single<OnboardingUseCase> { OnboardingUseCase(get()) }
 
-    single<UserSessionUseCase> { UserSessionUseCase(get()) }
+    single<UserLoginUseCase> { UserLoginUseCase(get()) }
 
     single<ReviewUseCase> { ReviewUseCase(get()) }
 
-    single<LoginUseCase> { LoginUseCaseImpl(get()) }
+    single { FeedbackUseCase(get()) }
 
-    single<SignUpUseCase> { SignUpUseCaseImpl(get(), get()) }
+    single { ResetPasswordUseCase(get()) }
+
+    single { SignInWithEmailAndPasswordUseCase(get()) }
+
+    single { SignInWithGoogleUseCase(get()) }
+
+    single { SignInAnonymouslyUseCase(get()) }
+
+    single { FetchSignInMethodsForEmailUseCase(get()) }
+
+    single { CreateUserWithEmailAndPasswordUseCase(get()) }
+
+    single { CreateUserWithGoogleUseCase(get()) }
+
+    single { GoogleUseCase(get()) }
+
+    single { InsertRemoteUserUseCase(get()) }
 
     single<ChatUseCase> { ChatUseCaseImpl(get(), get(), get(), get(), get(), get()) }
 
     single<MainUseCase> { MainUseCaseImpl(get(), get(), get(), get()) }
 
-    single<SettingsListUseCase> {
-        SettingsFeedbackUseCaseImpl(
-            authRepository = get(),
-            realDataBaseRepository = get()
-        )
-    }
-    single<SettingsChatUseCase> {
-        SettingsChatUseCaseImpl(get(), get())
-    }
     single<SettingsAccountUseCase> {
-        SettingsAccountUseCaseImpl(
-            authRepository = get(),
-            preferencesRepository = get(),
-            realDataBaseRepository = get(),
-            chatRepository = get(),
-            messageRepository = get()
-        )
+        SettingsAccountUseCaseImpl(get(), get(), get())
     }
-    single<SettingsSignUpUseCase> {
-        SettingsSignUpUseCaseImpl(
-            chatRepository = get(),
-            messageRepository = get(),
-            authRepository = get(),
-            realDataBaseRepository = get()
-        )
-    }
+
+    // ViewModels
     viewModel {
         AppViewModel(get(), get(), get(), get(), get())
     }
@@ -187,10 +183,10 @@ val appModule = module {
         OnBoardingViewModel(get())
     }
     viewModel {
-        LoginViewModel(get(), get(), get())
+        LoginViewModel(get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
-        SignUpViewModel(get(), get())
+        SignUpViewModel(get(), get(), get(), get(), get(), get())
     }
     viewModel {
         ChatListViewModel(get(), get())
@@ -199,13 +195,13 @@ val appModule = module {
         ChatViewModel(get(), get(), get(), get(), get(), get())
     }
     viewModel {
-        SettingsAccountViewModel(get(), get())
+        SettingsAccountViewModel(get(), get(), get())
     }
     viewModel {
-        SettingsChatViewModel(get())
+        SettingsChatViewModel(get(), get())
     }
     viewModel {
-        SettingsFeedbackViewModel(get(), get())
+        SettingsFeedbackViewModel(get(), get(), get())
     }
     viewModel {
         SettingsLanguageViewModel(get())
@@ -214,7 +210,7 @@ val appModule = module {
         SettingsPrivacyPolicyViewModel(get(), get())
     }
     viewModel {
-        SettingsSignUpViewModel(get(), get())
+        SettingsSignUpViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         SettingsThemeViewModel(get())

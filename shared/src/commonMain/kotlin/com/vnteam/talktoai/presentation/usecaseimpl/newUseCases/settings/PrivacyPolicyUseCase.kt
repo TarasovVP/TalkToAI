@@ -1,4 +1,4 @@
-package com.vnteam.talktoai.presentation.usecaseimpl
+package com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings
 
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository

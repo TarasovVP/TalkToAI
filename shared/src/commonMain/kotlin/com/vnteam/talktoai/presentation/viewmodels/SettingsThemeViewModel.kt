@@ -1,7 +1,7 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.data.network.onSuccess
-import com.vnteam.talktoai.presentation.usecaseimpl.ThemeUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ThemeUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
