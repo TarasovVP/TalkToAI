@@ -23,13 +23,9 @@ import com.vnteam.talktoai.domain.repositories.MessageRepository
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnteam.talktoai.domain.usecase.ChatUseCase
-import com.vnteam.talktoai.domain.usecase.MainUseCase
-import com.vnteam.talktoai.domain.usecase.SettingsAccountUseCase
 import com.vnteam.talktoai.presentation.mapperimpls.ChatUIMapperImpl
 import com.vnteam.talktoai.presentation.mapperimpls.MessageUIMapperImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.ChatUseCaseImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.MainUseCaseImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.SettingsAccountUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.FeedbackUseCase

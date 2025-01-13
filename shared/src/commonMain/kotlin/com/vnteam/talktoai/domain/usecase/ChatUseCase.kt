@@ -13,8 +13,6 @@ interface ChatUseCase {
 
     suspend fun getCurrentChat(chatId: Long): Flow<Result<Chat?>>
 
-    fun isAuthorisedUser(): Boolean
-
     fun insertRemoteChat(chat: Chat): Flow<Result<Unit>>
 
     suspend fun insertMessage(message: Message)

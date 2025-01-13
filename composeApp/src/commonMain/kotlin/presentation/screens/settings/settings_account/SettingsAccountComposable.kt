@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.CommonExtensions.isTrue
-import com.vnteam.talktoai.Constants.REVIEW_VOTE
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.data.ANONYMOUS_USER
 import com.vnteam.talktoai.data.GOOGLE_USER
@@ -106,8 +105,7 @@ fun SettingsAccountScreen() {
     val successState = viewModel.successLiveData.collectAsState()
     LaunchedEffect(successState.value) {
         if (successState.value) {
-            viewModel.clearDataByKeys(listOf(REVIEW_VOTE))
-            viewModel.clearDataBase()
+            viewModel.clearData()
             updatedScreenRoute.value = NavigationScreen.LoginScreen.route
         }
     }
@@ -150,7 +148,7 @@ fun SettingsAccountScreen() {
             mutableStateOf(TextFieldValue())
         },
         showDeleteEmailAccountDialog
-    ) { password ->
+    ) {
         viewModel.reAuthenticate()
         showDeleteEmailAccountDialog.value = false
     }

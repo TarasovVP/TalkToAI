@@ -1,23 +1,25 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.data.network.onSuccess
-import com.vnteam.talktoai.domain.usecase.SettingsAccountUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ChangePasswordUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ClearDataUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.DeleteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ReAuthenticateUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignOutUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsAccountViewModel(
-    private val settingsAccountUseCase: SettingsAccountUseCase,
     private val networkState: NetworkState,
-
-
     private val userLoginUseCase: UserLoginUseCase,
     private val changePasswordUseCase: ChangePasswordUseCase,
     private val reAuthenticateUseCase: ReAuthenticateUseCase,
+    private val signOutUseCase: SignOutUseCase,
+    private val deleteUserUseCase: DeleteUserUseCase,
+    private val clearDataUseCase: ClearDataUseCase,
     private val googleUseCase: GoogleUseCase
 ) : BaseViewModel() {
 
@@ -39,7 +41,7 @@ class SettingsAccountViewModel(
     fun signOut() {
         successLiveData.value = true
         launchWithNetworkCheck(networkState) {
-            settingsAccountUseCase.signOut().onSuccess {
+            signOutUseCase.execute().onSuccess {
                 successLiveData.value = true
             }
         }
@@ -63,21 +65,15 @@ class SettingsAccountViewModel(
 
     fun deleteUser() {
         launchWithNetworkCheck(networkState) {
-            settingsAccountUseCase.deleteUser().onSuccess {
+            deleteUserUseCase.execute().onSuccess {
                 successLiveData.value = true
             }
         }
     }
 
-    fun clearDataByKeys(keys: List<String>) {
+    fun clearData() {
         launchWithErrorHandling {
-            settingsAccountUseCase.clearDataByKeys(keys)
-        }
-    }
-
-    fun clearDataBase() {
-        launchWithErrorHandling {
-            settingsAccountUseCase.clearDataInDB()
+            clearDataUseCase.execute()
         }
     }
 

@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Res
-import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.empty_state
 import com.vnteam.talktoai.ic_chat
@@ -51,26 +50,11 @@ fun ChatListScreen(
     onChatClick: (Chat?) -> Unit
 ) {
     val viewModel = koinViewModel<ChatListViewModel>()
-    val authState = viewModel.authState.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.getUserLogin()
+        viewModel.getChats()
     }
 
-    LaunchedEffect(authState.value) {
-        println("appTAG ChatListComposable authState: ${authState.value}")
-        authState.value?.let { authStateValue ->
-            when (authStateValue) {
-                AuthState.UNAUTHORISED -> viewModel.removeRemoteUserListeners()
-                AuthState.AUTHORISED_ANONYMOUSLY -> viewModel.getChats()
-                else -> {
-                    viewModel.getChats()
-                    viewModel.addRemoteChatListener()
-                    viewModel.addRemoteMessageListener()
-                }
-            }
-        }
-    }
     val chatsState = viewModel.chatsList.collectAsState()
     val showCreateChatDialog = remember { mutableStateOf(false) }
     val showDeleteChatDialog = remember { mutableStateOf(false) }

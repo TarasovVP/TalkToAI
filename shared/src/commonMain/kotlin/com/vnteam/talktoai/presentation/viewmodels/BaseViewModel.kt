@@ -70,6 +70,16 @@ open class BaseViewModel : ViewModel() {
         }
     }
 
+    protected fun <T> launchWithResult(
+        block: suspend CoroutineScope.() -> Result<T>
+    ): Job = launchWithErrorHandling {
+        when (val result = block()) {
+            is Result.Success -> hideProgress()
+            is Result.Failure -> onError(Exception(result.errorMessage))
+            is Result.Loading -> showProgress()
+        }
+    }
+
     protected fun launchWithErrorHandling(
         block: suspend CoroutineScope.() -> Unit
     ): Job = viewModelScope.launch(CoroutineExceptionHandler { _, exception ->

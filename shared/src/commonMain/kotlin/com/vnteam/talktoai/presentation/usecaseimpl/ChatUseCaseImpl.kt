@@ -32,8 +32,6 @@ class ChatUseCaseImpl(
         }
     }
 
-    override fun isAuthorisedUser() = authRepository.isAuthorisedUser()
-
     override fun insertRemoteChat(chat: Chat): Flow<Result<Unit>> =
         realDataBaseRepository.insertChat(chat)
 

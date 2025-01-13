@@ -2,6 +2,9 @@ package com.vnteam.talktoai
 
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.intl.LocaleList
+import com.vnteam.talktoai.data.ANONYMOUS_USER
+import com.vnteam.talktoai.data.GOOGLE_USER
+import com.vnteam.talktoai.domain.enums.AuthState
 import org.jetbrains.compose.resources.DrawableResource
 
 object CommonExtensions {
@@ -26,4 +29,12 @@ object CommonExtensions {
         }
     }
 
+    fun String?.getUserAuth(): AuthState {
+        return when {
+            this.isNullOrEmpty() -> AuthState.UNAUTHORISED
+            this == ANONYMOUS_USER -> AuthState.AUTHORISED_ANONYMOUSLY
+            this.contains(GOOGLE_USER) -> AuthState.AUTHORISED_GOOGLE
+            else -> AuthState.AUTHORISED_EMAIL
+        }
+    }
 }
