@@ -97,7 +97,7 @@ fun LoginScreen() {
         }
         uiState.userLogin?.let {
             //updateScreenState(screenRoute = "${NavigationScreen.CHAT_DESTINATION}/$DEFAULT_CHAT_ID")
-            viewModel.setUserLogin()
+            //viewModel.setUserLogin()
         }
     }
 

@@ -23,12 +23,12 @@ class ChatRepositoryImpl(private val chatDao: ChatDao, private val chatDBMapper:
         chatDao.insertChat(chatDBMapper.mapToImplModel(chat))
     }
 
-    override suspend fun getChats(): Flow<List<Chat>> =
+    override fun getChats(): Flow<List<Chat>> =
         chatDao.getChats().map { demoObjectWithOwners ->
             chatDBMapper.mapFromImplModelList(demoObjectWithOwners)
         }
 
-    override suspend fun getLastUpdatedChat(): Flow<Chat?> {
+    override fun getLastUpdatedChat(): Flow<Chat?> {
         return chatDao.getLastUpdatedChat().map { chat ->
             chat?.let { chatDBMapper.mapFromImplModel(it) }
         }

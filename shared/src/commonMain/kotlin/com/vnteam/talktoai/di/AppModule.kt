@@ -22,23 +22,21 @@ import com.vnteam.talktoai.domain.repositories.ChatRepository
 import com.vnteam.talktoai.domain.repositories.MessageRepository
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
-import com.vnteam.talktoai.domain.usecase.ChatUseCase
 import com.vnteam.talktoai.presentation.mapperimpls.ChatUIMapperImpl
 import com.vnteam.talktoai.presentation.mapperimpls.MessageUIMapperImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.ChatUseCaseImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.FeedbackUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchSignInMethodsForEmailUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ResetPasswordUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ReviewUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithGoogleUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.FeedbackUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ReviewUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ThemeUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
 import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
@@ -163,14 +161,6 @@ val appModule = module {
 
     single { InsertRemoteUserUseCase(get()) }
 
-    single<ChatUseCase> { ChatUseCaseImpl(get(), get(), get(), get(), get(), get()) }
-
-    single<MainUseCase> { MainUseCaseImpl(get(), get(), get(), get()) }
-
-    single<SettingsAccountUseCase> {
-        SettingsAccountUseCaseImpl(get(), get(), get())
-    }
-
     // ViewModels
     viewModel {
         AppViewModel(get(), get(), get(), get(), get())
@@ -185,13 +175,13 @@ val appModule = module {
         SignUpViewModel(get(), get(), get(), get(), get(), get())
     }
     viewModel {
-        ChatListViewModel(get(), get())
+        ChatListViewModel(get(), get(), get(), get(), get())
     }
     viewModel {
-        ChatViewModel(get(), get(), get(), get(), get(), get())
+        ChatViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
-        SettingsAccountViewModel(get(), get(), get())
+        SettingsAccountViewModel(get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         SettingsChatViewModel(get(), get())

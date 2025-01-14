@@ -9,9 +9,9 @@ interface MessageDao {
 
     suspend fun insertMessage(message: MessageDB)
 
-    suspend fun getMessages(): Flow<List<MessageDB>>
+    fun getMessages(): Flow<List<MessageDB>>
 
-    suspend fun getMessagesFromChat(chatId: Long): Flow<List<MessageDB>>
+    fun getMessagesFromChat(chatId: Long): Flow<List<MessageDB>>
 
     suspend fun deleteMessagesFromChat(chatId: Long)
 

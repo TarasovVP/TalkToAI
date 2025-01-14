@@ -37,7 +37,7 @@ fun SettingsFeedbackContent() {
     val successFeedbackState = viewModel.successFeedback.collectAsState()
     if (successFeedbackState.value) {
         updateScreenState(appMessage = AppMessage(false, LocalStringResources.current.SETTINGS_FEEDBACK_SEND_SUCCESS))
-        viewModel.successFeedback.value = false
+        //viewModel.successFeedback.value = false
     }
 
     Column(
@@ -73,7 +73,7 @@ fun SettingsFeedbackContent() {
         ) {
             viewModel.insertFeedback(
                 Feedback(
-                    viewModel.getCurrentUserLogin(),
+                    viewModel.userLogin.value,
                     inputValue.value.text,
                     Clock.System.now().toEpochMilliseconds()
                 )

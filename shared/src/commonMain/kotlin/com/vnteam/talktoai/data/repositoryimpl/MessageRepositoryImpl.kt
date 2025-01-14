@@ -3,7 +3,6 @@ package com.vnteam.talktoai.data.repositoryimpl
 import com.vnteam.talktoai.CommonExtensions.orZero
 import com.vnteam.talktoai.data.database.dao.MessageDao
 import com.vnteam.talktoai.data.network.ApiService
-import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.handleResponse
 import com.vnteam.talktoai.data.network.request.ApiRequest
 import com.vnteam.talktoai.data.network.responses.ApiResponse
@@ -30,15 +29,15 @@ class MessageRepositoryImpl(
         messageDao.insertMessage(messageDB)
     }
 
-    override suspend fun getMessages(): Flow<Result<List<Message>>> {
+    override fun getMessages(): Flow<List<Message>> {
         return messageDao.getMessages().map { messages ->
-            Result.Success(messages.map { messageDBMapper.mapFromImplModel(it) })
+            messages.map { messageDBMapper.mapFromImplModel(it) }
         }
     }
 
-    override suspend fun getMessagesFromChat(chatId: Long): Flow<Result<List<Message>>> {
+    override fun getMessagesFromChat(chatId: Long): Flow<List<Message>> {
         return messageDao.getMessagesFromChat(chatId).map { messages ->
-            Result.Success(messages.map { messageDBMapper.mapFromImplModel(it) })
+            messages.map { messageDBMapper.mapFromImplModel(it) }
         }
     }
 

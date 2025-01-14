@@ -53,7 +53,7 @@ class MessageDaoImpl(private val appDatabase: SharedDatabase) : MessageDao {
         }
     }
 
-    override suspend fun getMessages(): Flow<List<MessageDB>> = callbackFlow {
+    override fun getMessages(): Flow<List<MessageDB>> = callbackFlow {
         appDatabase { db ->
             trySend(db.appDatabaseQueries.getMessages().awaitAsList().map { message ->
                 MessageDB(
@@ -71,7 +71,7 @@ class MessageDaoImpl(private val appDatabase: SharedDatabase) : MessageDao {
         }
     }
 
-    override suspend fun getMessagesFromChat(chatId: Long): Flow<List<MessageDB>> = callbackFlow {
+    override fun getMessagesFromChat(chatId: Long): Flow<List<MessageDB>> = callbackFlow {
         appDatabase { db ->
             trySend(
                 db.appDatabaseQueries.getMessagesFromChat(chatId).awaitAsList().map { message ->

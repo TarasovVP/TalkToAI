@@ -1,5 +1,7 @@
 package com.vnteam.talktoai.presentation.mapperimpls
 
+import com.vnteam.talktoai.CommonExtensions.orZero
+import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.domain.mappers.ChatUIMapper
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.presentation.uimodels.ChatUI
@@ -8,10 +10,10 @@ class ChatUIMapperImpl : ChatUIMapper {
 
     override fun mapToImplModel(from: Chat): ChatUI {
         return ChatUI(
-            id = from.id,
-            name = from.name,
-            updated = from.updated,
-            listOrder = from.listOrder
+            id = from.id ?: DEFAULT_CHAT_ID,
+            name = from.name.orEmpty(),
+            updated = from.updated.orZero(),
+            listOrder = from.listOrder.orZero()
         )
     }
 

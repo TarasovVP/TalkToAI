@@ -169,7 +169,7 @@ fun ChatContent(chatId: Long) {
                     isMessageActionModeState,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 ) { message ->
-                    viewModel.updateMessage(message)
+                    viewModel.insertMessage(message)
                 }
             }
         }

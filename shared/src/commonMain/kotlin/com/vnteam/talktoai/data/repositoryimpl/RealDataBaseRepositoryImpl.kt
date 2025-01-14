@@ -32,7 +32,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun updateRemoteUser(remoteUser: RemoteUser): Flow<Result<Unit>> = callbackFlow {
+    override fun updateRemoteUser(remoteUser: RemoteUser): Flow<Unit> = callbackFlow {
         val updatesMap = hashMapOf<String, Any>()
         remoteUser.chats.forEach { chat ->
             updatesMap["$CHATS/${chat.id}"] = chat

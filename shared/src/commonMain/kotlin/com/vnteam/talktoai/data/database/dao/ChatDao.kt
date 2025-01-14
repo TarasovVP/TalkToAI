@@ -13,7 +13,7 @@ interface ChatDao {
 
     suspend fun deleteChats(chatIds: List<Long>)
 
-    suspend fun getChats(): Flow<List<ChatDB>>
+    fun getChats(): Flow<List<ChatDB>>
 
     fun getLastUpdatedChat(): Flow<ChatDB?>
 

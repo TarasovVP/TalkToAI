@@ -2,6 +2,7 @@ package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.models.Chat
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.DeleteChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.InsertChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.UpdateChatUseCase
@@ -15,7 +16,7 @@ class ChatListViewModel(
     private val insertChatUseCase: InsertChatUseCase,
     private val updateChatUseCase: UpdateChatUseCase,
     private val updateChatsUseCase: UpdateChatsUseCase,
-    private val deleteChatUseCase: InsertChatUseCase
+    private val deleteChatUseCase: DeleteChatUseCase
 ) : BaseViewModel() {
 
     private val _chatsList = MutableStateFlow<List<Chat>?>(null)

@@ -30,7 +30,7 @@ class ChatDaoImpl(private val appDatabase: SharedDatabase) : ChatDao {
         }
     }
 
-    override suspend fun getChats(): Flow<List<ChatDB>> = callbackFlow {
+    override fun getChats(): Flow<List<ChatDB>> = callbackFlow {
         appDatabase { db ->
             trySend(db.appDatabaseQueries.getChats().awaitAsList()).isSuccess
         }
@@ -64,14 +64,14 @@ class ChatDaoImpl(private val appDatabase: SharedDatabase) : ChatDao {
         }
     }
 
-    override suspend fun getLastUpdatedChat(): Flow<ChatDB?> = callbackFlow {
+    override fun getLastUpdatedChat(): Flow<ChatDB?> = callbackFlow {
         appDatabase { db ->
             trySend(db.appDatabaseQueries.getLastUpdatedChat().awaitAsOneOrNull()).isSuccess
             awaitClose { }
         }
     }
 
-    override suspend fun getChatById(chatId: Long): Flow<ChatDB?> = callbackFlow {
+    override fun getChatById(chatId: Long): Flow<ChatDB?> = callbackFlow {
         appDatabase { db ->
             trySend(db.appDatabaseQueries.getChatById(chatId).awaitAsOneOrNull()).isSuccess
             awaitClose { }

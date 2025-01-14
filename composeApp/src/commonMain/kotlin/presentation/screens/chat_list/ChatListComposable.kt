@@ -131,7 +131,7 @@ fun ChatListContent(
                 }
             ) { chat, isDragging ->
                 val elevation = animateDpAsState(if (isDragging) 4.dp else 1.dp)
-                ChatItem(name = chat.name,
+                ChatItem(name = chat.name.orEmpty(),
                     mainIcon = Res.drawable.ic_chat,
                     isCurrent = chat.id == currentChatState.value?.id,
                     secondaryIcon = if (isDragging) Res.drawable.ic_drag_handle else Res.drawable.ic_delete,

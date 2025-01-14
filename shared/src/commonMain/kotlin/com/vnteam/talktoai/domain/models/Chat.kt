@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Chat(
-    val id: Long,
-    var name: String,
-    val updated: Long,
-    var listOrder: Long,
+    val id: Long? = null,
+    var name: String? = null,
+    val updated: Long? = null,
+    var listOrder: Long? = null,
 )
