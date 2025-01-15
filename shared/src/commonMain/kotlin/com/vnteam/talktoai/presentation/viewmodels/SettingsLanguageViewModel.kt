@@ -3,7 +3,7 @@ package com.vnteam.talktoai.presentation.viewmodels
 import androidx.compose.ui.text.intl.Locale
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.data.network.onSuccess
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.LanguageUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 

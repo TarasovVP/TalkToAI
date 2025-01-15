@@ -5,10 +5,10 @@ import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.data.APP_LANG_EN
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ThemeUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.LanguageUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.OnboardingUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.ThemeUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.UserLoginUseCase
 import com.vnteam.talktoai.utils.AnimationUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -76,7 +76,7 @@ class AppViewModel(
     private fun getUserLogin() {
         launchWithResultHandling {
             userLoginUseCase.getUserLogin().onSuccess { userLogin ->
-                _userLogin.value = userLogin
+                _userLogin.value = userLogin.orEmpty()
             }
         }
     }

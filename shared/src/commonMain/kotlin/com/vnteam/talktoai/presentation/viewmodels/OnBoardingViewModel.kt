@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.OnboardingUseCase
 
 class OnBoardingViewModel(
     private val onboardingUseCase: OnboardingUseCase,

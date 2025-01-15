@@ -22,6 +22,7 @@ fun App(appViewModel: AppViewModel) {
     val screenState = appViewModel.screenState.collectAsState()
 
     val isSplashScreenVisible = remember { mutableStateOf(true) }
+    println("AppTAG: screenState.value: ${screenState.value} isSplashScreenVisible: ${isSplashScreenVisible.value}")
     if (screenState.value.isReadyToLaunch && isSplashScreenVisible.value.not()) {
         CompositionLocalProvider(
             LocalStringResources provides getStringResourcesByLocale(
@@ -29,6 +30,7 @@ fun App(appViewModel: AppViewModel) {
             ), LocalScreenState provides mutableStateOf(screenState.value)
         ) {
             AppTheme(screenState.value.isDarkTheme.isTrue()) {
+                println("AppTAG: AppContent")
                 AppContent(appViewModel)
             }
         }

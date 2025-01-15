@@ -4,8 +4,8 @@ import androidx.compose.ui.text.intl.Locale
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Constants.PRIVACY_POLICY
 import com.vnteam.talktoai.data.network.onSuccess
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.PrivacyPolicyUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.LanguageUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.PrivacyPolicyUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class SettingsPrivacyPolicyViewModel(

@@ -3,12 +3,11 @@ package com.vnteam.talktoai.presentation.viewmodels
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.models.Feedback
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.FeedbackUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.FeedbackUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.UserLoginUseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-
 
 class SettingsFeedbackViewModel(
     private val userLoginUseCase: UserLoginUseCase,

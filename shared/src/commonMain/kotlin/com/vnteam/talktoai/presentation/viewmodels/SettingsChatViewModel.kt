@@ -1,8 +1,8 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.CommonExtensions.EMPTY
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.OnboardingUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.UserLoginUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class SettingsChatViewModel(

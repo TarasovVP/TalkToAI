@@ -8,7 +8,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Re
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithGoogleUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.UserLoginUseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -50,7 +50,7 @@ class LoginViewModel(
     fun signInWithEmailAndPassword(email: String, password: String) {
         launchWithNetworkCheck(networkState = networkState) {
             signInWithEmailAndPasswordUseCase.execute(email, password).onSuccess { userLogin ->
-                updateUIState(LoginUIState(userLogin = userLogin))
+                setUserLogin(userLogin.orEmpty())
             }
         }
     }
@@ -58,7 +58,7 @@ class LoginViewModel(
     fun signInAuthWithGoogle(idToken: String) {
         launchWithNetworkCheck(networkState = networkState) {
             signInWithGoogleUseCase.execute(idToken).onSuccess { userLogin ->
-                updateUIState(LoginUIState(userLogin = userLogin))
+                setUserLogin(userLogin.orEmpty())
             }
         }
     }
@@ -66,8 +66,8 @@ class LoginViewModel(
     fun signInAnonymously() {
         launchWithNetworkCheck(networkState = networkState) {
             signInAnonymouslyUseCase.execute().onSuccess { userLogin ->
-                println("appTAG LoginViewModel signInAnonymously success")
-                updateUIState(LoginUIState(userLogin = userLogin))
+                println("appTAG LoginViewModel signInAnonymously success userLogin $userLogin")
+                setUserLogin(userLogin.orEmpty())
             }
         }
     }
@@ -80,7 +80,7 @@ class LoginViewModel(
         googleUseCase.googleSignIn()
     }
 
-    fun setUserLogin(userLogin: String) {
+    private fun setUserLogin(userLogin: String) {
         launchWithErrorHandling {
             userLoginUseCase.setUserLogin(userLogin)
         }
