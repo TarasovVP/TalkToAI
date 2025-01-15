@@ -53,7 +53,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertM
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.FeedbackUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.LanguageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.OnboardingUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.PrivacyPolicyUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.GetPrivacyPolicyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.ReviewUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.ThemeUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.UserLoginUseCase
@@ -158,7 +158,7 @@ val appModule = module {
 
     single { OnboardingUseCase(get()) }
 
-    single { PrivacyPolicyUseCase(get()) }
+    single { GetPrivacyPolicyUseCase(get()) }
 
     single { ReviewUseCase(get()) }
 

@@ -18,6 +18,7 @@ class UpdateChatsUseCase(
     private val chatRepository: ChatRepository,
     private val realDataBaseRepository: RealDataBaseRepository
 ) : UseCase<List<Chat>, Result<Unit>> {
+
     override suspend fun execute(params: List<Chat>): Result<Unit> {
         val userAuth = preferencesRepository.getUserLogin().firstOrNull()
         when {

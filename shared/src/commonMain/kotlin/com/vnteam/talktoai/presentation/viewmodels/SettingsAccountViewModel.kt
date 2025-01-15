@@ -1,6 +1,7 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.data.network.onSuccess
+import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ChangePasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ClearDataUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.DeleteUserUseCase
@@ -49,7 +50,7 @@ class SettingsAccountViewModel(
 
     fun changePassword(currentPassword: String, newPassword: String) {
         launchWithNetworkCheck(networkState) {
-            changePasswordUseCase.execute(currentPassword, newPassword).onSuccess {
+            changePasswordUseCase.execute(Pair(currentPassword, newPassword)).onSuccess {
                 successChangePasswordLiveData.value = true
             }
         }

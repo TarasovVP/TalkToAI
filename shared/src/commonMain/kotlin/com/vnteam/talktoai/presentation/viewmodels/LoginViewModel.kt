@@ -1,6 +1,7 @@
 package com.vnteam.talktoai.presentation.viewmodels
 
 import com.vnteam.talktoai.data.network.onSuccess
+import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.LoginUIState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchSignInMethodsForEmailUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleUseCase
@@ -49,7 +50,7 @@ class LoginViewModel(
 
     fun signInWithEmailAndPassword(email: String, password: String) {
         launchWithNetworkCheck(networkState = networkState) {
-            signInWithEmailAndPasswordUseCase.execute(email, password).onSuccess { userLogin ->
+            signInWithEmailAndPasswordUseCase.execute(Pair(email, password)).onSuccess { userLogin ->
                 setUserLogin(userLogin.orEmpty())
             }
         }

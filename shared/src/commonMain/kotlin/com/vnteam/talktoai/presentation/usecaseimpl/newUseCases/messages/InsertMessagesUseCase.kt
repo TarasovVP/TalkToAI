@@ -8,6 +8,7 @@ import com.vnteam.talktoai.domain.usecase.UseCase
 class InsertMessagesUseCase(
     private val messageRepository: MessageRepository
 ) : UseCase<List<Message>, Result<Unit>> {
+
     override suspend fun execute(params: List<Message>): Result<Unit> {
         messageRepository.insertMessages(params)
         return Result.Success(Unit)

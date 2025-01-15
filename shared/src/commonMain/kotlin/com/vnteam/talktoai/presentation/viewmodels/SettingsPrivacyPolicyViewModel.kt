@@ -4,13 +4,13 @@ import androidx.compose.ui.text.intl.Locale
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Constants.PRIVACY_POLICY
 import com.vnteam.talktoai.data.network.onSuccess
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.GetPrivacyPolicyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.LanguageUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.PrivacyPolicyUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class SettingsPrivacyPolicyViewModel(
     private val languageUseCase: LanguageUseCase,
-    private val privacyPolicyUseCase: PrivacyPolicyUseCase
+    private val getPrivacyPolicyUseCase: GetPrivacyPolicyUseCase
 ) : BaseViewModel() {
 
     val appLanguageLiveData = MutableStateFlow(String.EMPTY)
@@ -27,7 +27,7 @@ class SettingsPrivacyPolicyViewModel(
     fun getPrivacyPolicy(appLang: String) {
         showProgress()
         launchWithResultHandling {
-            privacyPolicyUseCase.getPrivacyPolicy(appLang).onSuccess { result ->
+            getPrivacyPolicyUseCase.execute(appLang).onSuccess { result ->
                 privacyPolicyLiveData.value = result ?: PRIVACY_POLICY
             }
         }

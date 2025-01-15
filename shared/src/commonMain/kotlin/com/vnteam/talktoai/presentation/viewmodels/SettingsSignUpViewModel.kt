@@ -3,15 +3,16 @@ package com.vnteam.talktoai.presentation.viewmodels
 import com.vnteam.talktoai.data.network.getDataOrNull
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.models.RemoteUser
+import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.SettingsSignUpUIState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchSignInMethodsForEmailUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMessagesUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,7 +56,7 @@ class SettingsSignUpViewModel(
 
     fun createUserWithEmailAndPassword(email: String, password: String) {
         launchWithNetworkCheck(networkState) {
-            createUserWithEmailAndPasswordUseCase.execute(email, password).onSuccess {
+            createUserWithEmailAndPasswordUseCase.execute(Pair(email, password)).onSuccess {
                 updateUIState(SettingsSignUpUIState(successAuthorisation = false))
             }
         }
@@ -63,7 +64,7 @@ class SettingsSignUpViewModel(
 
     fun signInWithEmailAndPassword(email: String, password: String) {
         launchWithNetworkCheck(networkState) {
-            signInWithEmailAndPasswordUseCase.execute(email, password).onSuccess {
+            signInWithEmailAndPasswordUseCase.execute(Pair(email, password)).onSuccess {
                 updateUIState(SettingsSignUpUIState(successAuthorisation = true))
             }
 

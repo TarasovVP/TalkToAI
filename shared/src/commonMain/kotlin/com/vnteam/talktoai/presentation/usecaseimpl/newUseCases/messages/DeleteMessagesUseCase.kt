@@ -17,6 +17,7 @@ class DeleteMessagesUseCase(
     private val messageRepository: MessageRepository,
     private val realDataBaseRepository: RealDataBaseRepository
 ) : UseCase<List<Long>, Result<Unit>> {
+
     override suspend fun execute(params: List<Long>): Result<Unit> {
         val userAuth = preferencesRepository.getUserLogin().firstOrNull()
         when {

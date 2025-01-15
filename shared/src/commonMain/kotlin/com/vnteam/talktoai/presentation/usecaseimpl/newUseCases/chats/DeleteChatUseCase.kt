@@ -21,20 +21,22 @@ class DeleteChatUseCase(
     private val messageRepository: MessageRepository,
     private val realDataBaseRepository: RealDataBaseRepository
 ) : UseCase<Chat, Result<Unit>> {
-    override suspend fun execute(chat: Chat): Result<Unit> {
+
+    override suspend fun execute(params: Chat): Result<Unit> {
         val userAuth = preferencesRepository.getUserLogin().firstOrNull()
         when {
             userAuth.getUserAuth().isAuthorisedUser() -> when {
                 networkState.isNetworkAvailable() -> {
-                    realDataBaseRepository.deleteMessagesByChatId(chat.id ?: DEFAULT_CHAT_ID)
-                    realDataBaseRepository.deleteChat(chat)
+                    realDataBaseRepository.deleteMessagesByChatId(params.id ?: DEFAULT_CHAT_ID)
+                    realDataBaseRepository.deleteChat(params)
                 }
+
                 else -> return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
 
             else -> {
-                chatRepository.deleteChat(chat)
-                messageRepository.deleteMessagesFromChat(chat.id ?: DEFAULT_CHAT_ID)
+                chatRepository.deleteChat(params)
+                messageRepository.deleteMessagesFromChat(params.id ?: DEFAULT_CHAT_ID)
             }
         }
         return Result.Success(Unit)

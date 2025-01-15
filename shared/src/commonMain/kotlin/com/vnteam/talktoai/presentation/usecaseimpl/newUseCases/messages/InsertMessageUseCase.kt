@@ -18,6 +18,7 @@ class InsertMessageUseCase(
     private val messageRepository: MessageRepository,
     private val realDataBaseRepository: RealDataBaseRepository
 ) : UseCase<Message, Result<Unit>> {
+
     override suspend fun execute(params: Message): Result<Unit> {
         val userAuth = preferencesRepository.getUserLogin().firstOrNull()
         when {
