@@ -31,6 +31,7 @@ class ChatListViewModel(
         chatsFlowSubscription?.cancel()
         chatsFlowSubscription = launchWithResultHandling {
             getChatsUseCase.execute().onSuccess { chats ->
+                println("flowTAG ChatListViewModel getChats chats: $chats")
                 _chatsList.value = chats
                 hideProgress()
             }
@@ -48,7 +49,7 @@ class ChatListViewModel(
             insertChatUseCase.execute(chat)
         }
         // TODO add temporary
-        getChats()
+        //getChats()
     }
 
     fun updateChat(chat: Chat) {

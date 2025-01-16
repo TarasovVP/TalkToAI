@@ -5,7 +5,6 @@ import com.vnteam.talktoai.domain.mappers.ChatDBMapper
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.repositories.ChatRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 class ChatRepositoryImpl(private val chatDao: ChatDao, private val chatDBMapper: ChatDBMapper) :
@@ -23,12 +22,12 @@ class ChatRepositoryImpl(private val chatDao: ChatDao, private val chatDBMapper:
         chatDao.insertChat(chatDBMapper.mapToImplModel(chat))
     }
 
-    override fun getChats(): Flow<List<Chat>> =
+    override suspend fun getChats(): Flow<List<Chat>> =
         chatDao.getChats().map { demoObjectWithOwners ->
             chatDBMapper.mapFromImplModelList(demoObjectWithOwners)
         }
 
-    override fun getLastUpdatedChat(): Flow<Chat?> {
+    override suspend fun getLastUpdatedChat(): Flow<Chat?> {
         return chatDao.getLastUpdatedChat().map { chat ->
             chat?.let { chatDBMapper.mapFromImplModel(it) }
         }
@@ -46,14 +45,8 @@ class ChatRepositoryImpl(private val chatDao: ChatDao, private val chatDBMapper:
         chatDao.updateChats(chatDBMapper.mapToImplModelList(chats))
     }
 
-
-    override fun getChatById(chatId: String): Flow<Chat?> =
+    override suspend fun getChatById(chatId: String): Flow<Chat?> =
         chatDao.getChatById(chatId.toLong()).map { chat ->
             chat?.let { chatDBMapper.mapFromImplModel(it) }
         }
-
-    override fun deleteChatById(chatId: String): Flow<Unit> = flow {
-        chatDao.deleteChatById(chatId.toLong())
-        emit(Unit)
-    }
 }

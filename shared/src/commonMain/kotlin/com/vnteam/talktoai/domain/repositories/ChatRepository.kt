@@ -7,17 +7,15 @@ interface ChatRepository {
 
     suspend fun clearChats()
 
-    fun getChatById(chatId: String): Flow<Chat?>
-
-    fun deleteChatById(chatId: String): Flow<Unit>
+    suspend fun getChatById(chatId: String): Flow<Chat?>
 
     suspend fun insertChats(chats: List<Chat>)
 
     suspend fun insertChat(chat: Chat)
 
-    fun getChats(): Flow<List<Chat>>
+    suspend fun getChats(): Flow<List<Chat>>
 
-    fun getLastUpdatedChat(): Flow<Chat?>
+    suspend fun getLastUpdatedChat(): Flow<Chat?>
 
     suspend fun updateChat(chat: Chat)
 

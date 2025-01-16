@@ -55,22 +55,22 @@ fun ChatListScreen(
         viewModel.getChats()
     }
 
-    val chatsState = viewModel.chatsList.collectAsState()
+    val chats = viewModel.chatsList.collectAsState()
     val showCreateChatDialog = remember { mutableStateOf(false) }
     val showDeleteChatDialog = remember { mutableStateOf(false) }
 
     val currentChatState = remember { mutableStateOf<Chat?>(null) }
     val deleteChatState = remember { mutableStateOf<Chat?>(null) }
 
-    LaunchedEffect(chatsState.value) {
-        chatsState.value?.let { chats ->
+    LaunchedEffect(chats.value) {
+        chats.value?.let { chats ->
             currentChatState.value = chats.firstOrNull()
         }
     }
 
     ChatListContent(
         viewModel = viewModel,
-        chatsState = mutableStateOf(chatsState.value),
+        chats = chats.value.orEmpty(),
         currentChatState = currentChatState,
         showCreateChatDialog = showCreateChatDialog,
         showDeleteChatDialog = showDeleteChatDialog,
@@ -86,7 +86,7 @@ fun ChatListScreen(
                 id = Clock.System.now().dateToMilliseconds(),
                 name = chatName,
                 updated = Clock.System.now().dateToMilliseconds(),
-                listOrder = (chatsState.value.orEmpty().size + 1).toLong()
+                listOrder = (chats.value.orEmpty().size + 1).toLong()
             )
         )
     }
@@ -103,7 +103,7 @@ fun ChatListScreen(
 @Composable
 fun ChatListContent(
     viewModel: ChatListViewModel,
-    chatsState: MutableState<List<Chat>?>,
+    chats: List<Chat>,
     currentChatState: MutableState<Chat?>,
     showCreateChatDialog: MutableState<Boolean>,
     showDeleteChatDialog: MutableState<Boolean>,
@@ -113,7 +113,8 @@ fun ChatListContent(
     Column(
         modifier = Modifier.fillMaxSize().background(Primary900), Arrangement.Top
     ) {
-        if (chatsState.value.isNullOrEmpty()) {
+        println("flowTAG ChatListContent Column chats: $chats")
+        if (chats.isEmpty()) {
             Image(
                 painter = painterResource(Res.drawable.empty_state),
                 contentDescription = LocalStringResources.current.CHAT_EMPTY_STATE,
@@ -122,12 +123,12 @@ fun ChatListContent(
         } else {
             DragDropColumn(
                 modifier = Modifier.weight(1f).padding(vertical = 16.dp),
-                items = chatsState.value.orEmpty(),
+                items = chats,
                 onSwap = { firstIndex, secondIndex ->
                     viewModel.swapChats(firstIndex, secondIndex)
                 },
                 onDragEnd = {
-                    viewModel.updateChats(chatsState.value.orEmpty())
+                    viewModel.updateChats(chats)
                 }
             ) { chat, isDragging ->
                 val elevation = animateDpAsState(if (isDragging) 4.dp else 1.dp)

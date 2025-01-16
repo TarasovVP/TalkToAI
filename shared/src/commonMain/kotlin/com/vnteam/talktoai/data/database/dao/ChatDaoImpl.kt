@@ -1,12 +1,10 @@
 package com.vnteam.talktoai.data.database.dao
 
-import app.cash.sqldelight.async.coroutines.awaitAsList
-import app.cash.sqldelight.async.coroutines.awaitAsOneOrNull
+import app.cash.sqldelight.coroutines.asFlow
 import com.vnteam.talktoai.ChatDB
 import com.vnteam.talktoai.data.database.SharedDatabase
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
 
 class ChatDaoImpl(private val appDatabase: SharedDatabase) : ChatDao {
     override suspend fun clearChats() {
@@ -30,11 +28,12 @@ class ChatDaoImpl(private val appDatabase: SharedDatabase) : ChatDao {
         }
     }
 
-    override fun getChats(): Flow<List<ChatDB>> = callbackFlow {
-        appDatabase { db ->
-            trySend(db.appDatabaseQueries.getChats().awaitAsList()).isSuccess
+    override suspend fun getChats(): Flow<List<ChatDB>> {
+        return appDatabase { db ->
+            db.appDatabaseQueries.getChats().asFlow().map { query ->
+                query.executeAsList()
+            }
         }
-        awaitClose { }
     }
 
     override suspend fun deleteChatById(id: Long) {
@@ -64,17 +63,19 @@ class ChatDaoImpl(private val appDatabase: SharedDatabase) : ChatDao {
         }
     }
 
-    override fun getLastUpdatedChat(): Flow<ChatDB?> = callbackFlow {
-        appDatabase { db ->
-            trySend(db.appDatabaseQueries.getLastUpdatedChat().awaitAsOneOrNull()).isSuccess
-            awaitClose { }
+    override suspend fun getLastUpdatedChat(): Flow<ChatDB?> {
+        return appDatabase { db ->
+            db.appDatabaseQueries.getLastUpdatedChat().asFlow().map { query ->
+                query.executeAsOneOrNull()
+            }
         }
     }
 
-    override fun getChatById(chatId: Long): Flow<ChatDB?> = callbackFlow {
-        appDatabase { db ->
-            trySend(db.appDatabaseQueries.getChatById(chatId).awaitAsOneOrNull()).isSuccess
-            awaitClose { }
+    override suspend fun getChatById(chatId: Long): Flow<ChatDB?> {
+        return appDatabase { db ->
+            db.appDatabaseQueries.getChatById(chatId).asFlow().map { query ->
+                query.executeAsOneOrNull()
+            }
         }
     }
 
