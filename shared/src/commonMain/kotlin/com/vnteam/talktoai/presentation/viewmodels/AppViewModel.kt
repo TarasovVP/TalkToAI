@@ -99,7 +99,7 @@ class AppViewModel(
 
     private fun getLanguage() {
         launchWithResultHandling {
-            languageUseCase.getLanguage().onSuccess {
+            languageUseCase.get().onSuccess {
                 _language.value = it ?: APP_LANG_EN
             }
         }

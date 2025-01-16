@@ -188,7 +188,7 @@ class RealDataBaseRepositoryImpl :
             }*/
     }
 
-    override fun getFeedbacks(): Flow<List<String>> {
+    override fun getFeedbacks(): Flow<List<Feedback>> {
         TODO("Not yet implemented")
     }
 }

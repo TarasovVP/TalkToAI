@@ -41,7 +41,7 @@ interface RealDataBaseRepository {
 
     fun insertFeedback(feedback: Feedback): Flow<Unit>
 
-    fun getFeedbacks(): Flow<List<String>>
+    fun getFeedbacks(): Flow<List<Feedback>>
 
     fun getPrivacyPolicy(appLang: String): Flow<String>
 }

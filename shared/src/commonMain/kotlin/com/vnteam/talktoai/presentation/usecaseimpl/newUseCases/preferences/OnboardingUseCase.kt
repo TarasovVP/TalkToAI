@@ -2,13 +2,15 @@ package com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences
 
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
+import com.vnteam.talktoai.domain.usecase.DataUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
-class OnboardingUseCase(private val preferencesRepository: PreferencesRepository) {
+class OnboardingUseCase(private val preferencesRepository: PreferencesRepository):
+    DataUseCase<Boolean, Flow<Result<Boolean?>>> {
 
-    fun getIsBoardingSeen(): Flow<Result<Boolean?>> {
+    override fun get(): Flow<Result<Boolean?>> {
         return preferencesRepository.getIsBoardingSeen().map {
             Result.Success(it)
         }.catch {
@@ -16,7 +18,7 @@ class OnboardingUseCase(private val preferencesRepository: PreferencesRepository
         }
     }
 
-    suspend fun setOnBoardingSeen(isOnBoardingSeen: Boolean) {
-        preferencesRepository.setOnBoardingSeen(isOnBoardingSeen)
+    override suspend fun set(params: Boolean) {
+        preferencesRepository.setOnBoardingSeen(params)
     }
 }

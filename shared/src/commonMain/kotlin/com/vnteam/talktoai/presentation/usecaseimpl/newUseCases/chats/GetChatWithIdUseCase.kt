@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
-class GetChatWithIdUseCase(private val chatRepository: ChatRepository): UseCase<Long, Flow<Result<Chat>>> {
+class GetChatWithIdUseCase(private val chatRepository: ChatRepository) :
+    UseCase<Long, Flow<Result<Chat>>> {
 
     override suspend fun execute(params: Long): Flow<Result<Chat>> {
         return when (params) {
