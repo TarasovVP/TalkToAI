@@ -8,6 +8,7 @@ import com.vnteam.talktoai.data.database.dao.MessageDaoImpl
 import com.vnteam.talktoai.data.mapperimpls.ChatDBMapperImpl
 import com.vnteam.talktoai.data.mapperimpls.MessageDBMapperImpl
 import com.vnteam.talktoai.data.network.ApiService
+import com.vnteam.talktoai.data.repositoryimpl.AIRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.AuthRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.ChatRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.MessageRepositoryImpl
@@ -17,6 +18,7 @@ import com.vnteam.talktoai.domain.mappers.ChatDBMapper
 import com.vnteam.talktoai.domain.mappers.ChatUIMapper
 import com.vnteam.talktoai.domain.mappers.MessageDBMapper
 import com.vnteam.talktoai.domain.mappers.MessageUIMapper
+import com.vnteam.talktoai.domain.repositories.AIRepository
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import com.vnteam.talktoai.domain.repositories.ChatRepository
 import com.vnteam.talktoai.domain.repositories.MessageRepository
@@ -51,9 +53,9 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMess
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessagesUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.FeedbackUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.GetPrivacyPolicyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.LanguageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.OnboardingUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.GetPrivacyPolicyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.ReviewUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.ThemeUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.UserLoginUseCase
@@ -136,13 +138,17 @@ val appModule = module {
 
     single<MessageDBMapper> { MessageDBMapperImpl() }
 
+    // Repositories
+
     single<AuthRepository> { AuthRepositoryImpl() }
 
     single<RealDataBaseRepository> { RealDataBaseRepositoryImpl() }
 
     single<ChatRepository> { ChatRepositoryImpl(get(), get()) }
 
-    single<MessageRepository> { MessageRepositoryImpl(get(), get(), get()) }
+    single<MessageRepository> { MessageRepositoryImpl(get(), get()) }
+
+    single<AIRepository> { AIRepositoryImpl(get()) }
 
     single<PreferencesRepository> { PreferencesRepositoryImpl(get()) }
 
