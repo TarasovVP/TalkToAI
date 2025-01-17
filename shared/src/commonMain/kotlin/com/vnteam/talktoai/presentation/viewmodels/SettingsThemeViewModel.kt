@@ -14,7 +14,7 @@ class SettingsThemeViewModel(
 
     fun getIsDarkTheme() {
         launchWithResultHandling {
-            themeUseCase.getIsDarkTheme().onSuccess {
+            themeUseCase.get().onSuccess {
                 _isDarkTheme.value = it
             }
         }
@@ -22,7 +22,7 @@ class SettingsThemeViewModel(
 
     fun setIsDarkTheme(isDarkTheme: Boolean) {
         launchWithErrorHandling {
-            themeUseCase.setIsDarkTheme(isDarkTheme)
+            themeUseCase.set(isDarkTheme)
             _isDarkTheme.value = isDarkTheme
         }
     }

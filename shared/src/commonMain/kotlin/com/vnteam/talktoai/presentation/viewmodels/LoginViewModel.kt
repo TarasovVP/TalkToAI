@@ -83,7 +83,7 @@ class LoginViewModel(
 
     private fun setUserLogin(userLogin: String) {
         launchWithErrorHandling {
-            userLoginUseCase.setUserLogin(userLogin)
+            userLoginUseCase.set(userLogin)
         }
     }
 

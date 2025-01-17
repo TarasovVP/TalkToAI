@@ -18,7 +18,6 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMess
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessageUseCase
 import com.vnteam.talktoai.utils.AnimationUtils
 import com.vnteam.talktoai.utils.ShareUtils
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
@@ -39,8 +38,6 @@ class ChatViewModel(
     val messagesLiveData = MutableStateFlow<List<MessageUI>>(listOf())
     val animationResource = MutableStateFlow("")
 
-    private var messagesFlowSubscription: Job? = null
-
     fun insertChat(chat: Chat) {
         launchWithResult {
             insertChatUseCase.execute(chat)
@@ -56,9 +53,7 @@ class ChatViewModel(
     }
 
     fun getMessagesFromChat(chatId: Long) {
-        showProgress()
-        messagesFlowSubscription?.cancel()
-        messagesFlowSubscription = launchWithResultHandling {
+        launchWithResultHandling {
             getMessagesFromChatUseCase.execute(chatId).onSuccess { result ->
                 messagesLiveData.value = messageUIMapper.mapToImplModelList(result.orEmpty())
             }
@@ -66,30 +61,34 @@ class ChatViewModel(
     }
 
     fun sendRequest(temporaryMessage: MessageUI, apiRequest: ApiRequest) {
+        println("messageTAG ChatViewModel.sendRequest: apiRequest = $apiRequest")
         launchWithResultHandling {
             sendRequestUseCase.execute(apiRequest).onSuccess { apiResponse ->
-                insertMessage(temporaryMessage.apply {
-                    author = apiResponse?.model.orEmpty()
-                    message = apiResponse?.choices?.firstOrNull()?.message?.content.orEmpty()
-                    updatedAt = apiResponse?.created?.toLongOrNull() ?: 0
-                    status = MessageStatus.SUCCESS
-                })
+                println("messageTAG ChatViewModel.sendRequest: apiResponse = $apiResponse")
+                insertMessage(
+                    temporaryMessage.copy(
+                        author = apiResponse?.model.orEmpty(),
+                        message = apiResponse?.choices?.firstOrNull()?.message?.content.orEmpty(),
+                        //updatedAt = apiResponse?.created?.toLongOrNull() ?: 0,
+                        status = MessageStatus.SUCCESS
+                    )
+                )
             }.onError { error ->
-                insertMessage(temporaryMessage.apply {
-                    status = MessageStatus.ERROR
-                    errorMessage = error.orEmpty()
-                    println("Error when api request: $error")
-                })
+                insertMessage(
+                    temporaryMessage.copy(
+                        status = MessageStatus.ERROR,
+                        errorMessage = error.orEmpty()
+                    )
+                )
             }
         }
     }
 
     fun insertMessage(message: MessageUI) {
         launchWithResult {
+            println("messageTAG ChatViewModel.insertMessage: message = $message")
             insertMessageUseCase.execute(messageUIMapper.mapFromImplModel(message))
         }
-        // TODO add temporary
-        getMessagesFromChat(message.chatId)
     }
 
     fun deleteMessages(messageIds: List<Long>) {
@@ -108,10 +107,5 @@ class ChatViewModel(
             val resource = Res.readBytes("files/message_typing.json").decodeToString()
             animationResource.value = resource
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        messagesFlowSubscription?.cancel()
     }
 }

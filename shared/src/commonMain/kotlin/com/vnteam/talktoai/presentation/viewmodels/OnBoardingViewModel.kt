@@ -9,7 +9,7 @@ class OnBoardingViewModel(
     fun setOnBoardingSeen() {
         launchWithErrorHandling {
             println("appTAG OnBoardingViewModel setOnBoardingSeen")
-            onboardingUseCase.setOnBoardingSeen(true)
+            onboardingUseCase.set(true)
         }
     }
 }

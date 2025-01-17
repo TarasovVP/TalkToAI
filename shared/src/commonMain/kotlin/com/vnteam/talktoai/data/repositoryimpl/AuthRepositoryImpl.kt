@@ -4,7 +4,6 @@ import com.vnteam.talktoai.data.ANONYMOUS_USER
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
@@ -75,7 +74,6 @@ class AuthRepositoryImpl :
         // TODO remove mock, uncomment below code
 
         CoroutineScope(coroutineContext).launch {
-            delay(3000)
             trySend(ANONYMOUS_USER)
             close()
         }

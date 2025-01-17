@@ -18,7 +18,7 @@ class SettingsPrivacyPolicyViewModel(
 
     fun getAppLanguage() {
         launchWithResultHandling {
-            languageUseCase.getLanguage().onSuccess { appLang ->
+            languageUseCase.get().onSuccess { appLang ->
                 appLanguageLiveData.value = appLang ?: Locale.current.language
             }
         }

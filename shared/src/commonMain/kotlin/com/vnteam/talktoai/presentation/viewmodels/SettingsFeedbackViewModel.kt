@@ -18,31 +18,31 @@ class SettingsFeedbackViewModel(
     private val _currentUserLogin = MutableStateFlow(String.EMPTY)
     val userLogin = _currentUserLogin.asStateFlow()
 
-    private val _previousFeedbacks = MutableStateFlow<List<String>>(emptyList())
+    private val _previousFeedbacks = MutableStateFlow<List<Feedback>>(emptyList())
     val previousFeedbacks = _currentUserLogin.asStateFlow()
 
     private val _successFeedback = MutableStateFlow(false)
     val successFeedback = _successFeedback.asStateFlow()
 
     fun getCurrentUserLogin() {
-        userLoginUseCase.getUserLogin().onSuccess {
+        userLoginUseCase.get().onSuccess {
             _currentUserLogin.value = it.orEmpty()
         }
     }
 
     fun getFeedbacks() {
         launchWithNetworkCheck(networkState) {
-            feedbackUseCase.getFeedbacks().onSuccess {
+            feedbackUseCase.get().onSuccess {
                 _previousFeedbacks.value = it.orEmpty()
             }
         }
     }
 
     fun insertFeedback(feedback: Feedback) {
-        launchWithNetworkCheck(networkState) {
-            feedbackUseCase.insertFeedback(feedback).onSuccess {
+        /*launchWithNetworkCheck(networkState) {
+            feedbackUseCase.set(feedback).onSuccess {
                 _successFeedback.value = true
             }
-        }
+        }*/
     }
 }

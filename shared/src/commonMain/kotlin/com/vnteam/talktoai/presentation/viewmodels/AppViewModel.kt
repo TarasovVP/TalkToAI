@@ -75,7 +75,7 @@ class AppViewModel(
 
     private fun getUserLogin() {
         launchWithResultHandling {
-            userLoginUseCase.getUserLogin().onSuccess { userLogin ->
+            userLoginUseCase.get().onSuccess { userLogin ->
                 _userLogin.value = userLogin.orEmpty()
             }
         }
@@ -83,7 +83,7 @@ class AppViewModel(
 
     private fun getOnBoardingSeen() {
         launchWithResultHandling {
-            onboardingUseCase.getIsBoardingSeen().onSuccess { isOnBoardingSeen ->
+            onboardingUseCase.get().onSuccess { isOnBoardingSeen ->
                 _onBoardingSeen.value = isOnBoardingSeen.isTrue()
             }
         }
@@ -91,7 +91,7 @@ class AppViewModel(
 
     private fun getIsDarkTheme() {
         launchWithResultHandling {
-            themeUseCase.getIsDarkTheme().onSuccess {
+            themeUseCase.get().onSuccess {
                 _isDarkTheme.value = it
             }
         }

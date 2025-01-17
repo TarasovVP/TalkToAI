@@ -16,7 +16,7 @@ class SettingsLanguageViewModel(
 
     fun getAppLanguage() {
         launchWithResultHandling {
-            languageUseCase.getLanguage().onSuccess { appLang ->
+            languageUseCase.get().onSuccess { appLang ->
                 _appLanguage.value = appLang ?: Locale.current.language
             }
         }
@@ -24,7 +24,7 @@ class SettingsLanguageViewModel(
 
     fun setAppLanguage(appLang: String) {
         launchWithErrorHandling {
-            languageUseCase.setLanguage(appLang)
+            languageUseCase.set(appLang)
             _appLanguage.value = appLang
         }
     }

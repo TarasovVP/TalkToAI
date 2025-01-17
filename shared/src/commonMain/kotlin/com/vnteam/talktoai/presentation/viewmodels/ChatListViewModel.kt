@@ -8,7 +8,6 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatsUs
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.InsertChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.UpdateChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.UpdateChatsUseCase
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -25,11 +24,8 @@ class ChatListViewModel(
     private val _animationResource = MutableStateFlow<String?>(null)
     val animationResource = _animationResource.asStateFlow()
 
-    private var chatsFlowSubscription: Job? = null
-
     fun getChats() {
-        chatsFlowSubscription?.cancel()
-        chatsFlowSubscription = launchWithResultHandling {
+        launchWithResultHandling {
             getChatsUseCase.execute().onSuccess { chats ->
                 println("flowTAG ChatListViewModel getChats chats: $chats")
                 _chatsList.value = chats
@@ -48,8 +44,6 @@ class ChatListViewModel(
         launchWithResult {
             insertChatUseCase.execute(chat)
         }
-        // TODO add temporary
-        //getChats()
     }
 
     fun updateChat(chat: Chat) {
@@ -62,11 +56,6 @@ class ChatListViewModel(
         launchWithResult {
             deleteChatUseCase.execute(chat)
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        chatsFlowSubscription?.cancel()
     }
 
     fun swapChats(firstIndex: Int, secondIndex: Int) {

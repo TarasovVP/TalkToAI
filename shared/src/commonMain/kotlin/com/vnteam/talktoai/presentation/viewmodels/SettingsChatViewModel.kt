@@ -14,8 +14,8 @@ class SettingsChatViewModel(
 
     fun clearUserData() {
         launchWithErrorHandling {
-            onboardingUseCase.setOnBoardingSeen(false)
-            userLoginUseCase.setUserLogin(String.EMPTY)
+            onboardingUseCase.set(false)
+            userLoginUseCase.set(String.EMPTY)
         }
     }
 }

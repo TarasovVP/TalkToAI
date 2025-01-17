@@ -33,7 +33,7 @@ class SettingsAccountViewModel(
 
     fun currentUserEmail() {
         launchWithResultHandling {
-            userLoginUseCase.getUserLogin().onSuccess {
+            userLoginUseCase.get().onSuccess {
                 _userLogin.value = it
             }
         }
