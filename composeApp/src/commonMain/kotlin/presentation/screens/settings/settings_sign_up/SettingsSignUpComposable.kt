@@ -33,7 +33,7 @@ import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Primary300
-import com.vnteam.talktoai.presentation.viewmodels.SettingsSignUpViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsSignUpViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.updateScreenState
 

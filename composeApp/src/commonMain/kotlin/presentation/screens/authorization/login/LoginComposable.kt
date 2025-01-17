@@ -28,7 +28,6 @@ import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.DataEditDialog
-import com.vnteam.talktoai.presentation.ui.components.GoogleButton
 import com.vnteam.talktoai.presentation.ui.components.LinkButton
 import com.vnteam.talktoai.presentation.ui.components.OrDivider
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
@@ -37,7 +36,7 @@ import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
 import com.vnteam.talktoai.presentation.ui.components.SecondaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
-import com.vnteam.talktoai.presentation.viewmodels.LoginViewModel
+import com.vnteam.talktoai.presentation.viewmodels.authorisation.LoginViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.updateScreenState
 
@@ -79,19 +78,19 @@ fun LoginScreen() {
 
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(uiState) {
-        uiState.isAccountExist?.let {
+        /*uiState.isAccountExist?.let {
             viewModel.googleSignOut()
             showAccountExistDialog.value = true
-        }
+        }*/
         uiState.isEmailAccountExist?.let {
             viewModel.signInWithEmailAndPassword(
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
             )
         }
-        uiState.isGoogleAccountExist?.let { idToken ->
+        /*uiState.isGoogleAccountExist?.let { idToken ->
             viewModel.signInAuthWithGoogle(idToken)
-        }
+        }*/
         uiState.successPasswordReset?.let {
             //updateScreenState(appMessage = AppMessage(false, LocalStringResources.current.AUTHORIZATION_PASSWORD_RESET_SUCCESS))
         }
@@ -146,13 +145,14 @@ fun LoginContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(160.dp))
         Text(
             text = LocalStringResources.current.AUTHORIZATION_ENTRANCE, modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp), textAlign = TextAlign.Center
         )
-        Text(
+        // TODO uncomment when google sign in is implemented
+        /*Text(
             text = LocalStringResources.current.AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
@@ -165,7 +165,7 @@ fun LoginContent(
         ) {
             viewModel.googleSignIn()
         }
-        OrDivider(modifier = Modifier)
+        OrDivider(modifier = Modifier)*/
         PrimaryTextField(LocalStringResources.current.AUTHORIZATION_EMAIL, emailInputValue)
         PasswordTextField(passwordInputValue, LocalStringResources.current.AUTHORIZATION_PASSWORD)
         Row(
@@ -196,7 +196,7 @@ fun LoginContent(
             emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
             modifier = Modifier
         ) {
-            viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
+            viewModel.signInWithEmailAndPassword(emailInputValue.value.text.trim(), passwordInputValue.value.text)
         }
         OrDivider()
         SecondaryButton(

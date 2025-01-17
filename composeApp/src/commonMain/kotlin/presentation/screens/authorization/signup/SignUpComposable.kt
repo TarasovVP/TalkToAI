@@ -27,14 +27,12 @@ import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
-import com.vnteam.talktoai.presentation.ui.components.GoogleButton
 import com.vnteam.talktoai.presentation.ui.components.LinkButton
-import com.vnteam.talktoai.presentation.ui.components.OrDivider
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
-import com.vnteam.talktoai.presentation.viewmodels.SignUpViewModel
+import com.vnteam.talktoai.presentation.viewmodels.authorisation.SignUpViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.updateScreenState
 
@@ -104,13 +102,14 @@ fun SignUpContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(160.dp))
         Text(
             text = LocalStringResources.current.AUTHORIZATION_SIGN_UP, modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp), textAlign = TextAlign.Center
         )
-        Text(
+        // TODO uncomment when google sign in is implemented
+        /*Text(
             text = LocalStringResources.current.AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
@@ -123,7 +122,7 @@ fun SignUpContent(
         ) {
             viewModel.googleSignIn()
         }
-        OrDivider(modifier = Modifier)
+        OrDivider(modifier = Modifier)*/
         PrimaryTextField(
             LocalStringResources.current.AUTHORIZATION_EMAIL, emailInputValue
         )

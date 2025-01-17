@@ -14,7 +14,7 @@ import com.vnteam.talktoai.presentation.ui.resources.getStringResourcesByLocale
 import com.vnteam.talktoai.presentation.ui.theme.AppTheme
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
-import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.AppViewModel
 import presentation.screens.main.AppContent
 
 @Composable

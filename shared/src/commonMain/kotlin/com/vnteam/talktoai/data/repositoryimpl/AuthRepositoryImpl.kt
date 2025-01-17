@@ -1,15 +1,36 @@
 package com.vnteam.talktoai.data.repositoryimpl
 
-import com.vnteam.talktoai.data.ANONYMOUS_USER
+import com.vnteam.talktoai.data.network.auth.AuthService
+import com.vnteam.talktoai.data.network.handleResponse
 import com.vnteam.talktoai.domain.repositories.AuthRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.flow
 
-class AuthRepositoryImpl :
+class AuthRepositoryImpl(private val authService: AuthService) :
     AuthRepository {
+
+    override suspend fun signInWithEmailAndPassword(
+        email: String,
+        password: String
+    ) = flow {
+        val httpResponse = authService.signInWithEmailAndPassword(email, password)
+        emit(httpResponse.handleResponse<String>())
+    }
+
+    override suspend fun signInAnonymously() = flow {
+        val httpResponse = authService.signInAnonymously()
+        emit(httpResponse.handleResponse<String>())
+    }
+
+    override suspend fun resetPassword(email: String) = flow {
+        val httpResponse = authService.resetPassword(email)
+        emit(httpResponse.handleResponse<Unit>())
+    }
+
+
+
+
 
     override fun addAuthStateListener(/*authStateListener: AuthStateListener*/) {
         //firebaseAuth.addAuthStateListener(authStateListener)
@@ -27,15 +48,6 @@ class AuthRepositoryImpl :
         return false
     }
 
-    override fun resetPassword(email: String): Flow<Unit> = callbackFlow {
-        /*firebaseAuth.sendPasswordResetEmail(email)
-            .addOnSuccessListener {
-                result.invoke(Result.Success())
-            }.addOnFailureListener { exception ->
-                result.invoke(Result.Failure(exception.localizedMessage))
-            }*/
-    }
-
     override fun fetchSignInMethodsForEmail(email: String): Flow<List<String>> =
         callbackFlow {
             /*firebaseAuth.fetchSignInMethodsForEmail(email)
@@ -48,17 +60,7 @@ class AuthRepositoryImpl :
                 }*/
         }
 
-    override fun signInWithEmailAndPassword(
-        email: String,
-        password: String
-    ): Flow<String> = callbackFlow {
-        /*firebaseAuth.signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                result.invoke(Result.Success())
-            }.addOnFailureListener { exception ->
-                result.invoke(Result.Failure(exception.localizedMessage))
-            }*/
-    }
+
 
     override fun signInWithGoogle(idToken: String): Flow<String> = callbackFlow {
         /*val credential = GoogleAuthProvider.getCredential(idToken, null)
@@ -70,24 +72,7 @@ class AuthRepositoryImpl :
             }*/
     }
 
-    override fun signInAnonymously(): Flow<String> = callbackFlow {
-        // TODO remove mock, uncomment below code
 
-        CoroutineScope(coroutineContext).launch {
-            trySend(ANONYMOUS_USER)
-            close()
-        }
-
-        awaitClose {}
-        /*firebaseAuth.signInAnonymously()
-            .addOnSuccessListener {
-                trySend(NetworkResult.Success(Unit))
-                close()
-            }.addOnFailureListener { exception ->
-                trySend(NetworkResult.Failure(exception.localizedMessage))
-                close()
-            }*/
-    }
 
     override fun createUserWithEmailAndPassword(
         email: String,

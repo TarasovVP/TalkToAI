@@ -8,7 +8,7 @@ import androidx.compose.runtime.remember
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Constants.PRIVACY_POLICY
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
-import com.vnteam.talktoai.presentation.viewmodels.SettingsPrivacyPolicyViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsPrivacyPolicyViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.updateScreenState
 

@@ -50,7 +50,7 @@ import com.vnteam.talktoai.presentation.ui.components.SubmitButtons
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
-import com.vnteam.talktoai.presentation.viewmodels.SettingsAccountViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsAccountViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.updateScreenState
 

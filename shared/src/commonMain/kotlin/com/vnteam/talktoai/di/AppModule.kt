@@ -7,7 +7,7 @@ import com.vnteam.talktoai.data.database.dao.MessageDao
 import com.vnteam.talktoai.data.database.dao.MessageDaoImpl
 import com.vnteam.talktoai.data.mapperimpls.ChatDBMapperImpl
 import com.vnteam.talktoai.data.mapperimpls.MessageDBMapperImpl
-import com.vnteam.talktoai.data.network.ApiService
+import com.vnteam.talktoai.data.network.ai.AIService
 import com.vnteam.talktoai.data.repositoryimpl.AIRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.AuthRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.ChatRepositoryImpl
@@ -52,28 +52,28 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMess
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMessagesUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessagesUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.FeedbackUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.GetPrivacyPolicyUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.LanguageUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.OnboardingUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.ReviewUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.ThemeUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.preferences.UserLoginUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.FeedbackUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GetPrivacyPolicyUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ReviewUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ThemeUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
-import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
-import com.vnteam.talktoai.presentation.viewmodels.ChatListViewModel
-import com.vnteam.talktoai.presentation.viewmodels.ChatViewModel
-import com.vnteam.talktoai.presentation.viewmodels.LoginViewModel
-import com.vnteam.talktoai.presentation.viewmodels.OnBoardingViewModel
-import com.vnteam.talktoai.presentation.viewmodels.SettingsAccountViewModel
-import com.vnteam.talktoai.presentation.viewmodels.SettingsChatViewModel
-import com.vnteam.talktoai.presentation.viewmodels.SettingsFeedbackViewModel
-import com.vnteam.talktoai.presentation.viewmodels.SettingsLanguageViewModel
-import com.vnteam.talktoai.presentation.viewmodels.SettingsPrivacyPolicyViewModel
-import com.vnteam.talktoai.presentation.viewmodels.SettingsSignUpViewModel
-import com.vnteam.talktoai.presentation.viewmodels.SettingsThemeViewModel
-import com.vnteam.talktoai.presentation.viewmodels.SignUpViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.AppViewModel
+import com.vnteam.talktoai.presentation.viewmodels.chats.ChatListViewModel
+import com.vnteam.talktoai.presentation.viewmodels.chats.ChatViewModel
+import com.vnteam.talktoai.presentation.viewmodels.authorisation.LoginViewModel
+import com.vnteam.talktoai.presentation.viewmodels.authorisation.OnBoardingViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsAccountViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsChatViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsFeedbackViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsLanguageViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsPrivacyPolicyViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsSignUpViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsThemeViewModel
+import com.vnteam.talktoai.presentation.viewmodels.authorisation.SignUpViewModel
 import com.vnteam.talktoai.secrets.Config.API_KEY
 import com.vnteam.talktoai.secrets.Config.BASE_URL
 import com.vnteam.talktoai.secrets.Config.ORGANIZATION_ID
@@ -92,7 +92,7 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    single { ApiService(BASE_URL, get()) }
+    single { AIService(BASE_URL, get()) }
     single {
         Json {
             prettyPrint = true

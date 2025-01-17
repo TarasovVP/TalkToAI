@@ -9,7 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
-import com.vnteam.talktoai.presentation.viewmodels.SettingsChatViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsChatViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.updateScreenState
 

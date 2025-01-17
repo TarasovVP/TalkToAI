@@ -26,7 +26,7 @@ import com.vnteam.talktoai.ic_flag_en
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral500
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
-import com.vnteam.talktoai.presentation.viewmodels.SettingsLanguageViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsLanguageViewModel
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel

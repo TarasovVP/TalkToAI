@@ -26,7 +26,7 @@ import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
-import com.vnteam.talktoai.presentation.viewmodels.OnBoardingViewModel
+import com.vnteam.talktoai.presentation.viewmodels.authorisation.OnBoardingViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 

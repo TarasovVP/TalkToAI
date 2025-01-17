@@ -15,7 +15,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.vnteam.talktoai.CommonExtensions.isTrue
-import com.vnteam.talktoai.presentation.viewmodels.AppViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.AppViewModel
 import kotlinx.coroutines.launch
 import presentation.AppNavigation
 import presentation.LocalScreenState

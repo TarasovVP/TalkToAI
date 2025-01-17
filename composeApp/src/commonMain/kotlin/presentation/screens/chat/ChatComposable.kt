@@ -47,8 +47,8 @@ import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.avatar_ai
-import com.vnteam.talktoai.data.network.request.ApiRequest
-import com.vnteam.talktoai.data.network.request.MessageApi
+import com.vnteam.talktoai.data.network.ai.request.ApiRequest
+import com.vnteam.talktoai.data.network.ai.request.MessageApi
 import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.sealed_classes.MessageAction
@@ -76,7 +76,7 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import com.vnteam.talktoai.presentation.ui.theme.Primary600
 import com.vnteam.talktoai.presentation.ui.theme.Primary900
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
-import com.vnteam.talktoai.presentation.viewmodels.ChatViewModel
+import com.vnteam.talktoai.presentation.viewmodels.chats.ChatViewModel
 import com.vnteam.talktoai.utils.screenWidth
 import dateToMilliseconds
 import isDefineSecondsLater

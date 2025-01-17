@@ -1,9 +1,18 @@
 package com.vnteam.talktoai.domain.repositories
 
+import com.vnteam.talktoai.data.network.Result
 import kotlinx.coroutines.flow.Flow
 
 
 interface AuthRepository {
+
+    suspend fun signInWithEmailAndPassword(email: String, password: String): Flow<Result<String>>
+
+    suspend fun signInAnonymously(): Flow<Result<String>>
+
+    suspend fun resetPassword(email: String): Flow<Result<Unit>>
+
+
 
     fun addAuthStateListener()
 
@@ -11,13 +20,7 @@ interface AuthRepository {
 
     fun fetchSignInMethodsForEmail(email: String): Flow<List<String>>
 
-    fun resetPassword(email: String): Flow<Unit>
-
-    fun signInWithEmailAndPassword(email: String, password: String): Flow<String>
-
     fun signInWithGoogle(idToken: String): Flow<String>
-
-    fun signInAnonymously(): Flow<String>
 
     fun createUserWithEmailAndPassword(
         email: String,

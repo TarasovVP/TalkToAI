@@ -38,7 +38,7 @@ import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
 import com.vnteam.talktoai.presentation.ui.theme.Primary800
 import com.vnteam.talktoai.presentation.ui.theme.Primary900
-import com.vnteam.talktoai.presentation.viewmodels.ChatListViewModel
+import com.vnteam.talktoai.presentation.viewmodels.chats.ChatListViewModel
 import dateToMilliseconds
 import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.DrawableResource
