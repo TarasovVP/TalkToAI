@@ -8,6 +8,7 @@ import com.vnteam.talktoai.data.database.dao.MessageDaoImpl
 import com.vnteam.talktoai.data.mapperimpls.ChatDBMapperImpl
 import com.vnteam.talktoai.data.mapperimpls.MessageDBMapperImpl
 import com.vnteam.talktoai.data.network.ai.AIService
+import com.vnteam.talktoai.data.network.auth.AuthService
 import com.vnteam.talktoai.data.repositoryimpl.AIRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.AuthRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.ChatRepositoryImpl
@@ -52,6 +53,8 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMess
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMessagesUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessagesUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.FeedbackUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GetPrivacyPolicyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
@@ -59,13 +62,12 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.Onboard
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ReviewUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ThemeUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
-import com.vnteam.talktoai.presentation.viewmodels.settings.AppViewModel
-import com.vnteam.talktoai.presentation.viewmodels.chats.ChatListViewModel
-import com.vnteam.talktoai.presentation.viewmodels.chats.ChatViewModel
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.LoginViewModel
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.OnBoardingViewModel
+import com.vnteam.talktoai.presentation.viewmodels.authorisation.SignUpViewModel
+import com.vnteam.talktoai.presentation.viewmodels.chats.ChatListViewModel
+import com.vnteam.talktoai.presentation.viewmodels.chats.ChatViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.AppViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsAccountViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsChatViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsFeedbackViewModel
@@ -73,11 +75,6 @@ import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsLanguageView
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsPrivacyPolicyViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsSignUpViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsThemeViewModel
-import com.vnteam.talktoai.presentation.viewmodels.authorisation.SignUpViewModel
-import com.vnteam.talktoai.secrets.Config.API_KEY
-import com.vnteam.talktoai.secrets.Config.BASE_URL
-import com.vnteam.talktoai.secrets.Config.ORGANIZATION_ID
-import com.vnteam.talktoai.secrets.Config.PROJECT_ID
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -92,7 +89,8 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    single { AIService(BASE_URL, get()) }
+    single { AIService(get()) }
+    single { AuthService(get()) }
     single {
         Json {
             prettyPrint = true
@@ -107,9 +105,9 @@ val appModule = module {
             }
             install(DefaultRequest) {
                 header("Content-Type", "application/json")
-                header("Authorization", "Bearer $API_KEY")
-                header("OpenAI-Organization", ORGANIZATION_ID)
-                header("OpenAI-Project", PROJECT_ID)
+                /*header("Authorization", "Bearer $Config.AI_API_KEY")
+                header("OpenAI-Organization", Config.ORGANIZATION_ID)
+                header("OpenAI-Project", Config.PROJECT_ID)*/
             }
             install(Logging) {
                 logger = object : Logger {
@@ -140,7 +138,7 @@ val appModule = module {
 
     // Repositories
 
-    single<AuthRepository> { AuthRepositoryImpl() }
+    single<AuthRepository> { AuthRepositoryImpl(get()) }
 
     single<RealDataBaseRepository> { RealDataBaseRepositoryImpl() }
 
@@ -189,11 +187,11 @@ val appModule = module {
 
     single { ReAuthenticateUseCase(get()) }
 
-    single { ResetPasswordUseCase(get()) }
+    single { ResetPasswordUseCase(get(), get()) }
 
-    single { SignInAnonymouslyUseCase(get()) }
+    single { SignInAnonymouslyUseCase(get(), get()) }
 
-    single { SignInWithEmailAndPasswordUseCase(get()) }
+    single { SignInWithEmailAndPasswordUseCase(get(), get()) }
 
     single { SignInWithGoogleUseCase(get()) }
 
@@ -241,7 +239,7 @@ val appModule = module {
         OnBoardingViewModel(get())
     }
     viewModel {
-        LoginViewModel(get(), get(), get(), get(), get(), get(), get(), get())
+        LoginViewModel(get(), get(), get(), get())
     }
     viewModel {
         SignUpViewModel(get(), get(), get(), get(), get(), get())

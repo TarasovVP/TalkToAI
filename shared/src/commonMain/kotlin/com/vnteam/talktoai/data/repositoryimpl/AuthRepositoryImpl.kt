@@ -1,5 +1,7 @@
 package com.vnteam.talktoai.data.repositoryimpl
 
+import com.vnteam.talktoai.data.ANONYMOUS_USER
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.auth.AuthService
 import com.vnteam.talktoai.data.network.handleResponse
 import com.vnteam.talktoai.domain.repositories.AuthRepository
@@ -19,8 +21,10 @@ class AuthRepositoryImpl(private val authService: AuthService) :
     }
 
     override suspend fun signInAnonymously() = flow {
-        val httpResponse = authService.signInAnonymously()
-        emit(httpResponse.handleResponse<String>())
+        // TODO remove mock, uncomment below code
+        emit(Result.Success(ANONYMOUS_USER))
+        /*val httpResponse = authService.signInAnonymously()
+        emit(httpResponse.handleResponse<String>())*/
     }
 
     override suspend fun resetPassword(email: String) = flow {

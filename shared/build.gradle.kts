@@ -149,8 +149,10 @@ tasks.register("generateConfig") {
             package com.vnteam.talktoai.secrets
             
             object Config {
-                val BASE_URL = "${properties.getProperty("BASE_URL", "")}"
-                val API_KEY = "${properties.getProperty("API_KEY", "")}"
+                val AUTH_BASE_URL = "${properties.getProperty("AUTH_BASE_URL", "")}"
+                val AUTH_API_KEY = "${properties.getProperty("AUTH_API_KEY", "")}"
+                val AI_BASE_URL = "${properties.getProperty("AI_BASE_URL", "")}"
+                val AI_API_KEY = "${properties.getProperty("AI_API_KEY", "")}"
                 val ORGANIZATION_ID = "${properties.getProperty("ORGANIZATION_ID", "")}"
                 val PROJECT_ID = "${properties.getProperty("PROJECT_ID", "")}"
             }

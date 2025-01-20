@@ -6,9 +6,7 @@ import com.vnteam.talktoai.domain.repositories.AuthRepository
 import com.vnteam.talktoai.domain.usecase.UseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 
 class SignInAnonymouslyUseCase(
     private val repository: AuthRepository,
@@ -17,11 +15,7 @@ class SignInAnonymouslyUseCase(
 
     override suspend fun execute(params: Nothing?): Flow<Result<String>> {
         return when {
-            networkState.isNetworkAvailable() -> repository.signInAnonymously().map {
-                Result.Success(it)
-            }.catch {
-                Result.Failure(it.message)
-            }
+            networkState.isNetworkAvailable() -> repository.signInAnonymously()
             else -> flowOf(Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT))
         }
     }
