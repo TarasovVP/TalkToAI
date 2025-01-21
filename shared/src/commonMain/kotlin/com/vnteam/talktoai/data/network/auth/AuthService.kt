@@ -1,24 +1,23 @@
 package com.vnteam.talktoai.data.network.auth
 
+import com.vnteam.talktoai.data.network.auth.request.AuthBody
+import com.vnteam.talktoai.data.network.auth.request.ChangePasswordBody
+import com.vnteam.talktoai.data.network.auth.request.ResetPasswordBody
 import com.vnteam.talktoai.secrets.Config.AUTH_API_KEY
 import com.vnteam.talktoai.secrets.Config.AUTH_BASE_URL
 import io.ktor.client.HttpClient
-import io.ktor.client.request.header
-import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 
 class AuthService(
     private val httpClient: HttpClient,
 ) {
-    suspend fun signInWithEmailAndPassword(email: String, password: String): HttpResponse? {
+    suspend fun signInWithEmailAndPassword(authBody: AuthBody): HttpResponse? {
         val httpResponse = try {
             httpClient
-                .post("${AUTH_BASE_URL}accounts:signUp?key=${AUTH_API_KEY}") {
-                    header("Content-Type", "application/json")
-                    parameter("email", email)
-                    parameter("password", password)
-                    parameter("returnSecureToken", true)
+                .post("${AUTH_BASE_URL}accounts:signInWithPassword?key=${AUTH_API_KEY}") {
+                    setBody(authBody)
                 }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -27,12 +26,10 @@ class AuthService(
         return httpResponse
     }
 
-    suspend fun signInAnonymously(): HttpResponse? {
+    suspend fun signInAnonymously(authBody: AuthBody): HttpResponse? {
         val httpResponse = try {
-            httpClient.post("${AUTH_BASE_URL}accounts:signInAnonymously?key=${AUTH_API_KEY}") {
-                mapOf(
-                    "returnSecureToken" to true
-                )
+            httpClient.post("${AUTH_BASE_URL}accounts:signUp?key=${AUTH_API_KEY}") {
+                setBody(authBody)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -41,14 +38,38 @@ class AuthService(
         return httpResponse
     }
 
-    suspend fun resetPassword(email: String): HttpResponse? {
+    suspend fun resetPassword(resetPasswordBody: ResetPasswordBody): HttpResponse? {
+        println("authTAG resetPassword resetPasswordBody: $resetPasswordBody")
         val httpResponse = try {
-            httpClient.post("${AUTH_BASE_URL}accounts:resetPassword?key=${AUTH_API_KEY}") {
-                mapOf(
-                    "email" to email,
-                    "returnSecureToken" to true
-                )
+            httpClient.post("${AUTH_BASE_URL}accounts:sendOobCode?key=${AUTH_API_KEY}") {
+                setBody(resetPasswordBody)
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+        return httpResponse
+    }
+
+    suspend fun createUserWithEmailAndPassword(authBody: AuthBody): HttpResponse? {
+        val httpResponse = try {
+            httpClient
+                .post("${AUTH_BASE_URL}accounts:signUp?key=${AUTH_API_KEY}") {
+                    setBody(authBody)
+                }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+        return httpResponse
+    }
+
+    suspend fun changePassword(changePasswordBody: ChangePasswordBody): HttpResponse? {
+        val httpResponse = try {
+            httpClient
+                .post("${AUTH_BASE_URL}accounts:update?key=${AUTH_API_KEY}") {
+                    setBody(changePasswordBody)
+                }
         } catch (e: Exception) {
             e.printStackTrace()
             null

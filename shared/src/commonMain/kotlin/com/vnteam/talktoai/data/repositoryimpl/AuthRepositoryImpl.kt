@@ -1,8 +1,15 @@
 package com.vnteam.talktoai.data.repositoryimpl
 
-import com.vnteam.talktoai.data.ANONYMOUS_USER
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.auth.AuthService
+import com.vnteam.talktoai.data.network.auth.request.AuthBody
+import com.vnteam.talktoai.data.network.auth.request.ChangePasswordBody
+import com.vnteam.talktoai.data.network.auth.request.ResetPasswordBody
+import com.vnteam.talktoai.data.network.auth.response.ChangePasswordResponse
+import com.vnteam.talktoai.data.network.auth.response.ResetPasswordResponse
+import com.vnteam.talktoai.data.network.auth.response.SignInAnonymouslyResponse
+import com.vnteam.talktoai.data.network.auth.response.SignInEmailResponse
+import com.vnteam.talktoai.data.network.auth.response.SignUpEmailResponse
 import com.vnteam.talktoai.data.network.handleResponse
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import kotlinx.coroutines.flow.Flow
@@ -16,22 +23,46 @@ class AuthRepositoryImpl(private val authService: AuthService) :
         email: String,
         password: String
     ) = flow {
-        val httpResponse = authService.signInWithEmailAndPassword(email, password)
-        emit(httpResponse.handleResponse<String>())
+        val httpResponse = authService.signInWithEmailAndPassword(AuthBody(email, password))
+        val signInEmailResponse = httpResponse.handleResponse<SignInEmailResponse>()
+        println("authTAG signInWithEmailAndPassword signInEmailResponse: $signInEmailResponse")
+        emit(Result.Success("signInWithEmailAndPassword"))
     }
 
     override suspend fun signInAnonymously() = flow {
-        // TODO remove mock, uncomment below code
-        emit(Result.Success(ANONYMOUS_USER))
-        /*val httpResponse = authService.signInAnonymously()
-        emit(httpResponse.handleResponse<String>())*/
+        val httpResponse = authService.signInAnonymously(AuthBody())
+        val signInAnonymouslyResponse = httpResponse.handleResponse<SignInAnonymouslyResponse>()
+        println("authTAG signInAnonymously signInAnonymouslyResponse: $signInAnonymouslyResponse")
+        emit(Result.Success("signInAnonymously"))
     }
 
     override suspend fun resetPassword(email: String) = flow {
-        val httpResponse = authService.resetPassword(email)
-        emit(httpResponse.handleResponse<Unit>())
+        val httpResponse = authService.resetPassword(ResetPasswordBody(email, "PASSWORD_RESET"))
+        val resetPasswordResponse = httpResponse.handleResponse<ResetPasswordResponse>()
+        println("authTAG resetPassword resetPasswordResponse: $resetPasswordResponse")
+        emit(Result.Success(Unit))
     }
 
+    override fun createUserWithEmailAndPassword(
+        email: String,
+        password: String
+    ) = flow {
+        val httpResponse = authService.createUserWithEmailAndPassword(AuthBody(email, password))
+        val signUpEmailResponse = httpResponse.handleResponse<SignUpEmailResponse>()
+        println("authTAG createUserWithEmailAndPassword signUpEmailResponse: $signUpEmailResponse")
+        emit(Result.Success("signInEmailResponse"))
+    }
+
+    override fun changePassword(
+        currentPassword: String,
+        newPassword: String
+    ): Flow<Unit> = flow {
+        // TODO implement id token
+        val httpResponse = authService.changePassword(ChangePasswordBody(currentPassword, newPassword))
+        val changePasswordResponse = httpResponse.handleResponse<ChangePasswordResponse>()
+        println("authTAG changePassword changePasswordResponse: $changePasswordResponse")
+        emit(Unit)
+    }
 
 
 
@@ -77,35 +108,6 @@ class AuthRepositoryImpl(private val authService: AuthService) :
     }
 
 
-
-    override fun createUserWithEmailAndPassword(
-        email: String,
-        password: String
-    ): Flow<List<String>> = callbackFlow {
-        /*firebaseAuth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) result.invoke(Result.Success(task.result.user?.uid.orEmpty()))
-            }.addOnFailureListener { exception ->
-                result.invoke(Result.Failure(exception.localizedMessage))
-            }*/
-    }
-
-    override fun changePassword(
-        currentPassword: String,
-        newPassword: String): Flow<Unit> = callbackFlow {
-        /*val user = firebaseAuth.currentUser
-        val credential = EmailAuthProvider.getCredential(user?.email.orEmpty(), currentPassword)
-        user?.reauthenticateAndRetrieveData(credential)
-            ?.addOnSuccessListener {
-                user.updatePassword(newPassword).addOnSuccessListener {
-                    result.invoke(Result.Success())
-                }.addOnFailureListener { exception ->
-                    result.invoke(Result.Failure(exception.localizedMessage))
-                }
-            }?.addOnFailureListener { exception ->
-                result.invoke(Result.Failure(exception.localizedMessage))
-            }*/
-    }
 
     override fun reAuthenticate(/*authCredential: AuthCredential*/): Flow<Unit> = callbackFlow {
         /*firebaseAuth.currentUser?.reauthenticate(authCredential)

@@ -12,6 +12,12 @@ interface AuthRepository {
 
     suspend fun resetPassword(email: String): Flow<Result<Unit>>
 
+    fun createUserWithEmailAndPassword(
+        email: String,
+        password: String
+    ): Flow<Result<String>>
+
+
 
 
     fun addAuthStateListener()
@@ -22,10 +28,7 @@ interface AuthRepository {
 
     fun signInWithGoogle(idToken: String): Flow<String>
 
-    fun createUserWithEmailAndPassword(
-        email: String,
-        password: String
-    ): Flow<List<String>>
+
 
     fun changePassword(
         currentPassword: String,
