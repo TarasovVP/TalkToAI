@@ -1,21 +1,27 @@
 package com.vnteam.talktoai.domain.repositories
 
 import com.vnteam.talktoai.data.network.Result
+import com.vnteam.talktoai.data.network.auth.request.AuthBody
+import com.vnteam.talktoai.data.network.auth.request.ChangePasswordBody
+import com.vnteam.talktoai.data.network.auth.request.ResetPasswordBody
+import com.vnteam.talktoai.data.network.auth.response.ChangePasswordResponse
+import com.vnteam.talktoai.data.network.auth.response.ResetPasswordResponse
+import com.vnteam.talktoai.data.network.auth.response.SignInAnonymouslyResponse
+import com.vnteam.talktoai.data.network.auth.response.SignInEmailResponse
+import com.vnteam.talktoai.data.network.auth.response.SignUpEmailResponse
 import kotlinx.coroutines.flow.Flow
-
 
 interface AuthRepository {
 
-    suspend fun signInWithEmailAndPassword(email: String, password: String): Flow<Result<String>>
+    suspend fun signInWithEmailAndPassword(authBody: AuthBody): Result<SignInEmailResponse>
 
-    suspend fun signInAnonymously(): Flow<Result<String>>
+    suspend fun signInAnonymously(authBody: AuthBody): Result<SignInAnonymouslyResponse>
 
-    suspend fun resetPassword(email: String): Flow<Result<Unit>>
+    suspend fun resetPassword(resetPasswordBody: ResetPasswordBody): Result<ResetPasswordResponse>
 
-    fun createUserWithEmailAndPassword(
-        email: String,
-        password: String
-    ): Flow<Result<String>>
+    suspend fun createUserWithEmailAndPassword(authBody: AuthBody): Result<SignUpEmailResponse>
+
+    suspend fun changePassword(changePasswordBody: ChangePasswordBody): Result<ChangePasswordResponse>
 
 
 
@@ -30,10 +36,7 @@ interface AuthRepository {
 
 
 
-    fun changePassword(
-        currentPassword: String,
-        newPassword: String
-    ): Flow<Unit>
+
 
     fun reAuthenticate(): Flow<Unit>
 

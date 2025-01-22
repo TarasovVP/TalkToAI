@@ -10,7 +10,8 @@ data class ScreenState(
     var appMessage: AppMessage? = null,
     var isDarkTheme: Boolean? = false,
     var language: String? = null,
-    var userLogin: String? = null,
+    var idToken: String? = null,
+    var userEmail: String? = null,
     var isOnboardingSeen: Boolean? = false,
     var isProgressVisible: Boolean = false,
     var isScreenUpdatingNeeded: Boolean = false,
@@ -20,7 +21,7 @@ data class ScreenState(
     val isMessageActionModeState = mutableStateOf<Boolean?>(null)
 
     val isReadyToLaunch: Boolean
-        get() = isDarkTheme.isNotNull() && language.isNotNull() && userLogin.isNotNull() && isOnboardingSeen.isNotNull()
+        get() = isDarkTheme.isNotNull() && language.isNotNull() && userEmail.isNotNull() && isOnboardingSeen.isNotNull()
 
     val isChatScreen: Boolean
         get() = currentScreenRoute?.contains(NavigationScreen.CHAT_DESTINATION).isTrue()
@@ -34,7 +35,7 @@ data class ScreenState(
     val startDestination: String
         get() = when {
             isOnboardingSeen == false -> NavigationScreen.ONBOARDING_SCREEN
-            userLogin.isNullOrEmpty() -> NavigationScreen.LOGIN_SCREEN
+            userEmail.isNullOrEmpty() -> NavigationScreen.LOGIN_SCREEN
             else -> NavigationScreen.CHAT_SCREEN
         }
 }

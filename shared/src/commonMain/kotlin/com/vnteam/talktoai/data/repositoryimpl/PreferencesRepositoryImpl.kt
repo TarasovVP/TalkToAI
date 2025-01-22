@@ -1,10 +1,11 @@
 package com.vnteam.talktoai.data.repositoryimpl
 
 import com.vnteam.talktoai.data.APP_LANGUAGE
+import com.vnteam.talktoai.data.ID_TOKEN
 import com.vnteam.talktoai.data.IS_DARK_THEME
-import com.vnteam.talktoai.data.USER_LOGIN
 import com.vnteam.talktoai.data.IS_ONBOARDING_SEEN
 import com.vnteam.talktoai.data.IS_REVIEW_VOTE
+import com.vnteam.talktoai.data.USER_EMAIL
 import com.vnteam.talktoai.data.local.PreferencesFactory
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import kotlinx.coroutines.flow.Flow
@@ -36,12 +37,20 @@ class PreferencesRepositoryImpl(private val preferencesFactory: PreferencesFacto
         println("appTAG PreferencesRepositoryImpl setOnBoardingSeen $isOnBoardingSeen")
     }
 
-    override fun getUserLogin(): Flow<String?> {
-        return preferencesFactory.getString(USER_LOGIN)
+    override fun getUserEmail(): Flow<String?> {
+        return preferencesFactory.getString(USER_EMAIL)
     }
 
-    override suspend fun setUserLogin(userLogin: String) {
-        preferencesFactory.putString(USER_LOGIN, userLogin)
+    override suspend fun setUserEmail(userEmail: String) {
+        preferencesFactory.putString(USER_EMAIL, userEmail)
+    }
+
+    override fun getIdToken(): Flow<String?> {
+        return preferencesFactory.getString(ID_TOKEN)
+    }
+
+    override suspend fun setIdToken(idToken: String) {
+        preferencesFactory.putString(ID_TOKEN, idToken)
     }
 
     override fun getIsReviewVoted(): Flow<Boolean?> {

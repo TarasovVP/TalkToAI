@@ -6,7 +6,7 @@ import com.vnteam.talktoai.presentation.uistates.LoginUIState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ResetPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +15,7 @@ class LoginViewModel(
     private val signInWithEmailAndPasswordUseCase: SignInWithEmailAndPasswordUseCase,
     private val signInAnonymouslyUseCase: SignInAnonymouslyUseCase,
     private val resetPasswordUseCase: ResetPasswordUseCase,
-    private val userLoginUseCase: UserLoginUseCase,
+    private val userEmailUseCase: UserEmailUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUIState())
@@ -80,7 +80,7 @@ class LoginViewModel(
 
     private fun setUserLogin(userLogin: String) {
         launchWithErrorHandling {
-            userLoginUseCase.set(userLogin)
+            userEmailUseCase.set(userLogin)
         }
     }
 

@@ -20,7 +20,7 @@ class InsertMessageUseCase(
 ) : UseCase<Message, Result<Unit>> {
 
     override suspend fun execute(params: Message): Result<Unit> {
-        val userAuth = preferencesRepository.getUserLogin().firstOrNull()
+        val userAuth = preferencesRepository.getUserEmail().firstOrNull()
         when {
             userAuth.getUserAuth().isAuthorisedUser() -> when {
                 networkState.isNetworkAvailable() -> realDataBaseRepository.insertMessage(params)

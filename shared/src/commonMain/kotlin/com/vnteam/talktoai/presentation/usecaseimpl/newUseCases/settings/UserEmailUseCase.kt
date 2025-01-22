@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
-class UserLoginUseCase(private val preferencesRepository: PreferencesRepository):
+class UserEmailUseCase(private val preferencesRepository: PreferencesRepository):
     DataUseCase<String, Flow<Result<String?>>> {
 
     override fun get(): Flow<Result<String?>> {
-        return preferencesRepository.getUserLogin().map {
+        return preferencesRepository.getUserEmail().map {
             Result.Success(it)
         }.catch {
             Result.Failure(it.message)
@@ -19,6 +19,6 @@ class UserLoginUseCase(private val preferencesRepository: PreferencesRepository)
     }
 
     override suspend fun set(params: String) {
-        preferencesRepository.setUserLogin(params)
+        preferencesRepository.setUserEmail(params)
     }
 }

@@ -14,54 +14,44 @@ import com.vnteam.talktoai.data.network.handleResponse
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
 
 class AuthRepositoryImpl(private val authService: AuthService) :
     AuthRepository {
 
-    override suspend fun signInWithEmailAndPassword(
-        email: String,
-        password: String
-    ) = flow {
-        val httpResponse = authService.signInWithEmailAndPassword(AuthBody(email, password))
+    override suspend fun signInWithEmailAndPassword(authBody: AuthBody): Result<SignInEmailResponse> {
+        val httpResponse = authService.signInWithEmailAndPassword(authBody)
         val signInEmailResponse = httpResponse.handleResponse<SignInEmailResponse>()
         println("authTAG signInWithEmailAndPassword signInEmailResponse: $signInEmailResponse")
-        emit(Result.Success("signInWithEmailAndPassword"))
+        return signInEmailResponse
     }
 
-    override suspend fun signInAnonymously() = flow {
-        val httpResponse = authService.signInAnonymously(AuthBody())
+    override suspend fun signInAnonymously(authBody: AuthBody): Result<SignInAnonymouslyResponse> {
+        val httpResponse = authService.signInAnonymously(authBody)
         val signInAnonymouslyResponse = httpResponse.handleResponse<SignInAnonymouslyResponse>()
         println("authTAG signInAnonymously signInAnonymouslyResponse: $signInAnonymouslyResponse")
-        emit(Result.Success("signInAnonymously"))
+        return signInAnonymouslyResponse
     }
 
-    override suspend fun resetPassword(email: String) = flow {
-        val httpResponse = authService.resetPassword(ResetPasswordBody(email, "PASSWORD_RESET"))
+    override suspend fun resetPassword(resetPasswordBody: ResetPasswordBody): Result<ResetPasswordResponse> {
+        val httpResponse = authService.resetPassword(resetPasswordBody)
         val resetPasswordResponse = httpResponse.handleResponse<ResetPasswordResponse>()
         println("authTAG resetPassword resetPasswordResponse: $resetPasswordResponse")
-        emit(Result.Success(Unit))
+        return resetPasswordResponse
     }
 
-    override fun createUserWithEmailAndPassword(
-        email: String,
-        password: String
-    ) = flow {
-        val httpResponse = authService.createUserWithEmailAndPassword(AuthBody(email, password))
+    override suspend fun createUserWithEmailAndPassword(authBody: AuthBody): Result<SignUpEmailResponse> {
+        val httpResponse = authService.createUserWithEmailAndPassword(authBody)
         val signUpEmailResponse = httpResponse.handleResponse<SignUpEmailResponse>()
         println("authTAG createUserWithEmailAndPassword signUpEmailResponse: $signUpEmailResponse")
-        emit(Result.Success("signInEmailResponse"))
+        return signUpEmailResponse
     }
 
-    override fun changePassword(
-        currentPassword: String,
-        newPassword: String
-    ): Flow<Unit> = flow {
+    override suspend fun changePassword(changePasswordBody: ChangePasswordBody): Result<ChangePasswordResponse> {
         // TODO implement id token
-        val httpResponse = authService.changePassword(ChangePasswordBody(currentPassword, newPassword))
+        val httpResponse = authService.changePassword(changePasswordBody)
         val changePasswordResponse = httpResponse.handleResponse<ChangePasswordResponse>()
         println("authTAG changePassword changePasswordResponse: $changePasswordResponse")
-        emit(Unit)
+        return changePasswordResponse
     }
 
 

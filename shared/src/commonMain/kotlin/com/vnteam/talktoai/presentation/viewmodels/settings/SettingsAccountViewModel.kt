@@ -8,7 +8,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.De
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ReAuthenticateUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignOutUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsAccountViewModel(
     private val networkState: NetworkState,
-    private val userLoginUseCase: UserLoginUseCase,
+    private val userEmailUseCase: UserEmailUseCase,
     private val changePasswordUseCase: ChangePasswordUseCase,
     private val reAuthenticateUseCase: ReAuthenticateUseCase,
     private val signOutUseCase: SignOutUseCase,
@@ -34,7 +34,7 @@ class SettingsAccountViewModel(
 
     fun currentUserEmail() {
         launchWithResultHandling {
-            userLoginUseCase.get().onSuccess {
+            userEmailUseCase.get().onSuccess {
                 _userLogin.value = it
             }
         }

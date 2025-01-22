@@ -61,7 +61,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.Languag
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ReviewUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ThemeUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.LoginViewModel
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.OnBoardingViewModel
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.SignUpViewModel
@@ -168,7 +168,7 @@ val appModule = module {
 
     single { ThemeUseCase(get()) }
 
-    single { UserLoginUseCase(get()) }
+    single { UserEmailUseCase(get()) }
 
     // authorisation
     single { ChangePasswordUseCase(get()) }

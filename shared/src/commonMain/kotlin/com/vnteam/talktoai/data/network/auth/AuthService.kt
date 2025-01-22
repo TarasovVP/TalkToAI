@@ -76,4 +76,17 @@ class AuthService(
         }
         return httpResponse
     }
+
+    suspend fun deleteAccount(changePasswordBody: ChangePasswordBody): HttpResponse? {
+        val httpResponse = try {
+            httpClient
+                .post("${AUTH_BASE_URL}accounts:delete?key=${AUTH_API_KEY}") {
+                    setBody(changePasswordBody)
+                }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+        return httpResponse
+    }
 }

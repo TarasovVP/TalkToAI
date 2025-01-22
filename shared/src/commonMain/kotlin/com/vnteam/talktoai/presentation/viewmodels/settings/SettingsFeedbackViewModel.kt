@@ -4,14 +4,14 @@ import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.models.Feedback
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.FeedbackUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserLoginUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsFeedbackViewModel(
-    private val userLoginUseCase: UserLoginUseCase,
+    private val userEmailUseCase: UserEmailUseCase,
     private val feedbackUseCase: FeedbackUseCase,
     private val networkState: NetworkState
 ) : BaseViewModel() {
@@ -26,7 +26,7 @@ class SettingsFeedbackViewModel(
     val successFeedback = _successFeedback.asStateFlow()
 
     fun getCurrentUserLogin() {
-        userLoginUseCase.get().onSuccess {
+        userEmailUseCase.get().onSuccess {
             _currentUserLogin.value = it.orEmpty()
         }
     }

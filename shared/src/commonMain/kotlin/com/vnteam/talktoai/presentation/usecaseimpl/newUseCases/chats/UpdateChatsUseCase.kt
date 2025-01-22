@@ -20,7 +20,7 @@ class UpdateChatsUseCase(
 ) : UseCase<List<Chat>, Result<Unit>> {
 
     override suspend fun execute(params: List<Chat>): Result<Unit> {
-        val userAuth = preferencesRepository.getUserLogin().firstOrNull()
+        val userAuth = preferencesRepository.getUserEmail().firstOrNull()
         when {
             userAuth.getUserAuth().isAuthorisedUser() -> when {
                 networkState.isNetworkAvailable() -> realDataBaseRepository.updateRemoteChats(params)

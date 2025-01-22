@@ -19,7 +19,7 @@ class DeleteMessagesUseCase(
 ) : UseCase<List<Long>, Result<Unit>> {
 
     override suspend fun execute(params: List<Long>): Result<Unit> {
-        val userAuth = preferencesRepository.getUserLogin().firstOrNull()
+        val userAuth = preferencesRepository.getUserEmail().firstOrNull()
         when {
             userAuth.getUserAuth().isAuthorisedUser() -> when {
                 networkState.isNetworkAvailable() -> realDataBaseRepository.deleteMessages(params.map { it.toString() })
