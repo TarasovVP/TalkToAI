@@ -57,6 +57,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRem
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.FeedbackUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GetPrivacyPolicyUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ReviewUseCase
@@ -170,12 +171,14 @@ val appModule = module {
 
     single { UserEmailUseCase(get()) }
 
+    single { IdTokenUseCase(get()) }
+
     // authorisation
-    single { ChangePasswordUseCase(get()) }
+    single { ChangePasswordUseCase(get(), get(), get()) }
 
     single { ClearDataUseCase() }
 
-    single { CreateUserWithEmailAndPasswordUseCase(get()) }
+    single { CreateUserWithEmailAndPasswordUseCase(get(), get(), get()) }
 
     single { CreateUserWithGoogleUseCase(get()) }
 
@@ -189,9 +192,9 @@ val appModule = module {
 
     single { ResetPasswordUseCase(get(), get()) }
 
-    single { SignInAnonymouslyUseCase(get(), get()) }
+    single { SignInAnonymouslyUseCase(get(), get(), get()) }
 
-    single { SignInWithEmailAndPasswordUseCase(get(), get()) }
+    single { SignInWithEmailAndPasswordUseCase(get(), get(), get()) }
 
     single { SignInWithGoogleUseCase(get()) }
 
@@ -233,7 +236,7 @@ val appModule = module {
 
     // ViewModels
     viewModel {
-        AppViewModel(get(), get(), get(), get(), get())
+        AppViewModel(get(), get(), get(), get(), get(), get())
     }
     viewModel {
         OnBoardingViewModel(get())

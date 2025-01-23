@@ -47,7 +47,6 @@ class AuthRepositoryImpl(private val authService: AuthService) :
     }
 
     override suspend fun changePassword(changePasswordBody: ChangePasswordBody): Result<ChangePasswordResponse> {
-        // TODO implement id token
         val httpResponse = authService.changePassword(changePasswordBody)
         val changePasswordResponse = httpResponse.handleResponse<ChangePasswordResponse>()
         println("authTAG changePassword changePasswordResponse: $changePasswordResponse")

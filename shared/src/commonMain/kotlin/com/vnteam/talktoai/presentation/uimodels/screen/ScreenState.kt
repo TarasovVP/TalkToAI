@@ -32,10 +32,13 @@ data class ScreenState(
     val isSecondaryScreen: Boolean
         get() = currentScreenRoute == NavigationScreen.SettingsSignUpScreen.route
 
+    val isLoggedInUser: Boolean
+        get() = idToken.isNotNull()
+
     val startDestination: String
         get() = when {
             isOnboardingSeen == false -> NavigationScreen.ONBOARDING_SCREEN
-            userEmail.isNullOrEmpty() -> NavigationScreen.LOGIN_SCREEN
+            idToken.isNullOrEmpty() -> NavigationScreen.LOGIN_SCREEN
             else -> NavigationScreen.CHAT_SCREEN
         }
 }

@@ -25,8 +25,8 @@ class SettingsAccountViewModel(
     private val googleUseCase: GoogleUseCase
 ) : BaseViewModel() {
 
-    private val _userLogin = MutableStateFlow<String?>(null)
-    val userLogin = _userLogin.asStateFlow()
+    private val _userEmail = MutableStateFlow<String?>(null)
+    val userEmail = _userEmail.asStateFlow()
 
     val reAuthenticateLiveData = MutableStateFlow(false)
     val successLiveData = MutableStateFlow(false)
@@ -35,7 +35,7 @@ class SettingsAccountViewModel(
     fun currentUserEmail() {
         launchWithResultHandling {
             userEmailUseCase.get().onSuccess {
-                _userLogin.value = it
+                _userEmail.value = it
             }
         }
     }
@@ -50,7 +50,7 @@ class SettingsAccountViewModel(
     }
 
     fun changePassword(currentPassword: String, newPassword: String) {
-        launchWithNetworkCheck(networkState) {
+        launchWithResult {
             changePasswordUseCase.execute(Pair(currentPassword, newPassword)).onSuccess {
                 successChangePasswordLiveData.value = true
             }

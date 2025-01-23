@@ -22,23 +22,19 @@ class LoginViewModel(
     val uiState = _uiState.asStateFlow()
 
     fun signInWithEmailAndPassword(email: String, password: String) {
-        launchWithResultHandling {
-            signInWithEmailAndPasswordUseCase.execute(Pair(email, password)).onSuccess { userLogin ->
-                setUserLogin(userLogin.orEmpty())
-            }
+        launchWithResult {
+            signInWithEmailAndPasswordUseCase.execute(Pair(email, password))
         }
     }
 
     fun signInAnonymously() {
-        launchWithResultHandling {
-            signInAnonymouslyUseCase.execute().onSuccess { userLogin ->
-                setUserLogin(userLogin.orEmpty())
-            }
+        launchWithResult {
+            signInAnonymouslyUseCase.execute()
         }
     }
 
     fun resetPassword(email: String) {
-        launchWithResultHandling {
+        launchWithResult {
             resetPasswordUseCase.execute(email).onSuccess {
                 updateUIState(LoginUIState(successPasswordReset = true))
             }

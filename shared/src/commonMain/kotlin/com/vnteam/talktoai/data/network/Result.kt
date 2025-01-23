@@ -17,6 +17,13 @@ fun <T> Flow<Result<T>>.onSuccess(action: (T?) -> Unit): Flow<Result<T>> = map {
     result
 }
 
+fun <T> Result<T>.onSuccess(action: (T?) -> Unit): Result<T> {
+    if (this is Result.Success) {
+        action(this.data)
+    }
+    return this
+}
+
 fun <T> Flow<Result<T>>.onError(action: (String?) -> Unit): Flow<Result<T>> = map { result ->
     if (result is Result.Failure) {
         action(result.errorMessage)

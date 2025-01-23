@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.presentation.viewmodels.settings
 
-import com.vnteam.talktoai.CommonExtensions.isTrue
+import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.data.APP_LANG_EN
 import com.vnteam.talktoai.data.network.Result
@@ -47,11 +47,11 @@ class AppViewModel(
     }
 
     private fun fetchInitialData() {
-        fetchAndSet(_isDarkTheme, themeUseCase::get)
+        fetchAndSet(_isDarkTheme, themeUseCase::get, false)
         fetchAndSet(_language, languageUseCase::get, APP_LANG_EN)
-        fetchAndSet(_idToken, idTokenUseCase::get)
-        fetchAndSet(_userEmail, userEmailUseCase::get)
-        fetchAndSet(_onBoardingSeen, onboardingUseCase::get) { it.isTrue() }
+        fetchAndSet(_idToken, idTokenUseCase::get, String.EMPTY)
+        fetchAndSet(_userEmail, userEmailUseCase::get, String.EMPTY)
+        fetchAndSet(_onBoardingSeen, onboardingUseCase::get, false)
         loadAnimationResource()
     }
 

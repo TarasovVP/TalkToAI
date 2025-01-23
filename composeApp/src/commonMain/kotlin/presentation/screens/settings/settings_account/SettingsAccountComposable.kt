@@ -71,15 +71,15 @@ fun SettingsAccountScreen() {
         updatedScreenRoute.value = String.EMPTY
     }
 
-    val userLogin by viewModel.userLogin.collectAsState()
-    LaunchedEffect(userLogin) {
-        if (userLogin.isNullOrEmpty()) {
+    val userEmail by viewModel.userEmail.collectAsState()
+    LaunchedEffect(userEmail) {
+        if (userEmail.isNullOrEmpty()) {
             viewModel.currentUserEmail()
         } else {
             authState.value = when {
-                userLogin.isNullOrEmpty() -> AuthState.UNAUTHORISED
-                userLogin == ANONYMOUS_USER -> AuthState.AUTHORISED_ANONYMOUSLY
-                userLogin?.contains(GOOGLE_USER).isTrue() -> AuthState.AUTHORISED_GOOGLE
+                userEmail.isNullOrEmpty() -> AuthState.UNAUTHORISED
+                userEmail == ANONYMOUS_USER -> AuthState.AUTHORISED_ANONYMOUSLY
+                userEmail?.contains(GOOGLE_USER).isTrue() -> AuthState.AUTHORISED_GOOGLE
                 else -> AuthState.AUTHORISED_EMAIL
             }
         }
@@ -111,7 +111,7 @@ fun SettingsAccountScreen() {
     }
 
     SettingsAccountContent(
-        userLogin,
+        userEmail,
         authState,
         showLogOutDialog,
         showChangePasswordDialog,

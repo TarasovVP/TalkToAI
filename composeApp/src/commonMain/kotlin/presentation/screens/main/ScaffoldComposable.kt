@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.CommonExtensions.EMPTY
+import com.vnteam.talktoai.CommonExtensions.isNotTrue
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
@@ -41,7 +42,7 @@ import org.jetbrains.compose.resources.painterResource
 fun AppTopBar(screenState: ScreenState?, onNavigationIconClick: () -> Unit) {
     println("AppTopBarTAG: screenState: $screenState")
     when {
-        screenState?.userEmail.isNullOrEmpty() -> Unit
+        screenState?.isLoggedInUser.isNotTrue() -> Unit
         screenState?.isMessageActionModeState?.value.isTrue() -> DeleteModeTopBar(
             LocalStringResources.current.MESSAGE_ACTION_SELECTED
         )

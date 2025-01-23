@@ -56,7 +56,7 @@ class SettingsSignUpViewModel(
     }
 
     fun createUserWithEmailAndPassword(email: String, password: String) {
-        launchWithNetworkCheck(networkState) {
+        launchWithResult {
             createUserWithEmailAndPasswordUseCase.execute(Pair(email, password)).onSuccess {
                 updateUIState(SettingsSignUpUIState(successAuthorisation = false))
             }
@@ -64,7 +64,7 @@ class SettingsSignUpViewModel(
     }
 
     fun signInWithEmailAndPassword(email: String, password: String) {
-        launchWithNetworkCheck(networkState) {
+        launchWithResult {
             signInWithEmailAndPasswordUseCase.execute(Pair(email, password)).onSuccess {
                 updateUIState(SettingsSignUpUIState(successAuthorisation = true))
             }
