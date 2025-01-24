@@ -1,20 +1,25 @@
 package com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation
 
+import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.data.network.Result
+import com.vnteam.talktoai.data.network.auth.request.DeleteAccountBody
 import com.vnteam.talktoai.domain.repositories.AuthRepository
+import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.usecase.UseCase
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
+import com.vnteam.talktoai.utils.NetworkState
+import kotlinx.coroutines.flow.firstOrNull
 
-class DeleteUserUseCase(private val repository: AuthRepository) :
-    UseCase<Nothing?, Flow<Result<Unit>>> {
+class DeleteUserUseCase(
+    private val repository: AuthRepository,
+    private val networkState: NetworkState,
+    private val preferencesRepository: PreferencesRepository
+) : UseCase<Nothing?, Result<Unit>> {
 
-    override suspend fun execute(params: Nothing?): Flow<Result<Unit>> {
-        return repository.deleteUser().map {
-            Result.Success(it)
-        }.catch {
-            Result.Failure(it.message)
+    override suspend fun execute(params: Nothing?): Result<Unit> {
+        if (networkState.isNetworkAvailable().not()) {
+            return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
         }
+        val idToken = preferencesRepository.getIdToken().firstOrNull()
+        return repository.deleteUser(DeleteAccountBody(idToken))
     }
 }

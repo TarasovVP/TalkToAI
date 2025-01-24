@@ -4,6 +4,7 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.auth.AuthService
 import com.vnteam.talktoai.data.network.auth.request.AuthBody
 import com.vnteam.talktoai.data.network.auth.request.ChangePasswordBody
+import com.vnteam.talktoai.data.network.auth.request.DeleteAccountBody
 import com.vnteam.talktoai.data.network.auth.request.ResetPasswordBody
 import com.vnteam.talktoai.data.network.auth.response.ChangePasswordResponse
 import com.vnteam.talktoai.data.network.auth.response.ResetPasswordResponse
@@ -53,6 +54,12 @@ class AuthRepositoryImpl(private val authService: AuthService) :
         return changePasswordResponse
     }
 
+    override suspend fun deleteUser(deleteAccountBody: DeleteAccountBody): Result<Unit> {
+        val httpResponse = authService.deleteAccount(deleteAccountBody)
+        val deleteAccountResponse = httpResponse.handleResponse<Unit>()
+        println("authTAG deleteUser deleteAccountResponse: $deleteAccountResponse")
+        return deleteAccountResponse
+    }
 
 
 
@@ -102,15 +109,6 @@ class AuthRepositoryImpl(private val authService: AuthService) :
         /*firebaseAuth.currentUser?.reauthenticate(authCredential)
             ?.addOnSuccessListener {
                 result.invoke(Result.Success())
-            }?.addOnFailureListener { exception ->
-                result.invoke(Result.Failure(exception.localizedMessage))
-            }*/
-    }
-
-    override fun deleteUser(): Flow<Unit> = callbackFlow {
-        /*firebaseAuth.currentUser?.delete()
-            ?.addOnSuccessListener {
-                signOut(result)
             }?.addOnFailureListener { exception ->
                 result.invoke(Result.Failure(exception.localizedMessage))
             }*/

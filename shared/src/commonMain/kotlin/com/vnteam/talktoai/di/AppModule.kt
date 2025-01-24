@@ -182,7 +182,7 @@ val appModule = module {
 
     single { CreateUserWithGoogleUseCase(get()) }
 
-    single { DeleteUserUseCase(get()) }
+    single { DeleteUserUseCase(get(), get(), get()) }
 
     single { FetchSignInMethodsForEmailUseCase(get()) }
 

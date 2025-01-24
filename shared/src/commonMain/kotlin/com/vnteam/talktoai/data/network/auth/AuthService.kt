@@ -2,6 +2,7 @@ package com.vnteam.talktoai.data.network.auth
 
 import com.vnteam.talktoai.data.network.auth.request.AuthBody
 import com.vnteam.talktoai.data.network.auth.request.ChangePasswordBody
+import com.vnteam.talktoai.data.network.auth.request.DeleteAccountBody
 import com.vnteam.talktoai.data.network.auth.request.ResetPasswordBody
 import com.vnteam.talktoai.secrets.Config.AUTH_API_KEY
 import com.vnteam.talktoai.secrets.Config.AUTH_BASE_URL
@@ -77,11 +78,11 @@ class AuthService(
         return httpResponse
     }
 
-    suspend fun deleteAccount(changePasswordBody: ChangePasswordBody): HttpResponse? {
+    suspend fun deleteAccount(deleteAccountBody: DeleteAccountBody): HttpResponse? {
         val httpResponse = try {
             httpClient
                 .post("${AUTH_BASE_URL}accounts:delete?key=${AUTH_API_KEY}") {
-                    setBody(changePasswordBody)
+                    setBody(deleteAccountBody)
                 }
         } catch (e: Exception) {
             e.printStackTrace()

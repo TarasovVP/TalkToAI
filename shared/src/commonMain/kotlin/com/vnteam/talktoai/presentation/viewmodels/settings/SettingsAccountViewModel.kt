@@ -66,7 +66,7 @@ class SettingsAccountViewModel(
     }
 
     fun deleteUser() {
-        launchWithNetworkCheck(networkState) {
+        launchWithResult {
             deleteUserUseCase.execute().onSuccess {
                 successLiveData.value = true
             }

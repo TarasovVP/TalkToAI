@@ -3,6 +3,7 @@ package com.vnteam.talktoai.domain.repositories
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.auth.request.AuthBody
 import com.vnteam.talktoai.data.network.auth.request.ChangePasswordBody
+import com.vnteam.talktoai.data.network.auth.request.DeleteAccountBody
 import com.vnteam.talktoai.data.network.auth.request.ResetPasswordBody
 import com.vnteam.talktoai.data.network.auth.response.ChangePasswordResponse
 import com.vnteam.talktoai.data.network.auth.response.ResetPasswordResponse
@@ -23,6 +24,8 @@ interface AuthRepository {
 
     suspend fun changePassword(changePasswordBody: ChangePasswordBody): Result<ChangePasswordResponse>
 
+    suspend fun deleteUser(deleteAccountBody: DeleteAccountBody): Result<Unit>
+
 
 
 
@@ -34,13 +37,7 @@ interface AuthRepository {
 
     fun signInWithGoogle(idToken: String): Flow<String>
 
-
-
-
-
     fun reAuthenticate(): Flow<Unit>
-
-    fun deleteUser(): Flow<Unit>
 
     fun signOut(): Flow<Unit>
 
