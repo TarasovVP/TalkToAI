@@ -7,7 +7,7 @@ import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.SettingsSignUpUIState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchSignInMethodsForEmailUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatsUseCase
@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsSignUpViewModel(
     private val networkState: NetworkState,
-    private val fetchSignInMethodsForEmailUseCase: FetchSignInMethodsForEmailUseCase,
+    private val fetchProvidersForEmailUseCase: FetchProvidersForEmailUseCase,
     private val createUserWithGoogleUseCase: CreateUserWithGoogleUseCase,
     private val createUserWithEmailAndPasswordUseCase: CreateUserWithEmailAndPasswordUseCase,
     private val signInWithEmailAndPasswordUseCase: SignInWithEmailAndPasswordUseCase,
@@ -36,8 +36,8 @@ class SettingsSignUpViewModel(
     val uiState = _uiState.asStateFlow()
 
     fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
-        launchWithNetworkCheck(networkState) {
-            fetchSignInMethodsForEmailUseCase.execute(email).onSuccess { result ->
+        launchWithResult {
+            fetchProvidersForEmailUseCase.execute(email).onSuccess { result ->
                 when {
                     result.isNullOrEmpty().not() -> updateUIState(SettingsSignUpUIState(accountExist = idToken.orEmpty()))
                     idToken.isNullOrEmpty() -> updateUIState(SettingsSignUpUIState(createEmailAccount = true))

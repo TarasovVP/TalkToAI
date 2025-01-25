@@ -149,7 +149,7 @@ fun SignUpContent(
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
             )
-            //viewModel.fetchSignInMethodsForEmail(emailInputValue.value.text.trim())
+            viewModel.fetchProvidersForEmailUseCase(emailInputValue.value.text.trim())
         }
     }
 }

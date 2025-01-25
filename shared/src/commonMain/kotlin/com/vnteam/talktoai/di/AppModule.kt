@@ -33,7 +33,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Cl
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.DeleteUserUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchSignInMethodsForEmailUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ReAuthenticateUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ResetPasswordUseCase
@@ -184,7 +184,7 @@ val appModule = module {
 
     single { DeleteUserUseCase(get(), get(), get()) }
 
-    single { FetchSignInMethodsForEmailUseCase(get()) }
+    single { FetchProvidersForEmailUseCase(get(), get()) }
 
     single { GoogleUseCase(get()) }
 

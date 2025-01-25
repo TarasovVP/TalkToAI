@@ -4,8 +4,10 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.auth.request.AuthBody
 import com.vnteam.talktoai.data.network.auth.request.ChangePasswordBody
 import com.vnteam.talktoai.data.network.auth.request.DeleteAccountBody
+import com.vnteam.talktoai.data.network.auth.request.ProvidersForEmailBody
 import com.vnteam.talktoai.data.network.auth.request.ResetPasswordBody
 import com.vnteam.talktoai.data.network.auth.response.ChangePasswordResponse
+import com.vnteam.talktoai.data.network.auth.response.ProvidersForEmailResponse
 import com.vnteam.talktoai.data.network.auth.response.ResetPasswordResponse
 import com.vnteam.talktoai.data.network.auth.response.SignInAnonymouslyResponse
 import com.vnteam.talktoai.data.network.auth.response.SignInEmailResponse
@@ -13,6 +15,8 @@ import com.vnteam.talktoai.data.network.auth.response.SignUpEmailResponse
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
+
+    suspend fun fetchProvidersForEmail(providersForEmailBody: ProvidersForEmailBody): Result<ProvidersForEmailResponse>
 
     suspend fun signInWithEmailAndPassword(authBody: AuthBody): Result<SignInEmailResponse>
 
@@ -32,8 +36,6 @@ interface AuthRepository {
     fun addAuthStateListener()
 
     fun removeAuthStateListener()
-
-    fun fetchSignInMethodsForEmail(email: String): Flow<List<String>>
 
     fun signInWithGoogle(idToken: String): Flow<String>
 

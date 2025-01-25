@@ -3,6 +3,7 @@ package com.vnteam.talktoai.data.network.auth
 import com.vnteam.talktoai.data.network.auth.request.AuthBody
 import com.vnteam.talktoai.data.network.auth.request.ChangePasswordBody
 import com.vnteam.talktoai.data.network.auth.request.DeleteAccountBody
+import com.vnteam.talktoai.data.network.auth.request.ProvidersForEmailBody
 import com.vnteam.talktoai.data.network.auth.request.ResetPasswordBody
 import com.vnteam.talktoai.secrets.Config.AUTH_API_KEY
 import com.vnteam.talktoai.secrets.Config.AUTH_BASE_URL
@@ -14,6 +15,19 @@ import io.ktor.client.statement.HttpResponse
 class AuthService(
     private val httpClient: HttpClient,
 ) {
+    suspend fun fetchProvidersForEmail(providersForEmailBody: ProvidersForEmailBody): HttpResponse? {
+        val httpResponse = try {
+            httpClient
+                .post("${AUTH_BASE_URL}accounts:createAuthUri?key=${AUTH_API_KEY}") {
+                    setBody(providersForEmailBody)
+                }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+        return httpResponse
+    }
+
     suspend fun signInWithEmailAndPassword(authBody: AuthBody): HttpResponse? {
         val httpResponse = try {
             httpClient

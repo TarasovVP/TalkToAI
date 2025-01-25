@@ -2,10 +2,11 @@ package com.vnteam.talktoai.presentation.viewmodels.authorisation
 
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.models.RemoteUser
+import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.SignUpUIState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchSignInMethodsForEmailUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
@@ -16,7 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class SignUpViewModel(
     private val networkState: NetworkState,
-    private val fetchSignInMethodsForEmailUseCase: FetchSignInMethodsForEmailUseCase,
+    private val fetchProvidersForEmailUseCase: FetchProvidersForEmailUseCase,
     private val createUserWithGoogleUseCase: CreateUserWithGoogleUseCase,
     private val createUserWithEmailAndPasswordUseCase: CreateUserWithEmailAndPasswordUseCase,
     private val insertRemoteUserUseCase: InsertRemoteUserUseCase,
@@ -26,9 +27,9 @@ class SignUpViewModel(
     private val _uiState = MutableStateFlow(SignUpUIState())
     val uiState: StateFlow<SignUpUIState> = _uiState.asStateFlow()
 
-    fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
-        launchWithNetworkCheck(networkState) {
-            fetchSignInMethodsForEmailUseCase.execute(email).onSuccess { result ->
+    fun fetchProvidersForEmailUseCase(idToken: String? = null) {
+        launchWithResult {
+            fetchProvidersForEmailUseCase.execute().onSuccess { result ->
                 when {
                     result.isNullOrEmpty().not() -> updateUIState(SignUpUIState(accountExist = true))
                     idToken.isNullOrEmpty() -> updateUIState(SignUpUIState(createEmailAccount = true))

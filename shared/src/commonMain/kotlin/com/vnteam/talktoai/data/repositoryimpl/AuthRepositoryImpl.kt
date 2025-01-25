@@ -5,8 +5,10 @@ import com.vnteam.talktoai.data.network.auth.AuthService
 import com.vnteam.talktoai.data.network.auth.request.AuthBody
 import com.vnteam.talktoai.data.network.auth.request.ChangePasswordBody
 import com.vnteam.talktoai.data.network.auth.request.DeleteAccountBody
+import com.vnteam.talktoai.data.network.auth.request.ProvidersForEmailBody
 import com.vnteam.talktoai.data.network.auth.request.ResetPasswordBody
 import com.vnteam.talktoai.data.network.auth.response.ChangePasswordResponse
+import com.vnteam.talktoai.data.network.auth.response.ProvidersForEmailResponse
 import com.vnteam.talktoai.data.network.auth.response.ResetPasswordResponse
 import com.vnteam.talktoai.data.network.auth.response.SignInAnonymouslyResponse
 import com.vnteam.talktoai.data.network.auth.response.SignInEmailResponse
@@ -18,6 +20,13 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class AuthRepositoryImpl(private val authService: AuthService) :
     AuthRepository {
+
+    override suspend fun fetchProvidersForEmail(providersForEmailBody: ProvidersForEmailBody): Result<ProvidersForEmailResponse> {
+        val httpResponse = authService.fetchProvidersForEmail(providersForEmailBody)
+        val providersForEmailResponse = httpResponse.handleResponse<ProvidersForEmailResponse>()
+        println("authTAG fetchProvidersForEmail providersForEmailResponse: $providersForEmailResponse")
+        return providersForEmailResponse
+    }
 
     override suspend fun signInWithEmailAndPassword(authBody: AuthBody): Result<SignInEmailResponse> {
         val httpResponse = authService.signInWithEmailAndPassword(authBody)
@@ -78,20 +87,6 @@ class AuthRepositoryImpl(private val authService: AuthService) :
         return false*/
         return false
     }
-
-    override fun fetchSignInMethodsForEmail(email: String): Flow<List<String>> =
-        callbackFlow {
-            /*firebaseAuth.fetchSignInMethodsForEmail(email)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        result.invoke(Result.Success(task.result?.signInMethods))
-                    }
-                }.addOnFailureListener { exception ->
-                    result.invoke(Result.Failure(exception.localizedMessage))
-                }*/
-        }
-
-
 
     override fun signInWithGoogle(idToken: String): Flow<String> = callbackFlow {
         /*val credential = GoogleAuthProvider.getCredential(idToken, null)
