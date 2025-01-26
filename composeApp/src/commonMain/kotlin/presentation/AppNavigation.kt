@@ -26,7 +26,7 @@ fun AppNavigation(
     navController: NavHostController,
     startDestination: String
 ) {
-    println("AppNavigationTAG: startDestination: $startDestination")
+    println("AppContentTAG AppNavigationTAG: startDestination: $startDestination")
     navController.checkCurrentDestUpdateWithStartDest(startDestination)
     NavHost(navController = navController, startDestination = startDestination) {
         composable(NavigationScreen.ONBOARDING_SCREEN) {

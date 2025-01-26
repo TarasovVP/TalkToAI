@@ -31,7 +31,6 @@ import androidx.compose.ui.window.Dialog
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Res
-import com.vnteam.talktoai.data.ANONYMOUS_USER
 import com.vnteam.talktoai.data.GOOGLE_USER
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.ic_avatar_anonymous
@@ -77,14 +76,13 @@ fun SettingsAccountScreen() {
             viewModel.currentUserEmail()
         } else {
             authState.value = when {
-                userEmail.isNullOrEmpty() -> AuthState.UNAUTHORISED
-                userEmail == ANONYMOUS_USER -> AuthState.AUTHORISED_ANONYMOUSLY
+                userEmail.isNullOrEmpty() -> AuthState.AUTHORISED_ANONYMOUSLY
                 userEmail?.contains(GOOGLE_USER).isTrue() -> AuthState.AUTHORISED_GOOGLE
                 else -> AuthState.AUTHORISED_EMAIL
             }
         }
     }
-
+    println("SettingsAccountTAG: userEmail: $userEmail authState: ${authState.value}")
     val reAuthenticateState = viewModel.reAuthenticateLiveData.collectAsState()
     LaunchedEffect(reAuthenticateState.value) {
         if (reAuthenticateState.value) {

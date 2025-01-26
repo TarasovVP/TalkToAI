@@ -29,7 +29,7 @@ fun AppContent(appViewModel: AppViewModel) {
 
     val screenState = LocalScreenState.current
 
-    println("AppContentTAG: screenState.value: ${screenState.value}")
+    println("AppContentTAG: AppContent screenState.value: ${screenState.value}")
 
     LaunchedEffect(screenState.value.currentScreenRoute) {
         screenState.value.currentScreenRoute?.let {
