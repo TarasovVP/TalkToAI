@@ -7,7 +7,7 @@ import com.vnteam.talktoai.presentation.uistates.SignUpUIState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleSignInUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.NetworkState
@@ -21,7 +21,7 @@ class SignUpViewModel(
     private val createUserWithGoogleUseCase: CreateUserWithGoogleUseCase,
     private val createUserWithEmailAndPasswordUseCase: CreateUserWithEmailAndPasswordUseCase,
     private val insertRemoteUserUseCase: InsertRemoteUserUseCase,
-    private val googleUseCase: GoogleUseCase
+    private val googleUseCase: GoogleSignInUseCase
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUIState())
@@ -40,10 +40,8 @@ class SignUpViewModel(
     }
 
     fun createUserWithGoogle(idToken: String) {
-        launchWithNetworkCheck(networkState) {
-            createUserWithGoogleUseCase.execute(idToken).onSuccess {
-                updateUIState(SignUpUIState(successSignUp = true))
-            }
+        launchWithResult {
+            googleUseCase.execute(idToken)
         }
     }
 
@@ -68,10 +66,13 @@ class SignUpViewModel(
     }
 
     fun googleSignOut() {
-        googleUseCase.googleSignOut()
+        //googleUseCase.googleSignOut()
     }
 
     fun googleSignIn() {
-        googleUseCase.googleSignIn()
+        val someString = "someString"
+        launchWithResult {
+            googleUseCase.execute(someString)
+        }
     }
 }

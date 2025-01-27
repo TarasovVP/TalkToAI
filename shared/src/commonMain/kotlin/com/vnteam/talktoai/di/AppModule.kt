@@ -34,7 +34,8 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Cr
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.DeleteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleSignInUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleSignOutUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ReAuthenticateUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ResetPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
@@ -139,7 +140,7 @@ val appModule = module {
 
     // Repositories
 
-    single<AuthRepository> { AuthRepositoryImpl(get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
 
     single<RealDataBaseRepository> { RealDataBaseRepositoryImpl() }
 
@@ -186,7 +187,9 @@ val appModule = module {
 
     single { FetchProvidersForEmailUseCase(get(), get()) }
 
-    single { GoogleUseCase(get()) }
+    single { GoogleSignInUseCase(get(), get()) }
+
+    single { GoogleSignOutUseCase(get(), get()) }
 
     single { ReAuthenticateUseCase(get()) }
 

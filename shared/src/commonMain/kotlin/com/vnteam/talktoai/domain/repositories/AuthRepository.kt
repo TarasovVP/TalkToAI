@@ -30,6 +30,9 @@ interface AuthRepository {
 
     suspend fun deleteUser(deleteAccountBody: DeleteAccountBody): Result<Unit>
 
+    suspend fun googleSignIn(idToken: String): Result<Unit>
+
+    suspend fun googleSignOut(): Result<Unit>
 
 
 
@@ -37,15 +40,7 @@ interface AuthRepository {
 
     fun removeAuthStateListener()
 
-    fun signInWithGoogle(idToken: String): Flow<String>
-
     fun reAuthenticate(): Flow<Unit>
 
-    fun signOut(): Flow<Unit>
-
     fun isGoogleAuthUser(): Boolean
-
-    fun googleSignOut()
-
-    fun googleSignIn()
 }

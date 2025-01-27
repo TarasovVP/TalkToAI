@@ -8,7 +8,7 @@ import com.vnteam.talktoai.presentation.uistates.SettingsSignUpUIState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleSignInUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMessagesUseCase
@@ -29,7 +29,7 @@ class SettingsSignUpViewModel(
     private val getMessagesUseCase: GetMessagesUseCase,
     private val insertRemoteUserUseCase: InsertRemoteUserUseCase,
     private val updateRemoteUserUseCase: UpdateRemoteUserUseCase,
-    private val googleUseCase: GoogleUseCase
+    private val googleUseCase: GoogleSignInUseCase
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsSignUpUIState())
@@ -48,10 +48,8 @@ class SettingsSignUpViewModel(
     }
 
     fun createUserWithGoogle(idToken: String, isExistUser: Boolean) {
-        launchWithNetworkCheck(networkState) {
-            createUserWithGoogleUseCase.execute(idToken).onSuccess {
-                updateUIState(SettingsSignUpUIState(successAuthorisation = isExistUser))
-            }
+        launchWithResult {
+            googleUseCase.execute(idToken)
         }
     }
 
@@ -69,6 +67,13 @@ class SettingsSignUpViewModel(
                 updateUIState(SettingsSignUpUIState(successAuthorisation = true))
             }
 
+        }
+    }
+
+    fun googleSign() {
+        val someString = "someString"
+        launchWithResult {
+            googleUseCase.execute(someString)
         }
     }
 
@@ -99,10 +104,6 @@ class SettingsSignUpViewModel(
                 updateUIState(SettingsSignUpUIState(successRemoteUser = true))
             }
         }
-    }
-
-    fun googleSign() {
-        googleUseCase.googleSignIn()
     }
 
     private fun updateUIState(newUIState: SettingsSignUpUIState) {

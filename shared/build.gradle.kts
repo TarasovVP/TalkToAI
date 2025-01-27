@@ -62,6 +62,8 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
             // Lottie
             implementation(libs.lottie.compose)
+            // Google Auth
+            implementation(libs.play.services.auth)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

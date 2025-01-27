@@ -14,11 +14,15 @@ import com.vnteam.talktoai.data.network.auth.response.SignInAnonymouslyResponse
 import com.vnteam.talktoai.data.network.auth.response.SignInEmailResponse
 import com.vnteam.talktoai.data.network.auth.response.SignUpEmailResponse
 import com.vnteam.talktoai.data.network.handleResponse
+import com.vnteam.talktoai.data.sdk.GoogleAuthHandler
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class AuthRepositoryImpl(private val authService: AuthService) :
+class AuthRepositoryImpl(
+    private val authService: AuthService,
+    private val googleAuthHandler: GoogleAuthHandler
+) :
     AuthRepository {
 
     override suspend fun fetchProvidersForEmail(providersForEmailBody: ProvidersForEmailBody): Result<ProvidersForEmailResponse> {
@@ -70,6 +74,15 @@ class AuthRepositoryImpl(private val authService: AuthService) :
         return deleteAccountResponse
     }
 
+    override suspend fun googleSignIn(idToken: String): Result<Unit> {
+        googleAuthHandler.signIn()
+        return Result.Success(Unit)
+    }
+
+    override suspend fun googleSignOut(): Result<Unit> {
+        googleAuthHandler.signOut()
+        return Result.Success(Unit)
+    }
 
 
     override fun addAuthStateListener(/*authStateListener: AuthStateListener*/) {
@@ -88,17 +101,6 @@ class AuthRepositoryImpl(private val authService: AuthService) :
         return false
     }
 
-    override fun signInWithGoogle(idToken: String): Flow<String> = callbackFlow {
-        /*val credential = GoogleAuthProvider.getCredential(idToken, null)
-        firebaseAuth.signInWithCredential(credential)
-            .addOnSuccessListener {
-                result.invoke(Result.Success())
-            }.addOnFailureListener { exception ->
-                result.invoke(Result.Failure(exception.localizedMessage))
-            }*/
-    }
-
-
 
     override fun reAuthenticate(/*authCredential: AuthCredential*/): Flow<Unit> = callbackFlow {
         /*firebaseAuth.currentUser?.reauthenticate(authCredential)
@@ -107,22 +109,5 @@ class AuthRepositoryImpl(private val authService: AuthService) :
             }?.addOnFailureListener { exception ->
                 result.invoke(Result.Failure(exception.localizedMessage))
             }*/
-    }
-
-    override fun signOut(): Flow<Unit> = callbackFlow {
-        /*googleSignInClient.signOut().addOnSuccessListener {
-            firebaseAuth.signOut()
-            result.invoke(Result.Success())
-        }.addOnFailureListener { exception ->
-            result.invoke(Result.Failure(exception.localizedMessage))
-        }*/
-    }
-
-    override fun googleSignOut() {
-        // TODO implement
-    }
-
-    override fun googleSignIn() {
-        // TODO implement
     }
 }
