@@ -154,6 +154,7 @@ tasks.register("generateConfig") {
                 val AUTH_BASE_URL = "${properties.getProperty("AUTH_BASE_URL", "")}"
                 val AUTH_API_KEY = "${properties.getProperty("AUTH_API_KEY", "")}"
                 val AI_BASE_URL = "${properties.getProperty("AI_BASE_URL", "")}"
+                val ANDROID_CLIENT_ID = "${properties.getProperty("ANDROID_CLIENT_ID", "")}"
                 val AI_API_KEY = "${properties.getProperty("AI_API_KEY", "")}"
                 val ORGANIZATION_ID = "${properties.getProperty("ORGANIZATION_ID", "")}"
                 val PROJECT_ID = "${properties.getProperty("PROJECT_ID", "")}"
