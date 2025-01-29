@@ -82,6 +82,8 @@ kotlin {
             implementation(compose.material3)
             implementation(libs.androidx.activity.compose)
             implementation(libs.material.ripple)
+            // Google Auth
+            implementation(libs.play.services.auth)
         }
         desktopMain.dependencies {
             implementation(libs.koin.core)

@@ -20,7 +20,7 @@ val androidModule = module {
         NetworkState(androidContext())
     }
     single {
-        GoogleAuthHandler(androidContext())
+        GoogleAuthHandler()
     }
     single {
         AnimationUtils()
