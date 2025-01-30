@@ -14,18 +14,7 @@ import com.vnteam.talktoai.secrets.Config
 actual class GoogleAuthHandler {
 
     private lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
-
-    private var activityProvider: () -> ComponentActivity = {
-        throw IllegalArgumentException(
-            "You need to implement the 'activityProvider' to provide the required Activity. " +
-                    "Just make sure to set a valid activity using " +
-                    "the 'setActivityProvider()' method."
-        )
-    }
-
-    fun setActivityProvider(provider: () -> ComponentActivity) {
-        activityProvider = provider
-    }
+    private var activity: Activity? = null
 
     private val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestEmail()
@@ -33,14 +22,35 @@ actual class GoogleAuthHandler {
         .build()
 
     private val googleSignInClient by lazy {
-        GoogleSignIn.getClient(activityProvider.invoke(), gso)
+        activity?.let { GoogleSignIn.getClient(it, gso) }
     }
 
     actual fun signIn() {
-        val activity = activityProvider.invoke()
+        println("googleTAG GoogleAuthHandler googleSignInClient.signInIntent: ${googleSignInClient?.signInIntent}")
+        googleSignInClient?.signOut()?.addOnCompleteListener {
+            googleSignInClient?.signInIntent?.let { googleSignInLauncher.launch(it) }
+        }
+    }
+
+    actual fun signOut() {
+        googleSignInClient?.signOut()
+    }
+
+    actual fun getToken(): String? {
+        val account = activity?.let { GoogleSignIn.getLastSignedInAccount(it) }
+        return account?.idToken
+    }
+
+    fun setActivity(activity: ComponentActivity) {
+        println("googleTAG MainActivity onCreate lifecycle: ${activity.lifecycle.currentState}")
         googleSignInLauncher = activity.registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
+            val extras = result.data?.extras
+            if (extras != null) {
+                val extrasMap = extras.keySet().associateWith { extras.get(it) }
+                println("googleTAG GoogleAuthHandler extras: $extrasMap")
+            }
             if (result.resultCode == Activity.RESULT_OK) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 try {
@@ -52,19 +62,6 @@ actual class GoogleAuthHandler {
                 }
             }
         }
-        googleSignInLauncher.launch(googleSignInClient.signInIntent)
-    }
-
-    actual fun signOut() {
-        googleSignInClient.signOut()
-    }
-
-    actual fun getToken(): String? {
-        val account = GoogleSignIn.getLastSignedInAccount(activityProvider.invoke())
-        return account?.idToken
-    }
-
-    private companion object {
-        const val RC_SIGN_IN = 9001
+        this.activity = activity
     }
 }
