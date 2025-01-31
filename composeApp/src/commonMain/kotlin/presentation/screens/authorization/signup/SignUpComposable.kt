@@ -27,7 +27,9 @@ import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
+import com.vnteam.talktoai.presentation.ui.components.GoogleButton
 import com.vnteam.talktoai.presentation.ui.components.LinkButton
+import com.vnteam.talktoai.presentation.ui.components.OrDivider
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
@@ -108,8 +110,7 @@ fun SignUpContent(
                 .fillMaxWidth()
                 .padding(16.dp), textAlign = TextAlign.Center
         )
-        // TODO uncomment when google sign in is implemented
-        /*Text(
+        Text(
             text = LocalStringResources.current.AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
@@ -122,7 +123,7 @@ fun SignUpContent(
         ) {
             viewModel.googleSignIn()
         }
-        OrDivider(modifier = Modifier)*/
+        OrDivider(modifier = Modifier)
         PrimaryTextField(
             LocalStringResources.current.AUTHORIZATION_EMAIL, emailInputValue
         )

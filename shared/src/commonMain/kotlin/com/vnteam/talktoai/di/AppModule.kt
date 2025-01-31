@@ -245,7 +245,7 @@ val appModule = module {
         OnBoardingViewModel(get())
     }
     viewModel {
-        LoginViewModel(get(), get(), get(), get())
+        LoginViewModel(get(), get(), get(), get(), get())
     }
     viewModel {
         SignUpViewModel(get(), get(), get(), get(), get(), get())

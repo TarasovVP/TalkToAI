@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -124,6 +125,18 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        val localProperties = file(rootProject.file("local.properties"))
+        val properties = Properties().apply {
+            load(localProperties.inputStream())
+        }
+        create("release") {
+            storeFile = file(project.rootProject.file(properties.getProperty("STORE_FILE", "")))
+            storePassword = properties.getProperty("STORE_PASSWORD", "")
+            keyAlias = properties.getProperty("KEY_ALIAS", "")
+            keyPassword = properties.getProperty("KEY_PASSWORD", "")
+        }
+    }
 
     buildTypes {
         getByName("release") {
@@ -132,6 +145,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

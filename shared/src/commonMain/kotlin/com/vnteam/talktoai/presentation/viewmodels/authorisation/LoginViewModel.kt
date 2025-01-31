@@ -3,6 +3,7 @@ package com.vnteam.talktoai.presentation.viewmodels.authorisation
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.LoginUIState
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleSignInUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ResetPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
@@ -16,6 +17,7 @@ class LoginViewModel(
     private val signInAnonymouslyUseCase: SignInAnonymouslyUseCase,
     private val resetPasswordUseCase: ResetPasswordUseCase,
     private val userEmailUseCase: UserEmailUseCase,
+    private val googleUseCase: GoogleSignInUseCase
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUIState())
@@ -41,7 +43,12 @@ class LoginViewModel(
         }
     }
 
-
+    fun googleSignIn() {
+        val someString = "someString"
+        launchWithResult {
+            googleUseCase.execute(someString)
+        }
+    }
 
 
     /*fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
