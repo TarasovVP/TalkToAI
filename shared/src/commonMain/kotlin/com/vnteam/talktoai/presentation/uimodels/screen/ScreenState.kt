@@ -33,7 +33,7 @@ data class ScreenState(
         get() = currentScreenRoute == NavigationScreen.SettingsSignUpScreen.route
 
     val isLoggedInUser: Boolean
-        get() = idToken.isNotNull()
+        get() = idToken.isNullOrEmpty().not()
 
     val startDestination: String
         get() = when {

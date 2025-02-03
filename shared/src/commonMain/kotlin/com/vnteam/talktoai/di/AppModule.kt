@@ -201,7 +201,7 @@ val appModule = module {
 
     single { SignInWithGoogleUseCase(get()) }
 
-    single { SignOutUseCase(get()) }
+    single { SignOutUseCase(get(), get()) }
 
     // chats
     single { DeleteChatUseCase(get(), get(), get(), get(), get()) }
