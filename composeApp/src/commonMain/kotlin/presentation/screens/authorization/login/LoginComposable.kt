@@ -196,7 +196,10 @@ fun LoginContent(
             emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
             modifier = Modifier
         ) {
-            viewModel.signInWithEmailAndPassword(emailInputValue.value.text.trim(), passwordInputValue.value.text)
+            viewModel.signInWithEmailAndPassword(
+                emailInputValue.value.text.trim(),
+                passwordInputValue.value.text
+            )
         }
         OrDivider()
         SecondaryButton(

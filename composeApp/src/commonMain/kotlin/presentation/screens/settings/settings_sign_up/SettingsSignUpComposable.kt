@@ -94,9 +94,9 @@ fun SettingsSignUpScreen() {
         /*viewModel.accountExistLiveData.value.takeIf { it.isNotEmpty() }?.let { idToken ->
             viewModel.createUserWithGoogle(idToken, true)
         } ?:*/ viewModel.signInWithEmailAndPassword(
-            emailInputValue.value.text,
-            passwordInputValue.value.text
-        )
+        emailInputValue.value.text,
+        passwordInputValue.value.text
+    )
         showAccountExistDialog.value = false
     }
 }

@@ -36,7 +36,12 @@ fun SettingsFeedbackContent() {
 
     val successFeedbackState = viewModel.successFeedback.collectAsState()
     if (successFeedbackState.value) {
-        updateScreenState(appMessage = AppMessage(false, LocalStringResources.current.SETTINGS_FEEDBACK_SEND_SUCCESS))
+        updateScreenState(
+            appMessage = AppMessage(
+                false,
+                LocalStringResources.current.SETTINGS_FEEDBACK_SEND_SUCCESS
+            )
+        )
         //viewModel.successFeedback.value = false
     }
 

@@ -125,7 +125,8 @@ fun SettingsItem(
                 modifier = Modifier.weight(1f).padding(vertical = 8.dp)
             )
             secondaryIcon?.let { icon ->
-                Image(painter = painterResource(icon),
+                Image(
+                    painter = painterResource(icon),
                     contentDescription = name,
                     modifier = Modifier.padding(8.dp)
                 )

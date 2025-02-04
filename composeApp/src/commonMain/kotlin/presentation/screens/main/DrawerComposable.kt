@@ -38,7 +38,7 @@ fun DrawerContent(screenState: ScreenState, onScreenStateUpdate: (ScreenState) -
                 currentScreenRoute = if (settingsDrawerModeState) {
                     NavigationScreen.SettingsChatScreen.route
                 } else {
-                   "${NavigationScreen.CHAT_DESTINATION}/${
+                    "${NavigationScreen.CHAT_DESTINATION}/${
                         screenState.currentChat?.id ?: Constants.DEFAULT_CHAT_ID
                     }"
                 }
@@ -55,7 +55,10 @@ fun DrawerContent(screenState: ScreenState, onScreenStateUpdate: (ScreenState) -
                 onScreenStateUpdate(
                     screenState.copy(
                         currentChat = chat,
-                        currentScreenRoute = NavigationScreen.ChatScreen.route.replace("/{chatId}", "/${chat?.id}")
+                        currentScreenRoute = NavigationScreen.ChatScreen.route.replace(
+                            "/{chatId}",
+                            "/${chat?.id}"
+                        )
                     )
                 )
             }
