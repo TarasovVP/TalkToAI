@@ -35,7 +35,6 @@ interface AuthRepository {
     suspend fun googleSignOut(): Result<Unit>
 
 
-
     fun addAuthStateListener()
 
     fun removeAuthStateListener()

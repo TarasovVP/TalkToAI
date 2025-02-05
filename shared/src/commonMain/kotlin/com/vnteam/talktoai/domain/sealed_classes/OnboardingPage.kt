@@ -35,6 +35,7 @@ sealed class OnboardingPage(
                 else -> getStringResources.ONBOARDING_INTRO
             }
         }
+
         fun getOnboardingPage(page: Int): OnboardingPage {
             return when (page) {
                 1 -> OnboardingPageFilterConditions

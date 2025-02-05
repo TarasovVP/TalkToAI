@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
-class ReviewUseCase(private val preferencesRepository: PreferencesRepository):
+class ReviewUseCase(private val preferencesRepository: PreferencesRepository) :
     DataUseCase<Boolean, Flow<Result<Boolean?>>> {
 
     override fun get(): Flow<Result<Boolean?>> {

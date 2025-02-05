@@ -3,12 +3,14 @@ package com.vnteam.talktoai.data.sdk
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class GoogleAuthHandler {
     init {
-        js("""
+        js(
+            """
             google.accounts.id.initialize({
                 client_id: 'YOUR_CLIENT_ID',
                 callback: handleCredentialResponse
             });
-        """)
+        """
+        )
     }
 
     actual fun signIn() {

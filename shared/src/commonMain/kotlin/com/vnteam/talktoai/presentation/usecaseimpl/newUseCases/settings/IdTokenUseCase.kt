@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
-class IdTokenUseCase(private val preferencesRepository: PreferencesRepository):
+class IdTokenUseCase(private val preferencesRepository: PreferencesRepository) :
     DataUseCase<String, Flow<Result<String?>>> {
 
     override fun get(): Flow<Result<String?>> {

@@ -18,7 +18,8 @@ class SignInWithEmailAndPasswordUseCase(
         if (networkState.isNetworkAvailable().not()) {
             return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
         }
-        return when (val result = repository.signInWithEmailAndPassword(AuthBody(params.first, params.second))) {
+        return when (val result =
+            repository.signInWithEmailAndPassword(AuthBody(params.first, params.second))) {
             is Result.Failure -> result
             is Result.Loading -> result
             is Result.Success -> {

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
-class GetMessagesUseCase(private val messageRepository: MessageRepository):
+class GetMessagesUseCase(private val messageRepository: MessageRepository) :
     UseCase<Nothing?, Flow<Result<List<Message>>>> {
 
     override suspend fun execute(params: Nothing?): Flow<Result<List<Message>>> {

@@ -1,9 +1,9 @@
 package com.vnteam.talktoai.presentation.viewmodels.chats
 
 import com.vnteam.talktoai.Res
+import com.vnteam.talktoai.data.network.ai.request.ApiRequest
 import com.vnteam.talktoai.data.network.onError
 import com.vnteam.talktoai.data.network.onSuccess
-import com.vnteam.talktoai.data.network.ai.request.ApiRequest
 import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.mappers.ChatUIMapper
 import com.vnteam.talktoai.domain.mappers.MessageUIMapper

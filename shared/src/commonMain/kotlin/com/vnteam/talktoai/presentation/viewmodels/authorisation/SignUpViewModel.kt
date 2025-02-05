@@ -31,7 +31,9 @@ class SignUpViewModel(
         launchWithResult {
             fetchProvidersForEmailUseCase.execute().onSuccess { result ->
                 when {
-                    result.isNullOrEmpty().not() -> updateUIState(SignUpUIState(accountExist = true))
+                    result.isNullOrEmpty()
+                        .not() -> updateUIState(SignUpUIState(accountExist = true))
+
                     idToken.isNullOrEmpty() -> updateUIState(SignUpUIState(createEmailAccount = true))
                     else -> updateUIState(SignUpUIState(createGoogleAccount = idToken))
                 }

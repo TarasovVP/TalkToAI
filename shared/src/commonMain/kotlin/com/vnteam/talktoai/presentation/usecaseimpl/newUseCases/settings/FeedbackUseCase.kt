@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
-class FeedbackUseCase(private val realDataBaseRepository: RealDataBaseRepository):
+class FeedbackUseCase(private val realDataBaseRepository: RealDataBaseRepository) :
     DataUseCase<Feedback, Flow<Result<List<Feedback>>>> {
 
     override fun get(): Flow<Result<List<Feedback>>> {

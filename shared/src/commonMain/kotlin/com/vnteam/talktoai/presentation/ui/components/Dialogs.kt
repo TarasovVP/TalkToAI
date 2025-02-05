@@ -118,7 +118,8 @@ fun CreateChatDialog(
         remember {
             mutableStateOf(TextFieldValue(currentChatName))
         },
-        showDialog) { newChatName ->
+        showDialog
+    ) { newChatName ->
         showDialog.value = false
         onConfirmationClick.invoke(newChatName)
     }

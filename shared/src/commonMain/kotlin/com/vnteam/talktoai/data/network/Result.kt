@@ -39,7 +39,7 @@ suspend fun <T> Flow<Result<T>>.getDataOrNull(): T? {
 }
 
 fun <T> Result<T>.getDataOrNull(): T? {
-    return when(this) {
+    return when (this) {
         is Result.Success -> this.data
         else -> null
     }

@@ -17,7 +17,8 @@ class FetchProvidersForEmailUseCase(
         if (networkState.isNetworkAvailable().not()) {
             return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
         }
-        val providersForEmailResponse = repository.fetchProvidersForEmail(ProvidersForEmailBody(params)).getDataOrNull()
+        val providersForEmailResponse =
+            repository.fetchProvidersForEmail(ProvidersForEmailBody(params)).getDataOrNull()
         return Result.Success(providersForEmailResponse?.allProviders.orEmpty())
     }
 }

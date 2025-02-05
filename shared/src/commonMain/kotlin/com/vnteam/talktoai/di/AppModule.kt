@@ -272,7 +272,18 @@ val appModule = module {
         SettingsPrivacyPolicyViewModel(get(), get())
     }
     viewModel {
-        SettingsSignUpViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
+        SettingsSignUpViewModel(
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get()
+        )
     }
     viewModel {
         SettingsThemeViewModel(get())
