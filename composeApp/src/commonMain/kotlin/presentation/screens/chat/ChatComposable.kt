@@ -76,6 +76,7 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import com.vnteam.talktoai.presentation.ui.theme.Primary600
 import com.vnteam.talktoai.presentation.ui.theme.Primary900
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
+import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.viewmodels.chats.ChatViewModel
 import com.vnteam.talktoai.utils.screenWidth
 import dateToMilliseconds
@@ -83,6 +84,7 @@ import isDefineSecondsLater
 import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
+import presentation.LocalScreenState
 import textToAction
 
 @Composable
@@ -95,6 +97,8 @@ fun ChatContent(chatId: Long) {
     val messageActionState: MutableState<String> =
         rememberSaveable { mutableStateOf(MessageAction.Cancel().value) }
     val showMessageActionDialog: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
+
+    val screenState = LocalScreenState.current
 
     LaunchedEffect(Unit) {
         viewModel.getAnimationResource()
@@ -120,6 +124,7 @@ fun ChatContent(chatId: Long) {
     val messageSent = LocalStringResources.current.MESSAGE_ACTION_SEND
     val messageCopy = LocalStringResources.current.MESSAGE_ACTION_COPY
     val messageShare = LocalStringResources.current.MESSAGE_ACTION_SHARE
+
     LaunchedEffect(messageActionState.value) {
         when (messageActionState.value) {
             MessageAction.Delete().value -> {
@@ -134,7 +139,9 @@ fun ChatContent(chatId: Long) {
                     isMessageActionModeState,
                     showMessageActionDialog
                 )
-                //screenState.appMessageState?.value = InfoMessage(messageCopy)
+                screenState.value = screenState.value.copy(
+                    appMessage = AppMessage(message = messageCopy)
+                )
             }
 
             MessageAction.Share().value -> {
@@ -248,7 +255,9 @@ fun ChatContent(chatId: Long) {
                     isMessageActionModeState,
                     showMessageActionDialog
                 )
-                //screenState.value?.infoMessageState?.value = InfoMessage(messageDelete)
+                screenState.value = screenState.value.copy(
+                    appMessage = AppMessage(message = messageDelete)
+                )
             }
 
             MessageAction.Transfer().value -> {
@@ -259,7 +268,9 @@ fun ChatContent(chatId: Long) {
                     isMessageActionModeState,
                     showMessageActionDialog
                 )
-                //screenState.value?.infoMessageState?.value = InfoMessage(messageTransfer)
+                screenState.value = screenState.value.copy(
+                    appMessage = AppMessage(message = messageTransfer)
+                )
             }
 
             else -> {
