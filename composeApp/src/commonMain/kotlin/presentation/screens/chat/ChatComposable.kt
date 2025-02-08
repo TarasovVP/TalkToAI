@@ -71,6 +71,7 @@ import com.vnteam.talktoai.presentation.ui.resources.LocalLargePadding
 import com.vnteam.talktoai.presentation.ui.resources.LocalMediumAvatarSize
 import com.vnteam.talktoai.presentation.ui.resources.LocalSmallPadding
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.ui.resources.StringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import com.vnteam.talktoai.presentation.ui.theme.Primary600
@@ -99,6 +100,7 @@ fun ChatContent(chatId: Long) {
     val showMessageActionDialog: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
 
     val screenState = LocalScreenState.current
+    val stringRes = LocalStringResources.current
 
     LaunchedEffect(Unit) {
         viewModel.getAnimationResource()
@@ -122,7 +124,6 @@ fun ChatContent(chatId: Long) {
 
     val clipboardManager = LocalClipboardManager.current
     val messageSent = LocalStringResources.current.MESSAGE_ACTION_SEND
-    val messageCopy = LocalStringResources.current.MESSAGE_ACTION_COPY
     val messageShare = LocalStringResources.current.MESSAGE_ACTION_SHARE
 
     LaunchedEffect(messageActionState.value) {
@@ -140,7 +141,7 @@ fun ChatContent(chatId: Long) {
                     showMessageActionDialog
                 )
                 screenState.value = screenState.value.copy(
-                    appMessage = AppMessage(message = messageCopy)
+                    appMessage = AppMessage(message = stringRes.MESSAGE_ACTION_COPY)
                 )
             }
 
@@ -174,7 +175,8 @@ fun ChatContent(chatId: Long) {
                 MessagesList(
                     messages,
                     isMessageActionModeState,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    stringRes = stringRes
                 ) { message ->
                     viewModel.insertMessage(message)
                 }
@@ -190,7 +192,7 @@ fun ChatContent(chatId: Long) {
                 }
 
                 isMessageActionModeState.value.isTrue() -> {
-                    MessageActionField(messageActionState)
+                    MessageActionField(messageActionState, stringRes)
                 }
 
                 currentChatState.value.isNotNull() && currentChatState.value?.id != DEFAULT_CHAT_ID -> {
@@ -235,12 +237,10 @@ fun ChatContent(chatId: Long) {
         }
     }
 
-    val messageDelete = LocalStringResources.current.MESSAGE_ACTION_DELETE
-    val messageTransfer = LocalStringResources.current.MESSAGE_ACTION_TRANSFER
     ConfirmationDialog(
         title = when (messageActionState.value) {
-            MessageAction.Delete().value -> LocalStringResources.current.MESSAGE_DELETE_CONFIRMATION
-            MessageAction.Transfer().value -> LocalStringResources.current.MESSAGE_TRANSFER_CONFIRMATION
+            MessageAction.Delete().value -> stringRes.MESSAGE_DELETE_CONFIRMATION
+            MessageAction.Transfer().value -> stringRes.MESSAGE_TRANSFER_CONFIRMATION
             else -> String.EMPTY
         },
         showDialog = showMessageActionDialog
@@ -256,7 +256,7 @@ fun ChatContent(chatId: Long) {
                     showMessageActionDialog
                 )
                 screenState.value = screenState.value.copy(
-                    appMessage = AppMessage(message = messageDelete)
+                    appMessage = AppMessage(message = stringRes.MESSAGE_ACTION_DELETE)
                 )
             }
 
@@ -269,7 +269,7 @@ fun ChatContent(chatId: Long) {
                     showMessageActionDialog
                 )
                 screenState.value = screenState.value.copy(
-                    appMessage = AppMessage(message = messageTransfer)
+                    appMessage = AppMessage(message = stringRes.MESSAGE_ACTION_TRANSFER)
                 )
             }
 
@@ -316,11 +316,12 @@ fun MessagesList(
     messages: List<MessageUI>,
     isMessageActionModeState: MutableState<Boolean?>,
     modifier: Modifier = Modifier,
+    stringRes: StringResources,
     onMessageChange: (MessageUI) -> Unit = {},
 ) {
     if (messages.isEmpty()) {
         EmptyState(
-            text = LocalStringResources.current.MESSAGE_EMPTY_STATE,
+            text = stringRes.MESSAGE_EMPTY_STATE,
             modifier = Modifier.fillMaxSize().padding(45.dp)
         )
     } else {
@@ -342,6 +343,7 @@ fun MessagesList(
                             isUserAuthor = message.author == Constants.MESSAGE_ROLE_ME,
                             message = message,
                             isMessageDeleteModeState = isMessageActionModeState,
+                            stringRes = stringRes,
                             onMessageChange
                         )
                     }
@@ -356,6 +358,7 @@ fun Message(
     isUserAuthor: Boolean,
     message: MessageUI,
     isMessageDeleteModeState: MutableState<Boolean?>,
+    stringRes: StringResources,
     onMessageChange: (MessageUI) -> Unit = {},
 ) {
     val isTruncatedState = rememberSaveable { mutableStateOf(message.isTruncated) }
@@ -392,14 +395,14 @@ fun Message(
             if (isMessageDeleteModeState.value.isTrue()) {
                 Image(
                     painter = painterResource(if (message.isCheckedToDelete.value) Res.drawable.ic_checked_check_box else Res.drawable.ic_empty_check_box),
-                    contentDescription = LocalStringResources.current.MESSAGE_DELETE_CONFIRMATION,
+                    contentDescription = stringRes.MESSAGE_DELETE_CONFIRMATION,
                     modifier = Modifier
                         .padding(2.dp)
                 )
             } else if (isUserAuthor.not()) {
                 Image(
                     painter = painterResource(Res.drawable.avatar_ai),
-                    contentDescription = LocalStringResources.current.AI_AVATAR
+                    contentDescription = stringRes.AI_AVATAR
                 )
             }
         }
@@ -434,7 +437,7 @@ fun Message(
                         .isDefineSecondsLater(
                             20, message.updatedAt
                         ) -> Text(
-                        text = LocalStringResources.current.UNKNOWN_ERROR,
+                        text = stringRes.UNKNOWN_ERROR,
                         fontSize = 16.sp,
                         color = Color.Red,
                         modifier = Modifier.padding(8.dp).wrapContentSize()
@@ -476,30 +479,31 @@ fun CreateChatScreen(onClick: () -> Unit) {
 @Composable
 fun MessageActionField(
     messageActionState: MutableState<String>,
+    stringRes: StringResources
 ) {
     Row(
         Modifier.padding(16.dp).height(TextFieldDefaults.MinHeight)
     ) {
         TextButton(onClick = { messageActionState.value = MessageAction.Cancel().value }) {
-            Text(text = LocalStringResources.current.BUTTON_CANCEL, color = Neutral50)
+            Text(text = stringRes.BUTTON_CANCEL, color = Neutral50)
         }
         Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = { messageActionState.value = MessageAction.Copy().value }) {
             Image(
                 painter = painterResource(Res.drawable.ic_copy),
-                contentDescription = LocalStringResources.current.MESSAGE_COPY_BUTTON
+                contentDescription = stringRes.MESSAGE_COPY_BUTTON
             )
         }
         IconButton(onClick = { messageActionState.value = MessageAction.Delete().value }) {
             Image(
                 painter = painterResource(Res.drawable.ic_delete),
-                contentDescription = LocalStringResources.current.MESSAGE_DELETE_BUTTON
+                contentDescription = stringRes.MESSAGE_DELETE_BUTTON
             )
         }
         IconButton(onClick = { messageActionState.value = MessageAction.Share().value }) {
             Image(
                 painter = painterResource(Res.drawable.ic_share),
-                contentDescription = LocalStringResources.current.MESSAGE_SHARE_BUTTON
+                contentDescription = stringRes.MESSAGE_SHARE_BUTTON
             )
         }
     }
