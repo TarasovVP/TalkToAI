@@ -113,7 +113,6 @@ fun ChatListContent(
     Column(
         modifier = Modifier.fillMaxSize().background(Primary900), Arrangement.Top
     ) {
-        println("flowTAG ChatListContent Column chats: $chats")
         if (chats.isEmpty()) {
             Image(
                 painter = painterResource(Res.drawable.empty_state),
