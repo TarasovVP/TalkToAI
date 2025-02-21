@@ -7,7 +7,9 @@ import com.vnteam.talktoai.data.database.dao.MessageDao
 import com.vnteam.talktoai.data.database.dao.MessageDaoImpl
 import com.vnteam.talktoai.data.mapperimpls.ChatDBMapperImpl
 import com.vnteam.talktoai.data.mapperimpls.MessageDBMapperImpl
+import com.vnteam.talktoai.data.network.ai.AIHttpClient
 import com.vnteam.talktoai.data.network.ai.AIService
+import com.vnteam.talktoai.data.network.auth.AuthHttpClient
 import com.vnteam.talktoai.data.network.auth.AuthService
 import com.vnteam.talktoai.data.repositoryimpl.AIRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.AuthRepositoryImpl
@@ -77,14 +79,6 @@ import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsLanguageView
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsPrivacyPolicyViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsSignUpViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsThemeViewModel
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.DefaultRequest
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.request.header
-import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -100,27 +94,8 @@ val appModule = module {
             ignoreUnknownKeys = true
         }
     }
-    single {
-        HttpClient {
-            install(ContentNegotiation) {
-                json(get())
-            }
-            install(DefaultRequest) {
-                header("Content-Type", "application/json")
-                /*header("Authorization", "Bearer $Config.AI_API_KEY")
-                header("OpenAI-Organization", Config.ORGANIZATION_ID)
-                header("OpenAI-Project", Config.PROJECT_ID)*/
-            }
-            install(Logging) {
-                logger = object : Logger {
-                    override fun log(message: String) {
-                        println("Logger Ktor => $message")
-                    }
-                }
-                level = LogLevel.ALL
-            }
-        }
-    }
+    single { AIHttpClient(get()) }
+    single { AuthHttpClient(get()) }
 
     single {
         SharedDatabase(get())
