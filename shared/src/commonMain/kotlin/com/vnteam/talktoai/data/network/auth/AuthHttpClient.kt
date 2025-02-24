@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.data.network.auth
 
+import com.vnteam.talktoai.data.network.NetworkConstants
 import com.vnteam.talktoai.secrets.Config
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
@@ -18,10 +19,10 @@ class AuthHttpClient(json: Json) {
             json(json)
         }
         defaultRequest {
-            url.parameters.append("key", Config.AUTH_API_KEY)
+            url.parameters.append(NetworkConstants.KEY, Config.AUTH_API_KEY)
         }
         install(DefaultRequest) {
-            header("Content-Type", "application/json")
+            header(NetworkConstants.CONTENT_TYPE, "application/json")
         }
         install(Logging) {
             logger = object : Logger {

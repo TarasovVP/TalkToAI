@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.data.network.ai
 
+import com.vnteam.talktoai.data.network.NetworkConstants
 import com.vnteam.talktoai.secrets.Config
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
@@ -17,9 +18,9 @@ class AIHttpClient(json: Json) {
             json(json)
         }
         install(DefaultRequest) {
-            header("Authorization", "Bearer $Config.AI_API_KEY")
-            header("OpenAI-Organization", Config.ORGANIZATION_ID)
-            header("OpenAI-Project", Config.PROJECT_ID)
+            header(NetworkConstants.AUTHORIZATION, "Bearer $Config.AI_API_KEY")
+            header(NetworkConstants.OPENAI_ORGANIZATION, Config.ORGANIZATION_ID)
+            header(NetworkConstants.OPENAI_PROJECT, Config.PROJECT_ID)
         }
         install(Logging) {
             logger = object : Logger {
