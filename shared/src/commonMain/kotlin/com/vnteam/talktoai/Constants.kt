@@ -1,6 +1,8 @@
 package com.vnteam.talktoai
 
 object Constants {
+    const val APP_NAME = "Architecture Templates"
+
     const val APP_MESSAGE_DELAY = 2000L
     const val SERVER_TIMEOUT = 50L
 
