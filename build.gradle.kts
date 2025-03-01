@@ -1,10 +1,10 @@
 buildscript {
 
     dependencies {
-        classpath("com.google.gms:google-services:4.4.1")
-        classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.9")
-        classpath("org.jetbrains.kotlin:kotlin-serialization:1.8.0")
-        classpath("com.squareup.sqldelight:gradle-plugin:1.5.5")
+        classpath(libs.google.services)
+        classpath(libs.firebase.crashlytics.gradle)
+        classpath(libs.kotlin.serialization)
+        classpath(libs.gradle.plugin)
     }
 }
 
