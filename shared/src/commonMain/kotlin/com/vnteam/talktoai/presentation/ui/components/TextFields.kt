@@ -51,8 +51,7 @@ fun PrimaryTextField(
         onValueChange = { newValue ->
             inputValue.value = newValue
         }, placeholder = { Text(text = placeHolder) },
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = Color.White,
+        colors = TextFieldDefaults.colors(containerColor = Color.White,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
@@ -80,7 +79,7 @@ fun SecondaryTextField(
         value = inputValue.value,
         onValueChange = { inputValue.value = it },
         placeholder = { Text(text = placeHolder) },
-        colors = TextFieldDefaults.textFieldColors(containerColor = Color.White),
+        colors = TextFieldDefaults.colors(containerColor = Color.White),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
@@ -98,7 +97,7 @@ fun PasswordTextField(inputValue: MutableState<TextFieldValue>, placeHolder: Str
             inputValue.value = newValue
         },
         placeholder = { Text(text = placeHolder) },
-        colors = TextFieldDefaults.textFieldColors(
+        colors = TextFieldDefaults.colors(
             containerColor = Color.White,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
