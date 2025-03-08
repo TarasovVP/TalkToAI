@@ -8,7 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.vnteam.talktoai.secrets.Config.ANDROID_CLIENT_ID
+import secrets.Properties
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class GoogleAuthHandler {
@@ -18,7 +18,7 @@ actual class GoogleAuthHandler {
 
     private val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestEmail()
-        .requestIdToken(ANDROID_CLIENT_ID)
+        .requestIdToken(Properties.ANDROID_CLIENT_ID)
         .build()
 
     private val googleSignInClient by lazy {

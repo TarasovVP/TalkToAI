@@ -134,8 +134,9 @@ compose.resources {
 
 tasks.register("generateConfig") {
     val localProperties = file(rootProject.file("local.properties"))
-    val configDir = file("${projectDir}/src/commonMain/kotlin/com/vnteam/talktoai/secrets")
-    val configFile = file("${configDir}/Secrets.kt")
+    val kotlinSrcDir = project.file("${project.projectDir}/src/commonMain/kotlin")
+    val configDir = project.file("$kotlinSrcDir/secrets")
+    val configFile = project.file("$configDir/Secrets.kt")
     doLast {
         if (!localProperties.exists()) {
             throw GradleException("local.properties file not found!")
@@ -146,21 +147,27 @@ tasks.register("generateConfig") {
         if (!configDir.exists()) {
             configDir.mkdirs()
         }
-        configFile.writeText(
-            """
-            package com.vnteam.talktoai.secrets
-            
-            object Config {
-                val AUTH_BASE_URL = "${properties.getProperty("AUTH_BASE_URL", "")}"
-                val AUTH_API_KEY = "${properties.getProperty("AUTH_API_KEY", "")}"
-                val AI_BASE_URL = "${properties.getProperty("AI_BASE_URL", "")}"
-                val ANDROID_CLIENT_ID = "${properties.getProperty("ANDROID_CLIENT_ID", "")}"
-                val AI_API_KEY = "${properties.getProperty("AI_API_KEY", "")}"
-                val ORGANIZATION_ID = "${properties.getProperty("ORGANIZATION_ID", "")}"
-                val PROJECT_ID = "${properties.getProperty("PROJECT_ID", "")}"
+        fun isValidKey(key: String): Boolean {
+            return key.matches(Regex("^[a-zA-Z_][a-zA-Z0-9_]*$"))
+        }
+        val packagePath = configDir.relativeTo(project.file("${project.projectDir}/src/commonMain/kotlin"))
+        val packageName = packagePath.toString().replace("/", ".").replace("\\", ".")
+        val configContent = buildString {
+            appendLine("package $packageName")
+            appendLine()
+            appendLine("object Properties {")
+
+            properties.forEach { (keyAny, value) ->
+                val key = keyAny.toString()
+                if (isValidKey(key)) {
+                    appendLine("    val $key = \"$value\"")
+                }
             }
-            """.trimIndent()
-        )
+
+            appendLine("}")
+        }
+
+        configFile.writeText(configContent)
     }
 }
 tasks.named("preBuild") {

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -41,7 +40,6 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import com.vnteam.talktoai.presentation.ui.theme.Primary900
 import org.jetbrains.compose.resources.painterResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrimaryTextField(
     placeHolder: String,
@@ -51,7 +49,7 @@ fun PrimaryTextField(
         onValueChange = { newValue ->
             inputValue.value = newValue
         }, placeholder = { Text(text = placeHolder) },
-        colors = TextFieldDefaults.colors(containerColor = Color.White,
+        colors = TextFieldDefaults.colors(focusedContainerColor = Color.White,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
@@ -69,7 +67,6 @@ fun PrimaryTextField(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SecondaryTextField(
     inputValue: MutableState<TextFieldValue>,
@@ -79,14 +76,13 @@ fun SecondaryTextField(
         value = inputValue.value,
         onValueChange = { inputValue.value = it },
         placeholder = { Text(text = placeHolder) },
-        colors = TextFieldDefaults.colors(containerColor = Color.White),
+        colors = TextFieldDefaults.colors(focusedContainerColor = Color.White),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasswordTextField(inputValue: MutableState<TextFieldValue>, placeHolder: String) {
     val passwordVisible = remember { mutableStateOf(false) }
@@ -98,7 +94,7 @@ fun PasswordTextField(inputValue: MutableState<TextFieldValue>, placeHolder: Str
         },
         placeholder = { Text(text = placeHolder) },
         colors = TextFieldDefaults.colors(
-            containerColor = Color.White,
+            focusedContainerColor = Color.White,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
@@ -127,7 +123,6 @@ fun PasswordTextField(inputValue: MutableState<TextFieldValue>, placeHolder: Str
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldWithButton(
     isEnabled: Boolean,

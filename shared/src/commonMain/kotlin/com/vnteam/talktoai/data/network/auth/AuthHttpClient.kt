@@ -1,7 +1,6 @@
 package com.vnteam.talktoai.data.network.auth
 
 import com.vnteam.talktoai.data.network.NetworkConstants
-import com.vnteam.talktoai.secrets.Config
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -12,6 +11,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import secrets.Properties
 
 class AuthHttpClient(json: Json) {
     val getHttpClient = HttpClient {
@@ -19,7 +19,7 @@ class AuthHttpClient(json: Json) {
             json(json)
         }
         defaultRequest {
-            url.parameters.append(NetworkConstants.KEY, Config.AUTH_API_KEY)
+            url.parameters.append(NetworkConstants.KEY, Properties.AUTH_API_KEY)
         }
         install(DefaultRequest) {
             header(NetworkConstants.CONTENT_TYPE, "application/json")
