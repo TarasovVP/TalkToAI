@@ -11,7 +11,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import secrets.Properties
+import secrets.Secrets
 
 class AuthHttpClient(json: Json) {
     val getHttpClient = HttpClient {
@@ -19,7 +19,7 @@ class AuthHttpClient(json: Json) {
             json(json)
         }
         defaultRequest {
-            url.parameters.append(NetworkConstants.KEY, Properties.AUTH_API_KEY)
+            url.parameters.append(NetworkConstants.KEY, Secrets.AUTH_API_KEY)
         }
         install(DefaultRequest) {
             header(NetworkConstants.CONTENT_TYPE, "application/json")

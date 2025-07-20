@@ -10,7 +10,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import secrets.Properties
+import secrets.Secrets
 
 class AIHttpClient(json: Json) {
     val getHttpClient = HttpClient {
@@ -18,9 +18,9 @@ class AIHttpClient(json: Json) {
             json(json)
         }
         install(DefaultRequest) {
-            header(NetworkConstants.AUTHORIZATION, "Bearer $Properties.AI_API_KEY")
-            header(NetworkConstants.OPENAI_ORGANIZATION, Properties.ORGANIZATION_ID)
-            header(NetworkConstants.OPENAI_PROJECT, Properties.PROJECT_ID)
+            header(NetworkConstants.AUTHORIZATION, "Bearer ${Secrets}.AI_API_KEY")
+            header(NetworkConstants.OPENAI_ORGANIZATION, Secrets.ORGANIZATION_ID)
+            header(NetworkConstants.OPENAI_PROJECT, Secrets.PROJECT_ID)
         }
         install(Logging) {
             logger = object : Logger {

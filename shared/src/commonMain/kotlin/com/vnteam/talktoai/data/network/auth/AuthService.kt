@@ -8,7 +8,7 @@ import com.vnteam.talktoai.data.network.auth.request.ResetPasswordBody
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import secrets.Properties
+import secrets.Secrets
 
 class AuthService(
     private val authHttpClient: AuthHttpClient,
@@ -16,7 +16,7 @@ class AuthService(
     suspend fun fetchProvidersForEmail(providersForEmailBody: ProvidersForEmailBody): HttpResponse? {
         val httpResponse = try {
             authHttpClient.getHttpClient
-                .post("${Properties.AUTH_BASE_URL}$ACCOUNT_CREATE_AUTH_URI") {
+                .post("${Secrets.AUTH_BASE_URL}$ACCOUNT_CREATE_AUTH_URI") {
                     setBody(providersForEmailBody)
                 }
         } catch (e: Exception) {
@@ -29,7 +29,7 @@ class AuthService(
     suspend fun signInWithEmailAndPassword(authBody: AuthBody): HttpResponse? {
         val httpResponse = try {
             authHttpClient.getHttpClient
-                .post("${Properties.AUTH_BASE_URL}$ACCOUNT_SIGN_IN_WITH_PASSWORD") {
+                .post("${Secrets.AUTH_BASE_URL}$ACCOUNT_SIGN_IN_WITH_PASSWORD") {
                     setBody(authBody)
                 }
         } catch (e: Exception) {
@@ -41,7 +41,7 @@ class AuthService(
 
     suspend fun signInAnonymously(authBody: AuthBody): HttpResponse? {
         val httpResponse = try {
-            authHttpClient.getHttpClient.post("${Properties.AUTH_BASE_URL}$ACCOUNT_SIGN_UP") {
+            authHttpClient.getHttpClient.post("${Secrets.AUTH_BASE_URL}$ACCOUNT_SIGN_UP") {
                 setBody(authBody)
             }
         } catch (e: Exception) {
@@ -54,7 +54,7 @@ class AuthService(
     suspend fun resetPassword(resetPasswordBody: ResetPasswordBody): HttpResponse? {
         println("authTAG resetPassword resetPasswordBody: $resetPasswordBody")
         val httpResponse = try {
-            authHttpClient.getHttpClient.post("${Properties.AUTH_BASE_URL}$ACCOUNT_SEND_OOB_CODE") {
+            authHttpClient.getHttpClient.post("${Secrets.AUTH_BASE_URL}$ACCOUNT_SEND_OOB_CODE") {
                 setBody(resetPasswordBody)
             }
         } catch (e: Exception) {
@@ -67,7 +67,7 @@ class AuthService(
     suspend fun createUserWithEmailAndPassword(authBody: AuthBody): HttpResponse? {
         val httpResponse = try {
             authHttpClient.getHttpClient
-                .post("${Properties.AUTH_BASE_URL}$ACCOUNT_SIGN_UP") {
+                .post("${Secrets.AUTH_BASE_URL}$ACCOUNT_SIGN_UP") {
                     setBody(authBody)
                 }
         } catch (e: Exception) {
@@ -80,7 +80,7 @@ class AuthService(
     suspend fun changePassword(changePasswordBody: ChangePasswordBody): HttpResponse? {
         val httpResponse = try {
             authHttpClient.getHttpClient
-                .post("${Properties.AUTH_BASE_URL}$ACCOUNT_UPDATE") {
+                .post("${Secrets.AUTH_BASE_URL}$ACCOUNT_UPDATE") {
                     setBody(changePasswordBody)
                 }
         } catch (e: Exception) {
@@ -93,7 +93,7 @@ class AuthService(
     suspend fun deleteAccount(deleteAccountBody: DeleteAccountBody): HttpResponse? {
         val httpResponse = try {
             authHttpClient.getHttpClient
-                .post("${Properties.AUTH_BASE_URL}$ACCOUNT_DELETE") {
+                .post("${Secrets.AUTH_BASE_URL}$ACCOUNT_DELETE") {
                     setBody(deleteAccountBody)
                 }
         } catch (e: Exception) {
