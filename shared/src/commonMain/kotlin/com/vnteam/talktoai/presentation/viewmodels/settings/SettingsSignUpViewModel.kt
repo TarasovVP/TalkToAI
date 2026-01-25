@@ -29,7 +29,7 @@ class SettingsSignUpViewModel(
     private val getMessagesUseCase: GetMessagesUseCase,
     private val insertRemoteUserUseCase: InsertRemoteUserUseCase,
     private val updateRemoteUserUseCase: UpdateRemoteUserUseCase,
-    private val googleUseCase: GoogleSignInUseCase
+    private val googleUseCase: GoogleSignInUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsSignUpUIState())

@@ -21,7 +21,7 @@ class SignUpViewModel(
     private val createUserWithGoogleUseCase: CreateUserWithGoogleUseCase,
     private val createUserWithEmailAndPasswordUseCase: CreateUserWithEmailAndPasswordUseCase,
     private val insertRemoteUserUseCase: InsertRemoteUserUseCase,
-    private val googleUseCase: GoogleSignInUseCase
+    private val googleUseCase: GoogleSignInUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUIState())

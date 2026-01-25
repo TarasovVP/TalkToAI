@@ -45,11 +45,13 @@ fun PrimaryTextField(
     placeHolder: String,
     inputValue: MutableState<TextFieldValue>,
 ) {
-    TextField(value = inputValue.value,
+    TextField(
+        value = inputValue.value,
         onValueChange = { newValue ->
             inputValue.value = newValue
         }, placeholder = { Text(text = placeHolder) },
-        colors = TextFieldDefaults.colors(focusedContainerColor = Color.White,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.White,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
@@ -138,10 +140,17 @@ fun TextFieldWithButton(
         if (inputValue.value.text.isEmpty()) focusManager.clearFocus()
     }
 
-    TextField(value = inputValue.value,
+    TextField(
+        value = inputValue.value,
         onValueChange = { newValue ->
             inputValue.value = newValue
-        }, placeholder = { Text(text = LocalStringResources.current.MESSAGE_ENTER_REQUEST, style = TextStyle(color = Color.Gray)) },
+        },
+        placeholder = {
+            Text(
+                text = LocalStringResources.current.MESSAGE_ENTER_REQUEST,
+                style = TextStyle(color = Color.Gray)
+            )
+        },
         textStyle = TextStyle(color = Color.Black),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,

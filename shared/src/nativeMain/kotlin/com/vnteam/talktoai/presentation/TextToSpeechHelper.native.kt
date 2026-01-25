@@ -20,7 +20,7 @@ class TextToSpeechInstance : NSObject(), AVSpeechSynthesizerDelegateProtocol {
     override fun speechSynthesizer(
         synthesizer: AVSpeechSynthesizer,
         @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-        didFinishSpeechUtterance: AVSpeechUtterance
+        didFinishSpeechUtterance: AVSpeechUtterance,
     ) {
         isSpeaking = false
     }

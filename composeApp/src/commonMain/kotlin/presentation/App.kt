@@ -49,7 +49,7 @@ val LocalScreenState = compositionLocalOf<MutableState<ScreenState>> {
 fun updateScreenState(
     isProgressVisible: Boolean = false,
     appMessage: AppMessage? = null,
-    screenRoute: String? = null
+    screenRoute: String? = null,
 ) {
     val localScreenState = LocalScreenState.current
     localScreenState.value = localScreenState.value.copy(

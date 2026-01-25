@@ -373,7 +373,8 @@ fun Message(
     val linesCount = textLinesCount(
         message.message, paddings, LocalDefaultTextSize.current.textSize.value
     )
-    Row(verticalAlignment = Alignment.Top,
+    Row(
+        verticalAlignment = Alignment.Top,
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             .pointerInput(isMessageDeleteModeState.value) {
                 if (isMessageDeleteModeState.value.isTrue()) {
@@ -479,7 +480,7 @@ fun CreateChatScreen(onClick: () -> Unit) {
 @Composable
 fun MessageActionField(
     messageActionState: MutableState<String>,
-    stringRes: StringResources
+    stringRes: StringResources,
 ) {
     Row(
         Modifier.padding(16.dp).height(TextFieldDefaults.MinHeight)

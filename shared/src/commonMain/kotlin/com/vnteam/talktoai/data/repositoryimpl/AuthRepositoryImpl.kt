@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class AuthRepositoryImpl(
     private val authService: AuthService,
-    private val googleAuthHandler: GoogleAuthHandler
+    private val googleAuthHandler: GoogleAuthHandler,
 ) :
     AuthRepository {
 

@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ProvidersForEmailResponse(
     val allProviders: List<String>? = null,
-    val registered: Boolean? = null
+    val registered: Boolean? = null,
 )

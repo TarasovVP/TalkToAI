@@ -160,7 +160,7 @@ fun SettingsAccountContent(
     showChangePasswordDialog: MutableState<Boolean>,
     showDeleteGoogleAccountDialog: MutableState<Boolean>,
     showDeleteEmailAccountDialog: MutableState<Boolean>,
-    updateScreenRoute: MutableState<String>
+    updateScreenRoute: MutableState<String>,
 ) {
     Column(
         modifier = Modifier

@@ -75,7 +75,7 @@ fun SettingsLanguageItem(
     name: String,
     isChecked: Boolean,
     icon: DrawableResource,
-    onLanguageCheck: () -> Unit
+    onLanguageCheck: () -> Unit,
 ) {
     Card(
         modifier = Modifier

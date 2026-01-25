@@ -12,7 +12,7 @@ import org.jetbrains.compose.resources.DrawableResource
 sealed class OnboardingPage(
     val page: Int,
     val mainImage: DrawableResource,
-    val tabImage: DrawableResource
+    val tabImage: DrawableResource,
 ) {
     data object OnboardingPageIntro :
         OnboardingPage(0, Res.drawable.onboarding_intro, Res.drawable.ic_tab_one)

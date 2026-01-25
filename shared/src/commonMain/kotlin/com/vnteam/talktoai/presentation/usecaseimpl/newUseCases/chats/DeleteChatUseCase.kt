@@ -19,7 +19,7 @@ class DeleteChatUseCase(
     private val preferencesRepository: PreferencesRepository,
     private val chatRepository: ChatRepository,
     private val messageRepository: MessageRepository,
-    private val realDataBaseRepository: RealDataBaseRepository
+    private val realDataBaseRepository: RealDataBaseRepository,
 ) : UseCase<Chat, Result<Unit>> {
 
     override suspend fun execute(params: Chat): Result<Unit> {

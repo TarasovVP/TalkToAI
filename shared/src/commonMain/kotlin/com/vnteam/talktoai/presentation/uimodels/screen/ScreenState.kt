@@ -16,7 +16,7 @@ data class ScreenState(
     var isProgressVisible: Boolean = false,
     var isScreenUpdatingNeeded: Boolean = false,
     var currentChat: Chat? = null,
-    var currentScreenRoute: String? = null
+    var currentScreenRoute: String? = null,
 ) {
     val isMessageActionModeState = mutableStateOf<Boolean?>(null)
 

@@ -78,7 +78,8 @@ fun PrimaryTopBar(
     isActionVisible: Boolean,
     onActionIconClick: () -> Unit,
 ) {
-    TopAppBar(title = { Text(title) }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+    TopAppBar(
+        title = { Text(title) }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
         containerColor = Primary900, titleContentColor = Neutral50
     ), navigationIcon = {
         IconButton(onClick = onNavigationIconClick) {
@@ -106,16 +107,17 @@ fun PrimaryTopBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SecondaryTopBar(title: String, onNavigationIconClick: () -> Unit) {
-    TopAppBar(title = { Text(title) }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-        containerColor = Primary900, titleContentColor = Neutral50
-    ), navigationIcon = {
-        IconButton(onClick = onNavigationIconClick) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_arrow_back),
-                contentDescription = LocalStringResources.current.NAVIGATION_ICON
-            )
-        }
-    })
+    TopAppBar(
+        title = { Text(title) }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = Primary900, titleContentColor = Neutral50
+        ), navigationIcon = {
+            IconButton(onClick = onNavigationIconClick) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_arrow_back),
+                    contentDescription = LocalStringResources.current.NAVIGATION_ICON
+                )
+            }
+        })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

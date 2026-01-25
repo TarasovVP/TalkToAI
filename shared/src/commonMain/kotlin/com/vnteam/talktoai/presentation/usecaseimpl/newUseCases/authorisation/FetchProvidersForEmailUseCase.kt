@@ -10,7 +10,7 @@ import com.vnteam.talktoai.utils.NetworkState
 
 class FetchProvidersForEmailUseCase(
     private val repository: AuthRepository,
-    private val networkState: NetworkState
+    private val networkState: NetworkState,
 ) : UseCase<String?, Result<List<String>>> {
 
     override suspend fun execute(params: String?): Result<List<String>> {

@@ -34,7 +34,7 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun SettingsListComposable(
     currentRouteState: String?,
-    onNextScreen: (String) -> Unit
+    onNextScreen: (String) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize().background(Primary900).padding(top = 8.dp)
@@ -91,7 +91,7 @@ fun SettingsItem(
     mainIcon: DrawableResource,
     isCurrent: Boolean,
     secondaryIcon: DrawableResource? = null,
-    onItemClick: () -> Unit
+    onItemClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier

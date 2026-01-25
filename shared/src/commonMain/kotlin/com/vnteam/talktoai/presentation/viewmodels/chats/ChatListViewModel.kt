@@ -17,7 +17,7 @@ class ChatListViewModel(
     private val insertChatUseCase: InsertChatUseCase,
     private val updateChatUseCase: UpdateChatUseCase,
     private val updateChatsUseCase: UpdateChatsUseCase,
-    private val deleteChatUseCase: DeleteChatUseCase
+    private val deleteChatUseCase: DeleteChatUseCase,
 ) : BaseViewModel() {
 
     private val _chatsList = MutableStateFlow<List<Chat>?>(null)

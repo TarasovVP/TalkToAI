@@ -8,5 +8,5 @@ data class SignUpEmailResponse(
     val email: String? = null,
     val refreshToken: String? = null,
     val expiresIn: String? = null,
-    val localId: String? = null
+    val localId: String? = null,
 )

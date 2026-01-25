@@ -9,7 +9,7 @@ import com.vnteam.talktoai.utils.NetworkState
 
 class ResetPasswordUseCase(
     private val repository: AuthRepository,
-    private val networkState: NetworkState
+    private val networkState: NetworkState,
 ) : UseCase<String, Result<Unit>> {
 
     override suspend fun execute(params: String): Result<Unit> {

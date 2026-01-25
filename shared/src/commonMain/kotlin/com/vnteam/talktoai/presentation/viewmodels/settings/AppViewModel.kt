@@ -25,7 +25,7 @@ class AppViewModel(
     private val idTokenUseCase: IdTokenUseCase,
     private val userEmailUseCase: UserEmailUseCase,
     private val onboardingUseCase: OnboardingUseCase,
-    val animationUtils: AnimationUtils
+    val animationUtils: AnimationUtils,
 ) : BaseViewModel() {
 
 
@@ -59,7 +59,7 @@ class AppViewModel(
         stateFlow: MutableStateFlow<R?>,
         useCaseCall: suspend () -> Flow<Result<T>>,
         defaultValue: R? = null,
-        transform: (T?) -> R? = { it as? R }
+        transform: (T?) -> R? = { it as? R },
     ) {
         launchWithResultHandling {
             useCaseCall().onSuccess { result ->

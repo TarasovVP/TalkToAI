@@ -103,6 +103,7 @@ class AuthService(
         return httpResponse
     }
 }
+
 private const val ACCOUNT_CREATE_AUTH_URI = "accounts:createAuthUri"
 private const val ACCOUNT_SIGN_IN_WITH_PASSWORD = "accounts:signInWithPassword"
 private const val ACCOUNT_SEND_OOB_CODE = "accounts:sendOobCode"

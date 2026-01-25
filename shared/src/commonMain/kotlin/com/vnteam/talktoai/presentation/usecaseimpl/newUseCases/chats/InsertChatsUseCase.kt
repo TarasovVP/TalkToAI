@@ -6,7 +6,7 @@ import com.vnteam.talktoai.domain.repositories.ChatRepository
 import com.vnteam.talktoai.domain.usecase.UseCase
 
 class InsertChatsUseCase(
-    private val chatRepository: ChatRepository
+    private val chatRepository: ChatRepository,
 ) : UseCase<List<Chat>, Result<Unit>> {
 
     override suspend fun execute(params: List<Chat>): Result<Unit> {

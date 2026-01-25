@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ResetPasswordBody(
     val email: String? = null,
-    val requestType: String? = null
+    val requestType: String? = null,
 )

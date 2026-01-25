@@ -47,7 +47,7 @@ import kotlin.time.Clock
 
 @Composable
 fun ChatListScreen(
-    onChatClick: (Chat?) -> Unit
+    onChatClick: (Chat?) -> Unit,
 ) {
     val viewModel = koinViewModel<ChatListViewModel>()
 
@@ -108,7 +108,7 @@ fun ChatListContent(
     showCreateChatDialog: MutableState<Boolean>,
     showDeleteChatDialog: MutableState<Boolean>,
     deleteChatState: MutableState<Chat?>,
-    onChatClick: (Chat) -> Unit
+    onChatClick: (Chat) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize().background(Primary900), Arrangement.Top
@@ -131,7 +131,8 @@ fun ChatListContent(
                 }
             ) { chat, isDragging ->
                 val elevation = animateDpAsState(if (isDragging) 4.dp else 1.dp)
-                ChatItem(name = chat.name.orEmpty(),
+                ChatItem(
+                    name = chat.name.orEmpty(),
                     mainIcon = Res.drawable.ic_chat,
                     isCurrent = chat.id == currentChatState.value?.id,
                     secondaryIcon = if (isDragging) Res.drawable.ic_drag_handle else Res.drawable.ic_delete,
@@ -170,7 +171,7 @@ fun ChatItem(
     elevation: Dp? = null,
     isIconClick: Boolean? = false,
     onIconClick: () -> Unit = {},
-    onItemClick: () -> Unit
+    onItemClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -204,7 +205,8 @@ fun ChatItem(
                 modifier = Modifier.weight(1f).padding(vertical = 8.dp)
             )
             secondaryIcon?.let { icon ->
-                Image(painter = painterResource(icon),
+                Image(
+                    painter = painterResource(icon),
                     contentDescription = name,
                     modifier = Modifier.padding(8.dp).let {
                         if (isIconClick.isTrue()) {

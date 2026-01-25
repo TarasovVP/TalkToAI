@@ -9,5 +9,5 @@ data class SettingsSignUpUIState(
     val successAuthorisation: Boolean? = null,
     val createCurrentUser: Boolean? = null,
     val remoteUser: Pair<Boolean, RemoteUser?>? = null,
-    val successRemoteUser: Boolean? = null
+    val successRemoteUser: Boolean? = null,
 )

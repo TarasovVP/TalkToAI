@@ -8,7 +8,7 @@ import com.vnteam.talktoai.utils.NetworkState
 
 class GoogleSignOutUseCase(
     private val repository: AuthRepository,
-    private val networkState: NetworkState
+    private val networkState: NetworkState,
 ) : UseCase<Nothing?, Result<Unit>> {
 
     override suspend fun execute(params: Nothing?): Result<Unit> {

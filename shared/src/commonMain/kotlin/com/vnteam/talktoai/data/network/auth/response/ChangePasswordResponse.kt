@@ -11,5 +11,5 @@ data class ChangePasswordResponse(
     val providerUserInfo: List<JsonObject>? = null,
     val idToken: String? = null,
     val refreshToken: String? = null,
-    val expiresIn: String? = null
+    val expiresIn: String? = null,
 )

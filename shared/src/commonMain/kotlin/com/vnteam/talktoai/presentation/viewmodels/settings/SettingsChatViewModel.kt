@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class SettingsChatViewModel(
     private val onboardingUseCase: OnboardingUseCase,
-    private val userEmailUseCase: UserEmailUseCase
+    private val userEmailUseCase: UserEmailUseCase,
 ) : BaseViewModel() {
 
     val chatSettingsLiveData = MutableStateFlow(false)

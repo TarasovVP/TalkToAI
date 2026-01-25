@@ -5,5 +5,5 @@ data class LoginUIState(
     val isEmailAccountExist: Boolean? = null,
     val isGoogleAccountExist: String? = null,
     val successPasswordReset: Boolean? = null,
-    val userLogin: String? = null
+    val userLogin: String? = null,
 )

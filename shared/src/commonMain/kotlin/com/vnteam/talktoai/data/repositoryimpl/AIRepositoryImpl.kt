@@ -8,7 +8,7 @@ import com.vnteam.talktoai.domain.repositories.AIRepository
 import kotlinx.coroutines.flow.flow
 
 class AIRepositoryImpl(
-    private val aIService: AIService
+    private val aIService: AIService,
 ) : AIRepository {
 
     override suspend fun sendRequest(apiRequest: ApiRequest) = flow {

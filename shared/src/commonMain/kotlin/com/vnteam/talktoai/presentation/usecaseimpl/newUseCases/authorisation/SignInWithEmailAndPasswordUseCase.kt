@@ -11,7 +11,7 @@ import com.vnteam.talktoai.utils.NetworkState
 class SignInWithEmailAndPasswordUseCase(
     private val repository: AuthRepository,
     private val networkState: NetworkState,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
 ) : UseCase<Pair<String, String>, Result<Unit>> {
 
     override suspend fun execute(params: Pair<String, String>): Result<Unit> {

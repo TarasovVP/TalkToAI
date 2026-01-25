@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 class SettingsFeedbackViewModel(
     private val userEmailUseCase: UserEmailUseCase,
     private val feedbackUseCase: FeedbackUseCase,
-    private val networkState: NetworkState
+    private val networkState: NetworkState,
 ) : BaseViewModel() {
 
     private val _currentUserLogin = MutableStateFlow(String.EMPTY)

@@ -24,7 +24,7 @@ import presentation.screens.settings.settings_theme.SettingsThemeContent
 @Composable
 fun AppNavigation(
     navController: NavHostController,
-    startDestination: String
+    startDestination: String,
 ) {
     println("AppContentTAG AppNavigationTAG: startDestination: $startDestination")
     navController.checkCurrentDestUpdateWithStartDest(startDestination)
@@ -38,7 +38,8 @@ fun AppNavigation(
         composable(NavigationScreen.SIGN_UP_SCREEN) {
             SignUpScreen()
         }
-        composable(route = NavigationScreen.CHAT_SCREEN,
+        composable(
+            route = NavigationScreen.CHAT_SCREEN,
             arguments = listOf(
                 navArgument(NavigationScreen.CHAT_ID) {
                     type = NavType.LongType

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class SettingsPrivacyPolicyViewModel(
     private val languageUseCase: LanguageUseCase,
-    private val getPrivacyPolicyUseCase: GetPrivacyPolicyUseCase
+    private val getPrivacyPolicyUseCase: GetPrivacyPolicyUseCase,
 ) : BaseViewModel() {
 
     val appLanguageLiveData = MutableStateFlow(String.EMPTY)

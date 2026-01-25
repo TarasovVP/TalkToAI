@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
 class InsertRemoteUserUseCase(
-    private val realDataBaseRepository: RealDataBaseRepository
+    private val realDataBaseRepository: RealDataBaseRepository,
 ) : UseCase<RemoteUser, Flow<Result<Unit>>> {
 
     override suspend fun execute(params: RemoteUser): Flow<Result<Unit>> {

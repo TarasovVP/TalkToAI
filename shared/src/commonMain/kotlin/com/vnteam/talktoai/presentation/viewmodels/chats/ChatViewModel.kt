@@ -20,7 +20,6 @@ import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.AnimationUtils
 import com.vnteam.talktoai.utils.ShareUtils
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class ChatViewModel(
     private val messageUIMapper: MessageUIMapper,
@@ -32,7 +31,7 @@ class ChatViewModel(
     private val deleteMessagesUseCase: DeleteMessagesUseCase,
     private val getMessagesFromChatUseCase: GetMessagesFromChatUseCase,
     private val insertMessageUseCase: InsertMessageUseCase,
-    private val sendRequestUseCase: SendRequestUseCase
+    private val sendRequestUseCase: SendRequestUseCase,
 ) : BaseViewModel() {
 
     val currentChatLiveData = MutableStateFlow<ChatUI?>(null)
@@ -102,7 +101,6 @@ class ChatViewModel(
         shareUtils.shareLink(text)
     }
 
-    @OptIn(ExperimentalResourceApi::class)
     fun getAnimationResource() {
         launchWithErrorHandling {
             val resource = Res.readBytes("files/message_typing.json").decodeToString()

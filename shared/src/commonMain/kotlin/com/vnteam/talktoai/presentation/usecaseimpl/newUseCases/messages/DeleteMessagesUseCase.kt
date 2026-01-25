@@ -15,7 +15,7 @@ class DeleteMessagesUseCase(
     private val networkState: NetworkState,
     private val preferencesRepository: PreferencesRepository,
     private val messageRepository: MessageRepository,
-    private val realDataBaseRepository: RealDataBaseRepository
+    private val realDataBaseRepository: RealDataBaseRepository,
 ) : UseCase<List<Long>, Result<Unit>> {
 
     override suspend fun execute(params: List<Long>): Result<Unit> {

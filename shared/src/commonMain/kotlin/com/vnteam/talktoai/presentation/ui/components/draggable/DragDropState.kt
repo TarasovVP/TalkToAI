@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 class DragDropState internal constructor(
     val state: LazyListState,
     private val scope: CoroutineScope,
-    private val onSwap: (Int, Int) -> Unit
+    private val onSwap: (Int, Int) -> Unit,
 ) {
     private var draggedDistance by mutableStateOf(0f)
     private var draggingItemInitialOffset by mutableStateOf(0)

@@ -138,7 +138,7 @@ fun LoginContent(
     passwordInputValue: MutableState<TextFieldValue>,
     showForgotPasswordDialog: MutableState<Boolean>,
     showUnauthorizedEnterDialog: MutableState<Boolean>,
-    updatedScreenRoute: MutableState<String>
+    updatedScreenRoute: MutableState<String>,
 ) {
     Column(
         modifier = Modifier

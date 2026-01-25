@@ -10,7 +10,8 @@ import org.w3c.dom.HTMLTextAreaElement
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class ShareUtils {
     actual fun shareLink(url: String) {
-        showShareDialog(url,
+        showShareDialog(
+            url,
             onOpen = { openUrl(url) },
             onCopy = { copyToClipboard(url) })
     }

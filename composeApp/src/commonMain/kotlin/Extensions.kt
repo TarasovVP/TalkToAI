@@ -44,7 +44,7 @@ fun Instant.isDefineSecondsLater(seconds: Int, updated: Long): Boolean {
 
 @Composable
 fun NavHostController.checkCurrentDestUpdateWithStartDest(
-    startDestination: String
+    startDestination: String,
 ) {
     LaunchedEffect(startDestination) {
         if (currentBackStackEntry?.destination?.route != startDestination) {

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 
 class MessageRepositoryImpl(
     private val messageDao: MessageDao,
-    private val messageDBMapper: MessageDBMapper
+    private val messageDBMapper: MessageDBMapper,
 ) : MessageRepository {
 
     override suspend fun insertMessages(messages: List<Message>) {

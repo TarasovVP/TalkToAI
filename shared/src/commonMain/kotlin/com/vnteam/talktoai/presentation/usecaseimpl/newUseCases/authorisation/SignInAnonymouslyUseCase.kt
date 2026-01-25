@@ -11,7 +11,7 @@ import com.vnteam.talktoai.utils.NetworkState
 class SignInAnonymouslyUseCase(
     private val repository: AuthRepository,
     private val networkState: NetworkState,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
 ) : UseCase<Nothing?, Result<Unit>> {
 
     override suspend fun execute(params: Nothing?): Result<Unit> {

@@ -16,7 +16,7 @@ class UpdateChatsUseCase(
     private val networkState: NetworkState,
     private val preferencesRepository: PreferencesRepository,
     private val chatRepository: ChatRepository,
-    private val realDataBaseRepository: RealDataBaseRepository
+    private val realDataBaseRepository: RealDataBaseRepository,
 ) : UseCase<List<Chat>, Result<Unit>> {
 
     override suspend fun execute(params: List<Chat>): Result<Unit> {

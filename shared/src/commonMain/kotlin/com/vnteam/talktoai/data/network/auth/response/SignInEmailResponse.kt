@@ -9,5 +9,5 @@ data class SignInEmailResponse(
     val refreshToken: String? = null,
     val expiresIn: String? = null,
     val localId: String? = null,
-    val registered: Boolean? = null
+    val registered: Boolean? = null,
 )

@@ -96,7 +96,7 @@ fun SignUpContent(
     viewModel: SignUpViewModel,
     emailInputValue: MutableState<TextFieldValue>,
     passwordInputValue: MutableState<TextFieldValue>,
-    updatedScreenRoute: MutableState<String>
+    updatedScreenRoute: MutableState<String>,
 ) {
     Column(
         modifier = Modifier

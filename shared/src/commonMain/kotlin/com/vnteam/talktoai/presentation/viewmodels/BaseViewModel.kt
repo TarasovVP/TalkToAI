@@ -46,7 +46,7 @@ open class BaseViewModel : ViewModel() {
 
     protected fun <T> launchWithNetworkCheck(
         networkState: NetworkState? = null,
-        block: suspend CoroutineScope.() -> Flow<Result<T>>
+        block: suspend CoroutineScope.() -> Flow<Result<T>>,
     ): Job {
         networkState?.let {
             if (it.isNetworkAvailable().not()) {
@@ -58,7 +58,7 @@ open class BaseViewModel : ViewModel() {
     }
 
     protected fun <T> launchWithResultHandling(
-        block: suspend CoroutineScope.() -> Flow<Result<T>>
+        block: suspend CoroutineScope.() -> Flow<Result<T>>,
     ): Job = launchWithErrorHandling {
         block().collect { result ->
             println("appTAG BaseViewModel launchWithConditionsTest: result $result")
@@ -71,7 +71,7 @@ open class BaseViewModel : ViewModel() {
     }
 
     protected fun <T> launchWithResult(
-        block: suspend CoroutineScope.() -> Result<T>
+        block: suspend CoroutineScope.() -> Result<T>,
     ): Job = launchWithErrorHandling {
         when (val result = block()) {
             is Result.Success -> hideProgress()
@@ -81,7 +81,7 @@ open class BaseViewModel : ViewModel() {
     }
 
     protected fun launchWithErrorHandling(
-        block: suspend CoroutineScope.() -> Unit
+        block: suspend CoroutineScope.() -> Unit,
     ): Job = viewModelScope.launch(CoroutineExceptionHandler { _, exception ->
         onError(exception)
     }) {

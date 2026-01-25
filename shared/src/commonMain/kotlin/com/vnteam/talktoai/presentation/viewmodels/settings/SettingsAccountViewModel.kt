@@ -22,7 +22,7 @@ class SettingsAccountViewModel(
     private val signOutUseCase: SignOutUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
     private val clearDataUseCase: ClearDataUseCase,
-    private val googleUseCase: SignInWithGoogleUseCase
+    private val googleUseCase: SignInWithGoogleUseCase,
 ) : BaseViewModel() {
 
     private val _userEmail = MutableStateFlow<String?>(null)

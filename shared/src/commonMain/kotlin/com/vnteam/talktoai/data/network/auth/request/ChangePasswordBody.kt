@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class ChangePasswordBody(
     val idToken: String? = null,
     val password: String? = null,
-    val returnSecureToken: Boolean = true
+    val returnSecureToken: Boolean = true,
 )

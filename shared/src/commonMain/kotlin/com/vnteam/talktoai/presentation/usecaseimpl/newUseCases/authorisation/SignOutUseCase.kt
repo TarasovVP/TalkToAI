@@ -7,7 +7,7 @@ import com.vnteam.talktoai.domain.usecase.UseCase
 
 class SignOutUseCase(
     private val repository: AuthRepository,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
 ) :
     UseCase<Nothing?, Result<Unit>> {
 

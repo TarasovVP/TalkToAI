@@ -16,7 +16,7 @@ class InsertMessageUseCase(
     private val networkState: NetworkState,
     private val preferencesRepository: PreferencesRepository,
     private val messageRepository: MessageRepository,
-    private val realDataBaseRepository: RealDataBaseRepository
+    private val realDataBaseRepository: RealDataBaseRepository,
 ) : UseCase<Message, Result<Unit>> {
 
     override suspend fun execute(params: Message): Result<Unit> {

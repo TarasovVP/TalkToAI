@@ -41,7 +41,8 @@ fun PrimaryButton(
     modifier: Modifier,
     onClick: () -> Unit,
 ) {
-    TextButton(enabled = isEnabled,
+    TextButton(
+        enabled = isEnabled,
         modifier = modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .fillMaxWidth()
@@ -60,15 +61,16 @@ fun PrimaryButton(
 
 @Composable
 fun SecondaryButton(text: String, isDestructive: Boolean, modifier: Modifier, onClick: () -> Unit) {
-    TextButton(modifier = modifier
-        .padding(horizontal = 16.dp, vertical = 8.dp)
-        .fillMaxWidth()
-        .border(
-            1.dp,
-            if (isDestructive) Color.Red else Primary400,
-            shape = RoundedCornerShape(16.dp)
-        )
-        .background(color = Color.Transparent, shape = RoundedCornerShape(16.dp)),
+    TextButton(
+        modifier = modifier
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .fillMaxWidth()
+            .border(
+                1.dp,
+                if (isDestructive) Color.Red else Primary400,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .background(color = Color.Transparent, shape = RoundedCornerShape(16.dp)),
         onClick = {
             onClick.invoke()
         }
@@ -107,13 +109,14 @@ fun SubmitButtons(
 
 @Composable
 fun GoogleButton(title: String, modifier: Modifier, onClick: () -> Unit) {
-    Row(modifier = modifier
-        .wrapContentSize()
-        .border(1.dp, color = Primary300, shape = RoundedCornerShape(16.dp))
-        .background(color = Color.Transparent, shape = RoundedCornerShape(16.dp))
-        .clickable {
-            onClick.invoke()
-        }) {
+    Row(
+        modifier = modifier
+            .wrapContentSize()
+            .border(1.dp, color = Primary300, shape = RoundedCornerShape(16.dp))
+            .background(color = Color.Transparent, shape = RoundedCornerShape(16.dp))
+            .clickable {
+                onClick.invoke()
+            }) {
         Image(
             painter = painterResource(Res.drawable.ic_logo_google),
             contentDescription = LocalStringResources.current.AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
@@ -133,7 +136,7 @@ fun LinkButton(
     text: String,
     modifier: Modifier,
     textAlign: TextAlign? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     TextButton(
         onClick = onClick, modifier = modifier

@@ -9,5 +9,5 @@ data class ChatUI(
     val id: Long = DEFAULT_CHAT_ID,
     val name: String = String.EMPTY,
     val updated: Long = 0,
-    val listOrder: Long = 0
+    val listOrder: Long = 0,
 )

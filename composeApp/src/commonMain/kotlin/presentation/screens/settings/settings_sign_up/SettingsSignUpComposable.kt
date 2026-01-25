@@ -106,7 +106,7 @@ fun SettingsSignUpContent(
     viewModel: SettingsSignUpViewModel,
     emailInputValue: MutableState<TextFieldValue>,
     passwordInputValue: MutableState<TextFieldValue>,
-    transferDataState: MutableState<Boolean>
+    transferDataState: MutableState<Boolean>,
 ) {
     Column(
         modifier = Modifier

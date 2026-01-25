@@ -23,7 +23,7 @@ import androidx.compose.ui.zIndex
 @Composable
 fun rememberDragDropState(
     lazyListState: LazyListState,
-    onSwap: (Int, Int) -> Unit
+    onSwap: (Int, Int) -> Unit,
 ): DragDropState {
     val scope = rememberCoroutineScope()
     val state = remember(lazyListState) {
@@ -52,7 +52,7 @@ fun LazyItemScope.DraggableItem(
     dragDropState: DragDropState,
     index: Int,
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.(isDragging: Boolean) -> Unit
+    content: @Composable ColumnScope.(isDragging: Boolean) -> Unit,
 ) {
     val current: Float by animateFloatAsState(dragDropState.draggingItemOffset * 0.67f)
     val previous: Float by animateFloatAsState(dragDropState.previousItemOffset.value * 0.67f)
@@ -83,7 +83,7 @@ fun LazyItemScope.DraggableItem(
 @Composable
 fun UpdateViewConfiguration(
     longPressTimeoutMillis: Long? = null,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     fun ViewConfiguration.updateViewConfiguration() = object : ViewConfiguration {
         override val longPressTimeoutMillis

@@ -17,7 +17,7 @@ class LoginViewModel(
     private val signInAnonymouslyUseCase: SignInAnonymouslyUseCase,
     private val resetPasswordUseCase: ResetPasswordUseCase,
     private val userEmailUseCase: UserEmailUseCase,
-    private val googleUseCase: GoogleSignInUseCase
+    private val googleUseCase: GoogleSignInUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUIState())
