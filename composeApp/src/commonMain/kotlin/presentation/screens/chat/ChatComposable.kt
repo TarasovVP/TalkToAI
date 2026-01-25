@@ -82,11 +82,11 @@ import com.vnteam.talktoai.presentation.viewmodels.chats.ChatViewModel
 import com.vnteam.talktoai.utils.screenWidth
 import dateToMilliseconds
 import isDefineSecondsLater
-import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.LocalScreenState
 import textToAction
+import kotlin.time.Clock
 
 @Composable
 fun ChatContent(chatId: Long) {

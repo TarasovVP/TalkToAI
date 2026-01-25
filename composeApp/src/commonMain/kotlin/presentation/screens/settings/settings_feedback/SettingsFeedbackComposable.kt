@@ -23,9 +23,9 @@ import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsFeedbackViewModel
-import kotlinx.datetime.Clock
 import org.koin.compose.viewmodel.koinViewModel
 import presentation.updateScreenState
+import kotlin.time.Clock
 
 @Composable
 fun SettingsFeedbackContent() {

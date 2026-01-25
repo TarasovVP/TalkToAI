@@ -40,10 +40,10 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary800
 import com.vnteam.talktoai.presentation.ui.theme.Primary900
 import com.vnteam.talktoai.presentation.viewmodels.chats.ChatListViewModel
 import dateToMilliseconds
-import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.time.Clock
 
 @Composable
 fun ChatListScreen(
