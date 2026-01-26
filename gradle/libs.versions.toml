@@ -27,7 +27,7 @@ navigationCompose = "2.9.1"
 activity = "1.12.2"
 materialRipple = "1.10.1"
 agp = "8.13.2"
-compose-multiplatform = "1.10.0"
+compose-multiplatform = "1.9.0"
 kotlin = "2.3.0"
 slf4j = "2.0.17"
 androidx-uiTest = "1.10.1"
@@ -40,6 +40,12 @@ hikaricp = "7.0.2"
 [libraries]
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-multiplatform" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-multiplatform" }
+compose-ui-text = { module = "org.jetbrains.compose.ui:ui-text", version.ref = "compose-multiplatform" }
 firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsGradle" }
 freetts = { module = "net.sf.sociaal:freetts", version.ref = "freetts" }
 google-services = { module = "com.google.gms:google-services", version.ref = "googleServices" }
