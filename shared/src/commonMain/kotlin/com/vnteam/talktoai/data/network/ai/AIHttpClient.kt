@@ -13,9 +13,9 @@ import secrets.Secrets
 
 class AIHttpClient(json: Json) {
     val getHttpClient = HttpClient {
-        install(ContentNegotiation) {
+        /*install(ContentNegotiation) {
             json(json)
-        }
+        }*/
         install(DefaultRequest) {
             header(NetworkConstants.AUTHORIZATION, "Bearer ${Secrets}.AI_API_KEY")
             header(NetworkConstants.OPENAI_ORGANIZATION, Secrets.ORGANIZATION_ID)

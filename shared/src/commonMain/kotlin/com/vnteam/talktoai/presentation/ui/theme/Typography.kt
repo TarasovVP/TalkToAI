@@ -10,7 +10,7 @@ import com.vnteam.talktoai.robotomono_regular
 
 
 @Composable
-fun Typography() = Typography(
+fun Typography() = Unit/*Typography(
     bodySmall = TextStyle(
         fontWeight = FontWeight.Light,
         fontSize = com.vnteam.talktoai.presentation.ui.resources.default_text_size.textSize,
@@ -32,4 +32,4 @@ fun Typography() = Typography(
             org.jetbrains.compose.resources.Font(Res.font.robotomono_regular, FontWeight.Bold)
         )
     )
-)
+)*/

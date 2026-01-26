@@ -14,9 +14,9 @@ import secrets.Secrets
 
 class AuthHttpClient(json: Json) {
     val getHttpClient = HttpClient {
-        install(ContentNegotiation) {
+        /*install(ContentNegotiation) {
             json(json)
-        }
+        }*/
         defaultRequest {
             url.parameters.append(NetworkConstants.KEY, Secrets.AUTH_API_KEY)
         }
