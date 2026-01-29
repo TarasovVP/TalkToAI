@@ -18,3 +18,4 @@ dependencyResolutionManagement {
 rootProject.name = "TalkToAIAssistant"
 include(":composeApp")
 include(":shared")
+include(":authorization")

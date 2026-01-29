@@ -3,6 +3,7 @@ package com.vnteam.talktoai.presentation.uimodels.screen
 import androidx.compose.runtime.mutableStateOf
 import com.vnteam.talktoai.CommonExtensions.isNotNull
 import com.vnteam.talktoai.CommonExtensions.isTrue
+import com.vnteam.talktoai.CommonExtensions.orZero
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 
@@ -39,6 +40,6 @@ data class ScreenState(
         get() = when {
             isOnboardingSeen == false -> NavigationScreen.ONBOARDING_SCREEN
             idToken.isNullOrEmpty() -> NavigationScreen.LOGIN_SCREEN
-            else -> NavigationScreen.CHAT_SCREEN
+            else -> NavigationScreen.CHAT_SCREEN.replace("{chatId}", currentChat?.id.orZero().toString())
         }
 }

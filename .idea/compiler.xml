@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="17" />
+    <bytecodeTargetLevel target="17">
+      <module name="Talk_to_AI.composeApp" target="21" />
+      <module name="Talk_to_AI.composeApp.desktopMain" target="21" />
+      <module name="Talk_to_AI.composeApp.desktopTest" target="21" />
+      <module name="Talk_to_AI.shared" target="21" />
+      <module name="Talk_to_AI.shared.jvmMain" target="21" />
+      <module name="Talk_to_AI.shared.jvmTest" target="21" />
+      <module name="TalkToAIAssistant.composeApp.desktopDev" target="21" />
+      <module name="TalkToAIAssistant.shared.jvmDev" target="21" />
+    </bytecodeTargetLevel>
   </component>
 </project>
