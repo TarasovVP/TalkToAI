@@ -17,11 +17,18 @@ kotlin {
             }
         }
     }
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "shared"
+            isStatic = true
+        }
+    }
+    jvm()
     js(IR) {
-        useCommonJs()
         browser()
     }
     sourceSets {
@@ -79,35 +86,23 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.ktor.client.java)
             implementation(libs.kotlinx.coroutines.swing)
-            implementation(libs.sqldelight.java.driver)
-            implementation(libs.slf4j)
-            // Datastore
-            implementation(libs.androidx.datastore.preferences)
-            // Text to speech
-            implementation(libs.freetts)
-            // Lottie
-            //implementation(libs.lottie.compose)
         }
         jsMain.dependencies {
             implementation(libs.ktor.client.js)
-            implementation(libs.web.worker.driver)
-            implementation(npm("@cashapp/sqldelight-sqljs-worker", "2.0.2"))
-            implementation(npm("sql.js", "1.6.2"))
-            implementation(devNpm("copy-webpack-plugin", "9.1.0"))
         }
     }
 }
 
 android {
-    namespace = "com.vnteam.talktoai.authorization"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    namespace = "com.vnteam.talktoai"
+    compileSdk = 36
     defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
-        multiDexEnabled = true
+        minSdk = 28
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
+
 

@@ -1,0 +1,83 @@
+package com.vnteam.talktoai.di
+
+import com.vnteam.talktoai.data.network.auth.AuthHttpClient
+import com.vnteam.talktoai.data.network.auth.AuthService
+import com.vnteam.talktoai.data.repositoryimpl.AuthRepositoryImpl
+import com.vnteam.talktoai.domain.repositories.AuthRepository
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.SendRequestUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ChangePasswordUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ClearDataUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.DeleteUserUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleSignInUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleSignOutUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ReAuthenticateUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ResetPasswordUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithGoogleUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignOutUseCase
+import com.vnteam.talktoai.presentation.viewmodels.authorisation.LoginViewModel
+import com.vnteam.talktoai.presentation.viewmodels.authorisation.SignUpViewModel
+import kotlinx.serialization.json.Json
+import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.module
+
+val appModule = module {
+
+    single { AuthService(get()) }
+    single {
+        Json {
+            prettyPrint = true
+            isLenient = true
+            ignoreUnknownKeys = true
+        }
+    }
+
+    single { AuthHttpClient(get()) }
+
+
+    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
+
+    // authorisation
+    single { ChangePasswordUseCase(get(), get(), get()) }
+
+    single { ClearDataUseCase() }
+
+    single { CreateUserWithEmailAndPasswordUseCase(get(), get(), get()) }
+
+    single { CreateUserWithGoogleUseCase(get()) }
+
+    single { DeleteUserUseCase(get(), get(), get()) }
+
+    single { FetchProvidersForEmailUseCase(get(), get()) }
+
+    single { GoogleSignInUseCase(get(), get()) }
+
+    single { GoogleSignOutUseCase(get(), get()) }
+
+    single { ReAuthenticateUseCase(get()) }
+
+    single { ResetPasswordUseCase(get(), get()) }
+
+    single { SignInAnonymouslyUseCase(get(), get(), get()) }
+
+    single { SignInWithEmailAndPasswordUseCase(get(), get(), get()) }
+
+    single { SignInWithGoogleUseCase(get()) }
+
+    single { SignOutUseCase(get(), get()) }
+
+    // ai
+    single { SendRequestUseCase(get()) }
+
+    // ViewModels
+    viewModel {
+        LoginViewModel(get(), get(), get(), get(), get())
+    }
+    viewModel {
+        SignUpViewModel(get(), get(), get(), get(), get(), get())
+    }
+}
