@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="authorization">
+    <output-path>$PROJECT_DIR$/authorization/build/libs</output-path>
+    <root id="archive" name="authorization.jar">
+      <element id="module-output" name="TalkToAIAssistant.authorization.androidMain" />
+    </root>
+  </artifact>
+</component>
