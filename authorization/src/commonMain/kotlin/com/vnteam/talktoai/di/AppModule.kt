@@ -4,7 +4,6 @@ import com.vnteam.talktoai.data.network.auth.AuthHttpClient
 import com.vnteam.talktoai.data.network.auth.AuthService
 import com.vnteam.talktoai.data.repositoryimpl.AuthRepositoryImpl
 import com.vnteam.talktoai.domain.repositories.AuthRepository
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.SendRequestUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ChangePasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ClearDataUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
@@ -19,10 +18,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Si
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignOutUseCase
-import com.vnteam.talktoai.presentation.viewmodels.authorisation.LoginViewModel
-import com.vnteam.talktoai.presentation.viewmodels.authorisation.SignUpViewModel
 import kotlinx.serialization.json.Json
-import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
@@ -69,15 +65,4 @@ val appModule = module {
     single { SignInWithGoogleUseCase(get()) }
 
     single { SignOutUseCase(get(), get()) }
-
-    // ai
-    single { SendRequestUseCase(get()) }
-
-    // ViewModels
-    viewModel {
-        LoginViewModel(get(), get(), get(), get(), get())
-    }
-    viewModel {
-        SignUpViewModel(get(), get(), get(), get(), get(), get())
-    }
 }

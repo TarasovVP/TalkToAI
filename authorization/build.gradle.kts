@@ -1,6 +1,10 @@
+
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.kmpAndroidLibrary)
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinSerialization)
@@ -8,9 +12,12 @@ plugins {
 }
 
 kotlin {
-    android {
-        namespace = "com.vnteam.talktoai"
-        compileSdk = libs.versions.compileSdk.get().toInt()
+    androidTarget {
+        tasks.withType<KotlinJvmCompile>().configureEach {
+            compilerOptions {
+                jvmTarget.set(JvmTarget.JVM_17)
+            }
+        }
     }
     listOf(
         iosX64(),
@@ -60,6 +67,11 @@ kotlin {
             implementation(libs.ktor.client.js)
         }
     }
+}
+
+android {
+    namespace = "com.vnteam.talktoai.shared"
+    compileSdk = libs.versions.compileSdk.get().toInt()
 }
 
 
