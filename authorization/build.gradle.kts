@@ -25,7 +25,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "shared"
+            baseName = "authorization"
             isStatic = true
         }
     }
@@ -70,7 +70,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.vnteam.talktoai.shared"
+    namespace = "com.vnteam.talktoai.authorization"
     compileSdk = libs.versions.compileSdk.get().toInt()
 }
 

@@ -11,7 +11,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import secrets.Secrets
 
 class AuthHttpClient(json: Json) {
     val getHttpClient = HttpClient {
