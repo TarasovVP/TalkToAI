@@ -8,14 +8,10 @@ import kotlinx.coroutines.flow.firstOrNull
 
 class DeleteUserUseCase(
     private val repository: AuthRepository,
-    private val networkState: NetworkState,
     private val preferencesRepository: PreferencesRepository,
 ) : UseCase<Nothing?, Result<Unit>> {
 
     override suspend fun execute(params: Nothing?): Result<Unit> {
-        if (networkState.isNetworkAvailable().not()) {
-            return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
-        }
         val idToken = preferencesRepository.getIdToken().firstOrNull()
         return repository.deleteUser(DeleteAccountBody(idToken))
     }

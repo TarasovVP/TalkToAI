@@ -7,13 +7,9 @@ import com.vnteam.talktoai.domain.usecase.UseCase
 
 class ResetPasswordUseCase(
     private val repository: AuthRepository,
-    private val networkState: NetworkState,
 ) : UseCase<String, Result<Unit>> {
 
     override suspend fun execute(params: String): Result<Unit> {
-        if (networkState.isNetworkAvailable().not()) {
-            return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
-        }
         val body = ResetPasswordBody(params, "PASSWORD_RESET")
         return when (val result = repository.resetPassword(body)) {
             is Result.Failure -> result

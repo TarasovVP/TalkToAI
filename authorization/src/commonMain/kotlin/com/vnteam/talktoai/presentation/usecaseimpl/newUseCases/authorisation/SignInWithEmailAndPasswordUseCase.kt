@@ -7,14 +7,10 @@ import com.vnteam.talktoai.domain.usecase.UseCase
 
 class SignInWithEmailAndPasswordUseCase(
     private val repository: AuthRepository,
-    private val networkState: NetworkState,
     private val preferencesRepository: PreferencesRepository,
 ) : UseCase<Pair<String, String>, Result<Unit>> {
 
     override suspend fun execute(params: Pair<String, String>): Result<Unit> {
-        if (networkState.isNetworkAvailable().not()) {
-            return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
-        }
         return when (val result =
             repository.signInWithEmailAndPassword(AuthBody(params.first, params.second))) {
             is Result.Failure -> result
