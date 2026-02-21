@@ -2,25 +2,15 @@ package com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation
 
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.auth.request.AuthBody
+import com.vnteam.talktoai.data.network.auth.response.SignInAnonymouslyResponse
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import com.vnteam.talktoai.domain.usecase.UseCase
 
 class SignInAnonymouslyUseCase(
     private val repository: AuthRepository,
-    private val preferencesRepository: PreferencesRepository,
-) : UseCase<Nothing?, Result<Unit>> {
+) : UseCase<Nothing?, Result<SignInAnonymouslyResponse>> {
 
-    override suspend fun execute(params: Nothing?): Result<Unit> {
-        return when (val result = repository.signInAnonymously(AuthBody())) {
-            is Result.Failure -> result
-            is Result.Loading -> result
-            is Result.Success -> {
-                result.data?.apply {
-                    preferencesRepository.setIdToken(idToken.orEmpty())
-                    preferencesRepository.setUserEmail(email.orEmpty())
-                }
-                Result.Success(Unit)
-            }
-        }
+    override suspend fun execute(params: Nothing?): Result<SignInAnonymouslyResponse> {
+        return repository.signInAnonymously(AuthBody())
     }
 }

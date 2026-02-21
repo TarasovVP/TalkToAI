@@ -6,13 +6,11 @@ import com.vnteam.talktoai.domain.usecase.UseCase
 
 class SignOutUseCase(
     private val repository: AuthRepository,
-    private val preferencesRepository: PreferencesRepository,
 ) :
     UseCase<Nothing?, Result<Unit>> {
 
     override suspend fun execute(params: Nothing?): Result<Unit> {
         // TODO replace with real implementation
-        preferencesRepository.setIdToken("")
         return repository.googleSignOut()
     }
 }

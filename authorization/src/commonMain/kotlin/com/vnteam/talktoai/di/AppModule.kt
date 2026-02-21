@@ -38,15 +38,15 @@ val appModule = module {
     single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
 
     // authorisation
-    single { ChangePasswordUseCase(get(), get()) }
+    single { ChangePasswordUseCase(get()) }
 
     single { ClearDataUseCase() }
 
-    single { CreateUserWithEmailAndPasswordUseCase(get(), get()) }
+    single { CreateUserWithEmailAndPasswordUseCase(get()) }
 
     single { CreateUserWithGoogleUseCase(get()) }
 
-    single { DeleteUserUseCase(get(), get()) }
+    single { DeleteUserUseCase(get()) }
 
     single { FetchProvidersForEmailUseCase(get()) }
 
@@ -58,11 +58,11 @@ val appModule = module {
 
     single { ResetPasswordUseCase(get()) }
 
-    single { SignInAnonymouslyUseCase(get(), get()) }
+    single { SignInAnonymouslyUseCase(get()) }
 
-    single { SignInWithEmailAndPasswordUseCase(get(), get()) }
+    single { SignInWithEmailAndPasswordUseCase(get()) }
 
     single { SignInWithGoogleUseCase(get()) }
 
-    single { SignOutUseCase(get(), get()) }
+    single { SignOutUseCase(get()) }
 }
