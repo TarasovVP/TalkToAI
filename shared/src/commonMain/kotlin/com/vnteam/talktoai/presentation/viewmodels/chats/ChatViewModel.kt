@@ -20,6 +20,7 @@ import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.AnimationUtils
 import com.vnteam.talktoai.utils.ShareUtils
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class ChatViewModel(
     private val messageUIMapper: MessageUIMapper,
@@ -34,9 +35,12 @@ class ChatViewModel(
     private val sendRequestUseCase: SendRequestUseCase,
 ) : BaseViewModel() {
 
-    val currentChatLiveData = MutableStateFlow<ChatUI?>(null)
-    val messagesLiveData = MutableStateFlow<List<MessageUI>>(listOf())
-    val animationResource = MutableStateFlow("")
+    private val _currentChatLiveData = MutableStateFlow<ChatUI?>(null)
+    val currentChatLiveData = _currentChatLiveData.asStateFlow()
+    private val _messagesLiveData = MutableStateFlow<List<MessageUI>>(listOf())
+    val messagesLiveData = _messagesLiveData.asStateFlow()
+    private val _animationResource = MutableStateFlow("")
+    val animationResource = _animationResource.asStateFlow()
 
     fun insertChat(chat: Chat) {
         launchWithResult {
@@ -47,7 +51,7 @@ class ChatViewModel(
     fun getCurrentChat(chatId: Long) {
         launchWithResultHandling {
             getChatWithIdUseCase.execute(chatId).onSuccess { chat ->
-                currentChatLiveData.value = chat?.let { chatUIMapper.mapToImplModel(it) }
+                _currentChatLiveData.value = chat?.let { chatUIMapper.mapToImplModel(it) }
             }
         }
     }
@@ -55,7 +59,7 @@ class ChatViewModel(
     fun getMessagesFromChat(chatId: Long) {
         launchWithResultHandling {
             getMessagesFromChatUseCase.execute(chatId).onSuccess { result ->
-                messagesLiveData.value = messageUIMapper.mapToImplModelList(result.orEmpty())
+                _messagesLiveData.value = messageUIMapper.mapToImplModelList(result.orEmpty())
             }
         }
     }
@@ -104,7 +108,7 @@ class ChatViewModel(
     fun getAnimationResource() {
         launchWithErrorHandling {
             val resource = Res.readBytes("files/message_typing.json").decodeToString()
-            animationResource.value = resource
+            _animationResource.value = resource
         }
     }
 }
