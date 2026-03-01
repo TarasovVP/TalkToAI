@@ -16,98 +16,146 @@ import com.vnteam.talktoai.data.network.auth.response.SignUpEmailResponse
 import com.vnteam.talktoai.data.network.handleResponse
 import com.vnteam.talktoai.data.sdk.GoogleAuthHandler
 import com.vnteam.talktoai.domain.repositories.AuthRepository
+import io.ktor.client.statement.HttpResponse
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
+
+interface Logger {
+    fun debug(tag: String, message: String)
+    fun error(tag: String, message: String, throwable: Throwable? = null)
+}
 
 class AuthRepositoryImpl(
     private val authService: AuthService,
     private val googleAuthHandler: GoogleAuthHandler,
-) :
-    AuthRepository {
+    private val logger: Logger? = null,
+) : AuthRepository {
 
-    override suspend fun fetchProvidersForEmail(providersForEmailBody: ProvidersForEmailBody): Result<ProvidersForEmailResponse> {
-        val httpResponse = authService.fetchProvidersForEmail(providersForEmailBody)
-        val providersForEmailResponse = httpResponse.handleResponse<ProvidersForEmailResponse>()
-        println("authTAG fetchProvidersForEmail providersForEmailResponse: $providersForEmailResponse")
-        return providersForEmailResponse
+    companion object {
+        private const val TAG = "AuthRepository"
     }
 
-    override suspend fun signInWithEmailAndPassword(authBody: AuthBody): Result<SignInEmailResponse> {
-        val httpResponse = authService.signInWithEmailAndPassword(authBody)
-        val signInEmailResponse = httpResponse.handleResponse<SignInEmailResponse>()
-        println("authTAG signInWithEmailAndPassword signInEmailResponse: $signInEmailResponse")
-        return signInEmailResponse
+    private suspend inline fun <reified T> executeAuthRequest(
+        operation: String,
+        crossinline block: suspend () -> HttpResponse?
+    ): Result<T> {
+        return try {
+            logger?.debug(TAG, "Executing $operation")
+            val httpResponse = block()
+            val result = httpResponse.handleResponse<T>()
+
+            when (result) {
+                is Result.Success -> logger?.debug(TAG, "$operation completed successfully")
+                is Result.Failure -> logger?.error(TAG, "$operation failed: ${result.message}")
+            }
+
+            result
+        } catch (e: Exception) {
+            logger?.error(TAG, "$operation exception", e)
+            Result.Failure("$operation failed: ${e.message}")
+        }
     }
 
-    override suspend fun signInAnonymously(authBody: AuthBody): Result<SignInAnonymouslyResponse> {
-        val httpResponse = authService.signInAnonymously(authBody)
-        val signInAnonymouslyResponse = httpResponse.handleResponse<SignInAnonymouslyResponse>()
-        println("authTAG signInAnonymously signInAnonymouslyResponse: $signInAnonymouslyResponse")
-        return signInAnonymouslyResponse
-    }
+    override suspend fun fetchProvidersForEmail(
+        providersForEmailBody: ProvidersForEmailBody
+    ): Result<ProvidersForEmailResponse> = 
+        executeAuthRequest("fetchProvidersForEmail") {
+            authService.fetchProvidersForEmail(providersForEmailBody)
+        }
 
-    override suspend fun resetPassword(resetPasswordBody: ResetPasswordBody): Result<ResetPasswordResponse> {
-        val httpResponse = authService.resetPassword(resetPasswordBody)
-        val resetPasswordResponse = httpResponse.handleResponse<ResetPasswordResponse>()
-        println("authTAG resetPassword resetPasswordResponse: $resetPasswordResponse")
-        return resetPasswordResponse
-    }
+    override suspend fun signInWithEmailAndPassword(
+        authBody: AuthBody
+    ): Result<SignInEmailResponse> = 
+        executeAuthRequest("signInWithEmailAndPassword") {
+            authService.signInWithEmailAndPassword(authBody)
+        }
 
-    override suspend fun createUserWithEmailAndPassword(authBody: AuthBody): Result<SignUpEmailResponse> {
-        val httpResponse = authService.createUserWithEmailAndPassword(authBody)
-        val signUpEmailResponse = httpResponse.handleResponse<SignUpEmailResponse>()
-        println("authTAG createUserWithEmailAndPassword signUpEmailResponse: $signUpEmailResponse")
-        return signUpEmailResponse
-    }
+    override suspend fun signInAnonymously(
+        authBody: AuthBody
+    ): Result<SignInAnonymouslyResponse> = 
+        executeAuthRequest("signInAnonymously") {
+            authService.signInAnonymously(authBody)
+        }
 
-    override suspend fun changePassword(changePasswordBody: ChangePasswordBody): Result<ChangePasswordResponse> {
-        val httpResponse = authService.changePassword(changePasswordBody)
-        val changePasswordResponse = httpResponse.handleResponse<ChangePasswordResponse>()
-        println("authTAG changePassword changePasswordResponse: $changePasswordResponse")
-        return changePasswordResponse
-    }
+    override suspend fun resetPassword(
+        resetPasswordBody: ResetPasswordBody
+    ): Result<ResetPasswordResponse> = 
+        executeAuthRequest("resetPassword") {
+            authService.resetPassword(resetPasswordBody)
+        }
 
-    override suspend fun deleteUser(deleteAccountBody: DeleteAccountBody): Result<Unit> {
-        val httpResponse = authService.deleteAccount(deleteAccountBody)
-        val deleteAccountResponse = httpResponse.handleResponse<Unit>()
-        println("authTAG deleteUser deleteAccountResponse: $deleteAccountResponse")
-        return deleteAccountResponse
-    }
+    override suspend fun createUserWithEmailAndPassword(
+        authBody: AuthBody
+    ): Result<SignUpEmailResponse> = 
+        executeAuthRequest("createUserWithEmailAndPassword") {
+            authService.createUserWithEmailAndPassword(authBody)
+        }
+
+    override suspend fun changePassword(
+        changePasswordBody: ChangePasswordBody
+    ): Result<ChangePasswordResponse> = 
+        executeAuthRequest("changePassword") {
+            authService.changePassword(changePasswordBody)
+        }
+
+    override suspend fun deleteUser(
+        deleteAccountBody: DeleteAccountBody
+    ): Result<Unit> = 
+        executeAuthRequest("deleteUser") {
+            authService.deleteAccount(deleteAccountBody)
+        }
 
     override suspend fun googleSignIn(idToken: String): Result<Unit> {
-        googleAuthHandler.signIn()
-        return Result.Success(Unit)
+        return try {
+            logger?.debug(TAG, "Google sign in with provided token")
+            // TODO: Send idToken to backend for verification
+            // val result = authService.googleSignIn(GoogleSignInRequest(idToken))
+            // return executeAuthRequest("googleSignIn") { result }
+
+            // For now using local handler
+            googleAuthHandler.signIn()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            logger?.error(TAG, "Google sign in failed", e)
+            Result.Failure("Google sign in failed: ${e.message}")
+        }
     }
 
     override suspend fun googleSignOut(): Result<Unit> {
-        googleAuthHandler.signOut()
-        return Result.Success(Unit)
+        return try {
+            logger?.debug(TAG, "Google sign out")
+            googleAuthHandler.signOut()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            logger?.error(TAG, "Google sign out failed", e)
+            Result.Failure("Google sign out failed: ${e.message}")
+        }
     }
 
-
-    override fun addAuthStateListener(/*authStateListener: AuthStateListener*/) {
-        //firebaseAuth.addAuthStateListener(authStateListener)
+    override fun addAuthStateListener() {
+        // TODO: Implement when needed
+        logger?.debug(TAG, "addAuthStateListener not implemented")
     }
 
-    override fun removeAuthStateListener(/*authStateListener: AuthStateListener*/) {
-        //firebaseAuth.removeAuthStateListener(authStateListener)
+    override fun removeAuthStateListener() {
+        // TODO: Implement when needed
+        logger?.debug(TAG, "removeAuthStateListener not implemented")
     }
 
     override fun isGoogleAuthUser(): Boolean {
-        /*firebaseAuth.currentUser?.providerData?.forEach {
-            if (it.providerId == GoogleAuthProvider.PROVIDER_ID) return true
+        return try {
+            val token = googleAuthHandler.getToken()
+            val isGoogleUser = !token.isNullOrEmpty()
+            logger?.debug(TAG, "isGoogleAuthUser: $isGoogleUser")
+            isGoogleUser
+        } catch (e: Exception) {
+            logger?.error(TAG, "Error checking Google auth user", e)
+            false
         }
-        return false*/
-        return false
     }
 
-
-    override fun reAuthenticate(/*authCredential: AuthCredential*/): Flow<Unit> = callbackFlow {
-        /*firebaseAuth.currentUser?.reauthenticate(authCredential)
-            ?.addOnSuccessListener {
-                result.invoke(Result.Success())
-            }?.addOnFailureListener { exception ->
-                result.invoke(Result.Failure(exception.localizedMessage))
-            }*/
+    override fun reAuthenticate(): Flow<Unit> = flow {
+        logger?.debug(TAG, "reAuthenticate called")
+        throw UnsupportedOperationException("reAuthenticate is not yet implemented")
     }
 }

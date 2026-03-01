@@ -3,6 +3,7 @@ package com.vnteam.talktoai.data.network.auth
 import com.vnteam.talktoai.data.network.NetworkConstants
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
@@ -12,7 +13,13 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-class AuthHttpClient(json: Json) {
+class AuthHttpClient(
+    json: Json,
+    enableLogging: Boolean = false,
+    connectTimeoutMillis: Long = 15_000,
+    requestTimeoutMillis: Long = 30_000,
+    socketTimeoutMillis: Long = 30_000
+) {
     val getHttpClient = HttpClient {
         install(ContentNegotiation) {
             json(json)
@@ -24,13 +31,23 @@ class AuthHttpClient(json: Json) {
             }
             contentType(ContentType.Application.Json)
         }
-        install(Logging) {
-            logger = object : Logger {
-                override fun log(message: String) {
-                    println("Logger Ktor => $message")
+        install(HttpTimeout) {
+            this.connectTimeoutMillis = connectTimeoutMillis
+            this.requestTimeoutMillis = requestTimeoutMillis
+            this.socketTimeoutMillis = socketTimeoutMillis
+        }
+        if (enableLogging) {
+            install(Logging) {
+                logger = object : Logger {
+                    override fun log(message: String) {
+                        // Проста маскіровка значення ключа у логах
+                        val redacted = message.replace(Secrets.AUTH_API_KEY, "***")
+                        println("Ktor => $redacted")
+                    }
                 }
+                // Уникаємо ALL, щоб не світити чутливі дані
+                level = LogLevel.HEADERS
             }
-            level = LogLevel.ALL
         }
     }
 }
