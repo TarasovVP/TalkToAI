@@ -4,7 +4,7 @@ import com.vnteam.talktoai.Constants.APP_NAME
 import com.vnteam.talktoai.di.doInitKoin
 import org.jetbrains.skiko.wasm.onWasmReady
 import org.koin.compose.koinInject
-import presentation.App
+import com.vnteam.talktoai.presentation.App
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
