@@ -46,7 +46,8 @@ class AuthRepositoryImpl(
 
             when (result) {
                 is Result.Success -> logger?.debug(TAG, "$operation completed successfully")
-                is Result.Failure -> logger?.error(TAG, "$operation failed: ${result.message}")
+                is Result.Failure -> logger?.error(TAG, "$operation failed: ${result.errorMessage}")
+                else -> Unit
             }
 
             result

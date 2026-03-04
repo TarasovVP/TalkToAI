@@ -1,8 +1,9 @@
 package di_ios
 
 import com.vnteam.talktoai.di.appModule
+import com.vnteam.talktoai.di.authModule
 import org.koin.core.context.startKoin
 
 fun doInitKoin() = startKoin {
-    modules(appModule, iosModule)
+    modules(authModule, appModule, iosModule)
 }

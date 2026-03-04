@@ -8,7 +8,6 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.sqlDelight)
-    alias(libs.plugins.kmpSecrets)
 }
 
 kotlin {
@@ -30,6 +29,7 @@ kotlin {
     jvm()
     sourceSets {
         commonMain.dependencies {
+            api(projects.authorization)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.androidx.viewmodel.compose)

@@ -21,7 +21,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Si
 import kotlinx.serialization.json.Json
 import org.koin.dsl.module
 
-val appModule = module {
+val authModule = module {
 
     single { AuthService(get()) }
     single {

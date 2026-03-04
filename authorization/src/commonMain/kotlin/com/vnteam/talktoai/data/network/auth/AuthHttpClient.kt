@@ -12,6 +12,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import secrets.Secrets
 
 class AuthHttpClient(
     json: Json,
@@ -40,12 +41,10 @@ class AuthHttpClient(
             install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {
-                        // Проста маскіровка значення ключа у логах
                         val redacted = message.replace(Secrets.AUTH_API_KEY, "***")
                         println("Ktor => $redacted")
                     }
                 }
-                // Уникаємо ALL, щоб не світити чутливі дані
                 level = LogLevel.HEADERS
             }
         }
