@@ -29,9 +29,11 @@ kotlin {
     jvm()
     sourceSets {
         commonMain.dependencies {
-            api(projects.authorization)
+            implementation(projects.authorization)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.navigation.compose)
             implementation(libs.androidx.viewmodel.compose)
             // Compose
             implementation(libs.compose.runtime)
