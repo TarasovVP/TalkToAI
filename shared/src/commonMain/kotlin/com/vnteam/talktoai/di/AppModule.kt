@@ -7,9 +7,6 @@ import com.vnteam.talktoai.data.database.dao.MessageDao
 import com.vnteam.talktoai.data.database.dao.MessageDaoImpl
 import com.vnteam.talktoai.data.mapperimpls.ChatDBMapperImpl
 import com.vnteam.talktoai.data.mapperimpls.MessageDBMapperImpl
-import com.vnteam.talktoai.data.network.ai.AIHttpClient
-import com.vnteam.talktoai.data.network.ai.AIService
-import com.vnteam.talktoai.data.repositoryimpl.AIRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.ChatRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.MessageRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.PreferencesRepositoryImpl
@@ -18,14 +15,12 @@ import com.vnteam.talktoai.domain.mappers.ChatDBMapper
 import com.vnteam.talktoai.domain.mappers.ChatUIMapper
 import com.vnteam.talktoai.domain.mappers.MessageDBMapper
 import com.vnteam.talktoai.domain.mappers.MessageUIMapper
-import com.vnteam.talktoai.domain.repositories.AIRepository
 import com.vnteam.talktoai.domain.repositories.ChatRepository
 import com.vnteam.talktoai.domain.repositories.MessageRepository
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnteam.talktoai.presentation.mapperimpls.ChatUIMapperImpl
 import com.vnteam.talktoai.presentation.mapperimpls.MessageUIMapperImpl
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.SendRequestUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.DeleteChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatWithIdUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatsUseCase
@@ -61,21 +56,10 @@ import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsLanguageView
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsPrivacyPolicyViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsSignUpViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsThemeViewModel
-import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
-
-    single { AIService(get()) }
-    single {
-        Json {
-            prettyPrint = true
-            isLenient = true
-            ignoreUnknownKeys = true
-        }
-    }
-    single { AIHttpClient(get()) }
 
     single {
         SharedDatabase(get())
@@ -99,8 +83,6 @@ val appModule = module {
     single<ChatRepository> { ChatRepositoryImpl(get(), get()) }
 
     single<MessageRepository> { MessageRepositoryImpl(get(), get()) }
-
-    single<AIRepository> { AIRepositoryImpl(get()) }
 
     single<PreferencesRepository> { PreferencesRepositoryImpl(get()) }
 
@@ -156,9 +138,6 @@ val appModule = module {
     single { InsertRemoteUserUseCase(get()) }
 
     single { UpdateRemoteUserUseCase(get()) }
-
-    // ai
-    single { SendRequestUseCase(get()) }
 
     // ViewModels
     viewModel {
