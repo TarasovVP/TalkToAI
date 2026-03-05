@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.kmpSecrets)
 }
 
 kotlin {
@@ -22,7 +23,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "authorization"
+            baseName = "network"
             isStatic = true
         }
     }
@@ -32,7 +33,6 @@ kotlin {
     }
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.network)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.coroutines.core)
             // Ktor
@@ -48,8 +48,6 @@ kotlin {
             implementation(libs.ktor.client.android)
             // Koin
             implementation(libs.koin.android)
-            // Google Auth
-            implementation(libs.play.services.auth)
         }
         iosMain.dependencies {
             // Ktor
@@ -68,7 +66,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.vnteam.talktoai.authorization"
+    namespace = "com.vnteam.talktoai.network"
     compileSdk = libs.versions.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
@@ -78,7 +76,3 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
 }
-
-
-
-
