@@ -8,6 +8,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.vnteam.talktoai.CommonExtensions.isTrue
+import com.vnteam.talktoai.presentation.screens.main.AppContent
 import com.vnteam.talktoai.presentation.ui.components.SplashScreen
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.resources.getStringResourcesByLocale
@@ -15,12 +16,12 @@ import com.vnteam.talktoai.presentation.ui.theme.AppTheme
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.settings.AppViewModel
-import com.vnteam.talktoai.presentation.screens.main.AppContent
+import secrets.Secrets
 
 @Composable
 fun App(appViewModel: AppViewModel) {
     val screenState = appViewModel.screenState.collectAsState()
-
+    Secrets
     val isSplashScreenVisible = remember { mutableStateOf(true) }
     println("AppTAG: screenState.value: ${screenState.value} isSplashScreenVisible: ${isSplashScreenVisible.value}")
     if (screenState.value.isReadyToLaunch && isSplashScreenVisible.value.not()) {
