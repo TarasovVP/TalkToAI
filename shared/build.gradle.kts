@@ -30,6 +30,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.authorization)
+            implementation(projects.ai)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
