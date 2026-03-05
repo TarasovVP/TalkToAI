@@ -33,7 +33,6 @@ kotlin {
     }
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.authorization)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.coroutines.core)
             // Ktor
