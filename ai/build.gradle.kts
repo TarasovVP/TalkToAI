@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.kmpSecrets)
 }
 
 kotlin {
@@ -33,6 +32,7 @@ kotlin {
     }
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.network)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.coroutines.core)
             // Ktor
