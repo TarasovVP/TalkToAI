@@ -14,7 +14,7 @@ kotlin {
     androidTarget {
         tasks.withType<KotlinJvmCompile>().configureEach {
             compilerOptions {
-                jvmTarget.set(JvmTarget.JVM_21)
+                jvmTarget.set(JvmTarget.JVM_17)
             }
         }
     }
@@ -31,6 +31,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.authorization)
             implementation(projects.ai)
+            implementation(projects.network)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
@@ -114,8 +115,8 @@ android {
         multiDexEnabled = true
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
