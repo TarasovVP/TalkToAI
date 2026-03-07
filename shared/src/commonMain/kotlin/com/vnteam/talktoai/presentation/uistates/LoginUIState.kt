@@ -6,4 +6,5 @@ data class LoginUIState(
     val isGoogleAccountExist: String? = null,
     val successPasswordReset: Boolean? = null,
     val userLogin: String? = null,
+    val anonymousSignInSuccess: Boolean? = null,
 )

@@ -49,6 +49,7 @@ fun ConfirmationDialog(
                                 .fillMaxWidth()
                                 .padding(16.dp),
                             textAlign = TextAlign.Center,
+                            color = Color.Black,
                         )
                         SubmitButtons(true, {
                             showDialog.value = false
