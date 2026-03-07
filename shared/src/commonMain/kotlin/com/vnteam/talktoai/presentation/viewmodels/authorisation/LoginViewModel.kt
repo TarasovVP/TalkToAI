@@ -30,8 +30,15 @@ class LoginViewModel(
     }
 
     fun signInAnonymously() {
-        launchWithResult {
-            signInAnonymouslyUseCase.execute()
+        launchWithErrorHandling {
+            when (val result = signInAnonymouslyUseCase.execute()) {
+                is com.vnteam.talktoai.data.network.Result.Success -> {
+                    hideProgress()
+                    updateUIState(LoginUIState(anonymousSignInSuccess = true))
+                }
+                is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
+                is com.vnteam.talktoai.data.network.Result.Loading -> showProgress()
+            }
         }
     }
 
