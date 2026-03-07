@@ -95,6 +95,9 @@ fun LoginScreen() {
         uiState.successPasswordReset?.let {
             //updateScreenState(appMessage = AppMessage(false, LocalStringResources.current.AUTHORIZATION_PASSWORD_RESET_SUCCESS))
         }
+        uiState.anonymousSignInSuccess?.let {
+            updatedScreenRoute.value = "${com.vnteam.talktoai.presentation.ui.NavigationScreen.CHAT_DESTINATION}/${com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID}"
+        }
     }
 
     LoginContent(
