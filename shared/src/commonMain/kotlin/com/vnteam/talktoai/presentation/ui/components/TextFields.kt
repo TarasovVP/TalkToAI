@@ -77,11 +77,22 @@ fun SecondaryTextField(
     TextField(
         value = inputValue.value,
         onValueChange = { inputValue.value = it },
-        placeholder = { Text(text = placeHolder) },
-        colors = TextFieldDefaults.colors(focusedContainerColor = Color.White),
+        placeholder = { Text(text = placeHolder, color = Color.Gray) },
+        textStyle = TextStyle(color = Color.Black),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            disabledContainerColor = Color.White,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+        ),
+        shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
+            .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
+            .background(color = Color.White, shape = RoundedCornerShape(16.dp))
     )
 }
 
