@@ -93,6 +93,7 @@ fun DataEditDialog(
                                 .fillMaxWidth()
                                 .padding(16.dp),
                             textAlign = TextAlign.Center,
+                            color = Color.Black,
                         )
                         SecondaryTextField(inputValue, placeHolder)
                         SubmitButtons(inputValue.value.text.isNotEmpty(), {
