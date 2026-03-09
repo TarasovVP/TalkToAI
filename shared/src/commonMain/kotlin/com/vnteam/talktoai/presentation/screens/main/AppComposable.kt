@@ -19,6 +19,7 @@ import com.vnteam.talktoai.presentation.viewmodels.settings.AppViewModel
 import kotlinx.coroutines.launch
 import com.vnteam.talktoai.presentation.AppNavigation
 import com.vnteam.talktoai.presentation.LocalScreenState
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
 
 @Composable
 fun AppContent(appViewModel: AppViewModel) {
@@ -32,8 +33,16 @@ fun AppContent(appViewModel: AppViewModel) {
     println("AppContentTAG: AppContent screenState.value: ${screenState.value}")
 
     LaunchedEffect(screenState.value.currentScreenRoute) {
-        screenState.value.currentScreenRoute?.let {
-            navController.navigate(it)
+        screenState.value.currentScreenRoute?.let { route ->
+            if (route.startsWith(NavigationScreen.CHAT_DESTINATION)) {
+                navController.navigate(route) {
+                    popUpTo(navController.graph.startDestinationRoute.orEmpty()) {
+                        inclusive = true
+                    }
+                }
+            } else {
+                navController.navigate(route)
+            }
         }
     }
 
