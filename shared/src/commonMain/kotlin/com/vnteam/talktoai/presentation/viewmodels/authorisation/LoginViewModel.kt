@@ -7,6 +7,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Go
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ResetPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +19,7 @@ class LoginViewModel(
     private val resetPasswordUseCase: ResetPasswordUseCase,
     private val userEmailUseCase: UserEmailUseCase,
     private val googleUseCase: GoogleSignInUseCase,
+    private val idTokenUseCase: IdTokenUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUIState())
@@ -34,6 +36,7 @@ class LoginViewModel(
             when (val result = signInAnonymouslyUseCase.execute()) {
                 is com.vnteam.talktoai.data.network.Result.Success -> {
                     hideProgress()
+                    idTokenUseCase.set("anonymous")
                     updateUIState(LoginUIState(anonymousSignInSuccess = true))
                 }
                 is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
