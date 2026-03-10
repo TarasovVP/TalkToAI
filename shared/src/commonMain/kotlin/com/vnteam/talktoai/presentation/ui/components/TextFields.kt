@@ -174,7 +174,7 @@ fun TextFieldWithButton(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .border(
                 1.dp,
                 if (isEnabled) Primary500 else Neutral600,
