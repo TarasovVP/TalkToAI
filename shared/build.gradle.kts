@@ -32,6 +32,7 @@ kotlin {
             implementation(projects.authorization)
             implementation(projects.ai)
             implementation(projects.network)
+            implementation(projects.settings)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)

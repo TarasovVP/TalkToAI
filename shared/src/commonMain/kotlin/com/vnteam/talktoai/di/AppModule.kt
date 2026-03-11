@@ -9,7 +9,6 @@ import com.vnteam.talktoai.data.mapperimpls.ChatDBMapperImpl
 import com.vnteam.talktoai.data.mapperimpls.MessageDBMapperImpl
 import com.vnteam.talktoai.data.repositoryimpl.ChatRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.MessageRepositoryImpl
-import com.vnteam.talktoai.data.repositoryimpl.PreferencesRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.RealDataBaseRepositoryImpl
 import com.vnteam.talktoai.domain.mappers.ChatDBMapper
 import com.vnteam.talktoai.domain.mappers.ChatUIMapper
@@ -17,7 +16,6 @@ import com.vnteam.talktoai.domain.mappers.MessageDBMapper
 import com.vnteam.talktoai.domain.mappers.MessageUIMapper
 import com.vnteam.talktoai.domain.repositories.ChatRepository
 import com.vnteam.talktoai.domain.repositories.MessageRepository
-import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnteam.talktoai.presentation.mapperimpls.ChatUIMapperImpl
 import com.vnteam.talktoai.presentation.mapperimpls.MessageUIMapperImpl
@@ -38,12 +36,6 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRem
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.FeedbackUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GetPrivacyPolicyUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ReviewUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ThemeUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.LoginViewModel
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.OnBoardingViewModel
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.SignUpViewModel
@@ -85,8 +77,6 @@ val appModule = module {
 
     single<MessageRepository> { MessageRepositoryImpl(get(), get()) }
 
-    single<PreferencesRepository> { PreferencesRepositoryImpl(get()) }
-
     single<ChatUIMapper> { ChatUIMapperImpl() }
 
     single<MessageUIMapper> { MessageUIMapperImpl() }
@@ -95,19 +85,7 @@ val appModule = module {
     // preferences
     single { FeedbackUseCase(get()) }
 
-    single { LanguageUseCase(get()) }
-
-    single { OnboardingUseCase(get()) }
-
     single { GetPrivacyPolicyUseCase(get()) }
-
-    single { ReviewUseCase(get()) }
-
-    single { ThemeUseCase(get()) }
-
-    single { UserEmailUseCase(get()) }
-
-    single { IdTokenUseCase(get()) }
 
     // ai
     single { SendRequestUseCase(get()) }
