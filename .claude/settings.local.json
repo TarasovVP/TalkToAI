@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(adb:*)",
-      "Bash(./gradlew :composeApp:assembleDebug:*)"
+      "Bash(./gradlew :composeApp:assembleDebug:*)",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Read(//Users/volodymyrtarasov/AndroidStudioProjects/TalkToAI/$f/**)",
+      "Bash(done)"
     ]
   }
 }
