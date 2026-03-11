@@ -1,0 +1,8 @@
+{
+  "buildPath": ":",
+  "projectPath": ":settings",
+  "moduleId": {
+    "groupId": "TalkToAIAssistant",
+    "moduleId": "settings"
+  }
+}
