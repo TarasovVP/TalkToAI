@@ -1,2 +1,3 @@
 # Auto-generated .gitignore
+/build
 src/commonMain/kotlin/secrets/Secrets.kt
