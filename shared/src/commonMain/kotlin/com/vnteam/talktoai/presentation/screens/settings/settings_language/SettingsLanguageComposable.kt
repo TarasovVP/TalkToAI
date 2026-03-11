@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.ic_flag_en
+import com.vnteam.talktoai.ic_flag_ua
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral500
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
@@ -63,7 +64,7 @@ fun SettingsLanguageContent() {
         SettingsLanguageItem(
             LocalStringResources.current.SETTINGS_LANGUAGE_UKRAINIAN,
             Constants.APP_LANG_UK == appLanguageState.value,
-            Res.drawable.ic_flag_en
+            Res.drawable.ic_flag_ua
         ) {
             viewModel.setAppLanguage(Constants.APP_LANG_UK)
         }
