@@ -13,10 +13,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.unit.dp
-import com.vnteam.talktoai.CommonExtensions.flagDrawable
+import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
+import com.vnteam.talktoai.ic_flag_en
+import com.vnteam.talktoai.ic_flag_ua
+import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.ic_settings_account
 import com.vnteam.talktoai.ic_settings_chat
 import com.vnteam.talktoai.ic_settings_feedback
@@ -36,6 +38,7 @@ fun SettingsListComposable(
     currentRouteState: String?,
     onNextScreen: (String) -> Unit,
 ) {
+    val language = LocalScreenState.current.value.language
     Column(
         modifier = Modifier.fillMaxSize().background(Primary900).padding(top = 8.dp)
     ) {
@@ -57,7 +60,7 @@ fun SettingsListComposable(
             name = LocalStringResources.current.SETTINGS_LANGUAGE,
             mainIcon = Res.drawable.ic_settings_language,
             isCurrent = currentRouteState == NavigationScreen.SettingsLanguageScreen.route,
-            secondaryIcon = LocaleList.current.flagDrawable()
+            secondaryIcon = if (language == Constants.APP_LANG_UK) Res.drawable.ic_flag_ua else Res.drawable.ic_flag_en
         ) {
             onNextScreen.invoke(NavigationScreen.SettingsLanguageScreen.route)
         }
