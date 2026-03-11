@@ -85,7 +85,7 @@ class AppViewModel(
                 _userEmail,
                 _onBoardingSeen
             ) { isDarkTheme, language, idToken, userEmail, onBoardingSeen ->
-                ScreenState(
+                _screenState.value.copy(
                     isDarkTheme = isDarkTheme,
                     language = language,
                     idToken = idToken,
