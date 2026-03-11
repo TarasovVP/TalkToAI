@@ -47,6 +47,7 @@ import kotlin.time.Clock
 
 @Composable
 fun ChatListScreen(
+    currentChatId: Long? = null,
     onChatClick: (Chat?) -> Unit,
 ) {
     val viewModel = koinViewModel<ChatListViewModel>()
@@ -62,9 +63,9 @@ fun ChatListScreen(
     val currentChatState = remember { mutableStateOf<Chat?>(null) }
     val deleteChatState = remember { mutableStateOf<Chat?>(null) }
 
-    LaunchedEffect(chats.value) {
-        chats.value?.let { chats ->
-            currentChatState.value = chats.firstOrNull()
+    LaunchedEffect(chats.value, currentChatId) {
+        chats.value?.let { chatList ->
+            currentChatState.value = chatList.firstOrNull { it.id == currentChatId }
         }
     }
 

@@ -51,6 +51,7 @@ fun DrawerContent(screenState: ScreenState, onScreenStateUpdate: (ScreenState) -
         }
     } else {
         ChatListScreen(
+            currentChatId = screenState.currentChat?.id,
             onChatClick = { chat ->
                 onScreenStateUpdate(
                     screenState.copy(
