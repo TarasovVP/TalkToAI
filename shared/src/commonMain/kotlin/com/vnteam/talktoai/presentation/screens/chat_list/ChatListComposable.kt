@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.domain.models.Chat
@@ -88,7 +89,7 @@ fun ChatListScreen(
         onChatClick = onChatClick
     )
     CreateChatDialog(
-        currentChatState.value?.name.orEmpty(),
+        String.EMPTY,
         showCreateChatDialog
     ) { chatName ->
         viewModel.insertChat(
