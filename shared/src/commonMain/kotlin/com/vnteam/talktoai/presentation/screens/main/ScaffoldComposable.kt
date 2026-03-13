@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun AppTopBar(screenState: ScreenState?, onNavigationIconClick: () -> Unit) {
+fun AppTopBar(screenState: ScreenState?, onNavigationIconClick: () -> Unit, onEditChatClick: () -> Unit = {}) {
     println("AppTopBarTAG: screenState: $screenState screenState?.isLoggedInUser: ${screenState?.isLoggedInUser}")
     when {
         screenState?.isLoggedInUser.isNotTrue() -> Unit
@@ -62,10 +62,9 @@ fun AppTopBar(screenState: ScreenState?, onNavigationIconClick: () -> Unit) {
                 LocalStringResources.current
             ),
             onNavigationIconClick,
-            isActionVisible = screenState?.isChatScreen.isTrue() && screenState?.currentChat != null
-        ) {
-            //showEditChatDialog.value = true
-        }
+            isActionVisible = screenState?.isChatScreen.isTrue() && screenState?.currentChat != null,
+            onActionIconClick = onEditChatClick
+        )
     }
 }
 
@@ -79,7 +78,7 @@ fun PrimaryTopBar(
     onActionIconClick: () -> Unit,
 ) {
     TopAppBar(
-        title = { Text(title) }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        title = { Text(title, color = Neutral50) }, colors = TopAppBarDefaults.topAppBarColors(
         containerColor = Primary900, titleContentColor = Neutral50
     ), navigationIcon = {
         IconButton(onClick = onNavigationIconClick) {

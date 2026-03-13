@@ -11,15 +11,20 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.vnteam.talktoai.CommonExtensions.isTrue
+import com.vnteam.talktoai.presentation.ui.components.CreateChatDialog
+import com.vnteam.talktoai.presentation.viewmodels.chats.ChatListViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.AppViewModel
 import kotlinx.coroutines.launch
 import com.vnteam.talktoai.presentation.AppNavigation
 import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AppContent(appViewModel: AppViewModel) {
@@ -27,8 +32,10 @@ fun AppContent(appViewModel: AppViewModel) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val navController = rememberNavController()
+    val chatListViewModel = koinViewModel<ChatListViewModel>()
 
     val screenState = LocalScreenState.current
+    val showRenameChatDialog = remember { mutableStateOf(false) }
 
     println("AppContentTAG: AppContent screenState.value: ${screenState.value}")
 
@@ -65,17 +72,21 @@ fun AppContent(appViewModel: AppViewModel) {
     ) {
         Scaffold(
             topBar = {
-                AppTopBar(screenState.value) {
-                    if (screenState.value.isSecondaryScreen.isTrue()) {
-                        navController.navigateUp()
-                    } else {
-                        scope.launch {
-                            if (drawerState.isClosed) {
-                                drawerState.open()
+                AppTopBar(
+                    screenState = screenState.value,
+                    onNavigationIconClick = {
+                        if (screenState.value.isSecondaryScreen.isTrue()) {
+                            navController.navigateUp()
+                        } else {
+                            scope.launch {
+                                if (drawerState.isClosed) {
+                                    drawerState.open()
+                                }
                             }
                         }
-                    }
-                }
+                    },
+                    onEditChatClick = { showRenameChatDialog.value = true }
+                )
             },
             snackbarHost = {
                 AppSnackBar(screenState.value, scope)
@@ -95,6 +106,17 @@ fun AppContent(appViewModel: AppViewModel) {
                     )
                 }
             }
+        }
+    }
+
+    CreateChatDialog(
+        currentChatName = screenState.value.currentChat?.name.orEmpty(),
+        showDialog = showRenameChatDialog
+    ) { newName ->
+        screenState.value.currentChat?.let { chat ->
+            val updatedChat = chat.copy(name = newName)
+            chatListViewModel.updateChat(updatedChat)
+            screenState.value = screenState.value.copy(currentChat = updatedChat)
         }
     }
 }
