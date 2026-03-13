@@ -6,7 +6,8 @@
       "Bash(for f:*)",
       "Bash(do echo:*)",
       "Read(//Users/volodymyrtarasov/AndroidStudioProjects/TalkToAI/$f/**)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(find /Users/volodymyrtarasov/AndroidStudioProjects/TalkToAI -type f -name \"*UpdateChatUseCase*\" 2>/dev/null | grep -v build)"
     ]
   }
 }
