@@ -55,7 +55,7 @@ fun SettingsFeedbackContent() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Start,
         )
         OutlinedTextField(
             value = inputValue.value,
