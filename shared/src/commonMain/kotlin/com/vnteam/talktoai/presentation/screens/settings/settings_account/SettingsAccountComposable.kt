@@ -72,7 +72,7 @@ fun SettingsAccountScreen() {
 
     val userEmail by viewModel.userEmail.collectAsState()
     LaunchedEffect(userEmail) {
-        if (userEmail.isNullOrEmpty()) {
+        if (userEmail == null) {
             viewModel.currentUserEmail()
         } else {
             authState.value = when {
