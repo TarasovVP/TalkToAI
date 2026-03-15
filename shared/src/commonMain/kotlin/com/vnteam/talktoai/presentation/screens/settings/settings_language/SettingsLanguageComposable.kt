@@ -98,7 +98,8 @@ fun SettingsLanguageItem(
             Text(text = name, modifier = Modifier.weight(1f))
             Image(
                 painter = painterResource(icon),
-                contentDescription = "${LocalStringResources.current.SETTINGS_LANGUAGE} $name"
+                contentDescription = "${LocalStringResources.current.SETTINGS_LANGUAGE} $name",
+                modifier = Modifier.padding(end = 16.dp)
             )
         }
     }
