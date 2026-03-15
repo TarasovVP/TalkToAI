@@ -76,6 +76,9 @@ fun AppContent(appViewModel: AppViewModel) {
                     screenState = screenState.value,
                     onNavigationIconClick = {
                         if (screenState.value.isSecondaryScreen.isTrue()) {
+                            navController.previousBackStackEntry?.destination?.route?.let { route ->
+                                screenState.value = screenState.value.copy(currentScreenRoute = route)
+                            }
                             navController.navigateUp()
                         } else {
                             scope.launch {

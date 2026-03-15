@@ -107,13 +107,14 @@ fun PrimaryTopBar(
 @Composable
 fun SecondaryTopBar(title: String, onNavigationIconClick: () -> Unit) {
     TopAppBar(
-        title = { Text(title) }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        title = { Text(title, color = Neutral50) }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = Primary900, titleContentColor = Neutral50
         ), navigationIcon = {
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
                     painter = painterResource(Res.drawable.ic_arrow_back),
-                    contentDescription = LocalStringResources.current.NAVIGATION_ICON
+                    contentDescription = LocalStringResources.current.NAVIGATION_ICON,
+                    tint = Primary100
                 )
             }
         })
