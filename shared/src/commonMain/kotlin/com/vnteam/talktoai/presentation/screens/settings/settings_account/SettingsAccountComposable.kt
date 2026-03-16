@@ -192,16 +192,23 @@ fun SettingsAccountContent(
                 }
             }
         } else {
+            EmptyState(
+                text = LocalStringResources.current.EMPTY_STATE_ACCOUNT,
+                modifier = Modifier.weight(1f)
+            )
             PrimaryButton(
-                text = LocalStringResources.current.AUTHORIZATION_SIGNING_UP,
+                text = LocalStringResources.current.AUTHORIZATION_ENTER,
+                modifier = Modifier
+            ) {
+                updateScreenRoute.value = NavigationScreen.LoginScreen.route
+            }
+            SecondaryButton(
+                text = LocalStringResources.current.AUTHORIZATION_SIGN_UP,
+                isDestructive = false,
                 modifier = Modifier
             ) {
                 updateScreenRoute.value = NavigationScreen.SettingsSignUpScreen.route
             }
-            EmptyState(
-                text = LocalStringResources.current.EMPTY_STATE_ACCOUNT,
-                modifier = Modifier
-            )
         }
     }
 }
