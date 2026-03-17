@@ -46,6 +46,7 @@ import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsAccountViewM
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsChatViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsFeedbackViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsLanguageViewModel
+import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsLoginViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsPrivacyPolicyViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsSignUpViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsThemeViewModel
@@ -167,6 +168,17 @@ val appModule = module {
             get(),
             get(),
             get()
+        )
+    }
+    viewModel {
+        SettingsLoginViewModel(
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
         )
     }
     viewModel {
