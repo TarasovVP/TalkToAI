@@ -17,6 +17,8 @@ sealed class NavigationScreen(val route: String) {
 
     data object SettingsSignUpScreen : NavigationScreen(SETTINGS_SIGN_UP_SCREEN)
 
+    data object SettingsLoginScreen : NavigationScreen(SETTINGS_LOGIN_SCREEN)
+
     data object SettingsLanguageScreen : NavigationScreen(SETTINGS_LANGUAGE_SCREEN)
 
     data object SettingsThemeScreen : NavigationScreen(SETTINGS_THEME_SCREEN)
@@ -40,6 +42,7 @@ sealed class NavigationScreen(val route: String) {
         const val SETTINGS_FEEDBACK_SCREEN = "destination_settings_feedback_screen"
         const val SETTINGS_PRIVACY_POLICY_SCREEN = "destination_settings_privacy_policy_screen"
         const val SETTINGS_SIGN_UP_SCREEN = "destination_settings_sign_up_screen"
+        const val SETTINGS_LOGIN_SCREEN = "destination_settings_login_screen"
 
         val settingScreens = listOf(
             SettingsChatScreen,
