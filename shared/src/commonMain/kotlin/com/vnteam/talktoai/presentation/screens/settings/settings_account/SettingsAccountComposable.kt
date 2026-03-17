@@ -200,7 +200,7 @@ fun SettingsAccountContent(
                 text = LocalStringResources.current.AUTHORIZATION_ENTER,
                 modifier = Modifier
             ) {
-                updateScreenRoute.value = NavigationScreen.LoginScreen.route
+                updateScreenRoute.value = NavigationScreen.SettingsLoginScreen.route
             }
             SecondaryButton(
                 text = LocalStringResources.current.AUTHORIZATION_SIGN_UP,

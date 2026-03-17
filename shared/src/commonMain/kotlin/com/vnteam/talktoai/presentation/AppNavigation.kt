@@ -6,9 +6,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.vnteam.talktoai.checkCurrentDestUpdateWithStartDest
 import com.vnteam.talktoai.Constants
-import com.vnteam.talktoai.presentation.ui.NavigationScreen
+import com.vnteam.talktoai.checkCurrentDestUpdateWithStartDest
 import com.vnteam.talktoai.presentation.screens.authorization.login.LoginScreen
 import com.vnteam.talktoai.presentation.screens.authorization.onboarding.OnboardingScreen
 import com.vnteam.talktoai.presentation.screens.authorization.signup.SignUpScreen
@@ -17,9 +16,11 @@ import com.vnteam.talktoai.presentation.screens.settings.settings_account.Settin
 import com.vnteam.talktoai.presentation.screens.settings.settings_chat.SettingsChatContent
 import com.vnteam.talktoai.presentation.screens.settings.settings_feedback.SettingsFeedbackContent
 import com.vnteam.talktoai.presentation.screens.settings.settings_language.SettingsLanguageContent
+import com.vnteam.talktoai.presentation.screens.settings.settings_login.SettingsLoginScreen
 import com.vnteam.talktoai.presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyContent
 import com.vnteam.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpScreen
 import com.vnteam.talktoai.presentation.screens.settings.settings_theme.SettingsThemeContent
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
 
 @Composable
 fun AppNavigation(
@@ -72,6 +73,9 @@ fun AppNavigation(
         }
         composable(NavigationScreen.SETTINGS_SIGN_UP_SCREEN) {
             SettingsSignUpScreen()
+        }
+        composable(NavigationScreen.SETTINGS_LOGIN_SCREEN) {
+            SettingsLoginScreen()
         }
     }
 }

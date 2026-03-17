@@ -31,7 +31,7 @@ data class ScreenState(
         get() = NavigationScreen.isSettingsScreen(currentScreenRoute)
 
     val isSecondaryScreen: Boolean
-        get() = currentScreenRoute == NavigationScreen.SettingsSignUpScreen.route
+        get() = currentScreenRoute == NavigationScreen.SettingsSignUpScreen.route || currentScreenRoute == NavigationScreen.SettingsLoginScreen.route
 
     val isLoggedInUser: Boolean
         get() = idToken.isNullOrEmpty().not()
