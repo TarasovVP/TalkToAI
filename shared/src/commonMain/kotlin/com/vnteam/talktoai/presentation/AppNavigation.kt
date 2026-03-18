@@ -47,10 +47,9 @@ fun AppNavigation(
                 }
             )
         ) { backStackEntry ->
-            val chatId = backStackEntry.arguments?.getLong(
-                NavigationScreen.CHAT_ID,
-                Constants.DEFAULT_CHAT_ID
-            ) ?: Constants.DEFAULT_CHAT_ID
+            val chatId = backStackEntry.arguments?.let {
+                NavType.LongType[it, NavigationScreen.CHAT_ID]
+            } ?: Constants.DEFAULT_CHAT_ID
             ChatContent(chatId)
         }
         composable(NavigationScreen.SETTINGS_CHAT_SCREEN) {
