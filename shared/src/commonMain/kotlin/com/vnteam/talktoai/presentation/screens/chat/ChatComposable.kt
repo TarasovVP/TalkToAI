@@ -91,10 +91,10 @@ import kotlin.time.Clock
 @Composable
 fun ChatContent(chatId: Long) {
     val viewModel = koinViewModel<ChatViewModel>()
-    val isMessageActionModeState: MutableState<Boolean?> = mutableStateOf(false)
+    val isMessageActionModeState: MutableState<Boolean?> = rememberSaveable { mutableStateOf(false) }
     val currentChatState = viewModel.currentChatLiveData.collectAsState()
     val messagesState = viewModel.messagesLiveData.collectAsState()
-    val showCreateChatDialogue: MutableState<Boolean> = mutableStateOf(false)
+    val showCreateChatDialogue: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
     val messageActionState: MutableState<String> =
         rememberSaveable { mutableStateOf(MessageAction.Cancel().value) }
     val showMessageActionDialog: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
