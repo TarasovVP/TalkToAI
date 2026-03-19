@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
+import com.vnteam.talktoai.Constants
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
@@ -17,7 +18,11 @@ fun List<MessageUI>?.clearCheckToAction() {
 
 fun List<MessageUI>?.textToAction(): String {
     return this?.filter { it.isCheckedToDelete.value }
-        ?.joinToString { "${it.author}: ${it.message} \n" }.orEmpty()
+        ?.joinToString(separator = "\n") {
+            val author = if (it.author == Constants.MESSAGE_ROLE_ME) "Me" else "AI"
+            val text = it.message.ifEmpty { it.errorMessage }
+            "$author: $text"
+        }.orEmpty()
 }
 
 fun Instant.dateToMilliseconds(): Long {
