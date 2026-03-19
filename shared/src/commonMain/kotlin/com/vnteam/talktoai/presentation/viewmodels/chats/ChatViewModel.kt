@@ -59,7 +59,15 @@ class ChatViewModel(
     fun getMessagesFromChat(chatId: Long) {
         launchWithResultHandling {
             getMessagesFromChatUseCase.execute(chatId).onSuccess { result ->
-                _messagesLiveData.value = messageUIMapper.mapToImplModelList(result.orEmpty())
+                val checkedIds = _messagesLiveData.value
+                    .filter { it.isCheckedToDelete.value }
+                    .map { it.id }
+                    .toSet()
+                val newMessages = messageUIMapper.mapToImplModelList(result.orEmpty())
+                if (checkedIds.isNotEmpty()) {
+                    newMessages.forEach { if (it.id in checkedIds) it.isCheckedToDelete.value = true }
+                }
+                _messagesLiveData.value = newMessages
             }
         }
     }
