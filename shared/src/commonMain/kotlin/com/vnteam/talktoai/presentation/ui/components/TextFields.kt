@@ -147,9 +147,6 @@ fun TextFieldWithButton(
     }
 
     val focusManager = LocalFocusManager.current
-    LaunchedEffect(inputValue.value) {
-        if (inputValue.value.text.isEmpty()) focusManager.clearFocus()
-    }
 
     TextField(
         value = inputValue.value,
@@ -183,13 +180,13 @@ fun TextFieldWithButton(
             .background(
                 color = Color.White,
                 shape = RoundedCornerShape(16.dp)
-            )
-            .clickable(enabled = isEnabled) {},
+            ),
         maxLines = 6,
         trailingIcon = {
             IconButton(enabled = isEnabled && inputValue.value.text.isNotBlank(), onClick = {
                 onSendClick.invoke(inputValue.value.text.trim())
                 inputValue.value = TextFieldValue(String.EMPTY)
+                focusManager.clearFocus()
             }) {
                 Icon(
                     painter = painterResource(Res.drawable.ic_message_send),
