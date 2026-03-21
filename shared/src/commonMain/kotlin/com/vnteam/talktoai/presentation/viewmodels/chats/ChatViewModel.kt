@@ -1,7 +1,9 @@
 package com.vnteam.talktoai.presentation.viewmodels.chats
 
+import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.data.network.ai.request.ApiRequest
+import com.vnteam.talktoai.data.network.ai.request.MessageApi
 import com.vnteam.talktoai.data.network.onError
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.enums.MessageStatus
@@ -16,11 +18,14 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.InsertChat
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.DeleteMessagesUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMessagesFromChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessageUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ApiKeyUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.AnimationUtils
 import com.vnteam.talktoai.utils.ShareUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 
 class ChatViewModel(
     private val messageUIMapper: MessageUIMapper,
@@ -33,6 +38,8 @@ class ChatViewModel(
     private val getMessagesFromChatUseCase: GetMessagesFromChatUseCase,
     private val insertMessageUseCase: InsertMessageUseCase,
     private val sendRequestUseCase: SendRequestUseCase,
+    private val aiModelUseCase: AiModelUseCase,
+    private val apiKeyUseCase: ApiKeyUseCase,
 ) : BaseViewModel() {
 
     private val _currentChatLiveData = MutableStateFlow<ChatUI?>(null)
@@ -41,6 +48,25 @@ class ChatViewModel(
     val messagesLiveData = _messagesLiveData.asStateFlow()
     private val _animationResource = MutableStateFlow("")
     val animationResource = _animationResource.asStateFlow()
+    private val _aiModel = MutableStateFlow(Constants.AI_MODEL_DEFAULT)
+    private val _apiKey = MutableStateFlow<String?>(null)
+
+    init {
+        launchWithErrorHandling {
+            aiModelUseCase.get().firstOrNull()?.let { result ->
+                if (result is com.vnteam.talktoai.data.network.Result.Success && !result.data.isNullOrEmpty()) {
+                    _aiModel.value = result.data!!
+                }
+            }
+        }
+        launchWithErrorHandling {
+            apiKeyUseCase.get().firstOrNull()?.let { result ->
+                if (result is com.vnteam.talktoai.data.network.Result.Success && !result.data.isNullOrEmpty()) {
+                    _apiKey.value = result.data
+                }
+            }
+        }
+    }
 
     fun insertChat(chat: Chat) {
         launchWithResult {
@@ -72,10 +98,15 @@ class ChatViewModel(
         }
     }
 
-    fun sendRequest(temporaryMessage: MessageUI, apiRequest: ApiRequest) {
+    fun sendRequest(temporaryMessage: MessageUI, messageText: String) {
+        val apiRequest = ApiRequest(
+            model = _aiModel.value,
+            temperature = 0.7f,
+            messages = listOf(MessageApi(role = Constants.MESSAGE_ROLE_USER, content = messageText))
+        )
         println("messageTAG ChatViewModel.sendRequest: apiRequest = $apiRequest")
         launchWithResultHandling {
-            sendRequestUseCase.execute(apiRequest).onSuccess { apiResponse ->
+            sendRequestUseCase.execute(apiRequest, _apiKey.value).onSuccess { apiResponse ->
                 println("messageTAG ChatViewModel.sendRequest: apiResponse = $apiResponse")
                 insertMessage(
                     temporaryMessage.copy(

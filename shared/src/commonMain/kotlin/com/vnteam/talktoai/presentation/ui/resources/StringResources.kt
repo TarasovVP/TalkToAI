@@ -64,6 +64,11 @@ sealed class StringResources(
     var SETTINGS_FEEDBACK: String,
     var SETTINGS_PRIVACY_POLICY: String,
     // Settings chat
+    var SETTINGS_CHAT_MODEL_TITLE: String,
+    var SETTINGS_CHAT_API_KEY_TITLE: String,
+    var SETTINGS_CHAT_API_KEY_HINT: String,
+    var SETTINGS_CHAT_SAVE: String,
+    var SETTINGS_CHAT_SAVED: String,
 
     // Settings account
     var SETTINGS_ACCOUNT_LOG_OUT_TITLE: String,
@@ -216,6 +221,11 @@ class StringResourcesEN : StringResources(
     SETTINGS_FEEDBACK = "Contact developer",
     SETTINGS_PRIVACY_POLICY = "Privacy Policy",
     // Settings chat
+    SETTINGS_CHAT_MODEL_TITLE = "AI Model",
+    SETTINGS_CHAT_API_KEY_TITLE = "API Key",
+    SETTINGS_CHAT_API_KEY_HINT = "Enter your OpenAI API key",
+    SETTINGS_CHAT_SAVE = "Save",
+    SETTINGS_CHAT_SAVED = "Settings saved",
 
     // Settings account
     SETTINGS_ACCOUNT_LOG_OUT_TITLE = "Logout",
@@ -374,6 +384,12 @@ class StringResourcesUK : StringResources(
     SETTINGS_THEME = "Вибір теми",
     SETTINGS_FEEDBACK = "Написати розробнику",
     SETTINGS_PRIVACY_POLICY = "Політика конфіденційності",
+    // Settings chat
+    SETTINGS_CHAT_MODEL_TITLE = "Модель AI",
+    SETTINGS_CHAT_API_KEY_TITLE = "API ключ",
+    SETTINGS_CHAT_API_KEY_HINT = "Введіть ваш OpenAI API ключ",
+    SETTINGS_CHAT_SAVE = "Зберегти",
+    SETTINGS_CHAT_SAVED = "Налаштування збережено",
 
     // Settings account
     SETTINGS_ACCOUNT_LOG_OUT_TITLE = "Вийти",

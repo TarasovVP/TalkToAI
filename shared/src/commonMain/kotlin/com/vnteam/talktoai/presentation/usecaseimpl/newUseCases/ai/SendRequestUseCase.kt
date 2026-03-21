@@ -7,10 +7,9 @@ import com.vnteam.talktoai.domain.repositories.AIRepository
 import com.vnteam.talktoai.domain.usecase.UseCase
 import kotlinx.coroutines.flow.Flow
 
-class SendRequestUseCase(private val aiRepository: AIRepository) :
-    UseCase<ApiRequest, Flow<Result<ApiResponse>>> {
+class SendRequestUseCase(private val aiRepository: AIRepository) {
 
-    override suspend fun execute(params: ApiRequest): Flow<Result<ApiResponse>> {
-        return aiRepository.sendRequest(params)
+    suspend fun execute(apiRequest: ApiRequest, apiKey: String? = null): Flow<Result<ApiResponse>> {
+        return aiRepository.sendRequest(apiRequest, apiKey)
     }
 }
