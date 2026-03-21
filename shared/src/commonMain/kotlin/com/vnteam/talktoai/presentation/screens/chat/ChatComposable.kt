@@ -39,7 +39,6 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vnteam.talktoai.clearCheckToAction
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.CommonExtensions.isNotNull
 import com.vnteam.talktoai.CommonExtensions.isTrue
@@ -47,8 +46,8 @@ import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.avatar_ai
-import com.vnteam.talktoai.data.network.ai.request.ApiRequest
-import com.vnteam.talktoai.data.network.ai.request.MessageApi
+import com.vnteam.talktoai.clearCheckToAction
+import com.vnteam.talktoai.dateToMilliseconds
 import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.sealed_classes.MessageAction
@@ -58,6 +57,8 @@ import com.vnteam.talktoai.ic_copy
 import com.vnteam.talktoai.ic_delete
 import com.vnteam.talktoai.ic_empty_check_box
 import com.vnteam.talktoai.ic_share
+import com.vnteam.talktoai.isDefineSecondsLater
+import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.CreateChatDialog
 import com.vnteam.talktoai.presentation.ui.components.EmptyState
@@ -79,13 +80,10 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary900
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.viewmodels.chats.ChatViewModel
+import com.vnteam.talktoai.textToAction
 import com.vnteam.talktoai.utils.screenWidth
-import com.vnteam.talktoai.dateToMilliseconds
-import com.vnteam.talktoai.isDefineSecondsLater
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
-import com.vnteam.talktoai.presentation.LocalScreenState
-import com.vnteam.talktoai.textToAction
 import kotlin.time.Clock
 
 @Composable
@@ -219,18 +217,7 @@ fun ChatContent(chatId: Long) {
                             status = MessageStatus.REQUESTING
                         )
                         viewModel.insertMessage(temporaryMessage)
-                        viewModel.sendRequest(
-                            temporaryMessage, ApiRequest(
-                                model = Constants.MESSAGE_ROLE_CHAT_GPT,
-                                temperature = 0.7f,
-                                messages = listOf(
-                                    MessageApi(
-                                        role = Constants.MESSAGE_ROLE_USER,
-                                        content = messageText
-                                    )
-                                )
-                            )
-                        )
+                        viewModel.sendRequest(temporaryMessage, messageText)
                     }
                 }
             }

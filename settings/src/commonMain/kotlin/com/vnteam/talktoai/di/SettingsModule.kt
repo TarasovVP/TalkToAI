@@ -2,6 +2,8 @@ package com.vnteam.talktoai.di
 
 import com.vnteam.talktoai.data.repositoryimpl.PreferencesRepositoryImpl
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ApiKeyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
@@ -25,4 +27,8 @@ val settingsModule = module {
     single { UserEmailUseCase(get()) }
 
     single { IdTokenUseCase(get()) }
+
+    single { AiModelUseCase(get()) }
+
+    single { ApiKeyUseCase(get()) }
 }

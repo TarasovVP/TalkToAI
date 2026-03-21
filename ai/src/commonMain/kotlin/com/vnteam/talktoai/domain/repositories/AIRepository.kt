@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface AIRepository {
 
-    suspend fun sendRequest(apiRequest: ApiRequest): Flow<Result<ApiResponse>>
+    suspend fun sendRequest(apiRequest: ApiRequest, apiKey: String? = null): Flow<Result<ApiResponse>>
 }

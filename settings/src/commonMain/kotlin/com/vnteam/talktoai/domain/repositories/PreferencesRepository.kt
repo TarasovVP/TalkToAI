@@ -27,4 +27,12 @@ interface PreferencesRepository {
     fun getIsReviewVoted(): Flow<Boolean?>
 
     suspend fun setReviewVoted(isReviewVoted: Boolean)
+
+    fun getAiModel(): Flow<String?>
+
+    suspend fun setAiModel(model: String)
+
+    fun getApiKey(): Flow<String?>
+
+    suspend fun setApiKey(apiKey: String)
 }

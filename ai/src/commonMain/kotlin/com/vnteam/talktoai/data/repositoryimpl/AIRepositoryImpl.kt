@@ -11,8 +11,8 @@ class AIRepositoryImpl(
     private val aIService: AIService,
 ) : AIRepository {
 
-    override suspend fun sendRequest(apiRequest: ApiRequest) = flow {
-        val httpResponse = aIService.sendRequest(apiRequest)
+    override suspend fun sendRequest(apiRequest: ApiRequest, apiKey: String?) = flow {
+        val httpResponse = aIService.sendRequest(apiRequest, apiKey)
         emit(httpResponse.handleResponse<ApiResponse>())
     }
 }

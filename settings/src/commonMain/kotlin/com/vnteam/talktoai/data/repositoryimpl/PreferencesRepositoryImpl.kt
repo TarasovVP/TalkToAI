@@ -4,6 +4,8 @@ import com.vnteam.talktoai.data.APP_LANGUAGE
 import com.vnteam.talktoai.data.ID_TOKEN
 import com.vnteam.talktoai.data.IS_DARK_THEME
 import com.vnteam.talktoai.data.IS_ONBOARDING_SEEN
+import com.vnteam.talktoai.data.AI_API_KEY
+import com.vnteam.talktoai.data.AI_MODEL
 import com.vnteam.talktoai.data.IS_REVIEW_VOTE
 import com.vnteam.talktoai.data.USER_EMAIL
 import com.vnteam.talktoai.data.local.PreferencesFactory
@@ -59,5 +61,21 @@ class PreferencesRepositoryImpl(private val preferencesFactory: PreferencesFacto
 
     override suspend fun setReviewVoted(isReviewVoted: Boolean) {
         preferencesFactory.putBoolean(IS_REVIEW_VOTE, isReviewVoted)
+    }
+
+    override fun getAiModel(): Flow<String?> {
+        return preferencesFactory.getString(AI_MODEL)
+    }
+
+    override suspend fun setAiModel(model: String) {
+        preferencesFactory.putString(AI_MODEL, model)
+    }
+
+    override fun getApiKey(): Flow<String?> {
+        return preferencesFactory.getString(AI_API_KEY)
+    }
+
+    override suspend fun setApiKey(apiKey: String) {
+        preferencesFactory.putString(AI_API_KEY, apiKey)
     }
 }
