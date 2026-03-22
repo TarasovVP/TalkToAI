@@ -35,7 +35,7 @@ class SettingsAccountViewModel(
     fun currentUserEmail() {
         launchWithResultHandling {
             userEmailUseCase.get().onSuccess {
-                _userEmail.value = it
+                _userEmail.value = it.orEmpty()
             }
         }
     }

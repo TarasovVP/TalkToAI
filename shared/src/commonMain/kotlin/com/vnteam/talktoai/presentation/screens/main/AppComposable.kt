@@ -40,6 +40,7 @@ fun AppContent(appViewModel: AppViewModel) {
     println("AppContentTAG: AppContent screenState.value: ${screenState.value}")
 
     LaunchedEffect(screenState.value.currentScreenRoute) {
+        scope.launch { drawerState.close() }
         screenState.value.currentScreenRoute?.let { route ->
             if (route.startsWith(NavigationScreen.CHAT_DESTINATION)) {
                 navController.navigate(route) {
