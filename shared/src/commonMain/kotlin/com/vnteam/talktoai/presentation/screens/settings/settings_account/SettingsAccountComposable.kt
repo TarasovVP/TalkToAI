@@ -236,6 +236,7 @@ fun AccountCard(authState: AuthState?, email: String?, onClick: () -> Unit) {
             ) {
                 Text(
                     text = if (authState != AuthState.AUTHORISED_ANONYMOUSLY) email.orEmpty() else LocalStringResources.current.SETTINGS_ACCOUNT_UNAUTHORISED,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 8.dp, top = 8.dp)
