@@ -185,8 +185,7 @@ fun ChatContent(chatId: Long) {
         ) {
             when {
                 currentChatState.value?.id == DEFAULT_CHAT_ID -> CreateChatScreen {
-                    //showCreateChatDialogue.value = true
-
+                    showCreateChatDialogue.value = true
                 }
 
                 isMessageActionModeState.value.isTrue() -> {
