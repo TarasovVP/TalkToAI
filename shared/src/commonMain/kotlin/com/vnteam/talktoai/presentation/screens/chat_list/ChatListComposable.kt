@@ -138,7 +138,7 @@ fun ChatListContent(
                     viewModel.swapChats(firstIndex, secondIndex)
                 },
                 onDragEnd = {
-                    viewModel.updateChats(chats)
+                    viewModel.persistCurrentOrder()
                 }
             ) { chat, isDragging ->
                 val elevation = animateDpAsState(if (isDragging) 4.dp else 1.dp)

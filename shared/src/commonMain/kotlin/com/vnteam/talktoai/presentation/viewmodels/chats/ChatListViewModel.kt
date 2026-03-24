@@ -41,6 +41,14 @@ class ChatListViewModel(
         }
     }
 
+    fun persistCurrentOrder() {
+        _chatsList.value?.let { chats ->
+            launchWithResult {
+                updateChatsUseCase.execute(chats)
+            }
+        }
+    }
+
     fun insertChat(chat: Chat) {
         launchWithResult {
             insertChatUseCase.execute(chat)
