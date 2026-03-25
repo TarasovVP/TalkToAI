@@ -26,10 +26,12 @@ class SettingsPrivacyPolicyViewModel(
     }
 
     fun getPrivacyPolicy(appLang: String) {
-        showProgress()
+        privacyPolicyLiveData.value = PRIVACY_POLICY
         launchWithResultHandling {
             getPrivacyPolicyUseCase.execute(appLang).onSuccess { result ->
-                privacyPolicyLiveData.value = result ?: PRIVACY_POLICY
+                if (!result.isNullOrEmpty()) {
+                    privacyPolicyLiveData.value = result
+                }
             }
         }
     }
