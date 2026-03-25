@@ -65,6 +65,8 @@ private fun String.stripHtml(): String {
     return this
         .replace(Regex("<!\\[CDATA\\["), "")
         .replace(Regex("]]>"), "")
+        .replace(Regex("<style[^>]*>.*?</style>", setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)), "")
+        .replace(Regex("<head[^>]*>.*?</head>", setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)), "")
         .replace(Regex("<br\\s*/?>", RegexOption.IGNORE_CASE), "\n")
         .replace(Regex("<p[^>]*>", RegexOption.IGNORE_CASE), "\n")
         .replace(Regex("</p>", RegexOption.IGNORE_CASE), "\n")
