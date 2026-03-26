@@ -185,8 +185,8 @@ fun TextFieldWithButton(
         trailingIcon = {
             IconButton(enabled = isEnabled && inputValue.value.text.isNotBlank(), onClick = {
                 onSendClick.invoke(inputValue.value.text.trim())
-                inputValue.value = TextFieldValue(String.EMPTY)
                 focusManager.clearFocus()
+                inputValue.value = TextFieldValue(String.EMPTY)
             }) {
                 Icon(
                     painter = painterResource(Res.drawable.ic_message_send),
