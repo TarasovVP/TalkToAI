@@ -19,6 +19,7 @@ import com.vnteam.talktoai.domain.repositories.MessageRepository
 import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
 import com.vnteam.talktoai.presentation.mapperimpls.ChatUIMapperImpl
 import com.vnteam.talktoai.presentation.mapperimpls.MessageUIMapperImpl
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.GetModelsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.SendRequestUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.DeleteChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatWithIdUseCase
@@ -91,6 +92,8 @@ val appModule = module {
     // ai
     single { SendRequestUseCase(get()) }
 
+    single { GetModelsUseCase(get()) }
+
     // chats
     single { DeleteChatUseCase(get(), get(), get(), get(), get()) }
 
@@ -145,7 +148,7 @@ val appModule = module {
         SettingsAccountViewModel(get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
-        SettingsChatViewModel(get(), get(), get(), get())
+        SettingsChatViewModel(get(), get(), get(), get(), get())
     }
     viewModel {
         SettingsFeedbackViewModel(get(), get(), get())
