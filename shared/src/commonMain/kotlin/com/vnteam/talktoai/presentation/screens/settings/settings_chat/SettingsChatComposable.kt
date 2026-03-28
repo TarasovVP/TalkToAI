@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
@@ -40,6 +39,7 @@ fun SettingsChatContent() {
     val stringRes = LocalStringResources.current
     val aiModel = viewModel.aiModel.collectAsState()
     val apiKey = viewModel.apiKey.collectAsState()
+    val availableModels = viewModel.availableModels.collectAsState()
 
     val settingsSaved = viewModel.settingsSaved.collectAsState()
     if (settingsSaved.value) {
@@ -78,7 +78,7 @@ fun SettingsChatContent() {
                 expanded = dropdownExpanded.value,
                 onDismissRequest = { dropdownExpanded.value = false }
             ) {
-                Constants.AI_MODELS.forEach { model ->
+                availableModels.value.forEach { model ->
                     DropdownMenuItem(
                         text = { Text(text = model, color = Color.Black) },
                         onClick = {
