@@ -15,7 +15,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import com.vnteam.talktoai.presentation.LocalScreenState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -133,13 +135,16 @@ fun DeleteModeTopBar(title: String) {
 @Composable
 fun AppSnackBar(screenState: ScreenState?, scope: CoroutineScope) {
     val snackBarHostState = remember { SnackbarHostState() }
-    screenState?.appMessage?.let { infoMessage ->
-        scope.launch {
+    val localScreenState = LocalScreenState.current
+
+    LaunchedEffect(screenState?.appMessage) {
+        screenState?.appMessage?.let { infoMessage ->
             snackBarHostState.showSnackbar(
                 message = infoMessage.message,
                 actionLabel = if (infoMessage.isMessageError) Constants.ERROR_MESSAGE else String.EMPTY,
                 duration = SnackbarDuration.Short
             )
+            localScreenState.value = localScreenState.value.copy(appMessage = null)
         }
     }
     SnackbarHost(hostState = snackBarHostState, snackbar = { data ->
