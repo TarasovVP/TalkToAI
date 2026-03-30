@@ -60,10 +60,9 @@ class SettingsChatViewModel(
         launchWithErrorHandling {
             apiKeyUseCase.get().collect { result ->
                 if (result is Result.Success) {
-                    result.data?.let { key ->
-                        _apiKey.value = key
-                        loadModels(key)
-                    }
+                    val key = result.data.orEmpty()
+                    _apiKey.value = key
+                    loadModels(key)
                 }
             }
         }
