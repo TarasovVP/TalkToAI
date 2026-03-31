@@ -105,6 +105,7 @@ fun SettingsChatContent() {
             value = temperature.value,
             onValueChange = { viewModel.onTemperatureChanged(it) },
             valueRange = SettingsConstants.AI_TEMPERATURE_MIN..SettingsConstants.AI_TEMPERATURE_MAX,
+            steps = 19,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         )
 

@@ -1,7 +1,6 @@
 package com.vnteam.talktoai.presentation.viewmodels.settings
 
 import com.vnteam.talktoai.CommonExtensions.EMPTY
-import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.GetModelsUseCase
@@ -90,7 +89,7 @@ class SettingsChatViewModel(
     }
 
     fun onTemperatureChanged(temperature: Float) {
-        _temperature.value = temperature
+        _temperature.value = (temperature * 10).toInt() / 10f
     }
 
     fun saveSettings() {
