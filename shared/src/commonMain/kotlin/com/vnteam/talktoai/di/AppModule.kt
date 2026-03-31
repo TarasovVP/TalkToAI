@@ -142,13 +142,13 @@ val appModule = module {
         ChatListViewModel(get(), get(), get(), get(), get())
     }
     viewModel {
-        ChatViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
+        ChatViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         SettingsAccountViewModel(get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
-        SettingsChatViewModel(get(), get(), get(), get(), get())
+        SettingsChatViewModel(get(), get(), get(), get(), get(), get())
     }
     viewModel {
         SettingsFeedbackViewModel(get(), get(), get())

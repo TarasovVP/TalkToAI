@@ -6,6 +6,7 @@ import com.vnteam.talktoai.data.IS_DARK_THEME
 import com.vnteam.talktoai.data.IS_ONBOARDING_SEEN
 import com.vnteam.talktoai.data.AI_API_KEY
 import com.vnteam.talktoai.data.AI_MODEL
+import com.vnteam.talktoai.data.AI_TEMPERATURE
 import com.vnteam.talktoai.data.IS_REVIEW_VOTE
 import com.vnteam.talktoai.data.USER_EMAIL
 import com.vnteam.talktoai.data.local.PreferencesFactory
@@ -77,5 +78,13 @@ class PreferencesRepositoryImpl(private val preferencesFactory: PreferencesFacto
 
     override suspend fun setApiKey(apiKey: String) {
         preferencesFactory.putString(AI_API_KEY, apiKey)
+    }
+
+    override fun getTemperature(): Flow<String?> {
+        return preferencesFactory.getString(AI_TEMPERATURE)
+    }
+
+    override suspend fun setTemperature(temperature: String) {
+        preferencesFactory.putString(AI_TEMPERATURE, temperature)
     }
 }

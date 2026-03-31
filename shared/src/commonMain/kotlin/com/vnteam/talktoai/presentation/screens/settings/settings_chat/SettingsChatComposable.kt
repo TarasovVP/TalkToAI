@@ -2,6 +2,7 @@ package com.vnteam.talktoai.presentation.screens.settings.settings_chat
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
@@ -40,6 +43,7 @@ fun SettingsChatContent() {
     val aiModel = viewModel.aiModel.collectAsState()
     val apiKey = viewModel.apiKey.collectAsState()
     val availableModels = viewModel.availableModels.collectAsState()
+    val temperature = viewModel.temperature.collectAsState()
 
     val settingsSaved = viewModel.settingsSaved.collectAsState()
     if (settingsSaved.value) {
@@ -89,6 +93,20 @@ fun SettingsChatContent() {
                 }
             }
         }
+
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = stringRes.SETTINGS_CHAT_TEMPERATURE_TITLE)
+            Text(text = "%.1f".format(temperature.value))
+        }
+        Slider(
+            value = temperature.value,
+            onValueChange = { viewModel.onTemperatureChanged(it) },
+            valueRange = SettingsConstants.AI_TEMPERATURE_MIN..SettingsConstants.AI_TEMPERATURE_MAX,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+        )
 
         Text(
             text = stringRes.SETTINGS_CHAT_API_KEY_TITLE,
