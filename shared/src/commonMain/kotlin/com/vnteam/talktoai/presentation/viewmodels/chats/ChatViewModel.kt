@@ -2,6 +2,7 @@ package com.vnteam.talktoai.presentation.viewmodels.chats
 
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
+import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.data.network.ai.request.ApiRequest
 import com.vnteam.talktoai.data.network.ai.request.MessageApi
 import com.vnteam.talktoai.data.network.onError
@@ -20,6 +21,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMess
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ApiKeyUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.TemperatureUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.AnimationUtils
 import com.vnteam.talktoai.utils.ShareUtils
@@ -40,6 +42,7 @@ class ChatViewModel(
     private val sendRequestUseCase: SendRequestUseCase,
     private val aiModelUseCase: AiModelUseCase,
     private val apiKeyUseCase: ApiKeyUseCase,
+    private val temperatureUseCase: TemperatureUseCase,
 ) : BaseViewModel() {
 
     private val _currentChatLiveData = MutableStateFlow<ChatUI?>(null)
@@ -48,8 +51,9 @@ class ChatViewModel(
     val messagesLiveData = _messagesLiveData.asStateFlow()
     private val _animationResource = MutableStateFlow("")
     val animationResource = _animationResource.asStateFlow()
-    private val _aiModel = MutableStateFlow(Constants.AI_MODEL_DEFAULT)
+    private val _aiModel = MutableStateFlow(SettingsConstants.AI_MODEL_DEFAULT)
     private val _apiKey = MutableStateFlow<String?>(null)
+    private val _temperature = MutableStateFlow(SettingsConstants.AI_TEMPERATURE_DEFAULT)
 
     init {
         launchWithErrorHandling {
@@ -63,6 +67,13 @@ class ChatViewModel(
             apiKeyUseCase.get().firstOrNull()?.let { result ->
                 if (result is com.vnteam.talktoai.data.network.Result.Success && !result.data.isNullOrEmpty()) {
                     _apiKey.value = result.data
+                }
+            }
+        }
+        launchWithErrorHandling {
+            temperatureUseCase.get().firstOrNull()?.let { result ->
+                if (result is com.vnteam.talktoai.data.network.Result.Success) {
+                    _temperature.value = result.data ?: SettingsConstants.AI_TEMPERATURE_DEFAULT
                 }
             }
         }
@@ -101,7 +112,7 @@ class ChatViewModel(
     fun sendRequest(temporaryMessage: MessageUI, messageText: String) {
         val apiRequest = ApiRequest(
             model = _aiModel.value,
-            temperature = 0.7f,
+            temperature = _temperature.value,
             messages = listOf(MessageApi(role = Constants.MESSAGE_ROLE_USER, content = messageText))
         )
         println("messageTAG ChatViewModel.sendRequest: apiRequest = $apiRequest")

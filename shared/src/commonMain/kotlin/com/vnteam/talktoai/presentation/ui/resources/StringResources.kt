@@ -67,6 +67,7 @@ sealed class StringResources(
     var SETTINGS_CHAT_MODEL_TITLE: String,
     var SETTINGS_CHAT_API_KEY_TITLE: String,
     var SETTINGS_CHAT_API_KEY_HINT: String,
+    var SETTINGS_CHAT_TEMPERATURE_TITLE: String,
     var SETTINGS_CHAT_SAVE: String,
     var SETTINGS_CHAT_SAVED: String,
 
@@ -224,6 +225,7 @@ class StringResourcesEN : StringResources(
     SETTINGS_CHAT_MODEL_TITLE = "AI Model",
     SETTINGS_CHAT_API_KEY_TITLE = "API Key",
     SETTINGS_CHAT_API_KEY_HINT = "Enter your OpenAI API key",
+    SETTINGS_CHAT_TEMPERATURE_TITLE = "Temperature",
     SETTINGS_CHAT_SAVE = "Save",
     SETTINGS_CHAT_SAVED = "Settings saved",
 
@@ -388,6 +390,7 @@ class StringResourcesUK : StringResources(
     SETTINGS_CHAT_MODEL_TITLE = "Модель AI",
     SETTINGS_CHAT_API_KEY_TITLE = "API ключ",
     SETTINGS_CHAT_API_KEY_HINT = "Введіть ваш OpenAI API ключ",
+    SETTINGS_CHAT_TEMPERATURE_TITLE = "Температура",
     SETTINGS_CHAT_SAVE = "Зберегти",
     SETTINGS_CHAT_SAVED = "Налаштування збережено",
 
