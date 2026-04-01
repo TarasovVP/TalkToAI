@@ -99,7 +99,7 @@ fun SettingsChatContent() {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = stringRes.SETTINGS_CHAT_TEMPERATURE_TITLE)
-            Text(text = "%.1f".format(temperature.value))
+            Text(text = temperature.value.toString())
         }
         Slider(
             value = temperature.value,
