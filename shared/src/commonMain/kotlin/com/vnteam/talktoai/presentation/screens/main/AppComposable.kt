@@ -11,19 +11,21 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.vnteam.talktoai.CommonExtensions.isTrue
+import com.vnteam.talktoai.presentation.AppNavigation
+import com.vnteam.talktoai.presentation.LocalScreenState
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.CreateChatDialog
 import com.vnteam.talktoai.presentation.viewmodels.chats.ChatListViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.AppViewModel
 import kotlinx.coroutines.launch
-import com.vnteam.talktoai.presentation.AppNavigation
-import com.vnteam.talktoai.presentation.LocalScreenState
-import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -36,8 +38,17 @@ fun AppContent(appViewModel: AppViewModel) {
 
     val screenState = LocalScreenState.current
     val showRenameChatDialog = remember { mutableStateOf(false) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     println("AppContentTAG: AppContent screenState.value: ${screenState.value}")
+
+    val actualRoute = navBackStackEntry?.destination?.route
+
+    LaunchedEffect(actualRoute) {
+        if (drawerState.isOpen) {
+            drawerState.close()
+        }
+    }
 
     LaunchedEffect(screenState.value.currentScreenRoute) {
         scope.launch { drawerState.close() }
@@ -60,7 +71,9 @@ fun AppContent(appViewModel: AppViewModel) {
         drawerContent = {
             if (screenState.value.isLoggedInUser) {
                 ModalDrawerSheet {
-                    DrawerContent(screenState.value) { newScreenState ->
+                    DrawerContent(
+                        screenState.value.copy(currentScreenRoute = actualRoute ?: screenState.value.currentScreenRoute)
+                    ) { newScreenState ->
                         println("AppTAG DrawerContent newScreenState: $newScreenState")
                         appViewModel.updateScreenState(newScreenState)
                         scope.launch {
