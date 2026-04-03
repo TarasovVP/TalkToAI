@@ -44,6 +44,7 @@ fun SettingsChatContent() {
     val apiKey = viewModel.apiKey.collectAsState()
     val availableModels = viewModel.availableModels.collectAsState()
     val temperature = viewModel.temperature.collectAsState()
+    val hasChanges = viewModel.hasChanges.collectAsState()
 
     val settingsSaved = viewModel.settingsSaved.collectAsState()
     if (settingsSaved.value) {
@@ -122,6 +123,7 @@ fun SettingsChatContent() {
 
         PrimaryButton(
             text = stringRes.SETTINGS_CHAT_SAVE,
+            isEnabled = hasChanges.value,
             modifier = Modifier.padding(top = 16.dp)
         ) {
             viewModel.onApiKeyChanged(apiKeyState.value.text)
