@@ -10,7 +10,9 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.Onboard
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.TemperatureUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsChatViewModel(
@@ -31,8 +33,8 @@ class SettingsChatViewModel(
     private val _temperature = MutableStateFlow(SettingsConstants.AI_TEMPERATURE_DEFAULT)
     val temperature = _temperature.asStateFlow()
 
-    private val _settingsSaved = MutableStateFlow(false)
-    val settingsSaved = _settingsSaved.asStateFlow()
+    private val _settingsSaved = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val settingsSaved = _settingsSaved.asSharedFlow()
 
     private val _availableModels = MutableStateFlow(SettingsConstants.AI_MODELS)
     val availableModels = _availableModels.asStateFlow()
@@ -126,8 +128,7 @@ class SettingsChatViewModel(
             savedApiKey = _apiKey.value
             savedTemperature = _temperature.value
             _hasChanges.value = false
-            _settingsSaved.value = true
-            _settingsSaved.value = false
+            _settingsSaved.emit(Unit)
         }
     }
 
