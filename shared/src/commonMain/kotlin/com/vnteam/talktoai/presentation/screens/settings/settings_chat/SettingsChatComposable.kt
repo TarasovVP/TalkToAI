@@ -15,6 +15,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +28,7 @@ import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.updateScreenState
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsChatViewModel
@@ -46,9 +48,13 @@ fun SettingsChatContent() {
     val temperature = viewModel.temperature.collectAsState()
     val hasChanges = viewModel.hasChanges.collectAsState()
 
-    val settingsSaved = viewModel.settingsSaved.collectAsState()
-    if (settingsSaved.value) {
-        updateScreenState(appMessage = AppMessage(message = stringRes.SETTINGS_CHAT_SAVED))
+    val localScreenState = LocalScreenState.current
+    LaunchedEffect(Unit) {
+        viewModel.settingsSaved.collect {
+            localScreenState.value = localScreenState.value.copy(
+                appMessage = AppMessage(message = stringRes.SETTINGS_CHAT_SAVED)
+            )
+        }
     }
 
     val dropdownExpanded = remember { mutableStateOf(false) }

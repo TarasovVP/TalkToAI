@@ -55,7 +55,7 @@ fun updateScreenState(
     val localScreenState = LocalScreenState.current
     localScreenState.value = localScreenState.value.copy(
         isProgressVisible = isProgressVisible,
-        appMessage = appMessage,
+        appMessage = appMessage ?: localScreenState.value.appMessage,
         currentScreenRoute = screenRoute ?: localScreenState.value.currentScreenRoute
     )
 }
