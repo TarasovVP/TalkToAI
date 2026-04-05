@@ -54,9 +54,16 @@ class LoginViewModel(
     }
 
     fun googleSignIn() {
-        val someString = "someString"
-        launchWithResult {
-            googleUseCase.execute(someString)
+        launchWithErrorHandling {
+            when (val result = googleUseCase.execute("")) {
+                is com.vnteam.talktoai.data.network.Result.Success -> {
+                    val token = result.data.orEmpty()
+                    idTokenUseCase.set(token)
+                    updateUIState(LoginUIState(googleSignInSuccess = true))
+                }
+                is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
+                is com.vnteam.talktoai.data.network.Result.Loading -> showProgress()
+            }
         }
     }
 

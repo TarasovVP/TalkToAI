@@ -8,13 +8,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.suspendCancellableCoroutine
 import secrets.Secrets
+import kotlin.coroutines.resume
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class GoogleAuthHandler {
 
     private lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
-    private var activity: Activity? = null
+    private var activity: ComponentActivity? = null
+    private var signInContinuation: CancellableContinuation<String?>? = null
 
     private val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestEmail()
@@ -25,11 +29,14 @@ actual class GoogleAuthHandler {
         activity?.let { GoogleSignIn.getClient(it, gso) }
     }
 
-    actual fun signIn() {
-        println("googleTAG GoogleAuthHandler googleSignInClient.signInIntent: ${googleSignInClient?.signInIntent}")
+    actual suspend fun signIn(): String? = suspendCancellableCoroutine { continuation ->
+        signInContinuation = continuation
         googleSignInClient?.signOut()?.addOnCompleteListener {
-            googleSignInClient?.signInIntent?.let { googleSignInLauncher.launch(it) }
-        }
+            googleSignInClient?.signInIntent?.let { intent ->
+                googleSignInLauncher.launch(intent)
+            } ?: continuation.resume(null)
+        } ?: continuation.resume(null)
+        continuation.invokeOnCancellation { signInContinuation = null }
     }
 
     actual fun signOut() {
@@ -42,25 +49,26 @@ actual class GoogleAuthHandler {
     }
 
     fun setActivity(activity: ComponentActivity) {
-        println("googleTAG MainActivity onCreate lifecycle: ${activity.lifecycle.currentState}")
+        println("googleTAG GoogleAuthHandler setActivity")
         googleSignInLauncher = activity.registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            val extras = result.data?.extras
-            if (extras != null) {
-                val extrasMap = extras.keySet().associateWith { extras.get(it) }
-                println("googleTAG GoogleAuthHandler extras: $extrasMap")
-            }
-            if (result.resultCode == Activity.RESULT_OK) {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            val token = if (result.resultCode == Activity.RESULT_OK) {
                 try {
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                     val account = task.getResult(ApiException::class.java)
-                    val idToken = account?.idToken
-                    println("googleTAG GoogleAuthHandler Success! ID Token: $idToken")
+                    println("googleTAG GoogleAuthHandler Success! ID Token: ${account?.idToken}")
+                    account?.idToken
                 } catch (e: ApiException) {
-                    println("googleTAG GoogleAuthHandler Failed: ${e.message}")
+                    println("googleTAG GoogleAuthHandler Failed: statusCode=${e.statusCode} message=${e.message}")
+                    null
                 }
+            } else {
+                println("googleTAG GoogleAuthHandler cancelled, resultCode: ${result.resultCode}")
+                null
             }
+            signInContinuation?.resume(token)
+            signInContinuation = null
         }
         this.activity = activity
     }

@@ -5,9 +5,9 @@ import com.vnteam.talktoai.domain.repositories.AuthRepository
 import com.vnteam.talktoai.domain.usecase.UseCase
 
 class CreateUserWithGoogleUseCase(private val repository: AuthRepository) :
-    UseCase<String, Result<Unit>> {
+    UseCase<String, Result<String>> {
 
-    override suspend fun execute(params: String): Result<Unit> {
+    override suspend fun execute(params: String): Result<String> {
         return repository.googleSignIn(params)
     }
 }
