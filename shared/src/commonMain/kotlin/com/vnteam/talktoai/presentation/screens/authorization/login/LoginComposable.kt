@@ -98,6 +98,9 @@ fun LoginScreen() {
         uiState.anonymousSignInSuccess?.let {
             updatedScreenRoute.value = "${com.vnteam.talktoai.presentation.ui.NavigationScreen.CHAT_DESTINATION}/${com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID}"
         }
+        uiState.googleSignInSuccess?.let {
+            updatedScreenRoute.value = "${com.vnteam.talktoai.presentation.ui.NavigationScreen.CHAT_DESTINATION}/${com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID}"
+        }
     }
 
     LoginContent(
@@ -166,7 +169,7 @@ fun LoginContent(
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
         ) {
-            //viewModel.googleSignIn()
+            viewModel.googleSignIn()
         }
         OrDivider(modifier = Modifier)
         PrimaryTextField(LocalStringResources.current.AUTHORIZATION_EMAIL, emailInputValue)
