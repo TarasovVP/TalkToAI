@@ -13,8 +13,9 @@ actual class GoogleAuthHandler {
         )
     }
 
-    actual fun signIn() {
+    actual suspend fun signIn(): String? {
         js("google.accounts.id.prompt()")
+        return null
     }
 
     actual fun signOut() {

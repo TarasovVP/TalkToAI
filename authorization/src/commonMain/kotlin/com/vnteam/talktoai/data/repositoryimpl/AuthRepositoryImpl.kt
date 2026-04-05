@@ -106,16 +106,17 @@ class AuthRepositoryImpl(
             authService.deleteAccount(deleteAccountBody)
         }
 
-    override suspend fun googleSignIn(idToken: String): Result<Unit> {
+    override suspend fun googleSignIn(idToken: String): Result<String> {
         return try {
-            logger?.debug(TAG, "Google sign in with provided token")
-            // TODO: Send idToken to backend for verification
-            // val result = authService.googleSignIn(GoogleSignInRequest(idToken))
-            // return executeAuthRequest("googleSignIn") { result }
-
-            // For now using local handler
-            googleAuthHandler.signIn()
-            Result.Success(Unit)
+            logger?.debug(TAG, "Google sign in started")
+            val token = googleAuthHandler.signIn()
+            if (token != null) {
+                logger?.debug(TAG, "Google sign in success, token received")
+                Result.Success(token)
+            } else {
+                logger?.error(TAG, "Google sign in cancelled or failed — token is null")
+                Result.Failure("Google sign in cancelled or failed")
+            }
         } catch (e: Exception) {
             logger?.error(TAG, "Google sign in failed", e)
             Result.Failure("Google sign in failed: ${e.message}")
