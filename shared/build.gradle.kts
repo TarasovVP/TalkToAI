@@ -58,6 +58,7 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.androidx.multidex)
+            implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.android)
             implementation(libs.sqldelight.android.driver)
             // Koin
