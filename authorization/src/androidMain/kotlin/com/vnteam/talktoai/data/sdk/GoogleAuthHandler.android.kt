@@ -53,18 +53,13 @@ actual class GoogleAuthHandler {
         googleSignInLauncher = activity.registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            val token = if (result.resultCode == Activity.RESULT_OK) {
-                try {
-                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-                    val account = task.getResult(ApiException::class.java)
-                    println("googleTAG GoogleAuthHandler Success! ID Token: ${account?.idToken}")
-                    account?.idToken
-                } catch (e: ApiException) {
-                    println("googleTAG GoogleAuthHandler Failed: statusCode=${e.statusCode} message=${e.message}")
-                    null
-                }
-            } else {
-                println("googleTAG GoogleAuthHandler cancelled, resultCode: ${result.resultCode}")
+            val token = try {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                val account = task.getResult(ApiException::class.java)
+                println("googleTAG GoogleAuthHandler Success! ID Token: ${account?.idToken}")
+                account?.idToken
+            } catch (e: ApiException) {
+                println("googleTAG GoogleAuthHandler Failed: statusCode=${e.statusCode} message=${e.message}")
                 null
             }
             signInContinuation?.resume(token)
