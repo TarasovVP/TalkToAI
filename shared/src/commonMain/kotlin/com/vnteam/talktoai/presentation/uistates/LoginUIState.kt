@@ -8,4 +8,5 @@ data class LoginUIState(
     val userLogin: String? = null,
     val anonymousSignInSuccess: Boolean? = null,
     val googleSignInSuccess: Boolean? = null,
+    val emailSignInSuccess: Boolean? = null,
 )

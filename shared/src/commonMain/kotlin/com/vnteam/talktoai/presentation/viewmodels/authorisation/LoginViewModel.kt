@@ -26,8 +26,17 @@ class LoginViewModel(
     val uiState = _uiState.asStateFlow()
 
     fun signInWithEmailAndPassword(email: String, password: String) {
-        launchWithResult {
-            signInWithEmailAndPasswordUseCase.execute(Pair(email, password))
+        launchWithErrorHandling {
+            when (val result = signInWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
+                is com.vnteam.talktoai.data.network.Result.Success -> {
+                    hideProgress()
+                    idTokenUseCase.set(result.data?.idToken.orEmpty())
+                    userEmailUseCase.set(result.data?.email.orEmpty())
+                    updateUIState(LoginUIState(emailSignInSuccess = true))
+                }
+                is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
+                is com.vnteam.talktoai.data.network.Result.Loading -> showProgress()
+            }
         }
     }
 
