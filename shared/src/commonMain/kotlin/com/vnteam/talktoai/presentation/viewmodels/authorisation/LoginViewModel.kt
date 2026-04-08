@@ -36,7 +36,7 @@ class LoginViewModel(
             when (val result = signInAnonymouslyUseCase.execute()) {
                 is com.vnteam.talktoai.data.network.Result.Success -> {
                     hideProgress()
-                    idTokenUseCase.set("anonymous")
+                    idTokenUseCase.set(result.data?.idToken.orEmpty())
                     updateUIState(LoginUIState(anonymousSignInSuccess = true))
                 }
                 is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
