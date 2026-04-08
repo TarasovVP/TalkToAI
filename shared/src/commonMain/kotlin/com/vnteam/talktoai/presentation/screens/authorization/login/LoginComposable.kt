@@ -101,6 +101,9 @@ fun LoginScreen() {
         uiState.googleSignInSuccess?.let {
             updatedScreenRoute.value = "${com.vnteam.talktoai.presentation.ui.NavigationScreen.CHAT_DESTINATION}/${com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID}"
         }
+        uiState.emailSignInSuccess?.let {
+            updatedScreenRoute.value = "${com.vnteam.talktoai.presentation.ui.NavigationScreen.CHAT_DESTINATION}/${com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID}"
+        }
     }
 
     LoginContent(
