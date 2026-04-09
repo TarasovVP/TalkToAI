@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.presentation.viewmodels.settings
 
+import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ChangePasswordUseCase
@@ -8,6 +9,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.De
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ReAuthenticateUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignOutUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.NetworkState
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsAccountViewModel(
     private val networkState: NetworkState,
+    private val idTokenUseCase: IdTokenUseCase,
     private val userEmailUseCase: UserEmailUseCase,
     private val changePasswordUseCase: ChangePasswordUseCase,
     private val reAuthenticateUseCase: ReAuthenticateUseCase,
@@ -41,11 +44,11 @@ class SettingsAccountViewModel(
     }
 
     fun signOut() {
-        successLiveData.value = true
-        launchWithResult {
-            signOutUseCase.execute().onSuccess {
-                successLiveData.value = true
-            }
+        launchWithErrorHandling {
+            signOutUseCase.execute()
+            idTokenUseCase.set(String.EMPTY)
+            userEmailUseCase.set(String.EMPTY)
+            successLiveData.value = true
         }
     }
 
