@@ -35,6 +35,7 @@ import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
 import com.vnteam.talktoai.presentation.ui.components.SecondaryButton
+import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.LoginViewModel
@@ -77,6 +78,8 @@ fun LoginScreen() {
         ) else null
     )
 
+    val localScreenState = LocalScreenState.current
+    val stringRes = LocalStringResources.current
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(uiState) {
         /*uiState.isAccountExist?.let {
@@ -93,7 +96,9 @@ fun LoginScreen() {
             viewModel.signInAuthWithGoogle(idToken)
         }*/
         uiState.successPasswordReset?.let {
-            //updateScreenState(appMessage = AppMessage(false, LocalStringResources.current.AUTHORIZATION_PASSWORD_RESET_SUCCESS))
+            localScreenState.value = localScreenState.value.copy(
+                appMessage = AppMessage(false, stringRes.AUTHORIZATION_PASSWORD_RESET_SUCCESS)
+            )
         }
         uiState.anonymousSignInSuccess?.let {
             updatedScreenRoute.value = "${com.vnteam.talktoai.presentation.ui.NavigationScreen.CHAT_DESTINATION}/${com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID}"
