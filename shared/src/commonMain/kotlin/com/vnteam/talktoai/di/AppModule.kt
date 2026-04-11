@@ -136,7 +136,7 @@ val appModule = module {
         LoginViewModel(get(), get(), get(), get(), get(), get())
     }
     viewModel {
-        SignUpViewModel(get(), get(), get(), get(), get(), get())
+        SignUpViewModel(get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         ChatListViewModel(get(), get(), get(), get(), get())
