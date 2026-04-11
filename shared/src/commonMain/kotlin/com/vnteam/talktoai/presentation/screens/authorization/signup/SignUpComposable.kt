@@ -145,12 +145,10 @@ fun SignUpContent(
             emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
             modifier = Modifier
         ) {
-            println("AuthTAG SignUpContent email: ${emailInputValue.value.text.trim()} password: ${passwordInputValue.value.text}")
             viewModel.createUserWithEmailAndPassword(
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
             )
-            viewModel.fetchProvidersForEmailUseCase(emailInputValue.value.text.trim())
         }
     }
 }

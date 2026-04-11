@@ -9,6 +9,8 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Cr
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleSignInUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +24,8 @@ class SignUpViewModel(
     private val createUserWithEmailAndPasswordUseCase: CreateUserWithEmailAndPasswordUseCase,
     private val insertRemoteUserUseCase: InsertRemoteUserUseCase,
     private val googleUseCase: GoogleSignInUseCase,
+    private val idTokenUseCase: IdTokenUseCase,
+    private val userEmailUseCase: UserEmailUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUIState())
@@ -48,9 +52,16 @@ class SignUpViewModel(
     }
 
     fun createUserWithEmailAndPassword(email: String, password: String) {
-        launchWithResult {
-            createUserWithEmailAndPasswordUseCase.execute(Pair(email, password)).onSuccess {
-                updateUIState(SignUpUIState(successSignUp = true))
+        launchWithErrorHandling {
+            when (val result = createUserWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
+                is com.vnteam.talktoai.data.network.Result.Success -> {
+                    hideProgress()
+                    idTokenUseCase.set(result.data?.idToken.orEmpty())
+                    userEmailUseCase.set(result.data?.email.orEmpty())
+                    updateUIState(SignUpUIState(successSignUp = true))
+                }
+                is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
+                is com.vnteam.talktoai.data.network.Result.Loading -> showProgress()
             }
         }
     }
