@@ -67,10 +67,10 @@ fun AppContent(appViewModel: AppViewModel) {
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = screenState.value.isLoggedInUser,
+        gesturesEnabled = screenState.value.isLoggedInUser && actualRoute?.startsWith(NavigationScreen.CHAT_DESTINATION) == true,
         drawerContent = {
-            if (screenState.value.isLoggedInUser) {
-                ModalDrawerSheet {
+            ModalDrawerSheet {
+                if (screenState.value.isLoggedInUser) {
                     DrawerContent(
                         screenState.value.copy(currentScreenRoute = actualRoute ?: screenState.value.currentScreenRoute)
                     ) { newScreenState ->
