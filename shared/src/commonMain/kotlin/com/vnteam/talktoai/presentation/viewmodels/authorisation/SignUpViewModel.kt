@@ -10,6 +10,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Fe
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleSignInUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.NetworkState
@@ -26,6 +27,7 @@ class SignUpViewModel(
     private val googleUseCase: GoogleSignInUseCase,
     private val idTokenUseCase: IdTokenUseCase,
     private val userEmailUseCase: UserEmailUseCase,
+    private val onboardingUseCase: OnboardingUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUIState())
@@ -56,6 +58,7 @@ class SignUpViewModel(
             when (val result = createUserWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
                 is com.vnteam.talktoai.data.network.Result.Success -> {
                     hideProgress()
+                    onboardingUseCase.set(true)
                     idTokenUseCase.set(result.data?.idToken.orEmpty())
                     userEmailUseCase.set(result.data?.email.orEmpty())
                     updateUIState(SignUpUIState(successSignUp = true))
