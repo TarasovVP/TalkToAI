@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class AppViewModel(
@@ -92,7 +93,7 @@ class AppViewModel(
                     userEmail = userEmail,
                     isOnboardingSeen = onBoardingSeen
                 )
-            }.collect { newState ->
+            }.debounce(100).collect { newState ->
                 _screenState.value = newState
             }
         }

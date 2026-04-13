@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +28,7 @@ import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
+import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.ui.components.GoogleButton
 import com.vnteam.talktoai.presentation.ui.components.LinkButton
 import com.vnteam.talktoai.presentation.ui.components.OrDivider
@@ -50,6 +53,20 @@ fun SignUpScreen() {
         updateScreenState(screenRoute = updatedScreenRoute.value)
         updatedScreenRoute.value = String.EMPTY
     }
+
+    val innerProgress = viewModel.innerProgress.collectAsState()
+    if (innerProgress.value) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    }
+
+    val exceptionMessage = viewModel.exceptionMessage.collectAsState()
+    val progress = viewModel.progressVisibilityState.collectAsState()
+    updateScreenState(
+        isProgressVisible = progress.value,
+        appMessage = if (exceptionMessage.value.isNotEmpty()) AppMessage(true, exceptionMessage.value) else null
+    )
 
     val signUpUiState by viewModel.uiState.collectAsState()
     LaunchedEffect(signUpUiState) {
