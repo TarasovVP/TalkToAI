@@ -46,6 +46,8 @@ sealed class StringResources(
     var AUTHORIZATION_SIGN_UP_TITLE: String,
     var AUTHORIZATION_ENTRANCE_TITLE: String,
     var AUTHORIZATION_SIGNING_UP: String,
+    var AUTHORIZATION_PRIVACY_POLICY_AGREE: String,
+    var AUTHORIZATION_PRIVACY_POLICY_LINK: String,
     var AUTHORIZATION_ACCOUNT_NOT_EXIST: String,
     var AUTHORIZATION_ACCOUNT_EXIST: String,
     var AUTHORIZATION_UNAUTHORIZED_ENTER: String,
@@ -200,6 +202,8 @@ class StringResourcesEN : StringResources(
     AUTHORIZATION_SIGN_UP_TITLE = "Haven`t got an account?&#160;",
     AUTHORIZATION_ENTRANCE_TITLE = "Got an account?",
     AUTHORIZATION_SIGNING_UP = "Sign Up",
+    AUTHORIZATION_PRIVACY_POLICY_AGREE = "I agree to the",
+    AUTHORIZATION_PRIVACY_POLICY_LINK = "Privacy Policy",
     AUTHORIZATION_ACCOUNT_NOT_EXIST =
         "There is no user with this email address. First you need to create an account. Go to the registration screen?",
     AUTHORIZATION_ACCOUNT_EXIST =
@@ -365,6 +369,8 @@ class StringResourcesUK : StringResources(
     AUTHORIZATION_SIGN_UP_TITLE = "Ще немає облікового запису?&#160;",
     AUTHORIZATION_ENTRANCE_TITLE = "Є обліковий запис?",
     AUTHORIZATION_SIGNING_UP = "Зареєструватися",
+    AUTHORIZATION_PRIVACY_POLICY_AGREE = "Я погоджуюся з",
+    AUTHORIZATION_PRIVACY_POLICY_LINK = "Політикою конфіденційності",
     AUTHORIZATION_ACCOUNT_NOT_EXIST =
         "Користувача з електронною поштою не існує. Спочатку необхідно створити обліковий запис. Перейти на екран реєстрації?",
     AUTHORIZATION_ACCOUNT_EXIST =

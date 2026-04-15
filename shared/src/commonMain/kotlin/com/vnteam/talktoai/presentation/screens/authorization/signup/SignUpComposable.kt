@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -89,10 +90,13 @@ fun SignUpScreen() {
         }
     }
 
+    val privacyPolicyAccepted = remember { mutableStateOf(false) }
+
     SignUpContent(
         viewModel = viewModel,
         emailInputValue = emailInputValue,
         passwordInputValue = passwordInputValue,
+        privacyPolicyAccepted = privacyPolicyAccepted,
         updatedScreenRoute = updatedScreenRoute
     )
 
@@ -109,6 +113,7 @@ fun SignUpContent(
     viewModel: SignUpViewModel,
     emailInputValue: MutableState<TextFieldValue>,
     passwordInputValue: MutableState<TextFieldValue>,
+    privacyPolicyAccepted: MutableState<Boolean>,
     updatedScreenRoute: MutableState<String>,
 ) {
     Column(
@@ -155,13 +160,29 @@ fun SignUpContent(
         }
         PrimaryButton(
             text = LocalStringResources.current.AUTHORIZATION_SIGNING_UP,
-            emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty(),
+            emailInputValue.value.text.isNotEmpty() && passwordInputValue.value.text.isNotEmpty() && privacyPolicyAccepted.value,
             modifier = Modifier
         ) {
             viewModel.createUserWithEmailAndPassword(
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
             )
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(start = 4.dp)
+        ) {
+            Checkbox(
+                checked = privacyPolicyAccepted.value,
+                onCheckedChange = { privacyPolicyAccepted.value = it }
+            )
+            Text(text = LocalStringResources.current.AUTHORIZATION_PRIVACY_POLICY_AGREE)
+            LinkButton(
+                text = LocalStringResources.current.AUTHORIZATION_PRIVACY_POLICY_LINK,
+                modifier = Modifier.wrapContentSize()
+            ) {
+                updatedScreenRoute.value = NavigationScreen.SettingsPrivacyPolicyScreen.route
+            }
         }
     }
 }
