@@ -1,6 +1,12 @@
 package com.vnteam.talktoai.presentation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.core.snap
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -23,21 +29,35 @@ import com.vnteam.talktoai.presentation.screens.settings.settings_theme.Settings
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 
 @Composable
+private fun Screen(content: @Composable () -> Unit) {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        content()
+    }
+}
+
+@Composable
 fun AppNavigation(
     navController: NavHostController,
     startDestination: String,
 ) {
     println("AppContentTAG AppNavigationTAG: startDestination: $startDestination")
     navController.checkCurrentDestUpdateWithStartDest(startDestination)
-    NavHost(navController = navController, startDestination = startDestination) {
+    NavHost(
+        navController = navController,
+        startDestination = startDestination,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { fadeOut(animationSpec = snap()) },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { fadeOut(animationSpec = snap()) }
+    ) {
         composable(NavigationScreen.ONBOARDING_SCREEN) {
-            OnboardingScreen()
+            Screen { OnboardingScreen() }
         }
         composable(NavigationScreen.LOGIN_SCREEN) {
-            LoginScreen()
+            Screen { LoginScreen() }
         }
         composable(NavigationScreen.SIGN_UP_SCREEN) {
-            SignUpScreen()
+            Screen { SignUpScreen() }
         }
         composable(
             route = NavigationScreen.CHAT_SCREEN,
@@ -50,31 +70,31 @@ fun AppNavigation(
             val chatId = backStackEntry.arguments?.let {
                 NavType.LongType[it, NavigationScreen.CHAT_ID]
             } ?: Constants.DEFAULT_CHAT_ID
-            ChatContent(chatId)
+            Screen { ChatContent(chatId) }
         }
         composable(NavigationScreen.SETTINGS_CHAT_SCREEN) {
-            SettingsChatContent()
+            Screen { SettingsChatContent() }
         }
         composable(NavigationScreen.SETTINGS_ACCOUNT_SCREEN) {
-            SettingsAccountScreen()
+            Screen { SettingsAccountScreen() }
         }
         composable(NavigationScreen.SETTINGS_LANGUAGE_SCREEN) {
-            SettingsLanguageContent()
+            Screen { SettingsLanguageContent() }
         }
         composable(NavigationScreen.SETTINGS_THEME_SCREEN) {
-            SettingsThemeContent()
+            Screen { SettingsThemeContent() }
         }
         composable(NavigationScreen.SETTINGS_FEEDBACK_SCREEN) {
-            SettingsFeedbackContent()
+            Screen { SettingsFeedbackContent() }
         }
         composable(NavigationScreen.SETTINGS_PRIVACY_POLICY_SCREEN) {
-            SettingsPrivacyPolicyContent()
+            Screen { SettingsPrivacyPolicyContent() }
         }
         composable(NavigationScreen.SETTINGS_SIGN_UP_SCREEN) {
-            SettingsSignUpScreen()
+            Screen { SettingsSignUpScreen() }
         }
         composable(NavigationScreen.SETTINGS_LOGIN_SCREEN) {
-            SettingsLoginScreen()
+            Screen { SettingsLoginScreen() }
         }
     }
 }
