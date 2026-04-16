@@ -87,7 +87,7 @@ fun AppContent(appViewModel: AppViewModel) {
         Scaffold(
             topBar = {
                 AppTopBar(
-                    screenState = screenState.value,
+                    screenState = screenState.value.copy(currentScreenRoute = actualRoute ?: screenState.value.currentScreenRoute),
                     onNavigationIconClick = {
                         if (screenState.value.isSecondaryScreen.isTrue()) {
                             navController.previousBackStackEntry?.destination?.route?.let { route ->
