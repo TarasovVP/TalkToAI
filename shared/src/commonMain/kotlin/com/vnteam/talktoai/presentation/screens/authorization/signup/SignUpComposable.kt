@@ -137,7 +137,8 @@ fun SignUpContent(
             LocalStringResources.current.AUTHORIZATION_SIGNING_UP,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(16.dp)
+                .padding(16.dp),
+            enabled = privacyPolicyAccepted.value
         ) {
             viewModel.googleSignIn()
         }
