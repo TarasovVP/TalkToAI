@@ -69,6 +69,7 @@ fun SignUpScreen() {
         appMessage = if (exceptionMessage.value.isNotEmpty()) AppMessage(true, exceptionMessage.value) else null
     )
 
+    val stringResources = LocalStringResources.current
     val signUpUiState by viewModel.uiState.collectAsState()
     LaunchedEffect(signUpUiState) {
         signUpUiState.accountExist?.let {
@@ -86,7 +87,11 @@ fun SignUpScreen() {
             viewModel.createUserWithGoogle(idToken)
         }
         signUpUiState.successSignUp?.let {
-            viewModel.insertRemoteUser(RemoteUser())
+            viewModel.insertRemoteUser(
+                RemoteUser(),
+                stringResources.WELCOME_CHAT_NAME,
+                stringResources.WELCOME_MESSAGE
+            )
         }
     }
 
