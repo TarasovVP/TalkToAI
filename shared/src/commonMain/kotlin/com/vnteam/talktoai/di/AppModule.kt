@@ -21,6 +21,7 @@ import com.vnteam.talktoai.presentation.mapperimpls.ChatUIMapperImpl
 import com.vnteam.talktoai.presentation.mapperimpls.MessageUIMapperImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.GetModelsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.SendRequestUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.ClearLocalDataUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.DeleteChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatWithIdUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatsUseCase
@@ -97,6 +98,8 @@ val appModule = module {
     // chats
     single { DeleteChatUseCase(get(), get(), get(), get(), get()) }
 
+    single { ClearLocalDataUseCase(get(), get()) }
+
     single { GetChatsUseCase(get()) }
 
     single { GetChatWithIdUseCase(get()) }
@@ -136,7 +139,7 @@ val appModule = module {
         LoginViewModel(get(), get(), get(), get(), get(), get())
     }
     viewModel {
-        SignUpViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
+        SignUpViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         ChatListViewModel(get(), get(), get(), get(), get())

@@ -101,4 +101,10 @@ class MessageDaoImpl(private val appDatabase: SharedDatabase) : MessageDao {
             db.appDatabaseQueries.deleteMessage(id)
         }
     }
+
+    override suspend fun clearMessages() {
+        appDatabase { db ->
+            db.appDatabaseQueries.clearMessages()
+        }
+    }
 }
