@@ -47,4 +47,6 @@ class MessageRepositoryImpl(
         deleteMessages(messages.map { it.id.orZero() })
         insertMessages(messages)
     }
+
+    override suspend fun clearMessages() = messageDao.clearMessages()
 }
