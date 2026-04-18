@@ -73,3 +73,6 @@ DELETE FROM MessageDB WHERE id = ?;
 
 deleteMessages:
 DELETE FROM MessageDB WHERE id NOT IN (?);
+
+clearMessages:
+DELETE FROM MessageDB;

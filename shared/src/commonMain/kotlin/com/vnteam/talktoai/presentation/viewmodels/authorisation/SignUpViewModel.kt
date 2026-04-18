@@ -14,6 +14,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Cr
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleSignInUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.ClearLocalDataUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.InsertChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
@@ -40,6 +41,7 @@ class SignUpViewModel(
     private val onboardingUseCase: OnboardingUseCase,
     private val insertChatUseCase: InsertChatUseCase,
     private val insertMessageUseCase: InsertMessageUseCase,
+    private val clearLocalDataUseCase: ClearLocalDataUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUIState())
@@ -86,6 +88,7 @@ class SignUpViewModel(
 
     fun insertRemoteUser(remoteUser: RemoteUser, welcomeChatName: String, welcomeMessage: String) {
         launchWithErrorHandling {
+            clearLocalDataUseCase.execute()
             val chatId = Clock.System.now().dateToMilliseconds()
             insertChatUseCase.execute(
                 Chat(id = chatId, name = welcomeChatName, updated = chatId, listOrder = 1)

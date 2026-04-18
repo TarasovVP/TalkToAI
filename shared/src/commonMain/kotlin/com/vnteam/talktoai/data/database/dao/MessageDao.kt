@@ -18,4 +18,6 @@ interface MessageDao {
     suspend fun deleteMessage(id: Long)
 
     suspend fun deleteMessages(messageIds: List<Long>)
+
+    suspend fun clearMessages()
 }
