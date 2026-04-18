@@ -117,6 +117,10 @@ sealed class StringResources(
     var MENU_SEARCH: String,
     var ERROR_MESSAGE: String,
 
+    // Welcome
+    var WELCOME_CHAT_NAME: String,
+    var WELCOME_MESSAGE: String,
+
     // Chats
     var CHAT_CREATE_TITLE: String,
     var CHAT_RENAME_TITLE: String,
@@ -285,6 +289,10 @@ class StringResourcesEN : StringResources(
     MENU_SEARCH = "Search",
     ERROR_MESSAGE = "An error occurred",
 
+    // Welcome
+    WELCOME_CHAT_NAME = "Welcome",
+    WELCOME_MESSAGE = "Hello! I'm TalkToAI — your personal AI assistant.\n\nFeel free to ask me anything: answer questions, help with text or code, explain concepts, and more.\n\nWhat's on your mind? 👇",
+
     // Chats
     CHAT_CREATE_TITLE = "Create chat",
     CHAT_RENAME_TITLE = "Rename chat",
@@ -451,6 +459,10 @@ class StringResourcesUK : StringResources(
     MENU_DELETE = "Видалити",
     MENU_SEARCH = "Пошук",
     ERROR_MESSAGE = "Сталася помилка",
+
+    // Welcome
+    WELCOME_CHAT_NAME = "Ласкаво просимо",
+    WELCOME_MESSAGE = "Привіт! Я TalkToAI — твій персональний AI-асистент.\n\nЗапитай мене про що завгодно: відповім на питання, допоможу з текстом або кодом, поясню будь-яку тему.\n\nЩо тебе цікавить? 👇",
 
     // Chats
     CHAT_CREATE_TITLE = "Створити новий чат?",
