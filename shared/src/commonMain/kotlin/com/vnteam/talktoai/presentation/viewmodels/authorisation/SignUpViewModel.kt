@@ -1,6 +1,12 @@
 package com.vnteam.talktoai.presentation.viewmodels.authorisation
 
+import com.vnteam.talktoai.CommonExtensions.EMPTY
+import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.data.network.onSuccess
+import com.vnteam.talktoai.dateToMilliseconds
+import com.vnteam.talktoai.domain.enums.MessageStatus
+import com.vnteam.talktoai.domain.models.Chat
+import com.vnteam.talktoai.domain.models.Message
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.SignUpUIState
@@ -8,6 +14,8 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Cr
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleSignInUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.InsertChatUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
@@ -17,6 +25,8 @@ import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlin.time.Clock
 
 class SignUpViewModel(
     private val networkState: NetworkState,
@@ -28,10 +38,15 @@ class SignUpViewModel(
     private val idTokenUseCase: IdTokenUseCase,
     private val userEmailUseCase: UserEmailUseCase,
     private val onboardingUseCase: OnboardingUseCase,
+    private val insertChatUseCase: InsertChatUseCase,
+    private val insertMessageUseCase: InsertMessageUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUIState())
     val uiState: StateFlow<SignUpUIState> = _uiState.asStateFlow()
+
+    private var pendingIdToken: String = String.EMPTY
+    private var pendingEmail: String = String.EMPTY
 
     fun fetchProvidersForEmailUseCase(idToken: String? = null) {
         launchWithResult {
@@ -59,8 +74,8 @@ class SignUpViewModel(
                 is com.vnteam.talktoai.data.network.Result.Success -> {
                     hideProgress()
                     onboardingUseCase.set(true)
-                    idTokenUseCase.set(result.data?.idToken.orEmpty())
-                    userEmailUseCase.set(result.data?.email.orEmpty())
+                    pendingIdToken = result.data?.idToken.orEmpty()
+                    pendingEmail = result.data?.email.orEmpty()
                     updateUIState(SignUpUIState(successSignUp = true))
                 }
                 is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
@@ -69,10 +84,26 @@ class SignUpViewModel(
         }
     }
 
-    fun insertRemoteUser(remoteUser: RemoteUser) {
-        launchWithNetworkCheck(networkState) {
-            insertRemoteUserUseCase.execute(remoteUser).onSuccess {
-                updateUIState(SignUpUIState(createCurrentUser = true))
+    fun insertRemoteUser(remoteUser: RemoteUser, welcomeChatName: String, welcomeMessage: String) {
+        launchWithErrorHandling {
+            val chatId = Clock.System.now().dateToMilliseconds()
+            insertChatUseCase.execute(
+                Chat(id = chatId, name = welcomeChatName, updated = chatId, listOrder = 1)
+            )
+            insertMessageUseCase.execute(
+                Message(
+                    chatId = chatId,
+                    author = Constants.MESSAGE_ROLE_CHAT_GPT,
+                    message = welcomeMessage,
+                    status = MessageStatus.SUCCESS,
+                    updatedAt = chatId
+                )
+            )
+            idTokenUseCase.set(pendingIdToken)
+            userEmailUseCase.set(pendingEmail)
+            updateUIState(SignUpUIState(createCurrentUser = true))
+            if (networkState.isNetworkAvailable()) {
+                insertRemoteUserUseCase.execute(remoteUser).firstOrNull()
             }
         }
     }
