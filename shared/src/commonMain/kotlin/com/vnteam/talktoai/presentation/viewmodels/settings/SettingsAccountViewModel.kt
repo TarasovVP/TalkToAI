@@ -9,6 +9,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.De
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ReAuthenticateUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignOutUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.ClearLocalDataUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
@@ -25,6 +26,7 @@ class SettingsAccountViewModel(
     private val signOutUseCase: SignOutUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
     private val clearDataUseCase: ClearDataUseCase,
+    private val clearLocalDataUseCase: ClearLocalDataUseCase,
     private val googleUseCase: SignInWithGoogleUseCase,
 ) : BaseViewModel() {
 
@@ -78,6 +80,7 @@ class SettingsAccountViewModel(
 
     fun clearData() {
         launchWithErrorHandling {
+            clearLocalDataUseCase.execute()
             clearDataUseCase.execute()
         }
     }
