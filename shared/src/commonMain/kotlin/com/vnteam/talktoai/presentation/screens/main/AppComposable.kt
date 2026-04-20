@@ -74,8 +74,7 @@ fun AppContent(appViewModel: AppViewModel) {
                     DrawerContent(
                         screenState.value.copy(currentScreenRoute = actualRoute ?: screenState.value.currentScreenRoute)
                     ) { newScreenState ->
-                        println("AppTAG DrawerContent newScreenState: $newScreenState")
-                        appViewModel.updateScreenState(newScreenState)
+                        screenState.value = newScreenState
                         scope.launch {
                             drawerState.close()
                         }
@@ -114,7 +113,8 @@ fun AppContent(appViewModel: AppViewModel) {
                     .padding(paddingValues)
                     .fillMaxSize()
             ) {
-                AppNavigation(navController, screenState.value.startDestination)
+                val stableStartDestination = remember { screenState.value.startDestination }
+                AppNavigation(navController, stableStartDestination)
                 if (screenState.value.isProgressVisible) {
                     val animationResourceState = appViewModel.animationResource.collectAsState()
                     println("AppTAG AppNavigation screenState.value?.isProgressVisible.isTrue(): ${screenState.value.isProgressVisible.isTrue()}")
