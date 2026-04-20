@@ -22,7 +22,7 @@ data class ScreenState(
     val isMessageActionModeState = mutableStateOf<Boolean?>(null)
 
     val isReadyToLaunch: Boolean
-        get() = isDarkTheme.isNotNull() && language.isNotNull() && userEmail.isNotNull() && isOnboardingSeen.isNotNull()
+        get() = isDarkTheme.isNotNull() && language.isNotNull() && userEmail.isNotNull() && isOnboardingSeen.isNotNull() && idToken.isNotNull()
 
     val isChatScreen: Boolean
         get() = currentScreenRoute?.contains(NavigationScreen.CHAT_DESTINATION).isTrue()

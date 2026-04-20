@@ -54,7 +54,9 @@ fun NavHostController.checkCurrentDestUpdateWithStartDest(
     startDestination: String,
 ) {
     LaunchedEffect(startDestination) {
-        if (currentBackStackEntry?.destination?.route != startDestination) {
+        val currentRouteBase = currentBackStackEntry?.destination?.route?.substringBefore("/")
+        val startDestBase = startDestination.substringBefore("/")
+        if (currentRouteBase != startDestBase) {
             navigate(startDestination) {
                 popUpTo(graph.startDestinationRoute.orEmpty()) {
                     inclusive = true
