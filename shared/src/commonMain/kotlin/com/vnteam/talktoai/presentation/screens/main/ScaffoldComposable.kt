@@ -29,6 +29,7 @@ import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.ic_arrow_back
 import com.vnteam.talktoai.ic_edit
 import com.vnteam.talktoai.ic_navigation
+import com.vnteam.talktoai.ic_settings
 import com.vnteam.talktoai.presentation.ui.NavigationScreen.Companion.settingsScreenNameByRoute
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
@@ -41,38 +42,27 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun AppTopBar(screenState: ScreenState?, onNavigationIconClick: () -> Unit, onEditChatClick: () -> Unit = {}) {
-    println("AppTopBarTAG: screenState: $screenState screenState?.isLoggedInUser: ${screenState?.isLoggedInUser}")
+fun AppTopBar(
+    screenState: ScreenState?,
+    onNavigationIconClick: () -> Unit,
+    onEditChatClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
+) {
     when {
         screenState?.isSecondaryScreen.isTrue() -> SecondaryTopBar(
-            settingsScreenNameByRoute(
-                screenState?.currentScreenRoute,
-                LocalStringResources.current
-            ),
+            settingsScreenNameByRoute(screenState?.currentScreenRoute, LocalStringResources.current),
             onNavigationIconClick
         )
         screenState?.isLoggedInUser.isNotTrue() -> Unit
         screenState?.isMessageActionModeState?.value.isTrue() -> DeleteModeTopBar(
             LocalStringResources.current.MESSAGE_ACTION_SELECTED
         )
-
-        screenState?.isSecondaryScreen.isTrue() -> SecondaryTopBar(
-            settingsScreenNameByRoute(
-                screenState?.currentScreenRoute,
-                LocalStringResources.current
-            ),
-            onNavigationIconClick
-        )
-
         else -> PrimaryTopBar(
-            title = if (screenState?.isChatScreen.isTrue()) screenState?.currentChat?.name
-                ?: LocalStringResources.current.APP_NAME else settingsScreenNameByRoute(
-                screenState?.currentScreenRoute,
-                LocalStringResources.current
-            ),
-            onNavigationIconClick,
-            isActionVisible = screenState?.isChatScreen.isTrue() && screenState?.currentChat != null,
-            onActionIconClick = onEditChatClick
+            title = screenState?.currentChat?.name ?: LocalStringResources.current.APP_NAME,
+            onNavigationIconClick = onNavigationIconClick,
+            isEditVisible = screenState?.isChatScreen.isTrue() && screenState?.currentChat != null,
+            onEditClick = onEditChatClick,
+            onSettingsClick = onSettingsClick,
         )
     }
 }
@@ -83,33 +73,43 @@ fun AppTopBar(screenState: ScreenState?, onNavigationIconClick: () -> Unit, onEd
 fun PrimaryTopBar(
     title: String,
     onNavigationIconClick: () -> Unit,
-    isActionVisible: Boolean,
-    onActionIconClick: () -> Unit,
+    isEditVisible: Boolean,
+    onEditClick: () -> Unit,
+    onSettingsClick: () -> Unit,
 ) {
     TopAppBar(
-        title = { Text(title, color = Neutral50) }, colors = TopAppBarDefaults.topAppBarColors(
-        containerColor = Primary900, titleContentColor = Neutral50
-    ), navigationIcon = {
-        IconButton(onClick = onNavigationIconClick) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_navigation),
-                contentDescription = LocalStringResources.current.NAVIGATION_ICON,
-                tint = Primary100
-            )
-        }
-    }, actions = {
-        if (isActionVisible) {
-            IconButton(
-                onClick = onActionIconClick
-            ) {
+        title = { Text(title, color = Neutral50) },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Primary900, titleContentColor = Neutral50
+        ),
+        navigationIcon = {
+            IconButton(onClick = onNavigationIconClick) {
                 Icon(
-                    painter = painterResource(Res.drawable.ic_edit),
-                    contentDescription = LocalStringResources.current.CHAT_EDIT_BUTTON,
+                    painter = painterResource(Res.drawable.ic_navigation),
+                    contentDescription = LocalStringResources.current.NAVIGATION_ICON,
+                    tint = Primary100
+                )
+            }
+        },
+        actions = {
+            if (isEditVisible) {
+                IconButton(onClick = onEditClick) {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_edit),
+                        contentDescription = LocalStringResources.current.CHAT_EDIT_BUTTON,
+                        tint = Primary100
+                    )
+                }
+            }
+            IconButton(onClick = onSettingsClick) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_settings),
+                    contentDescription = LocalStringResources.current.SETTINGS,
                     tint = Primary100
                 )
             }
         }
-    })
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

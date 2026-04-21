@@ -101,7 +101,12 @@ fun AppContent(appViewModel: AppViewModel) {
                             }
                         }
                     },
-                    onEditChatClick = { showRenameChatDialog.value = true }
+                    onEditChatClick = { showRenameChatDialog.value = true },
+                    onSettingsClick = {
+                        screenState.value = screenState.value.copy(
+                            currentScreenRoute = NavigationScreen.SETTINGS_LIST_SCREEN
+                        )
+                    }
                 )
             },
             snackbarHost = {
