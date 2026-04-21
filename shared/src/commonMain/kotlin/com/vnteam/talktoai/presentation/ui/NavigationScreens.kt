@@ -27,6 +27,8 @@ sealed class NavigationScreen(val route: String) {
 
     data object SettingsPrivacyPolicyScreen : NavigationScreen(SETTINGS_PRIVACY_POLICY_SCREEN)
 
+    data object SettingsListScreen : NavigationScreen(SETTINGS_LIST_SCREEN)
+
     companion object {
 
         const val ONBOARDING_SCREEN = "destination_onboarding_screen"
@@ -43,8 +45,10 @@ sealed class NavigationScreen(val route: String) {
         const val SETTINGS_PRIVACY_POLICY_SCREEN = "destination_settings_privacy_policy_screen"
         const val SETTINGS_SIGN_UP_SCREEN = "destination_settings_sign_up_screen"
         const val SETTINGS_LOGIN_SCREEN = "destination_settings_login_screen"
+        const val SETTINGS_LIST_SCREEN = "destination_settings_list_screen"
 
         val settingScreens = listOf(
+            SettingsListScreen,
             SettingsChatScreen,
             SettingsAccountScreen,
             SettingsLanguageScreen,
@@ -59,6 +63,7 @@ sealed class NavigationScreen(val route: String) {
 
         fun settingsScreenNameByRoute(route: String?, stringRes: StringResources): String {
             return when (route) {
+                SettingsListScreen.route -> return stringRes.SETTINGS
                 SettingsChatScreen.route -> return stringRes.SETTINGS_CHAT
                 SettingsAccountScreen.route -> return stringRes.SETTINGS_ACCOUNT
                 SettingsLanguageScreen.route -> return stringRes.SETTINGS_LANGUAGE
