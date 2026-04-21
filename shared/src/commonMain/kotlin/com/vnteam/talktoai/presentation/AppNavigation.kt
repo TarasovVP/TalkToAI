@@ -19,6 +19,7 @@ import com.vnteam.talktoai.presentation.screens.authorization.onboarding.Onboard
 import com.vnteam.talktoai.presentation.screens.authorization.signup.SignUpScreen
 import com.vnteam.talktoai.presentation.screens.chat.ChatContent
 import com.vnteam.talktoai.presentation.screens.settings.settings_account.SettingsAccountScreen
+import com.vnteam.talktoai.presentation.screens.settings.settings_list.SettingsListScreen
 import com.vnteam.talktoai.presentation.screens.settings.settings_chat.SettingsChatContent
 import com.vnteam.talktoai.presentation.screens.settings.settings_feedback.SettingsFeedbackContent
 import com.vnteam.talktoai.presentation.screens.settings.settings_language.SettingsLanguageContent
@@ -71,6 +72,9 @@ fun AppNavigation(
                 NavType.LongType[it, NavigationScreen.CHAT_ID]
             } ?: Constants.DEFAULT_CHAT_ID
             Screen { ChatContent(chatId) }
+        }
+        composable(NavigationScreen.SETTINGS_LIST_SCREEN) {
+            Screen { SettingsListScreen() }
         }
         composable(NavigationScreen.SETTINGS_CHAT_SCREEN) {
             Screen { SettingsChatContent() }
