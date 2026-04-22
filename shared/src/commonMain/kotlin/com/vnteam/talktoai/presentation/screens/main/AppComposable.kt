@@ -89,10 +89,8 @@ fun AppContent(appViewModel: AppViewModel) {
                     screenState = screenState.value.copy(currentScreenRoute = actualRoute ?: screenState.value.currentScreenRoute),
                     onNavigationIconClick = {
                         if (screenState.value.isSecondaryScreen.isTrue()) {
-                            navController.previousBackStackEntry?.destination?.route?.let { route ->
-                                screenState.value = screenState.value.copy(currentScreenRoute = route)
-                            }
                             navController.navigateUp()
+                            screenState.value = screenState.value.copy(currentScreenRoute = null)
                         } else {
                             scope.launch {
                                 if (drawerState.isClosed) {
