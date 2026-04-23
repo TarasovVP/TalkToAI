@@ -67,7 +67,9 @@ fun AppContent(appViewModel: AppViewModel) {
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = screenState.value.isLoggedInUser && actualRoute?.startsWith(NavigationScreen.CHAT_DESTINATION) == true,
+        gesturesEnabled = screenState.value.isLoggedInUser &&
+                actualRoute?.startsWith(NavigationScreen.CHAT_DESTINATION) == true &&
+                !screenState.value.isSecondaryScreen,
         drawerContent = {
             ModalDrawerSheet {
                 if (screenState.value.isLoggedInUser) {
