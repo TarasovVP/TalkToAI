@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.presentation.screens.main
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -44,9 +45,22 @@ fun AppContent(appViewModel: AppViewModel) {
 
     val actualRoute = navBackStackEntry?.destination?.route
 
+    val isOnSecondaryScreen = NavigationScreen.isSettingsScreen(actualRoute) ||
+            actualRoute == NavigationScreen.SettingsSignUpScreen.route ||
+            actualRoute == NavigationScreen.SettingsLoginScreen.route
+
+    BackHandler(enabled = isOnSecondaryScreen) {
+        navController.navigateUp()
+        screenState.value = screenState.value.copy(currentScreenRoute = null)
+    }
+
     LaunchedEffect(actualRoute) {
         if (drawerState.isOpen) {
             drawerState.close()
+        }
+        if (NavigationScreen.isSettingsScreen(screenState.value.currentScreenRoute) &&
+            !NavigationScreen.isSettingsScreen(actualRoute)) {
+            screenState.value = screenState.value.copy(currentScreenRoute = null)
         }
     }
 
@@ -90,7 +104,7 @@ fun AppContent(appViewModel: AppViewModel) {
                 AppTopBar(
                     screenState = screenState.value.copy(currentScreenRoute = actualRoute ?: screenState.value.currentScreenRoute),
                     onNavigationIconClick = {
-                        if (screenState.value.isSecondaryScreen.isTrue()) {
+                        if (isOnSecondaryScreen) {
                             navController.navigateUp()
                             screenState.value = screenState.value.copy(currentScreenRoute = null)
                         } else {
