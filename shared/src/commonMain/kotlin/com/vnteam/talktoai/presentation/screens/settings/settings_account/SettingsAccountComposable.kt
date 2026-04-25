@@ -108,6 +108,8 @@ fun SettingsAccountScreen() {
         }
     }
 
+    if (authState.value == null) return
+
     SettingsAccountContent(
         userEmail,
         authState,
