@@ -42,9 +42,12 @@ class SettingsChatViewModel(
     private val _hasChanges = MutableStateFlow(false)
     val hasChanges = _hasChanges.asStateFlow()
 
-    private var savedAiModel = SettingsConstants.AI_MODEL_DEFAULT
-    private var savedApiKey = String.EMPTY
-    private var savedTemperature = SettingsConstants.AI_TEMPERATURE_DEFAULT
+    private val _savedApiKey = MutableStateFlow(String.EMPTY)
+    val savedApiKey = _savedApiKey.asStateFlow()
+
+    private var initialAiModel = SettingsConstants.AI_MODEL_DEFAULT
+    private var initialApiKey = String.EMPTY
+    private var initialTemperature = SettingsConstants.AI_TEMPERATURE_DEFAULT
 
     init {
         loadSettings()
@@ -64,9 +67,9 @@ class SettingsChatViewModel(
     }
 
     private fun updateHasChanges() {
-        _hasChanges.value = _aiModel.value != savedAiModel ||
-                _apiKey.value != savedApiKey ||
-                _temperature.value != savedTemperature
+        _hasChanges.value = _aiModel.value != initialAiModel ||
+                _apiKey.value != initialApiKey ||
+                _temperature.value != initialTemperature
     }
 
     private fun loadSettings() {
@@ -75,7 +78,7 @@ class SettingsChatViewModel(
                 if (result is Result.Success) {
                     result.data?.takeIf { it.isNotEmpty() }?.let {
                         _aiModel.value = it
-                        savedAiModel = it
+                        initialAiModel = it
                         updateHasChanges()
                     }
                 }
@@ -86,7 +89,8 @@ class SettingsChatViewModel(
                 if (result is Result.Success) {
                     val key = result.data.orEmpty()
                     _apiKey.value = key
-                    savedApiKey = key
+                    initialApiKey = key
+                    _savedApiKey.value = key
                     updateHasChanges()
                     loadModels(key)
                 }
@@ -97,7 +101,7 @@ class SettingsChatViewModel(
                 if (result is Result.Success) {
                     val temp = result.data ?: SettingsConstants.AI_TEMPERATURE_DEFAULT
                     _temperature.value = temp
-                    savedTemperature = temp
+                    initialTemperature = temp
                     updateHasChanges()
                 }
             }
@@ -124,11 +128,22 @@ class SettingsChatViewModel(
             aiModelUseCase.set(_aiModel.value)
             apiKeyUseCase.set(_apiKey.value)
             temperatureUseCase.set(_temperature.value)
-            savedAiModel = _aiModel.value
-            savedApiKey = _apiKey.value
-            savedTemperature = _temperature.value
+            initialAiModel = _aiModel.value
+            initialApiKey = _apiKey.value
+            initialTemperature = _temperature.value
+            _savedApiKey.value = _apiKey.value
             _hasChanges.value = false
             _settingsSaved.emit(Unit)
+        }
+    }
+
+    fun clearApiKey() {
+        launchWithErrorHandling {
+            apiKeyUseCase.set(String.EMPTY)
+            _apiKey.value = String.EMPTY
+            initialApiKey = String.EMPTY
+            _savedApiKey.value = String.EMPTY
+            updateHasChanges()
         }
     }
 
