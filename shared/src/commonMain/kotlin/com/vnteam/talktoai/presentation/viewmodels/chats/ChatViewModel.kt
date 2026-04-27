@@ -80,8 +80,9 @@ class ChatViewModel(
     }
 
     fun insertChat(chat: Chat) {
-        launchWithResult {
+        launchWithErrorHandling {
             insertChatUseCase.execute(chat)
+            _currentChatLiveData.value = chatUIMapper.mapToImplModel(chat)
         }
     }
 
