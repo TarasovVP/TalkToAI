@@ -79,6 +79,7 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary600
 import com.vnteam.talktoai.presentation.ui.theme.Primary900
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
+import com.vnteam.talktoai.presentation.viewmodels.chats.ChatListViewModel
 import com.vnteam.talktoai.presentation.viewmodels.chats.ChatViewModel
 import com.vnteam.talktoai.textToAction
 import com.vnteam.talktoai.utils.screenWidth
@@ -89,6 +90,7 @@ import kotlin.time.Clock
 @Composable
 fun ChatContent(chatId: Long) {
     val viewModel = koinViewModel<ChatViewModel>()
+    val chatListViewModel = koinViewModel<ChatListViewModel>()
     val isMessageActionModeState: MutableState<Boolean?> = rememberSaveable { mutableStateOf(false) }
     val currentChatState = viewModel.currentChatLiveData.collectAsState()
     val messagesState = viewModel.messagesLiveData.collectAsState()
@@ -274,14 +276,14 @@ fun ChatContent(chatId: Long) {
         currentChatState.value?.name.orEmpty(),
         showCreateChatDialogue
     ) {
-        viewModel.insertChat(
-            Chat(
-                id = Clock.System.now().dateToMilliseconds(),
-                name = it,
-                updated = Clock.System.now().dateToMilliseconds(),
-                listOrder = 1
-            )
+        val newChat = Chat(
+            id = Clock.System.now().dateToMilliseconds(),
+            name = it,
+            updated = Clock.System.now().dateToMilliseconds(),
+            listOrder = 1
         )
+        viewModel.insertChat(newChat)
+        chatListViewModel.notifyChatInserted(newChat)
     }
 }
 

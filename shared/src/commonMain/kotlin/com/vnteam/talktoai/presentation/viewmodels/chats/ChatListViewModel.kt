@@ -50,9 +50,14 @@ class ChatListViewModel(
     }
 
     fun insertChat(chat: Chat) {
-        launchWithResult {
+        launchWithErrorHandling {
             insertChatUseCase.execute(chat)
+            _chatsList.value = (_chatsList.value.orEmpty() + chat)
         }
+    }
+
+    fun notifyChatInserted(chat: Chat) {
+        _chatsList.value = (_chatsList.value.orEmpty() + chat)
     }
 
     fun updateChat(chat: Chat) {
