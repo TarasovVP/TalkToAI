@@ -52,7 +52,13 @@ fun AppNavigation(
         popExitTransition = { fadeOut(animationSpec = snap()) }
     ) {
         composable(NavigationScreen.ONBOARDING_SCREEN) {
-            Screen { OnboardingScreen() }
+            Screen {
+                OnboardingScreen(onComplete = {
+                    navController.navigate(NavigationScreen.LOGIN_SCREEN) {
+                        popUpTo(NavigationScreen.ONBOARDING_SCREEN) { inclusive = true }
+                    }
+                })
+            }
         }
         composable(NavigationScreen.LOGIN_SCREEN) {
             Screen { LoginScreen() }

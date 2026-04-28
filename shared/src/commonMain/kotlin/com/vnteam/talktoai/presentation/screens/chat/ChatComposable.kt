@@ -171,14 +171,16 @@ fun ChatContent(chatId: Long) {
         modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top
     ) {
         Box(modifier = Modifier.weight(1f)) {
-            messagesState.value.takeIf { it.isNotNull() }?.let { messages ->
-                MessagesList(
-                    messages,
-                    isMessageActionModeState,
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    stringRes = stringRes
-                ) { message ->
-                    viewModel.insertMessage(message)
+            if (currentChatState.value?.id != DEFAULT_CHAT_ID) {
+                messagesState.value.takeIf { it.isNotNull() }?.let { messages ->
+                    MessagesList(
+                        messages,
+                        isMessageActionModeState,
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        stringRes = stringRes
+                    ) { message ->
+                        viewModel.insertMessage(message)
+                    }
                 }
             }
         }
