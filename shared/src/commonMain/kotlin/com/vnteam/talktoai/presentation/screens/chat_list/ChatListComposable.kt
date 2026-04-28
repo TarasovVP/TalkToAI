@@ -146,7 +146,11 @@ fun ChatListContent(
                     name = chat.name.orEmpty(),
                     mainIcon = Res.drawable.ic_chat,
                     isCurrent = chat.id == currentChatState.value?.id,
-                    secondaryIcon = if (isDragging) Res.drawable.ic_drag_handle else Res.drawable.ic_delete,
+                    secondaryIcon = when {
+                        isDragging -> Res.drawable.ic_drag_handle
+                        chats.size > 1 -> Res.drawable.ic_delete
+                        else -> null
+                    },
                     elevation = elevation.value,
                     isIconClick = true,
                     onIconClick = {
