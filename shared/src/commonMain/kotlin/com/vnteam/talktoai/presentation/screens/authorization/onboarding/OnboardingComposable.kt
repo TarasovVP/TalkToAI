@@ -31,7 +31,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun OnboardingScreen() {
+fun OnboardingScreen(onComplete: () -> Unit = {}) {
     val viewModel = koinViewModel<OnBoardingViewModel>()
     val pageState = remember {
         mutableIntStateOf(0)
@@ -40,6 +40,7 @@ fun OnboardingScreen() {
     OnboardingContent(onboardingPage) {
         if (pageState.value == 3) {
             viewModel.setOnBoardingSeen()
+            onComplete()
         } else {
             pageState.value++
         }
