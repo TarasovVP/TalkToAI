@@ -101,6 +101,7 @@ fun ChatContent(chatId: Long) {
 
     val screenState = LocalScreenState.current
     val stringRes = LocalStringResources.current
+    val welcomeChat = viewModel.welcomeChat.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.getAnimationResource()
@@ -115,6 +116,18 @@ fun ChatContent(chatId: Long) {
         println("ChatContent: LaunchedEffect(currentChatState.value) ${currentChatState.value}")
         currentChatState.value?.let { chat ->
             viewModel.getMessagesFromChat(chat.id)
+        }
+    }
+
+    LaunchedEffect(currentChatState.value?.id) {
+        if (chatId == DEFAULT_CHAT_ID && currentChatState.value?.id == DEFAULT_CHAT_ID) {
+            viewModel.createWelcomeChat(stringRes.WELCOME_CHAT_NAME, stringRes.WELCOME_MESSAGE)
+        }
+    }
+
+    LaunchedEffect(welcomeChat.value) {
+        welcomeChat.value?.let { chat ->
+            chatListViewModel.notifyChatInserted(chat)
         }
     }
 
@@ -188,17 +201,13 @@ fun ChatContent(chatId: Long) {
             modifier = Modifier.fillMaxWidth().background(Primary900)
         ) {
             when {
-                currentChatState.value?.id == DEFAULT_CHAT_ID -> CreateChatScreen {
-                    showCreateChatDialogue.value = true
-                }
-
                 isMessageActionModeState.value.isTrue() -> {
                     MessageActionField(messageActionState, stringRes)
                 }
 
-                currentChatState.value.isNotNull() && currentChatState.value?.id != DEFAULT_CHAT_ID -> {
+                else -> {
                     TextFieldWithButton(
-                        (currentChatState.value?.id ?: DEFAULT_CHAT_ID) != DEFAULT_CHAT_ID
+                        currentChatState.value?.id != null && currentChatState.value?.id != DEFAULT_CHAT_ID
                     ) { messageText ->
 
                         viewModel.insertMessage(
