@@ -3,6 +3,8 @@ package com.vnteam.talktoai.presentation.viewmodels.chats
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.SettingsConstants
+import com.vnteam.talktoai.dateToMilliseconds
+import kotlin.time.Clock
 import com.vnteam.talktoai.data.network.ai.request.ApiRequest
 import com.vnteam.talktoai.data.network.ai.request.MessageApi
 import com.vnteam.talktoai.data.network.onError
@@ -47,6 +49,8 @@ class ChatViewModel(
 
     private val _currentChatLiveData = MutableStateFlow<ChatUI?>(null)
     val currentChatLiveData = _currentChatLiveData.asStateFlow()
+    private val _welcomeChat = MutableStateFlow<Chat?>(null)
+    val welcomeChat = _welcomeChat.asStateFlow()
     private val _messagesLiveData = MutableStateFlow<List<MessageUI>>(listOf())
     val messagesLiveData = _messagesLiveData.asStateFlow()
     private val _animationResource = MutableStateFlow("")
@@ -83,6 +87,28 @@ class ChatViewModel(
         launchWithErrorHandling {
             insertChatUseCase.execute(chat)
             _currentChatLiveData.value = chatUIMapper.mapToImplModel(chat)
+        }
+    }
+
+    fun createWelcomeChat(chatName: String, welcomeMessage: String) {
+        launchWithErrorHandling {
+            val chatId = Clock.System.now().dateToMilliseconds()
+            val chat = Chat(id = chatId, name = chatName, updated = chatId, listOrder = 1)
+            insertChatUseCase.execute(chat)
+            insertMessageUseCase.execute(
+                messageUIMapper.mapFromImplModel(
+                    MessageUI(
+                        id = chatId + 1,
+                        chatId = chatId,
+                        author = Constants.MESSAGE_ROLE_CHAT_GPT,
+                        message = welcomeMessage,
+                        updatedAt = chatId,
+                        status = MessageStatus.SUCCESS
+                    )
+                )
+            )
+            _currentChatLiveData.value = chatUIMapper.mapToImplModel(chat)
+            _welcomeChat.value = chat
         }
     }
 
