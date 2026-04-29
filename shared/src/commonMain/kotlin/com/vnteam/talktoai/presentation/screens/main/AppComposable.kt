@@ -3,6 +3,7 @@ package com.vnteam.talktoai.presentation.screens.main
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalDrawerSheet
@@ -65,7 +66,7 @@ fun AppContent(appViewModel: AppViewModel) {
     }
 
     LaunchedEffect(screenState.value.currentScreenRoute) {
-        scope.launch { drawerState.close() }
+        if (drawerState.isOpen) scope.launch { drawerState.close() }
         screenState.value.currentScreenRoute?.let { route ->
             if (route.startsWith(NavigationScreen.CHAT_DESTINATION)) {
                 navController.navigate(route) {
@@ -95,6 +96,8 @@ fun AppContent(appViewModel: AppViewModel) {
                             drawerState.close()
                         }
                     }
+                } else {
+                    Box(modifier = Modifier.fillMaxWidth())
                 }
             }
         }

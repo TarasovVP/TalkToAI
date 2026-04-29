@@ -51,7 +51,7 @@ class ChatViewModel(
     val currentChatLiveData = _currentChatLiveData.asStateFlow()
     private val _welcomeChat = MutableStateFlow<Chat?>(null)
     val welcomeChat = _welcomeChat.asStateFlow()
-    private val _messagesLiveData = MutableStateFlow<List<MessageUI>>(listOf())
+    private val _messagesLiveData = MutableStateFlow<List<MessageUI>?>(null)
     val messagesLiveData = _messagesLiveData.asStateFlow()
     private val _animationResource = MutableStateFlow("")
     val animationResource = _animationResource.asStateFlow()
@@ -121,9 +121,11 @@ class ChatViewModel(
     }
 
     fun getMessagesFromChat(chatId: Long) {
+        _messagesLiveData.value = null
         launchWithResultHandling {
             getMessagesFromChatUseCase.execute(chatId).onSuccess { result ->
                 val checkedIds = _messagesLiveData.value
+                    .orEmpty()
                     .filter { it.isCheckedToDelete.value }
                     .map { it.id }
                     .toSet()

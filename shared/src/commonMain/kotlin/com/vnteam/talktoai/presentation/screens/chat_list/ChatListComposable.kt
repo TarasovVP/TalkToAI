@@ -67,7 +67,7 @@ fun ChatListScreen(
     LaunchedEffect(chats.value, currentChatId) {
         chats.value?.let { chatList ->
             val selectedChat = chatList.firstOrNull { it.id == currentChatId }
-            if (selectedChat == null && chatList.isNotEmpty()) {
+            if (selectedChat == null && chatList.isNotEmpty() && currentChatId != null) {
                 val lastUpdatedChat = chatList.maxByOrNull { it.updated ?: 0L }
                 if (lastUpdatedChat != null) {
                     currentChatState.value = lastUpdatedChat
