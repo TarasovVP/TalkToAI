@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,7 +41,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnteam.talktoai.CommonExtensions.EMPTY
-import com.vnteam.talktoai.CommonExtensions.isNotNull
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
@@ -128,10 +128,10 @@ fun ChatContent(chatId: Long) {
     LaunchedEffect(welcomeChat.value) {
         welcomeChat.value?.let { chat ->
             chatListViewModel.notifyChatInserted(chat)
+            screenState.value = screenState.value.copy(currentChat = chat)
         }
     }
-
-    LaunchedEffect(isMessageActionModeState.value.isTrue() && messagesState.value.none { it.isCheckedToDelete.value }) {
+    LaunchedEffect(isMessageActionModeState.value.isTrue() && messagesState.value?.none { it.isCheckedToDelete.value } == true) {
         isMessageActionModeState.value = false
     }
 
@@ -184,9 +184,15 @@ fun ChatContent(chatId: Long) {
         modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top
     ) {
         Box(modifier = Modifier.weight(1f)) {
-            if (currentChatState.value?.id != DEFAULT_CHAT_ID) {
-                messagesState.value.takeIf { it.isNotNull() }?.let { messages ->
-                    MessagesList(
+            if (currentChatState.value != null && currentChatState.value?.id != DEFAULT_CHAT_ID) {
+                when (val messages = messagesState.value) {
+                    null -> Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Primary500)
+                    }
+                    else -> MessagesList(
                         messages,
                         isMessageActionModeState,
                         modifier = Modifier.padding(horizontal = 16.dp),
@@ -246,8 +252,8 @@ fun ChatContent(chatId: Long) {
     ) {
         when (messageActionState.value) {
             MessageAction.Delete().value -> {
-                viewModel.deleteMessages(messagesState.value.filter { it.isCheckedToDelete.value }
-                    .map { it.id })
+                viewModel.deleteMessages(messagesState.value?.filter { it.isCheckedToDelete.value }
+                    .orEmpty().map { it.id })
                 resetMessageActionState(
                     messagesState,
                     messageActionState,
