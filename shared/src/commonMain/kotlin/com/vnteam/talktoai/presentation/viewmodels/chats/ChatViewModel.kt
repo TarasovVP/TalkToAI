@@ -107,6 +107,7 @@ class ChatViewModel(
                     )
                 )
             )
+            _messagesLiveData.value = null
             _currentChatLiveData.value = chatUIMapper.mapToImplModel(chat)
             _welcomeChat.value = chat
         }
