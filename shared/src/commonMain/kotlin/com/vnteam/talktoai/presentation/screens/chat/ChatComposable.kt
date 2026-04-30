@@ -184,16 +184,17 @@ fun ChatContent(chatId: Long) {
         modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top
     ) {
         Box(modifier = Modifier.weight(1f)) {
+            val isFirstAnonymousLogin = chatId == DEFAULT_CHAT_ID && welcomeChat.value == null
             if (currentChatState.value != null && currentChatState.value?.id != DEFAULT_CHAT_ID) {
-                when (val messages = messagesState.value) {
-                    null -> Box(
+                when {
+                    messagesState.value == null || isFirstAnonymousLogin -> Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(color = Primary500)
                     }
                     else -> MessagesList(
-                        messages,
+                        messagesState.value!!,
                         isMessageActionModeState,
                         modifier = Modifier.padding(horizontal = 16.dp),
                         stringRes = stringRes
