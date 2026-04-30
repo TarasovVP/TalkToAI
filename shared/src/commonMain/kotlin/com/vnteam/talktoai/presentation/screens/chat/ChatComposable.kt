@@ -102,6 +102,7 @@ fun ChatContent(chatId: Long) {
     val screenState = LocalScreenState.current
     val stringRes = LocalStringResources.current
     val welcomeChat = viewModel.welcomeChat.collectAsState()
+    val isWelcomeChatPending = rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.getAnimationResource()
@@ -121,12 +122,14 @@ fun ChatContent(chatId: Long) {
 
     LaunchedEffect(currentChatState.value?.id) {
         if (chatId == DEFAULT_CHAT_ID && currentChatState.value?.id == DEFAULT_CHAT_ID) {
+            isWelcomeChatPending.value = true
             viewModel.createWelcomeChat(stringRes.WELCOME_CHAT_NAME, stringRes.WELCOME_MESSAGE)
         }
     }
 
     LaunchedEffect(welcomeChat.value) {
         welcomeChat.value?.let { chat ->
+            isWelcomeChatPending.value = false
             chatListViewModel.notifyChatInserted(chat)
             screenState.value = screenState.value.copy(currentChat = chat)
         }
@@ -184,10 +187,9 @@ fun ChatContent(chatId: Long) {
         modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top
     ) {
         Box(modifier = Modifier.weight(1f)) {
-            val isFirstAnonymousLogin = chatId == DEFAULT_CHAT_ID && welcomeChat.value == null
             if (currentChatState.value != null && currentChatState.value?.id != DEFAULT_CHAT_ID) {
                 when {
-                    messagesState.value == null || isFirstAnonymousLogin -> Box(
+                    messagesState.value == null || isWelcomeChatPending.value -> Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
