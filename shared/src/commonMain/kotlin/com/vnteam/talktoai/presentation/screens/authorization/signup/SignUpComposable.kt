@@ -30,9 +30,7 @@ import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
-import com.vnteam.talktoai.presentation.ui.components.GoogleButton
 import com.vnteam.talktoai.presentation.ui.components.LinkButton
-import com.vnteam.talktoai.presentation.ui.components.OrDivider
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
@@ -73,7 +71,6 @@ fun SignUpScreen() {
     val signUpUiState by viewModel.uiState.collectAsState()
     LaunchedEffect(signUpUiState) {
         signUpUiState.accountExist?.let {
-            viewModel.googleSignOut()
             showAccountExistDialog.value = true
             signUpUiState.accountExist = null
         }
@@ -82,9 +79,6 @@ fun SignUpScreen() {
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
             )
-        }
-        signUpUiState.createGoogleAccount?.let { idToken ->
-            viewModel.createUserWithGoogle(idToken)
         }
         signUpUiState.successSignUp?.let {
             viewModel.insertRemoteUser(
@@ -133,21 +127,6 @@ fun SignUpContent(
                 .fillMaxWidth()
                 .padding(16.dp), textAlign = TextAlign.Center
         )
-        Text(
-            text = LocalStringResources.current.AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
-        GoogleButton(
-            LocalStringResources.current.AUTHORIZATION_SIGNING_UP,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(16.dp),
-            enabled = privacyPolicyAccepted.value
-        ) {
-            viewModel.googleSignIn()
-        }
-        OrDivider(modifier = Modifier)
         PrimaryTextField(
             LocalStringResources.current.AUTHORIZATION_EMAIL, emailInputValue
         )

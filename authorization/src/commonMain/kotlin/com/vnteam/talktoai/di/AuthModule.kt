@@ -7,16 +7,12 @@ import com.vnteam.talktoai.domain.repositories.AuthRepository
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ChangePasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ClearDataUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.DeleteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleSignInUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleSignOutUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ReAuthenticateUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ResetPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignOutUseCase
 import kotlinx.serialization.json.Json
 import org.koin.dsl.module
@@ -34,8 +30,7 @@ val authModule = module {
 
     single { AuthHttpClient(get(), enableLogging = true) }
 
-
-    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get()) }
 
     // authorisation
     single { ChangePasswordUseCase(get()) }
@@ -44,15 +39,9 @@ val authModule = module {
 
     single { CreateUserWithEmailAndPasswordUseCase(get()) }
 
-    single { CreateUserWithGoogleUseCase(get()) }
-
     single { DeleteUserUseCase(get()) }
 
     single { FetchProvidersForEmailUseCase(get()) }
-
-    single { GoogleSignInUseCase(get()) }
-
-    single { GoogleSignOutUseCase(get()) }
 
     single { ReAuthenticateUseCase(get()) }
 
@@ -61,8 +50,6 @@ val authModule = module {
     single { SignInAnonymouslyUseCase(get()) }
 
     single { SignInWithEmailAndPasswordUseCase(get()) }
-
-    single { SignInWithGoogleUseCase(get()) }
 
     single { SignOutUseCase(get()) }
 }

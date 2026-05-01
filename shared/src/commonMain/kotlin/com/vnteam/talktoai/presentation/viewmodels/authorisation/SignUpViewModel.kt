@@ -11,9 +11,7 @@ import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.SignUpUIState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleSignInUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.ClearLocalDataUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.InsertChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessageUseCase
@@ -32,10 +30,8 @@ import kotlin.time.Clock
 class SignUpViewModel(
     private val networkState: NetworkState,
     private val fetchProvidersForEmailUseCase: FetchProvidersForEmailUseCase,
-    private val createUserWithGoogleUseCase: CreateUserWithGoogleUseCase,
     private val createUserWithEmailAndPasswordUseCase: CreateUserWithEmailAndPasswordUseCase,
     private val insertRemoteUserUseCase: InsertRemoteUserUseCase,
-    private val googleUseCase: GoogleSignInUseCase,
     private val idTokenUseCase: IdTokenUseCase,
     private val userEmailUseCase: UserEmailUseCase,
     private val onboardingUseCase: OnboardingUseCase,
@@ -50,23 +46,15 @@ class SignUpViewModel(
     private var pendingIdToken: String = String.EMPTY
     private var pendingEmail: String = String.EMPTY
 
-    fun fetchProvidersForEmailUseCase(idToken: String? = null) {
+    fun fetchProvidersForEmailUseCase() {
         launchWithResult {
             fetchProvidersForEmailUseCase.execute().onSuccess { result ->
-                when {
-                    result.isNullOrEmpty()
-                        .not() -> updateUIState(SignUpUIState(accountExist = true))
-
-                    idToken.isNullOrEmpty() -> updateUIState(SignUpUIState(createEmailAccount = true))
-                    else -> updateUIState(SignUpUIState(createGoogleAccount = idToken))
+                if (result.isNullOrEmpty().not()) {
+                    updateUIState(SignUpUIState(accountExist = true))
+                } else {
+                    updateUIState(SignUpUIState(createEmailAccount = true))
                 }
             }
-        }
-    }
-
-    fun createUserWithGoogle(idToken: String) {
-        launchWithResult {
-            googleUseCase.execute(idToken)
         }
     }
 
@@ -113,16 +101,5 @@ class SignUpViewModel(
 
     private fun updateUIState(newUIState: SignUpUIState) {
         _uiState.value = newUIState
-    }
-
-    fun googleSignOut() {
-        //googleUseCase.googleSignOut()
-    }
-
-    fun googleSignIn() {
-        val someString = "someString"
-        launchWithResult {
-            googleUseCase.execute(someString)
-        }
     }
 }

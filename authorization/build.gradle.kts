@@ -48,8 +48,6 @@ kotlin {
             implementation(libs.ktor.client.android)
             // Koin
             implementation(libs.koin.android)
-            // Google Auth
-            implementation(libs.play.services.auth)
         }
         iosMain.dependencies {
             // Ktor

@@ -2,9 +2,7 @@ package com.vnteam.talktoai.di_android
 
 import com.vnteam.talktoai.data.database.DatabaseDriverFactory
 import com.vnteam.talktoai.data.local.PreferencesFactory
-import com.vnteam.talktoai.data.sdk.GoogleAuthHandler
 import com.vnteam.talktoai.utils.AnimationUtils
-import com.vnteam.talktoai.utils.GoogleSignInInitializer
 import com.vnteam.talktoai.utils.NetworkState
 import com.vnteam.talktoai.utils.ShareUtils
 import org.koin.android.ext.koin.androidContext
@@ -19,12 +17,6 @@ val androidModule = module {
     }
     single {
         NetworkState(androidContext())
-    }
-    single {
-        GoogleAuthHandler()
-    }
-    single {
-        GoogleSignInInitializer(get())
     }
     single {
         AnimationUtils()
