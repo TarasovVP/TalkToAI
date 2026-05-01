@@ -7,7 +7,6 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Ch
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ClearDataUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.DeleteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ReAuthenticateUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignOutUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.ClearLocalDataUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
@@ -27,7 +26,6 @@ class SettingsAccountViewModel(
     private val deleteUserUseCase: DeleteUserUseCase,
     private val clearDataUseCase: ClearDataUseCase,
     private val clearLocalDataUseCase: ClearLocalDataUseCase,
-    private val googleUseCase: SignInWithGoogleUseCase,
 ) : BaseViewModel() {
 
     private val _userEmail = MutableStateFlow<String?>(null)
@@ -62,7 +60,7 @@ class SettingsAccountViewModel(
         }
     }
 
-    fun reAuthenticate(/*authCredential: AuthCredential*/) {
+    fun reAuthenticate() {
         launchWithNetworkCheck(networkState) {
             reAuthenticateUseCase.execute().onSuccess {
                 reAuthenticateLiveData.value = true
@@ -82,13 +80,6 @@ class SettingsAccountViewModel(
         launchWithErrorHandling {
             clearLocalDataUseCase.execute()
             clearDataUseCase.execute()
-        }
-    }
-
-    fun googleSignIn() {
-        val someString = "someString"
-        launchWithResult {
-            googleUseCase.execute(someString)
         }
     }
 }

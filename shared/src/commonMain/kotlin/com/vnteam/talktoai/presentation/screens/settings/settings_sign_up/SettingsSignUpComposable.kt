@@ -23,11 +23,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
-import com.vnteam.talktoai.presentation.ui.components.GoogleButton
-import com.vnteam.talktoai.presentation.ui.components.OrDivider
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
@@ -49,7 +46,6 @@ fun SettingsSignUpScreen() {
     val settingsSignUpUIStateState by viewModel.uiState.collectAsState()
     LaunchedEffect(settingsSignUpUIStateState) {
         settingsSignUpUIStateState.accountExist?.let {
-            viewModel.googleSign()
             showAccountExistDialog.value = true
         }
         settingsSignUpUIStateState.createEmailAccount?.let {
@@ -57,9 +53,6 @@ fun SettingsSignUpScreen() {
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
             )
-        }
-        settingsSignUpUIStateState.createGoogleAccount?.let { idToken ->
-            viewModel.createUserWithGoogle(idToken, false)
         }
         settingsSignUpUIStateState.successAuthorisation?.let { isExistUser ->
             if (transferDataState.value) {
@@ -71,11 +64,6 @@ fun SettingsSignUpScreen() {
                 userState.second?.let { viewModel.updateRemoteCurrentUser(it) }
             } else {
                 userState.second?.let { viewModel.insertRemoteCurrentUser(it) }
-            }
-        }
-        settingsSignUpUIStateState.successRemoteUser?.let { successRemoteUser ->
-            if (successRemoteUser) {
-                //updateScreenState(screenRoute = "${NavigationScreen.CHAT_DESTINATION}/${DEFAULT_CHAT_ID}")
             }
         }
     }
@@ -91,12 +79,10 @@ fun SettingsSignUpScreen() {
         LocalStringResources.current.SETTINGS_ACCOUNT_EXIST,
         showAccountExistDialog
     ) {
-        /*viewModel.accountExistLiveData.value.takeIf { it.isNotEmpty() }?.let { idToken ->
-            viewModel.createUserWithGoogle(idToken, true)
-        } ?:*/ viewModel.signInWithEmailAndPassword(
-        emailInputValue.value.text,
-        passwordInputValue.value.text
-    )
+        viewModel.signInWithEmailAndPassword(
+            emailInputValue.value.text,
+            passwordInputValue.value.text
+        )
         showAccountExistDialog.value = false
     }
 }
@@ -115,20 +101,6 @@ fun SettingsSignUpContent(
         verticalArrangement = Arrangement.Top
     ) {
         Spacer(modifier = Modifier.height(40.dp))
-        Text(
-            text = LocalStringResources.current.AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
-        GoogleButton(
-            LocalStringResources.current.AUTHORIZATION_SIGNING_UP,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(16.dp)
-        ) {
-            viewModel.googleSign()
-        }
-        OrDivider(modifier = Modifier)
         PrimaryTextField(LocalStringResources.current.AUTHORIZATION_EMAIL, emailInputValue)
         PasswordTextField(passwordInputValue, LocalStringResources.current.AUTHORIZATION_PASSWORD)
         PrimaryButton(

@@ -29,13 +29,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.vnteam.talktoai.CommonExtensions.EMPTY
-import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Res
-import com.vnteam.talktoai.data.GOOGLE_USER
 import com.vnteam.talktoai.domain.enums.AuthState
 import com.vnteam.talktoai.ic_avatar_anonymous
 import com.vnteam.talktoai.ic_avatar_email
-import com.vnteam.talktoai.ic_avatar_google
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.DataEditDialog
@@ -61,7 +58,6 @@ fun SettingsAccountScreen() {
     val authState = remember { mutableStateOf<AuthState?>(null) }
     val showLogOutDialog = remember { mutableStateOf(false) }
     val showChangePasswordDialog = remember { mutableStateOf(false) }
-    val showDeleteGoogleAccountDialog = remember { mutableStateOf(false) }
     val showDeleteEmailAccountDialog = remember { mutableStateOf(false) }
 
     val updatedScreenRoute = remember { mutableStateOf(String.EMPTY) }
@@ -77,7 +73,6 @@ fun SettingsAccountScreen() {
         } else {
             authState.value = when {
                 userEmail.isNullOrEmpty() -> AuthState.AUTHORISED_ANONYMOUSLY
-                userEmail?.contains(GOOGLE_USER).isTrue() -> AuthState.AUTHORISED_GOOGLE
                 else -> AuthState.AUTHORISED_EMAIL
             }
         }
@@ -115,7 +110,6 @@ fun SettingsAccountScreen() {
         authState,
         showLogOutDialog,
         showChangePasswordDialog,
-        showDeleteGoogleAccountDialog,
         showDeleteEmailAccountDialog,
         updatedScreenRoute
     )
@@ -132,13 +126,6 @@ fun SettingsAccountScreen() {
         showLogOutDialog
     ) {
         viewModel.signOut()
-    }
-
-    ConfirmationDialog(
-        LocalStringResources.current.SETTINGS_ACCOUNT_GOOGLE_DELETE,
-        showDeleteGoogleAccountDialog
-    ) {
-        viewModel.googleSignIn()
     }
 
     DataEditDialog(
@@ -160,7 +147,6 @@ fun SettingsAccountContent(
     authState: MutableState<AuthState?>,
     showLogOutDialog: MutableState<Boolean>,
     showChangePasswordDialog: MutableState<Boolean>,
-    showDeleteGoogleAccountDialog: MutableState<Boolean>,
     showDeleteEmailAccountDialog: MutableState<Boolean>,
     updateScreenRoute: MutableState<String>,
 ) {
@@ -180,18 +166,12 @@ fun SettingsAccountContent(
             ) {
                 showChangePasswordDialog.value = true
             }
-        }
-        if (authState.value == AuthState.AUTHORISED_EMAIL || authState.value == AuthState.AUTHORISED_GOOGLE) {
             SecondaryButton(
                 text = LocalStringResources.current.SETTINGS_ACCOUNT_DELETE_TITLE,
                 true,
                 modifier = Modifier
             ) {
-                if (authState.value == AuthState.AUTHORISED_GOOGLE) {
-                    showDeleteGoogleAccountDialog.value = true
-                } else {
-                    showDeleteEmailAccountDialog.value = true
-                }
+                showDeleteEmailAccountDialog.value = true
             }
         } else {
             EmptyState(
@@ -226,7 +206,6 @@ fun AccountCard(authState: AuthState?, email: String?, onClick: () -> Unit) {
             ShapeableImage(
                 modifier = Modifier.size(50.dp),
                 drawableRes = when (authState) {
-                    AuthState.AUTHORISED_GOOGLE -> Res.drawable.ic_avatar_google
                     AuthState.AUTHORISED_EMAIL -> Res.drawable.ic_avatar_email
                     else -> Res.drawable.ic_avatar_anonymous
                 },

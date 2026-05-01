@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
@@ -23,7 +22,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnteam.talktoai.Res
-import com.vnteam.talktoai.ic_logo_google
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Blue
 import com.vnteam.talktoai.presentation.ui.theme.Neutral400
@@ -105,34 +103,6 @@ fun SubmitButtons(
         ) {
             onConfirmationClick.invoke()
         }
-    }
-}
-
-@Composable
-fun GoogleButton(title: String, modifier: Modifier, enabled: Boolean = true, onClick: () -> Unit) {
-    val borderColor = if (enabled) Primary300 else Neutral400
-    val textColor = if (enabled) Color.Unspecified else Neutral400
-    Row(
-        modifier = modifier
-            .wrapContentSize()
-            .border(1.dp, color = borderColor, shape = RoundedCornerShape(16.dp))
-            .background(color = Color.Transparent, shape = RoundedCornerShape(16.dp))
-            .clickable(enabled = enabled) {
-                onClick.invoke()
-            }) {
-        Image(
-            painter = painterResource(Res.drawable.ic_logo_google),
-            contentDescription = LocalStringResources.current.AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
-            modifier = Modifier
-                .padding(top = 8.dp, start = 16.dp, bottom = 8.dp)
-                .then(if (enabled) Modifier else Modifier.alpha(0.4f))
-        )
-        Text(
-            text = title,
-            fontSize = 16.sp,
-            color = textColor,
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-        )
     }
 }
 
