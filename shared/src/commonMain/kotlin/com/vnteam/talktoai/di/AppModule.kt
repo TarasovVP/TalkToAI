@@ -136,10 +136,10 @@ val appModule = module {
         OnBoardingViewModel(get())
     }
     viewModel {
-        LoginViewModel(get(), get(), get(), get(), get(), get())
+        LoginViewModel(get(), get(), get(), get(), get())
     }
     viewModel {
-        SignUpViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
+        SignUpViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         ChatListViewModel(get(), get(), get(), get(), get())
@@ -148,7 +148,7 @@ val appModule = module {
         ChatViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
-        SettingsAccountViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
+        SettingsAccountViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         SettingsChatViewModel(get(), get(), get(), get(), get(), get())
@@ -171,14 +171,11 @@ val appModule = module {
             get(),
             get(),
             get(),
-            get(),
-            get(),
             get()
         )
     }
     viewModel {
         SettingsLoginViewModel(
-            get(),
             get(),
             get(),
             get(),

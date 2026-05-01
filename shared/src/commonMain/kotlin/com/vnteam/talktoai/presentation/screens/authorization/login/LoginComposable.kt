@@ -28,9 +28,7 @@ import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.DataEditDialog
-import com.vnteam.talktoai.presentation.ui.components.GoogleButton
 import com.vnteam.talktoai.presentation.ui.components.LinkButton
-import com.vnteam.talktoai.presentation.ui.components.OrDivider
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
@@ -60,7 +58,6 @@ fun LoginScreen() {
     }
 
     val innerProgress = viewModel.innerProgress.collectAsState()
-    println("appTAG LoginComposable innerProgress: ${innerProgress.value}")
     if (innerProgress.value) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
@@ -69,7 +66,6 @@ fun LoginScreen() {
 
     val exceptionMessage = viewModel.exceptionMessage.collectAsState()
     val progress = viewModel.progressVisibilityState.collectAsState()
-    println("appTAG LoginComposable exceptionMessage: ${exceptionMessage.value} progress: ${progress.value}")
     updateScreenState(
         isProgressVisible = progress.value,
         appMessage = if (exceptionMessage.value.isNotEmpty()) AppMessage(
@@ -82,28 +78,18 @@ fun LoginScreen() {
     val stringRes = LocalStringResources.current
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(uiState) {
-        /*uiState.isAccountExist?.let {
-            viewModel.googleSignOut()
-            showAccountExistDialog.value = true
-        }*/
         uiState.isEmailAccountExist?.let {
             viewModel.signInWithEmailAndPassword(
                 emailInputValue.value.text.trim(),
                 passwordInputValue.value.text
             )
         }
-        /*uiState.isGoogleAccountExist?.let { idToken ->
-            viewModel.signInAuthWithGoogle(idToken)
-        }*/
         uiState.successPasswordReset?.let {
             localScreenState.value = localScreenState.value.copy(
                 appMessage = AppMessage(false, stringRes.AUTHORIZATION_PASSWORD_RESET_SUCCESS)
             )
         }
         uiState.anonymousSignInSuccess?.let {
-            updatedScreenRoute.value = "${com.vnteam.talktoai.presentation.ui.NavigationScreen.CHAT_DESTINATION}/${com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID}"
-        }
-        uiState.googleSignInSuccess?.let {
             updatedScreenRoute.value = "${com.vnteam.talktoai.presentation.ui.NavigationScreen.CHAT_DESTINATION}/${com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID}"
         }
         uiState.emailSignInSuccess?.let {
@@ -166,20 +152,6 @@ fun LoginContent(
                 .fillMaxWidth()
                 .padding(16.dp), textAlign = TextAlign.Center
         )
-        Text(
-            text = LocalStringResources.current.AUTHORIZATION_WITH_GOOGLE_ACCOUNT,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
-        GoogleButton(
-            LocalStringResources.current.AUTHORIZATION_ENTRANCE,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(16.dp)
-        ) {
-            viewModel.googleSignIn()
-        }
-        OrDivider(modifier = Modifier)
         PrimaryTextField(LocalStringResources.current.AUTHORIZATION_EMAIL, emailInputValue)
         PasswordTextField(passwordInputValue, LocalStringResources.current.AUTHORIZATION_PASSWORD)
         Row(
@@ -215,7 +187,6 @@ fun LoginContent(
                 passwordInputValue.value.text
             )
         }
-        OrDivider()
         SecondaryButton(
             text = LocalStringResources.current.AUTHORIZATION_CONTINUE_WITHOUT_ACCOUNT,
             false,

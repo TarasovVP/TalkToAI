@@ -6,9 +6,7 @@ import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.SettingsSignUpUIState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithGoogleUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.GoogleSignInUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMessagesUseCase
@@ -22,41 +20,26 @@ import kotlinx.coroutines.flow.asStateFlow
 class SettingsSignUpViewModel(
     private val networkState: NetworkState,
     private val fetchProvidersForEmailUseCase: FetchProvidersForEmailUseCase,
-    private val createUserWithGoogleUseCase: CreateUserWithGoogleUseCase,
     private val createUserWithEmailAndPasswordUseCase: CreateUserWithEmailAndPasswordUseCase,
     private val signInWithEmailAndPasswordUseCase: SignInWithEmailAndPasswordUseCase,
     private val getChatsUseCase: GetChatsUseCase,
     private val getMessagesUseCase: GetMessagesUseCase,
     private val insertRemoteUserUseCase: InsertRemoteUserUseCase,
     private val updateRemoteUserUseCase: UpdateRemoteUserUseCase,
-    private val googleUseCase: GoogleSignInUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsSignUpUIState())
     val uiState = _uiState.asStateFlow()
 
-    fun fetchSignInMethodsForEmail(email: String, idToken: String? = null) {
+    fun fetchSignInMethodsForEmail(email: String) {
         launchWithResult {
             fetchProvidersForEmailUseCase.execute(email).onSuccess { result ->
-                when {
-                    result.isNullOrEmpty()
-                        .not() -> updateUIState(SettingsSignUpUIState(accountExist = idToken.orEmpty()))
-
-                    idToken.isNullOrEmpty() -> updateUIState(
-                        SettingsSignUpUIState(
-                            createEmailAccount = true
-                        )
-                    )
-
-                    else -> updateUIState(SettingsSignUpUIState(createGoogleAccount = idToken))
+                if (result.isNullOrEmpty().not()) {
+                    updateUIState(SettingsSignUpUIState(accountExist = email))
+                } else {
+                    updateUIState(SettingsSignUpUIState(createEmailAccount = true))
                 }
             }
-        }
-    }
-
-    fun createUserWithGoogle(idToken: String, isExistUser: Boolean) {
-        launchWithResult {
-            googleUseCase.execute(idToken)
         }
     }
 
@@ -73,14 +56,6 @@ class SettingsSignUpViewModel(
             signInWithEmailAndPasswordUseCase.execute(Pair(email, password)).onSuccess {
                 updateUIState(SettingsSignUpUIState(successAuthorisation = true))
             }
-
-        }
-    }
-
-    fun googleSign() {
-        val someString = "someString"
-        launchWithResult {
-            googleUseCase.execute(someString)
         }
     }
 
@@ -101,7 +76,6 @@ class SettingsSignUpViewModel(
             insertRemoteUserUseCase.execute(remoteUser).onSuccess {
                 updateUIState(SettingsSignUpUIState(successRemoteUser = true))
             }
-
         }
     }
 

@@ -14,7 +14,6 @@ import com.vnteam.talktoai.data.network.auth.response.SignInAnonymouslyResponse
 import com.vnteam.talktoai.data.network.auth.response.SignInEmailResponse
 import com.vnteam.talktoai.data.network.auth.response.SignUpEmailResponse
 import com.vnteam.talktoai.data.network.handleResponse
-import com.vnteam.talktoai.data.sdk.GoogleAuthHandler
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import io.ktor.client.statement.HttpResponse
 import kotlinx.coroutines.flow.Flow
@@ -27,7 +26,6 @@ interface Logger {
 
 class AuthRepositoryImpl(
     private val authService: AuthService,
-    private val googleAuthHandler: GoogleAuthHandler,
     private val logger: Logger? = null,
 ) : AuthRepository {
 
@@ -59,101 +57,59 @@ class AuthRepositoryImpl(
 
     override suspend fun fetchProvidersForEmail(
         providersForEmailBody: ProvidersForEmailBody
-    ): Result<ProvidersForEmailResponse> = 
+    ): Result<ProvidersForEmailResponse> =
         executeAuthRequest("fetchProvidersForEmail") {
             authService.fetchProvidersForEmail(providersForEmailBody)
         }
 
     override suspend fun signInWithEmailAndPassword(
         authBody: AuthBody
-    ): Result<SignInEmailResponse> = 
+    ): Result<SignInEmailResponse> =
         executeAuthRequest("signInWithEmailAndPassword") {
             authService.signInWithEmailAndPassword(authBody)
         }
 
     override suspend fun signInAnonymously(
         authBody: AuthBody
-    ): Result<SignInAnonymouslyResponse> = 
+    ): Result<SignInAnonymouslyResponse> =
         executeAuthRequest("signInAnonymously") {
             authService.signInAnonymously(authBody)
         }
 
     override suspend fun resetPassword(
         resetPasswordBody: ResetPasswordBody
-    ): Result<ResetPasswordResponse> = 
+    ): Result<ResetPasswordResponse> =
         executeAuthRequest("resetPassword") {
             authService.resetPassword(resetPasswordBody)
         }
 
     override suspend fun createUserWithEmailAndPassword(
         authBody: AuthBody
-    ): Result<SignUpEmailResponse> = 
+    ): Result<SignUpEmailResponse> =
         executeAuthRequest("createUserWithEmailAndPassword") {
             authService.createUserWithEmailAndPassword(authBody)
         }
 
     override suspend fun changePassword(
         changePasswordBody: ChangePasswordBody
-    ): Result<ChangePasswordResponse> = 
+    ): Result<ChangePasswordResponse> =
         executeAuthRequest("changePassword") {
             authService.changePassword(changePasswordBody)
         }
 
     override suspend fun deleteUser(
         deleteAccountBody: DeleteAccountBody
-    ): Result<Unit> = 
+    ): Result<Unit> =
         executeAuthRequest("deleteUser") {
             authService.deleteAccount(deleteAccountBody)
         }
 
-    override suspend fun googleSignIn(idToken: String): Result<String> {
-        return try {
-            logger?.debug(TAG, "Google sign in started")
-            val token = googleAuthHandler.signIn()
-            if (token != null) {
-                logger?.debug(TAG, "Google sign in success, token received")
-                Result.Success(token)
-            } else {
-                logger?.error(TAG, "Google sign in cancelled or failed — token is null")
-                Result.Failure("Google sign in cancelled or failed")
-            }
-        } catch (e: Exception) {
-            logger?.error(TAG, "Google sign in failed", e)
-            Result.Failure("Google sign in failed: ${e.message}")
-        }
-    }
-
-    override suspend fun googleSignOut(): Result<Unit> {
-        return try {
-            logger?.debug(TAG, "Google sign out")
-            googleAuthHandler.signOut()
-            Result.Success(Unit)
-        } catch (e: Exception) {
-            logger?.error(TAG, "Google sign out failed", e)
-            Result.Failure("Google sign out failed: ${e.message}")
-        }
-    }
-
     override fun addAuthStateListener() {
-        // TODO: Implement when needed
         logger?.debug(TAG, "addAuthStateListener not implemented")
     }
 
     override fun removeAuthStateListener() {
-        // TODO: Implement when needed
         logger?.debug(TAG, "removeAuthStateListener not implemented")
-    }
-
-    override fun isGoogleAuthUser(): Boolean {
-        return try {
-            val token = googleAuthHandler.getToken()
-            val isGoogleUser = !token.isNullOrEmpty()
-            logger?.debug(TAG, "isGoogleAuthUser: $isGoogleUser")
-            isGoogleUser
-        } catch (e: Exception) {
-            logger?.error(TAG, "Error checking Google auth user", e)
-            false
-        }
     }
 
     override fun reAuthenticate(): Flow<Unit> = flow {
