@@ -11,6 +11,6 @@ class SignOutUseCase(
 
     override suspend fun execute(params: Nothing?): Result<Unit> {
         // TODO replace with real implementation
-        return repository.googleSignOut()
+        return Result.Success(Unit)
     }
 }
