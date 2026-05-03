@@ -7,7 +7,6 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Ch
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ClearDataUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.DeleteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ReAuthenticateUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignOutUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.ClearLocalDataUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
@@ -22,7 +21,6 @@ class SettingsAccountViewModel(
     private val userEmailUseCase: UserEmailUseCase,
     private val changePasswordUseCase: ChangePasswordUseCase,
     private val reAuthenticateUseCase: ReAuthenticateUseCase,
-    private val signOutUseCase: SignOutUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
     private val clearDataUseCase: ClearDataUseCase,
     private val clearLocalDataUseCase: ClearLocalDataUseCase,
@@ -45,7 +43,6 @@ class SettingsAccountViewModel(
 
     fun signOut() {
         launchWithErrorHandling {
-            signOutUseCase.execute()
             idTokenUseCase.set(String.EMPTY)
             userEmailUseCase.set(String.EMPTY)
             successLiveData.value = true
