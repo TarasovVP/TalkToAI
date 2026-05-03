@@ -13,7 +13,6 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Re
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ResetPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignOutUseCase
 import kotlinx.serialization.json.Json
 import org.koin.dsl.module
 
@@ -50,6 +49,4 @@ val authModule = module {
     single { SignInAnonymouslyUseCase(get()) }
 
     single { SignInWithEmailAndPasswordUseCase(get()) }
-
-    single { SignOutUseCase(get()) }
 }
