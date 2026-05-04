@@ -139,7 +139,34 @@ class ChatViewModel(
         }
     }
 
-    fun sendRequest(temporaryMessage: MessageUI, messageText: String) {
+    fun sendMessage(chatId: Long, messageText: String) {
+        val now = Clock.System.now()
+        val userMsgId = now.toEpochMilliseconds()
+        val userMsg = MessageUI(
+            id = userMsgId,
+            chatId = chatId,
+            author = Constants.MESSAGE_ROLE_ME,
+            message = messageText,
+            updatedAt = now.dateToMilliseconds(),
+            status = MessageStatus.SUCCESS
+        )
+        val tempMsg = MessageUI(
+            id = userMsgId + 1,
+            chatId = chatId,
+            author = Constants.MESSAGE_ROLE_CHAT_GPT,
+            message = "",
+            updatedAt = now.dateToMilliseconds() + 1,
+            status = MessageStatus.REQUESTING
+        )
+        launchWithErrorHandling {
+            insertMessageUseCase.execute(messageUIMapper.mapFromImplModel(userMsg))
+            insertMessageUseCase.execute(messageUIMapper.mapFromImplModel(tempMsg))
+            _messagesLiveData.value = (_messagesLiveData.value.orEmpty()) + listOf(userMsg, tempMsg)
+        }
+        sendRequest(tempMsg, messageText)
+    }
+
+    private fun sendRequest(temporaryMessage: MessageUI, messageText: String) {
         val apiRequest = ApiRequest(
             model = _aiModel.value,
             temperature = _temperature.value,
@@ -153,7 +180,6 @@ class ChatViewModel(
                     temporaryMessage.copy(
                         author = apiResponse?.model.orEmpty(),
                         message = apiResponse?.choices?.firstOrNull()?.message?.content.orEmpty(),
-                        //updatedAt = apiResponse?.created?.toLongOrNull() ?: 0,
                         status = MessageStatus.SUCCESS
                     )
                 )
@@ -169,9 +195,13 @@ class ChatViewModel(
     }
 
     fun insertMessage(message: MessageUI) {
-        launchWithResult {
+        launchWithErrorHandling {
             println("messageTAG ChatViewModel.insertMessage: message = $message")
             insertMessageUseCase.execute(messageUIMapper.mapFromImplModel(message))
+            val current = _messagesLiveData.value.orEmpty().toMutableList()
+            val idx = current.indexOfFirst { it.id == message.id }
+            if (idx >= 0) current[idx] = message else current.add(message)
+            _messagesLiveData.value = current
         }
     }
 
