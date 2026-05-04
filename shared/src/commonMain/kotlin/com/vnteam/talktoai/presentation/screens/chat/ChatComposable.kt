@@ -218,27 +218,7 @@ fun ChatContent(chatId: Long) {
                     TextFieldWithButton(
                         currentChatState.value?.id != null && currentChatState.value?.id != DEFAULT_CHAT_ID
                     ) { messageText ->
-
-                        viewModel.insertMessage(
-                            MessageUI(
-                                id = Clock.System.now().toEpochMilliseconds(),
-                                chatId = currentChatState.value?.id ?: 0,
-                                author = Constants.MESSAGE_ROLE_ME,
-                                message = messageText,
-                                updatedAt = Clock.System.now().dateToMilliseconds(),
-                                status = MessageStatus.SUCCESS
-                            )
-                        )
-                        val temporaryMessage = MessageUI(
-                            id = Clock.System.now().toEpochMilliseconds() + 1,
-                            chatId = currentChatState.value?.id ?: 0,
-                            author = Constants.MESSAGE_ROLE_CHAT_GPT,
-                            message = String.EMPTY,
-                            updatedAt = Clock.System.now().dateToMilliseconds() + 1,
-                            status = MessageStatus.REQUESTING
-                        )
-                        viewModel.insertMessage(temporaryMessage)
-                        viewModel.sendRequest(temporaryMessage, messageText)
+                        viewModel.sendMessage(currentChatState.value?.id ?: 0, messageText)
                     }
                 }
             }
