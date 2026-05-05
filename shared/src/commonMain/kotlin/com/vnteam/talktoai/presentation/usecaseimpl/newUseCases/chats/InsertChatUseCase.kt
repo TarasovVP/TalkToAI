@@ -21,14 +21,13 @@ class InsertChatUseCase(
 
     override suspend fun execute(params: Chat): Result<Unit> {
         val userAuth = preferencesRepository.getUserEmail().firstOrNull()
-        when {
-            userAuth.getUserAuth().isAuthorisedUser() -> when {
-                networkState.isNetworkAvailable() -> realDataBaseRepository.insertChat(params)
-                else -> return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
+        if (userAuth.getUserAuth().isAuthorisedUser()) {
+            if (!networkState.isNetworkAvailable()) {
+                return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
-
-            else -> chatRepository.insertChat(params)
+            realDataBaseRepository.insertChat(params)
         }
+        chatRepository.insertChat(params)
         return Result.Success(Unit)
     }
 }
