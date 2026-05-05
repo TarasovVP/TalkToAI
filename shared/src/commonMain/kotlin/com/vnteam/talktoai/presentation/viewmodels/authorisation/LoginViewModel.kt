@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.presentation.viewmodels.authorisation
 
+import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.LoginUIState
@@ -44,6 +45,7 @@ class LoginViewModel(
                 is com.vnteam.talktoai.data.network.Result.Success -> {
                     hideProgress()
                     idTokenUseCase.set(result.data?.idToken.orEmpty())
+                    userEmailUseCase.set(String.EMPTY)
                     updateUIState(LoginUIState(anonymousSignInSuccess = true))
                 }
                 is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
