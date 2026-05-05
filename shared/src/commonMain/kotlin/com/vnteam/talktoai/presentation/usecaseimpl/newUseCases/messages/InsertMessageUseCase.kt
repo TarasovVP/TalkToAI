@@ -21,14 +21,13 @@ class InsertMessageUseCase(
 
     override suspend fun execute(params: Message): Result<Unit> {
         val userAuth = preferencesRepository.getUserEmail().firstOrNull()
-        when {
-            userAuth.getUserAuth().isAuthorisedUser() -> when {
-                networkState.isNetworkAvailable() -> realDataBaseRepository.insertMessage(params)
-                else -> return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
+        if (userAuth.getUserAuth().isAuthorisedUser()) {
+            if (!networkState.isNetworkAvailable()) {
+                return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
-
-            else -> messageRepository.insertMessage(params)
+            realDataBaseRepository.insertMessage(params)
         }
+        messageRepository.insertMessage(params)
         return Result.Success(Unit)
     }
 }

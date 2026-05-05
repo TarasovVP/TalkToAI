@@ -57,7 +57,9 @@ class ChatListViewModel(
     }
 
     fun notifyChatInserted(chat: Chat) {
-        _chatsList.value = (_chatsList.value.orEmpty() + chat)
+        if (_chatsList.value.orEmpty().none { it.id == chat.id }) {
+            _chatsList.value = (_chatsList.value.orEmpty() + chat)
+        }
     }
 
     fun updateChat(chat: Chat) {

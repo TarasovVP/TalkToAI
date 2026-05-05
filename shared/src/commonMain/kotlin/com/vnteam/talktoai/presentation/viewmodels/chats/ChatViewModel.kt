@@ -92,6 +92,14 @@ class ChatViewModel(
 
     fun createWelcomeChat(chatName: String, welcomeMessage: String) {
         launchWithErrorHandling {
+            // Guard against re-creating on second launch (reactive DB flow race condition)
+            val firstResult = getChatWithIdUseCase.execute(Constants.DEFAULT_CHAT_ID).firstOrNull()
+            val existingChat = (firstResult as? com.vnteam.talktoai.data.network.Result.Success)?.data
+            if (existingChat?.id != null) {
+                _currentChatLiveData.value = chatUIMapper.mapToImplModel(existingChat)
+                _welcomeChat.value = existingChat
+                return@launchWithErrorHandling
+            }
             val chatId = Clock.System.now().dateToMilliseconds()
             val chat = Chat(id = chatId, name = chatName, updated = chatId, listOrder = 1)
             insertChatUseCase.execute(chat)
@@ -161,7 +169,6 @@ class ChatViewModel(
         launchWithErrorHandling {
             insertMessageUseCase.execute(messageUIMapper.mapFromImplModel(userMsg))
             insertMessageUseCase.execute(messageUIMapper.mapFromImplModel(tempMsg))
-            _messagesLiveData.value = (_messagesLiveData.value.orEmpty()) + listOf(userMsg, tempMsg)
         }
         sendRequest(tempMsg, messageText)
     }
