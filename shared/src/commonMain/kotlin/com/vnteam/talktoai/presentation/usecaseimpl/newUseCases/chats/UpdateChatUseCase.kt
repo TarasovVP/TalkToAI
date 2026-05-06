@@ -21,14 +21,13 @@ class UpdateChatUseCase(
 
     override suspend fun execute(params: Chat): Result<Unit> {
         val userAuth = preferencesRepository.getUserEmail().firstOrNull()
-        when {
-            userAuth.getUserAuth().isAuthorisedUser() -> when {
-                networkState.isNetworkAvailable() -> realDataBaseRepository.updateChat(params)
-                else -> return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
+        if (userAuth.getUserAuth().isAuthorisedUser()) {
+            if (!networkState.isNetworkAvailable()) {
+                return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
-
-            else -> chatRepository.updateChat(params)
+            realDataBaseRepository.updateChat(params)
         }
+        chatRepository.updateChat(params)
         return Result.Success(Unit)
     }
 }
