@@ -117,6 +117,11 @@ fun ChatContent(chatId: Long) {
         println("ChatContent: LaunchedEffect(currentChatState.value) ${currentChatState.value}")
         currentChatState.value?.let { chat ->
             viewModel.getMessagesFromChat(chat.id)
+            if (chat.id != DEFAULT_CHAT_ID) {
+                screenState.value = screenState.value.copy(
+                    currentChat = Chat(id = chat.id, name = chat.name, updated = chat.updated, listOrder = chat.listOrder)
+                )
+            }
         }
     }
 
