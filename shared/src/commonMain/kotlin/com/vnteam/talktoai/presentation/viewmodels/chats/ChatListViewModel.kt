@@ -52,7 +52,6 @@ class ChatListViewModel(
     fun insertChat(chat: Chat) {
         launchWithErrorHandling {
             insertChatUseCase.execute(chat)
-            _chatsList.value = (_chatsList.value.orEmpty() + chat)
         }
     }
 
