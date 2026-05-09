@@ -62,12 +62,6 @@ class LoginViewModel(
         }
     }
 
-    private fun setUserLogin(userLogin: String) {
-        launchWithErrorHandling {
-            userEmailUseCase.set(userLogin)
-        }
-    }
-
     private fun updateUIState(newUIState: LoginUIState) {
         _uiState.value = newUIState
     }
