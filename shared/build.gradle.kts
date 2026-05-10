@@ -125,7 +125,7 @@ sqldelight {
         create("AppDatabase") {
             packageName.set("com.vnteam.talktoai")
             generateAsync.set(true)
-            version = 2
+            version = 3
         }
     }
 }

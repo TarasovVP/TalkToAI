@@ -30,6 +30,7 @@ import com.vnteam.talktoai.empty_state
 import com.vnteam.talktoai.ic_chat
 import com.vnteam.talktoai.ic_chat_add
 import com.vnteam.talktoai.ic_delete
+import com.vnteam.talktoai.ic_settings
 import com.vnteam.talktoai.ic_drag_handle
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.CreateChatDialog
@@ -50,6 +51,7 @@ import kotlin.time.Clock
 fun ChatListScreen(
     currentChatId: Long? = null,
     onChatClick: (Chat?) -> Unit,
+    onSettingsClick: () -> Unit = {},
 ) {
     val viewModel = koinViewModel<ChatListViewModel>()
 
@@ -86,7 +88,8 @@ fun ChatListScreen(
         showCreateChatDialog = showCreateChatDialog,
         showDeleteChatDialog = showDeleteChatDialog,
         deleteChatState = deleteChatState,
-        onChatClick = onChatClick
+        onChatClick = onChatClick,
+        onSettingsClick = onSettingsClick,
     )
     CreateChatDialog(
         String.EMPTY,
@@ -120,6 +123,7 @@ fun ChatListContent(
     showDeleteChatDialog: MutableState<Boolean>,
     deleteChatState: MutableState<Chat?>,
     onChatClick: (Chat) -> Unit,
+    onSettingsClick: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier.fillMaxSize().background(Primary900), Arrangement.Top
@@ -170,9 +174,16 @@ fun ChatListContent(
         TextIconButton(
             LocalStringResources.current.NEW_CHAT,
             Res.drawable.ic_chat_add,
-            Modifier.padding(bottom = 40.dp, start = 16.dp, end = 16.dp)
+            Modifier.padding(top = 0.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
         ) {
             showCreateChatDialog.value = true
+        }
+        TextIconButton(
+            LocalStringResources.current.SETTINGS,
+            Res.drawable.ic_settings,
+            Modifier.padding(bottom = 40.dp, start = 16.dp, end = 16.dp)
+        ) {
+            onSettingsClick()
         }
     }
 }

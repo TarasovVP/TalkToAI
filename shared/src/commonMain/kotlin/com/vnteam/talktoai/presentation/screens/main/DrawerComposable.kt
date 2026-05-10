@@ -25,7 +25,11 @@ import org.jetbrains.compose.resources.painterResource
 import com.vnteam.talktoai.presentation.screens.chat_list.ChatListScreen
 
 @Composable
-fun DrawerContent(screenState: ScreenState, onScreenStateUpdate: (ScreenState) -> Unit) {
+fun DrawerContent(
+    screenState: ScreenState,
+    onScreenStateUpdate: (ScreenState) -> Unit,
+    onSettingsClick: () -> Unit,
+) {
     DrawerHeader()
     ChatListScreen(
         currentChatId = screenState.currentChat?.id,
@@ -39,7 +43,8 @@ fun DrawerContent(screenState: ScreenState, onScreenStateUpdate: (ScreenState) -
                     )
                 )
             )
-        }
+        },
+        onSettingsClick = onSettingsClick,
     )
 }
 
