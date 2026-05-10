@@ -72,6 +72,9 @@ sealed class StringResources(
     var SETTINGS_CHAT_TEMPERATURE_TITLE: String,
     var SETTINGS_CHAT_SAVE: String,
     var SETTINGS_CHAT_SAVED: String,
+    // Chat settings override
+    var CHAT_SETTINGS_USE_GLOBAL: String,
+    var CHAT_SETTINGS_GLOBAL_LABEL: String,
 
     // Settings account
     var SETTINGS_ACCOUNT_LOG_OUT_TITLE: String,
@@ -236,6 +239,8 @@ class StringResourcesEN : StringResources(
     SETTINGS_CHAT_TEMPERATURE_TITLE = "Temperature",
     SETTINGS_CHAT_SAVE = "Save",
     SETTINGS_CHAT_SAVED = "Settings saved",
+    CHAT_SETTINGS_USE_GLOBAL = "Reset to global settings",
+    CHAT_SETTINGS_GLOBAL_LABEL = "global",
 
     // Settings account
     SETTINGS_ACCOUNT_LOG_OUT_TITLE = "Logout",
@@ -407,6 +412,8 @@ class StringResourcesUK : StringResources(
     SETTINGS_CHAT_TEMPERATURE_TITLE = "Температура",
     SETTINGS_CHAT_SAVE = "Зберегти",
     SETTINGS_CHAT_SAVED = "Налаштування збережено",
+    CHAT_SETTINGS_USE_GLOBAL = "Скинути до глобальних налаштувань",
+    CHAT_SETTINGS_GLOBAL_LABEL = "глобально",
 
     // Settings account
     SETTINGS_ACCOUNT_LOG_OUT_TITLE = "Вийти",
