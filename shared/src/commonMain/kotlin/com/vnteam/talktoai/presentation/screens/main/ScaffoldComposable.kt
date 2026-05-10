@@ -29,7 +29,6 @@ import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.ic_arrow_back
 import com.vnteam.talktoai.ic_edit
 import com.vnteam.talktoai.ic_navigation
-import com.vnteam.talktoai.ic_settings
 import com.vnteam.talktoai.presentation.ui.NavigationScreen.Companion.settingsScreenNameByRoute
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
@@ -46,7 +45,6 @@ fun AppTopBar(
     screenState: ScreenState?,
     onNavigationIconClick: () -> Unit,
     onEditChatClick: () -> Unit = {},
-    onSettingsClick: () -> Unit = {},
 ) {
     when {
         screenState?.isSecondaryScreen.isTrue() -> SecondaryTopBar(
@@ -62,7 +60,6 @@ fun AppTopBar(
             onNavigationIconClick = onNavigationIconClick,
             isEditVisible = screenState?.isChatScreen.isTrue() && screenState?.currentChat != null,
             onEditClick = onEditChatClick,
-            onSettingsClick = onSettingsClick,
         )
     }
 }
@@ -75,7 +72,6 @@ fun PrimaryTopBar(
     onNavigationIconClick: () -> Unit,
     isEditVisible: Boolean,
     onEditClick: () -> Unit,
-    onSettingsClick: () -> Unit,
 ) {
     TopAppBar(
         title = { Text(title, color = Neutral50) },
@@ -100,13 +96,6 @@ fun PrimaryTopBar(
                         tint = Primary100
                     )
                 }
-            }
-            IconButton(onClick = onSettingsClick) {
-                Icon(
-                    painter = painterResource(Res.drawable.ic_settings),
-                    contentDescription = LocalStringResources.current.SETTINGS,
-                    tint = Primary100
-                )
             }
         }
     )

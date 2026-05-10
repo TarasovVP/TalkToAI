@@ -89,13 +89,19 @@ fun AppContent(appViewModel: AppViewModel) {
             ModalDrawerSheet {
                 if (screenState.value.isLoggedInUser) {
                     DrawerContent(
-                        screenState.value.copy(currentScreenRoute = actualRoute ?: screenState.value.currentScreenRoute)
-                    ) { newScreenState ->
-                        screenState.value = newScreenState
-                        scope.launch {
-                            drawerState.close()
+                        screenState = screenState.value.copy(currentScreenRoute = actualRoute ?: screenState.value.currentScreenRoute),
+                        onScreenStateUpdate = { newScreenState ->
+                            screenState.value = newScreenState
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        },
+                        onSettingsClick = {
+                            screenState.value = screenState.value.copy(
+                                currentScreenRoute = NavigationScreen.SETTINGS_LIST_SCREEN
+                            )
                         }
-                    }
+                    )
                 } else {
                     Box(modifier = Modifier.fillMaxWidth())
                 }
@@ -119,11 +125,6 @@ fun AppContent(appViewModel: AppViewModel) {
                         }
                     },
                     onEditChatClick = { showRenameChatDialog.value = true },
-                    onSettingsClick = {
-                        screenState.value = screenState.value.copy(
-                            currentScreenRoute = NavigationScreen.SETTINGS_LIST_SCREEN
-                        )
-                    }
                 )
             },
             snackbarHost = {
