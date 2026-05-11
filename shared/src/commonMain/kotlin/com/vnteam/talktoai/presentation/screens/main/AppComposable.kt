@@ -24,11 +24,9 @@ import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.presentation.AppNavigation
 import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
-import com.vnteam.talktoai.presentation.ui.components.CreateChatDialog
-import com.vnteam.talktoai.presentation.viewmodels.chats.ChatListViewModel
+import com.vnteam.talktoai.presentation.screens.chat.ChatSettingsBottomSheet
 import com.vnteam.talktoai.presentation.viewmodels.settings.AppViewModel
 import kotlinx.coroutines.launch
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AppContent(appViewModel: AppViewModel) {
@@ -36,10 +34,9 @@ fun AppContent(appViewModel: AppViewModel) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val navController = rememberNavController()
-    val chatListViewModel = koinViewModel<ChatListViewModel>()
 
     val screenState = LocalScreenState.current
-    val showRenameChatDialog = remember { mutableStateOf(false) }
+    val showChatSettingsSheet = remember { mutableStateOf(false) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     println("AppContentTAG: AppContent screenState.value: ${screenState.value}")
@@ -124,7 +121,7 @@ fun AppContent(appViewModel: AppViewModel) {
                             }
                         }
                     },
-                    onEditChatClick = { showRenameChatDialog.value = true },
+                    onEditChatClick = { showChatSettingsSheet.value = true },
                 )
             },
             snackbarHost = {
@@ -149,14 +146,16 @@ fun AppContent(appViewModel: AppViewModel) {
         }
     }
 
-    CreateChatDialog(
-        currentChatName = screenState.value.currentChat?.name.orEmpty(),
-        showDialog = showRenameChatDialog
-    ) { newName ->
+    if (showChatSettingsSheet.value) {
         screenState.value.currentChat?.let { chat ->
-            val updatedChat = chat.copy(name = newName)
-            chatListViewModel.updateChat(updatedChat)
-            screenState.value = screenState.value.copy(currentChat = updatedChat)
+            ChatSettingsBottomSheet(
+                chat = chat,
+                onDismiss = { showChatSettingsSheet.value = false },
+                onChatUpdated = { updatedChat ->
+                    screenState.value = screenState.value.copy(currentChat = updatedChat)
+                    showChatSettingsSheet.value = false
+                }
+            )
         }
     }
 }
