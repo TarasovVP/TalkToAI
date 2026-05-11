@@ -10,4 +10,5 @@ data class Chat(
     var listOrder: Long? = null,
     val aiModel: String? = null,
     val temperature: Float? = null,
+    val context: String? = null,
 )

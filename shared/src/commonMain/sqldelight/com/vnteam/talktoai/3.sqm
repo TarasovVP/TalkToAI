@@ -1,0 +1,1 @@
+ALTER TABLE ChatDB ADD COLUMN context TEXT;
