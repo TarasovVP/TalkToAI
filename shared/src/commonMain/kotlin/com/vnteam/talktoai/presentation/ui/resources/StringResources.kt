@@ -129,6 +129,7 @@ sealed class StringResources(
     var CHAT_RENAME_TITLE: String,
     var CHAT_DELETE_TITLE: String,
     var CHAT_NAME: String,
+    var CHAT_CONTEXT: String,
     var CHAT_EMPTY_STATE: String,
     var NEW_CHAT: String,
     var CHAT_CREATE_BUTTON: String,
@@ -303,6 +304,7 @@ class StringResourcesEN : StringResources(
     CHAT_RENAME_TITLE = "Rename chat",
     CHAT_DELETE_TITLE = "Delete chat",
     CHAT_NAME = "Chat name",
+    CHAT_CONTEXT = "System context (optional)",
     CHAT_EMPTY_STATE = "Chat list is empty",
     NEW_CHAT = "New chat",
     CHAT_CREATE_BUTTON = "Create",
@@ -474,6 +476,7 @@ class StringResourcesUK : StringResources(
     // Chats
     CHAT_CREATE_TITLE = "Створити новий чат?",
     CHAT_NAME = "Назва чату",
+    CHAT_CONTEXT = "Системний контекст (необов'язково)",
     CHAT_RENAME_TITLE = "Змінити назву чату?",
     CHAT_DELETE_TITLE = "Видалити чат?",
     CHAT_EMPTY_STATE = "Список чатів порожній",

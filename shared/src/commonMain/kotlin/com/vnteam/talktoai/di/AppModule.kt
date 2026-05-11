@@ -42,6 +42,7 @@ import com.vnteam.talktoai.presentation.viewmodels.authorisation.LoginViewModel
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.OnBoardingViewModel
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.SignUpViewModel
 import com.vnteam.talktoai.presentation.viewmodels.chats.ChatListViewModel
+import com.vnteam.talktoai.presentation.viewmodels.chats.ChatSettingsViewModel
 import com.vnteam.talktoai.presentation.viewmodels.chats.ChatViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.AppViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsAccountViewModel
@@ -143,6 +144,9 @@ val appModule = module {
     }
     viewModel {
         ChatListViewModel(get(), get(), get(), get(), get())
+    }
+    viewModel {
+        ChatSettingsViewModel(get(), get(), get())
     }
     viewModel {
         ChatViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())

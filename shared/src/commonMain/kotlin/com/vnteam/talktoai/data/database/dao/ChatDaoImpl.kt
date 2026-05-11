@@ -23,7 +23,8 @@ class ChatDaoImpl(private val appDatabase: SharedDatabase) : ChatDao {
                         updated = chat.updated,
                         listOrder = chat.listOrder,
                         aiModel = chat.aiModel,
-                        temperature = chat.temperature
+                        temperature = chat.temperature,
+                        context = chat.context
                     )
                 }
             }
@@ -52,7 +53,8 @@ class ChatDaoImpl(private val appDatabase: SharedDatabase) : ChatDao {
                 chat.updated,
                 chat.listOrder,
                 chat.aiModel,
-                chat.temperature
+                chat.temperature,
+                chat.context
             )
         }
     }
@@ -91,6 +93,7 @@ class ChatDaoImpl(private val appDatabase: SharedDatabase) : ChatDao {
                 chat.listOrder,
                 chat.aiModel,
                 chat.temperature,
+                chat.context,
                 chat.id
             )
         }
@@ -106,6 +109,7 @@ class ChatDaoImpl(private val appDatabase: SharedDatabase) : ChatDao {
                         chat.listOrder,
                         chat.aiModel,
                         chat.temperature,
+                        chat.context,
                         chat.id
                     )
                 }
