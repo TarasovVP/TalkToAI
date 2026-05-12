@@ -13,7 +13,10 @@ class ChatUIMapperImpl : ChatUIMapper {
             id = from.id ?: DEFAULT_CHAT_ID,
             name = from.name.orEmpty(),
             updated = from.updated.orZero(),
-            listOrder = from.listOrder.orZero()
+            listOrder = from.listOrder.orZero(),
+            aiModel = from.aiModel,
+            temperature = from.temperature,
+            context = from.context
         )
     }
 
@@ -22,7 +25,10 @@ class ChatUIMapperImpl : ChatUIMapper {
             id = to.id,
             name = to.name,
             updated = to.updated,
-            listOrder = to.listOrder
+            listOrder = to.listOrder,
+            aiModel = to.aiModel,
+            temperature = to.temperature,
+            context = to.context
         )
     }
 

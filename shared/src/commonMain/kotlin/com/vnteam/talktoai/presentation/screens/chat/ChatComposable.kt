@@ -119,7 +119,15 @@ fun ChatContent(chatId: Long) {
             viewModel.getMessagesFromChat(chat.id)
             if (chat.id != DEFAULT_CHAT_ID) {
                 screenState.value = screenState.value.copy(
-                    currentChat = Chat(id = chat.id, name = chat.name, updated = chat.updated, listOrder = chat.listOrder)
+                    currentChat = Chat(
+                        id = chat.id,
+                        name = chat.name,
+                        updated = chat.updated,
+                        listOrder = chat.listOrder,
+                        aiModel = chat.aiModel,
+                        temperature = chat.temperature,
+                        context = chat.context,
+                    )
                 )
             }
         }
