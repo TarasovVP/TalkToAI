@@ -170,14 +170,33 @@ class ChatViewModel(
             insertMessageUseCase.execute(messageUIMapper.mapFromImplModel(userMsg))
             insertMessageUseCase.execute(messageUIMapper.mapFromImplModel(tempMsg))
         }
-        sendRequest(tempMsg, messageText)
+        val currentChat = _currentChatLiveData.value
+        sendRequest(
+            temporaryMessage = tempMsg,
+            messageText = messageText,
+            systemContext = currentChat?.context,
+            chatAiModel = currentChat?.aiModel,
+            chatTemperature = currentChat?.temperature,
+        )
     }
 
-    private fun sendRequest(temporaryMessage: MessageUI, messageText: String) {
+    private fun sendRequest(
+        temporaryMessage: MessageUI,
+        messageText: String,
+        systemContext: String?,
+        chatAiModel: String?,
+        chatTemperature: Float?,
+    ) {
+        val messages = buildList {
+            if (!systemContext.isNullOrBlank()) {
+                add(MessageApi(role = Constants.MESSAGE_ROLE_SYSTEM, content = systemContext))
+            }
+            add(MessageApi(role = Constants.MESSAGE_ROLE_USER, content = messageText))
+        }
         val apiRequest = ApiRequest(
-            model = _aiModel.value,
-            temperature = _temperature.value,
-            messages = listOf(MessageApi(role = Constants.MESSAGE_ROLE_USER, content = messageText))
+            model = chatAiModel ?: _aiModel.value,
+            temperature = chatTemperature ?: _temperature.value,
+            messages = messages,
         )
         println("messageTAG ChatViewModel.sendRequest: apiRequest = $apiRequest")
         launchWithResultHandling {
