@@ -10,4 +10,7 @@ data class ChatUI(
     val name: String = String.EMPTY,
     val updated: Long = 0,
     val listOrder: Long = 0,
+    val aiModel: String? = null,
+    val temperature: Float? = null,
+    val context: String? = null,
 )
