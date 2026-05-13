@@ -9,6 +9,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.De
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ReAuthenticateUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.ClearLocalDataUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.NetworkState
@@ -19,6 +20,7 @@ class SettingsAccountViewModel(
     private val networkState: NetworkState,
     private val idTokenUseCase: IdTokenUseCase,
     private val userEmailUseCase: UserEmailUseCase,
+    private val uidUseCase: UidUseCase,
     private val changePasswordUseCase: ChangePasswordUseCase,
     private val reAuthenticateUseCase: ReAuthenticateUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
@@ -45,6 +47,7 @@ class SettingsAccountViewModel(
         launchWithErrorHandling {
             idTokenUseCase.set(String.EMPTY)
             userEmailUseCase.set(String.EMPTY)
+            uidUseCase.set(String.EMPTY)
             successLiveData.value = true
         }
     }
