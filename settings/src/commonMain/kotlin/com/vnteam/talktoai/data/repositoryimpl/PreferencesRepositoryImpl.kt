@@ -8,6 +8,7 @@ import com.vnteam.talktoai.data.AI_API_KEY
 import com.vnteam.talktoai.data.AI_MODEL
 import com.vnteam.talktoai.data.AI_TEMPERATURE
 import com.vnteam.talktoai.data.IS_REVIEW_VOTE
+import com.vnteam.talktoai.data.UID
 import com.vnteam.talktoai.data.USER_EMAIL
 import com.vnteam.talktoai.data.local.PreferencesFactory
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
@@ -86,5 +87,13 @@ class PreferencesRepositoryImpl(private val preferencesFactory: PreferencesFacto
 
     override suspend fun setTemperature(temperature: String) {
         preferencesFactory.putString(AI_TEMPERATURE, temperature)
+    }
+
+    override fun getUid(): Flow<String?> {
+        return preferencesFactory.getString(UID)
+    }
+
+    override suspend fun setUid(uid: String) {
+        preferencesFactory.putString(UID, uid)
     }
 }

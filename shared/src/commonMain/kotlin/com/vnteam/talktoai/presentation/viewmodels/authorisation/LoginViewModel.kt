@@ -8,6 +8,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Re
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +20,7 @@ class LoginViewModel(
     private val resetPasswordUseCase: ResetPasswordUseCase,
     private val userEmailUseCase: UserEmailUseCase,
     private val idTokenUseCase: IdTokenUseCase,
+    private val uidUseCase: UidUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUIState())
@@ -31,6 +33,7 @@ class LoginViewModel(
                     hideProgress()
                     idTokenUseCase.set(result.data?.idToken.orEmpty())
                     userEmailUseCase.set(result.data?.email.orEmpty())
+                    uidUseCase.set(result.data?.localId.orEmpty())
                     updateUIState(LoginUIState(emailSignInSuccess = true))
                 }
                 is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
@@ -46,6 +49,7 @@ class LoginViewModel(
                     hideProgress()
                     idTokenUseCase.set(result.data?.idToken.orEmpty())
                     userEmailUseCase.set(String.EMPTY)
+                    uidUseCase.set(result.data?.localId.orEmpty())
                     updateUIState(LoginUIState(anonymousSignInSuccess = true))
                 }
                 is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
