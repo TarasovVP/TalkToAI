@@ -39,4 +39,8 @@ interface PreferencesRepository {
     fun getTemperature(): Flow<String?>
 
     suspend fun setTemperature(temperature: String)
+
+    fun getUid(): Flow<String?>
+
+    suspend fun setUid(uid: String)
 }

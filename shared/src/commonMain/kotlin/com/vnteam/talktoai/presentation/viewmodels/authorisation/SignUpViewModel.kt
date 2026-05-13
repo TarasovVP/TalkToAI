@@ -18,6 +18,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertM
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.NetworkState
@@ -38,6 +39,7 @@ class SignUpViewModel(
     private val insertChatUseCase: InsertChatUseCase,
     private val insertMessageUseCase: InsertMessageUseCase,
     private val clearLocalDataUseCase: ClearLocalDataUseCase,
+    private val uidUseCase: UidUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUIState())
@@ -45,6 +47,7 @@ class SignUpViewModel(
 
     private var pendingIdToken: String = String.EMPTY
     private var pendingEmail: String = String.EMPTY
+    private var pendingUid: String = String.EMPTY
 
     fun fetchProvidersForEmailUseCase() {
         launchWithResult {
@@ -66,6 +69,7 @@ class SignUpViewModel(
                     onboardingUseCase.set(true)
                     pendingIdToken = result.data?.idToken.orEmpty()
                     pendingEmail = result.data?.email.orEmpty()
+                    pendingUid = result.data?.localId.orEmpty()
                     updateUIState(SignUpUIState(successSignUp = true))
                 }
                 is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
@@ -92,6 +96,7 @@ class SignUpViewModel(
             )
             idTokenUseCase.set(pendingIdToken)
             userEmailUseCase.set(pendingEmail)
+            uidUseCase.set(pendingUid)
             updateUIState(SignUpUIState(createCurrentUser = true))
             if (networkState.isNetworkAvailable()) {
                 insertRemoteUserUseCase.execute(remoteUser).firstOrNull()

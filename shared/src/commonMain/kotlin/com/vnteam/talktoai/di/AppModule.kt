@@ -7,6 +7,8 @@ import com.vnteam.talktoai.data.database.dao.MessageDao
 import com.vnteam.talktoai.data.database.dao.MessageDaoImpl
 import com.vnteam.talktoai.data.mapperimpls.ChatDBMapperImpl
 import com.vnteam.talktoai.data.mapperimpls.MessageDBMapperImpl
+import com.vnteam.talktoai.data.network.firestore.FirestoreHttpClient
+import com.vnteam.talktoai.data.network.firestore.FirestoreService
 import com.vnteam.talktoai.data.repositoryimpl.ChatRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.MessageRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.RealDataBaseRepositoryImpl
@@ -74,8 +76,12 @@ val appModule = module {
 
     single<MessageDBMapper> { MessageDBMapperImpl() }
 
+    // Firestore
+    single { FirestoreHttpClient(get()) }
+    single { FirestoreService(get()) }
+
     // Repositories
-    single<RealDataBaseRepository> { RealDataBaseRepositoryImpl() }
+    single<RealDataBaseRepository> { RealDataBaseRepositoryImpl(get(), get()) }
 
     single<ChatRepository> { ChatRepositoryImpl(get(), get()) }
 
@@ -137,10 +143,10 @@ val appModule = module {
         OnBoardingViewModel(get())
     }
     viewModel {
-        LoginViewModel(get(), get(), get(), get(), get())
+        LoginViewModel(get(), get(), get(), get(), get(), get())
     }
     viewModel {
-        SignUpViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
+        SignUpViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         ChatListViewModel(get(), get(), get(), get(), get())
@@ -152,7 +158,7 @@ val appModule = module {
         ChatViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
-        SettingsAccountViewModel(get(), get(), get(), get(), get(), get(), get(), get())
+        SettingsAccountViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         SettingsChatViewModel(get(), get(), get(), get(), get(), get())

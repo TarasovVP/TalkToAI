@@ -10,6 +10,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.Languag
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ReviewUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ThemeUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import org.koin.dsl.module
 
@@ -34,4 +35,6 @@ val settingsModule = module {
     single { ApiKeyUseCase(get()) }
 
     single { TemperatureUseCase(get()) }
+
+    single { UidUseCase(get()) }
 }
