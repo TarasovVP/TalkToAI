@@ -25,8 +25,16 @@ class FirestoreService(private val client: FirestoreHttpClient) {
             header(NetworkConstants.AUTHORIZATION, "Bearer $idToken")
             setBody(FirestoreDocument(fields = fields))
         }
-        response.status.isSuccess()
-    }.getOrDefault(false)
+        val ok = response.status.isSuccess()
+        if (!ok) {
+            val body = runCatching { response.body<String>() }.getOrDefault("")
+            println("firestoreTAG setDocument ERROR status=${response.status} body=$body path=$path")
+        }
+        ok
+    }.getOrElse { e ->
+        println("firestoreTAG setDocument EXCEPTION ${e.message} path=$path")
+        false
+    }
 
     suspend fun deleteDocument(path: String, idToken: String): Boolean = runCatching {
         val response = client.httpClient.delete("$base/$path") {

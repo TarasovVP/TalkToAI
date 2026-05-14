@@ -148,6 +148,7 @@ class ChatViewModel(
     }
 
     fun sendMessage(chatId: Long, messageText: String) {
+        println("firestoreTAG ChatViewModel.sendMessage CALLED chatId=$chatId")
         val now = Clock.System.now()
         val userMsgId = now.toEpochMilliseconds()
         val userMsg = MessageUI(

@@ -8,6 +8,7 @@ import com.vnteam.talktoai.data.network.auth.request.DeleteAccountBody
 import com.vnteam.talktoai.data.network.auth.request.ProvidersForEmailBody
 import com.vnteam.talktoai.data.network.auth.request.ResetPasswordBody
 import com.vnteam.talktoai.data.network.auth.response.ChangePasswordResponse
+import com.vnteam.talktoai.data.network.auth.response.ExchangeTokenResponse
 import com.vnteam.talktoai.data.network.auth.response.ProvidersForEmailResponse
 import com.vnteam.talktoai.data.network.auth.response.ResetPasswordResponse
 import com.vnteam.talktoai.data.network.auth.response.SignInAnonymouslyResponse
@@ -102,6 +103,11 @@ class AuthRepositoryImpl(
     ): Result<Unit> =
         executeAuthRequest("deleteUser") {
             authService.deleteAccount(deleteAccountBody)
+        }
+
+    override suspend fun exchangeRefreshToken(refreshToken: String): Result<ExchangeTokenResponse> =
+        executeAuthRequest("exchangeRefreshToken") {
+            authService.exchangeRefreshToken(refreshToken)
         }
 
     override fun addAuthStateListener() {

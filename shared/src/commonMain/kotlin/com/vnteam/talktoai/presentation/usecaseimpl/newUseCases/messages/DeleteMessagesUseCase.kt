@@ -24,7 +24,7 @@ class DeleteMessagesUseCase(
             if (!networkState.isNetworkAvailable()) {
                 return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
-            realDataBaseRepository.deleteMessages(params.map { it.toString() })
+            realDataBaseRepository.deleteMessages(params.map { it.toString() }).firstOrNull()
         }
         messageRepository.deleteMessages(params)
         return Result.Success(Unit)

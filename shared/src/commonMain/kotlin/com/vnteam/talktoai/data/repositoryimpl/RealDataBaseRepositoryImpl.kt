@@ -36,11 +36,17 @@ class RealDataBaseRepositoryImpl(
     private val preferencesRepository: PreferencesRepository,
 ) : RealDataBaseRepository {
 
-    private suspend fun idToken(): String =
-        preferencesRepository.getIdToken().firstOrNull().orEmpty()
+    private suspend fun idToken(): String {
+        val token = preferencesRepository.getIdToken().firstOrNull().orEmpty()
+        println("firestoreTAG idToken: length=${token.length} empty=${token.isEmpty()}")
+        return token
+    }
 
-    private suspend fun uid(): String =
-        preferencesRepository.getUid().firstOrNull().orEmpty()
+    private suspend fun uid(): String {
+        val uid = preferencesRepository.getUid().firstOrNull().orEmpty()
+        println("firestoreTAG uid: value='$uid' empty=${uid.isEmpty()}")
+        return uid
+    }
 
     private fun userChatsPath(uid: String) = "$USERS/$uid/$CHATS"
     private fun userMessagesPath(uid: String) = "$USERS/$uid/$MESSAGES"
@@ -182,7 +188,9 @@ class RealDataBaseRepositoryImpl(
             emit(Result.Failure("Not authenticated"))
             return@flow
         }
+        println("firestoreTAG insertChat uid=$uid chatId=${chat.id}")
         val ok = firestoreService.setDocument("${userChatsPath(uid)}/${chat.id}", chat.toFields(), token)
+        println("firestoreTAG insertChat result=$ok")
         if (ok) emit(Result.Success(Unit)) else emit(Result.Failure("Firestore write failed"))
     }
 
@@ -233,11 +241,13 @@ class RealDataBaseRepositoryImpl(
             emit(Result.Failure("Not authenticated"))
             return@flow
         }
+        println("firestoreTAG insertMessage uid=$uid msgId=${message.id}")
         val ok = firestoreService.setDocument(
             "${userMessagesPath(uid)}/${message.id}",
             message.toFields(),
             token
         )
+        println("firestoreTAG insertMessage result=$ok")
         if (ok) emit(Result.Success(Unit)) else emit(Result.Failure("Firestore write failed"))
     }
 
