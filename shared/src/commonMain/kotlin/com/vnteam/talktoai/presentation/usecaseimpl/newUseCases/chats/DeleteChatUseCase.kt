@@ -28,8 +28,8 @@ class DeleteChatUseCase(
             if (!networkState.isNetworkAvailable()) {
                 return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
-            realDataBaseRepository.deleteMessagesByChatId(params.id ?: DEFAULT_CHAT_ID)
-            realDataBaseRepository.deleteChat(params)
+            realDataBaseRepository.deleteMessagesByChatId(params.id ?: DEFAULT_CHAT_ID).firstOrNull()
+            realDataBaseRepository.deleteChat(params).firstOrNull()
         }
         chatRepository.deleteChat(params)
         messageRepository.deleteMessagesFromChat(params.id ?: DEFAULT_CHAT_ID)

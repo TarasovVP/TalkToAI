@@ -5,9 +5,12 @@ import com.vnteam.talktoai.data.network.auth.request.ChangePasswordBody
 import com.vnteam.talktoai.data.network.auth.request.DeleteAccountBody
 import com.vnteam.talktoai.data.network.auth.request.ProvidersForEmailBody
 import com.vnteam.talktoai.data.network.auth.request.ResetPasswordBody
+import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
+import io.ktor.http.parameters
+import secrets.Secrets
 
 class AuthService(
     private val authHttpClient: AuthHttpClient,
@@ -101,8 +104,24 @@ class AuthService(
         }
         return httpResponse
     }
+
+    suspend fun exchangeRefreshToken(refreshToken: String): HttpResponse? {
+        return try {
+            authHttpClient.getHttpClient.post(SECURE_TOKEN_URL) {
+                setBody(FormDataContent(parameters {
+                    append("grant_type", "refresh_token")
+                    append("refresh_token", refreshToken)
+                    append("key", Secrets.AUTH_API_KEY)
+                }))
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
 }
 
+private const val SECURE_TOKEN_URL = "https://securetoken.googleapis.com/v1/token"
 private const val ACCOUNT_CREATE_AUTH_URI = "/v1/accounts:createAuthUri"
 private const val ACCOUNT_SIGN_IN_WITH_PASSWORD = "/v1/accounts:signInWithPassword"
 private const val ACCOUNT_SEND_OOB_CODE = "/v1/accounts:sendOobCode"

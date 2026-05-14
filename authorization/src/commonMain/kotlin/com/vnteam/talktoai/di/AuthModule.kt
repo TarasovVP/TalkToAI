@@ -5,6 +5,7 @@ import com.vnteam.talktoai.data.network.auth.AuthService
 import com.vnteam.talktoai.data.repositoryimpl.AuthRepositoryImpl
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ChangePasswordUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ExchangeTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ClearDataUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.DeleteUserUseCase
@@ -49,4 +50,6 @@ val authModule = module {
     single { SignInAnonymouslyUseCase(get()) }
 
     single { SignInWithEmailAndPasswordUseCase(get()) }
+
+    single { ExchangeTokenUseCase(get()) }
 }

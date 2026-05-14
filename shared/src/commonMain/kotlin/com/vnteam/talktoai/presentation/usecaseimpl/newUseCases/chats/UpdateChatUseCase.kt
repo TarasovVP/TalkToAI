@@ -25,7 +25,7 @@ class UpdateChatUseCase(
             if (!networkState.isNetworkAvailable()) {
                 return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
-            realDataBaseRepository.updateChat(params)
+            realDataBaseRepository.updateChat(params).firstOrNull()
         }
         chatRepository.updateChat(params)
         return Result.Success(Unit)
