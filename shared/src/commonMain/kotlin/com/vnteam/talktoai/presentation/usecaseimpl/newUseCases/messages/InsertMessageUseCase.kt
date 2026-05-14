@@ -21,11 +21,17 @@ class InsertMessageUseCase(
 
     override suspend fun execute(params: Message): Result<Unit> {
         val userAuth = preferencesRepository.getUserEmail().firstOrNull()
-        if (userAuth.getUserAuth().isAuthorisedUser()) {
-            if (!networkState.isNetworkAvailable()) {
+        val authState = userAuth.getUserAuth()
+        println("firestoreTAG InsertMessageUseCase: userEmail=$userAuth authState=$authState isAuthorised=${authState.isAuthorisedUser()}")
+        if (authState.isAuthorisedUser()) {
+            val network = networkState.isNetworkAvailable()
+            println("firestoreTAG InsertMessageUseCase: networkAvailable=$network")
+            if (!network) {
                 return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
-            realDataBaseRepository.insertMessage(params)
+            println("firestoreTAG InsertMessageUseCase: calling insertMessage msgId=${params.id}")
+            realDataBaseRepository.insertMessage(params).firstOrNull()
+            println("firestoreTAG InsertMessageUseCase: insertMessage done")
         }
         messageRepository.insertMessage(params)
         return Result.Success(Unit)

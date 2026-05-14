@@ -4,6 +4,7 @@ import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.LoginUIState
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ExchangeTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ResetPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
@@ -21,6 +22,7 @@ class LoginViewModel(
     private val userEmailUseCase: UserEmailUseCase,
     private val idTokenUseCase: IdTokenUseCase,
     private val uidUseCase: UidUseCase,
+    private val exchangeTokenUseCase: ExchangeTokenUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUIState())
@@ -31,9 +33,11 @@ class LoginViewModel(
             when (val result = signInWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
                 is com.vnteam.talktoai.data.network.Result.Success -> {
                     hideProgress()
-                    idTokenUseCase.set(result.data?.idToken.orEmpty())
+                    val firebaseIdToken = exchangeForFirebaseToken(result.data?.refreshToken)
+                    idTokenUseCase.set(firebaseIdToken ?: result.data?.idToken.orEmpty())
                     userEmailUseCase.set(result.data?.email.orEmpty())
                     uidUseCase.set(result.data?.localId.orEmpty())
+                    println("firestoreTAG LoginViewModel email sign-in: uid=${result.data?.localId} firebaseToken=${firebaseIdToken?.take(30)}")
                     updateUIState(LoginUIState(emailSignInSuccess = true))
                 }
                 is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
@@ -47,7 +51,8 @@ class LoginViewModel(
             when (val result = signInAnonymouslyUseCase.execute()) {
                 is com.vnteam.talktoai.data.network.Result.Success -> {
                     hideProgress()
-                    idTokenUseCase.set(result.data?.idToken.orEmpty())
+                    val firebaseIdToken = exchangeForFirebaseToken(result.data?.refreshToken)
+                    idTokenUseCase.set(firebaseIdToken ?: result.data?.idToken.orEmpty())
                     userEmailUseCase.set(String.EMPTY)
                     uidUseCase.set(result.data?.localId.orEmpty())
                     updateUIState(LoginUIState(anonymousSignInSuccess = true))
@@ -64,6 +69,12 @@ class LoginViewModel(
                 updateUIState(LoginUIState(successPasswordReset = true))
             }
         }
+    }
+
+    private suspend fun exchangeForFirebaseToken(refreshToken: String?): String? {
+        if (refreshToken.isNullOrEmpty()) return null
+        val result = exchangeTokenUseCase.execute(refreshToken)
+        return (result as? com.vnteam.talktoai.data.network.Result.Success)?.data?.idToken
     }
 
     private fun updateUIState(newUIState: LoginUIState) {
