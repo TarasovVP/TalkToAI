@@ -29,15 +29,18 @@ class LoginViewModel(
     val uiState = _uiState.asStateFlow()
 
     fun signInWithEmailAndPassword(email: String, password: String) {
+        println("firestoreTAG LoginViewModel.signInWithEmailAndPassword: CALLED email=$email")
         launchWithErrorHandling {
             when (val result = signInWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
                 is com.vnteam.talktoai.data.network.Result.Success -> {
                     hideProgress()
+                    println("firestoreTAG LoginViewModel.signInWithEmailAndPassword: sign-in SUCCESS, uid=${result.data?.localId}, refreshToken length=${result.data?.refreshToken?.length}")
                     val firebaseIdToken = exchangeForFirebaseToken(result.data?.refreshToken)
-                    idTokenUseCase.set(firebaseIdToken ?: result.data?.idToken.orEmpty())
+                    val finalToken = firebaseIdToken ?: result.data?.idToken.orEmpty()
+                    println("firestoreTAG LoginViewModel.signInWithEmailAndPassword: finalToken length=${finalToken.length} isFirebase=${firebaseIdToken != null}")
+                    idTokenUseCase.set(finalToken)
                     userEmailUseCase.set(result.data?.email.orEmpty())
                     uidUseCase.set(result.data?.localId.orEmpty())
-                    println("firestoreTAG LoginViewModel email sign-in: uid=${result.data?.localId} firebaseToken=${firebaseIdToken?.take(30)}")
                     updateUIState(LoginUIState(emailSignInSuccess = true))
                 }
                 is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
@@ -47,6 +50,7 @@ class LoginViewModel(
     }
 
     fun signInAnonymously() {
+        println("firestoreTAG LoginViewModel.signInAnonymously: CALLED")
         launchWithErrorHandling {
             when (val result = signInAnonymouslyUseCase.execute()) {
                 is com.vnteam.talktoai.data.network.Result.Success -> {
@@ -72,9 +76,15 @@ class LoginViewModel(
     }
 
     private suspend fun exchangeForFirebaseToken(refreshToken: String?): String? {
-        if (refreshToken.isNullOrEmpty()) return null
+        println("firestoreTAG LoginViewModel.exchangeForFirebaseToken: refreshToken length=${refreshToken?.length}")
+        if (refreshToken.isNullOrEmpty()) {
+            println("firestoreTAG LoginViewModel.exchangeForFirebaseToken: empty token, skipping exchange")
+            return null
+        }
         val result = exchangeTokenUseCase.execute(refreshToken)
-        return (result as? com.vnteam.talktoai.data.network.Result.Success)?.data?.idToken
+        val idToken = (result as? com.vnteam.talktoai.data.network.Result.Success)?.data?.idToken
+        println("firestoreTAG LoginViewModel.exchangeForFirebaseToken: result=${result::class.simpleName} idToken length=${idToken?.length}")
+        return idToken
     }
 
     private fun updateUIState(newUIState: LoginUIState) {
