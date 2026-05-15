@@ -45,7 +45,7 @@ class AuthHttpClient(
                         println("Ktor => $redacted")
                     }
                 }
-                level = LogLevel.HEADERS
+                level = LogLevel.ALL
             }
         }
     }

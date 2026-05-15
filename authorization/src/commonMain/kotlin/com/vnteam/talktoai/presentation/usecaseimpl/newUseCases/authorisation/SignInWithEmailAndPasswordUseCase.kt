@@ -11,6 +11,6 @@ class SignInWithEmailAndPasswordUseCase(
 ) : UseCase<Pair<String, String>, Result<SignInEmailResponse>> {
 
     override suspend fun execute(params: Pair<String, String>): Result<SignInEmailResponse> {
-        return repository.signInWithEmailAndPassword(AuthBody(params.first, params.second))
+        return repository.signInWithEmailAndPassword(AuthBody(params.first, params.second, returnSecureToken = true))
     }
 }
