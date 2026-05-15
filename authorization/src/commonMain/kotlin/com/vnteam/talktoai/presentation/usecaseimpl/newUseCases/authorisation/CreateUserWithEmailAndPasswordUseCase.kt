@@ -11,7 +11,7 @@ class CreateUserWithEmailAndPasswordUseCase(
 ) : UseCase<Pair<String, String>, Result<SignUpEmailResponse>> {
 
     override suspend fun execute(params: Pair<String, String>): Result<SignUpEmailResponse> {
-        val authBody = AuthBody(params.first, params.second)
+        val authBody = AuthBody(params.first, params.second, returnSecureToken = true)
         return repository.createUserWithEmailAndPassword(authBody)
     }
 }

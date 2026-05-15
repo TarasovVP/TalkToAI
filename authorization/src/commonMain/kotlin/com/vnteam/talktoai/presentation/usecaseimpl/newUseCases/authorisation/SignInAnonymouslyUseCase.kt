@@ -11,6 +11,6 @@ class SignInAnonymouslyUseCase(
 ) : UseCase<Nothing?, Result<SignInAnonymouslyResponse>> {
 
     override suspend fun execute(params: Nothing?): Result<SignInAnonymouslyResponse> {
-        return repository.signInAnonymously(AuthBody())
+        return repository.signInAnonymously(AuthBody(returnSecureToken = true))
     }
 }
