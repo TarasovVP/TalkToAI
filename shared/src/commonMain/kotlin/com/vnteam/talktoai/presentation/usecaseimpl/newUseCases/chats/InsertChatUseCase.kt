@@ -22,16 +22,12 @@ class InsertChatUseCase(
     override suspend fun execute(params: Chat): Result<Unit> {
         val userAuth = preferencesRepository.getUserEmail().firstOrNull()
         val authState = userAuth.getUserAuth()
-        println("firestoreTAG InsertChatUseCase: userEmail=$userAuth authState=$authState isAuthorised=${authState.isAuthorisedUser()}")
         if (authState.isAuthorisedUser()) {
             val network = networkState.isNetworkAvailable()
-            println("firestoreTAG InsertChatUseCase: networkAvailable=$network")
             if (!network) {
                 return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
-            println("firestoreTAG InsertChatUseCase: calling insertChat chatId=${params.id}")
             realDataBaseRepository.insertChat(params).firstOrNull()
-            println("firestoreTAG InsertChatUseCase: insertChat done")
         }
         chatRepository.insertChat(params)
         return Result.Success(Unit)
