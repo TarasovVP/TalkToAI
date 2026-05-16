@@ -26,13 +26,8 @@ class FirestoreService(private val client: FirestoreHttpClient) {
             setBody(FirestoreDocument(fields = fields))
         }
         val ok = response.status.isSuccess()
-        if (!ok) {
-            val body = runCatching { response.body<String>() }.getOrDefault("")
-            println("firestoreTAG setDocument ERROR status=${response.status} body=$body path=$path")
-        }
         ok
     }.getOrElse { e ->
-        println("firestoreTAG setDocument EXCEPTION ${e.message} path=$path")
         false
     }
 

@@ -106,9 +106,8 @@ class AuthService(
     }
 
     suspend fun exchangeRefreshToken(refreshToken: String): HttpResponse? {
-        println("firestoreTAG AuthService.exchangeRefreshToken: START refreshToken length=${refreshToken.length}")
         return try {
-            val response = authHttpClient.getHttpClient.post(SECURE_TOKEN_URL) {
+            authHttpClient.getHttpClient.post(SECURE_TOKEN_URL) {
                 url {
                     parameters.append("key", Secrets.AUTH_API_KEY)
                 }
@@ -117,10 +116,7 @@ class AuthService(
                     append("refresh_token", refreshToken)
                 }))
             }
-            println("firestoreTAG AuthService.exchangeRefreshToken: status=${response.status}")
-            response
         } catch (e: Exception) {
-            println("firestoreTAG AuthService.exchangeRefreshToken EXCEPTION: ${e.message}")
             e.printStackTrace()
             null
         }
