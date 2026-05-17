@@ -84,9 +84,11 @@ class ChatViewModel(
     }
 
     fun insertChat(chat: Chat) {
-        launchWithErrorHandling {
-            insertChatUseCase.execute(chat)
-            _currentChatLiveData.value = chatUIMapper.mapToImplModel(chat)
+        launchWithResult {
+            insertChatUseCase.execute(chat).onSuccess { insertedChat ->
+                if (insertedChat == null) return@onSuccess
+                _currentChatLiveData.value = chatUIMapper.mapToImplModel(insertedChat)
+            }
         }
     }
 
@@ -102,7 +104,10 @@ class ChatViewModel(
             }
             val chatId = Clock.System.now().dateToMilliseconds()
             val chat = Chat(id = chatId, name = chatName, updated = chatId, listOrder = 1)
-            insertChatUseCase.execute(chat)
+            val insertedChat = when (val result = insertChatUseCase.execute(chat)) {
+                is com.vnteam.talktoai.data.network.Result.Success -> result.data
+                else -> null
+            } ?: return@launchWithErrorHandling
             insertMessageUseCase.execute(
                 messageUIMapper.mapFromImplModel(
                     MessageUI(
@@ -116,8 +121,8 @@ class ChatViewModel(
                 )
             )
             _messagesLiveData.value = null
-            _currentChatLiveData.value = chatUIMapper.mapToImplModel(chat)
-            _welcomeChat.value = chat
+            _currentChatLiveData.value = chatUIMapper.mapToImplModel(insertedChat)
+            _welcomeChat.value = insertedChat
         }
     }
 
