@@ -113,7 +113,7 @@ val appModule = module {
 
     single { InsertChatsUseCase(get()) }
 
-    single { InsertChatUseCase(get(), get(), get(), get()) }
+    single { InsertChatUseCase(get(), get(), get(), get(), get(), get()) }
 
     single { UpdateChatsUseCase(get(), get(), get(), get()) }
 
