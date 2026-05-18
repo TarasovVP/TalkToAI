@@ -13,6 +13,8 @@ interface RealDataBaseRepository {
 
     fun updateRemoteUser(remoteUser: RemoteUser): Flow<Unit>
 
+    fun getRemoteUser(): Flow<Result<RemoteUser>>
+
     fun deleteRemoteUser(): Flow<Result<Unit>>
 
     fun updateRemoteChats(chats: List<Chat>): Flow<Result<Unit>>

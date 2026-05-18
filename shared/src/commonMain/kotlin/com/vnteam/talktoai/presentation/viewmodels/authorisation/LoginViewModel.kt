@@ -8,6 +8,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Ex
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ResetPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
@@ -23,6 +24,7 @@ class LoginViewModel(
     private val idTokenUseCase: IdTokenUseCase,
     private val uidUseCase: UidUseCase,
     private val exchangeTokenUseCase: ExchangeTokenUseCase,
+    private val syncRemoteUserUseCase: SyncRemoteUserUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUIState())
@@ -38,6 +40,14 @@ class LoginViewModel(
                     idTokenUseCase.set(finalToken)
                     userEmailUseCase.set(result.data?.email.orEmpty())
                     uidUseCase.set(result.data?.localId.orEmpty())
+                    when (val syncResult = syncRemoteUserUseCase.execute()) {
+                        is com.vnteam.talktoai.data.network.Result.Success -> Unit
+                        is com.vnteam.talktoai.data.network.Result.Failure -> {
+                            onError(Exception(syncResult.errorMessage))
+                            return@launchWithErrorHandling
+                        }
+                        is com.vnteam.talktoai.data.network.Result.Loading -> Unit
+                    }
                     updateUIState(LoginUIState(emailSignInSuccess = true))
                 }
                 is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
