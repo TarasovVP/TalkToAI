@@ -37,6 +37,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMess
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessagesUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.FeedbackUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GetPrivacyPolicyUseCase
@@ -135,6 +136,8 @@ val appModule = module {
 
     single { UpdateRemoteUserUseCase(get()) }
 
+    single { SyncRemoteUserUseCase(get(), get(), get()) }
+
     // ViewModels
     viewModel {
         AppViewModel(get(), get(), get(), get(), get(), get())
@@ -143,7 +146,7 @@ val appModule = module {
         OnBoardingViewModel(get())
     }
     viewModel {
-        LoginViewModel(get(), get(), get(), get(), get(), get(), get())
+        LoginViewModel(get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         SignUpViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
