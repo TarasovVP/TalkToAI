@@ -139,6 +139,29 @@ class RealDataBaseRepositoryImpl(
         emit(Unit)
     }
 
+    override fun getRemoteUser(): Flow<Result<RemoteUser>> = flow {
+        val token = idToken()
+        val uid = uid()
+        if (token.isEmpty() || uid.isEmpty()) {
+            emit(Result.Failure("Not authenticated"))
+            return@flow
+        }
+
+        val chats = firestoreService.listDocuments(userChatsPath(uid), token)
+            .mapNotNull { it.toChat() }
+        val messages = firestoreService.listDocuments(userMessagesPath(uid), token)
+            .mapNotNull { it.toMessage() }
+
+        emit(
+            Result.Success(
+                RemoteUser(
+                    chats = ArrayList(chats),
+                    messages = ArrayList(messages),
+                )
+            )
+        )
+    }
+
     override fun updateRemoteChats(chats: List<Chat>): Flow<Result<Unit>> = flow {
         val token = idToken()
         val uid = uid()
