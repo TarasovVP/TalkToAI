@@ -42,6 +42,6 @@ data class ScreenState(
         get() = when {
             isOnboardingSeen == false -> NavigationScreen.ONBOARDING_SCREEN
             idToken.isNullOrEmpty() -> NavigationScreen.LOGIN_SCREEN
-            else -> NavigationScreen.CHAT_SCREEN.replace("{chatId}", (currentChat?.id ?: DEFAULT_CHAT_ID).toString())
+            else -> NavigationScreen.CHAT_SCREEN.replace("{chatId}", DEFAULT_CHAT_ID.toString())
         }
 }
