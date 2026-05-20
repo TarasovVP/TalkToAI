@@ -73,7 +73,6 @@ fun ChatListScreen(
                 val lastUpdatedChat = chatList.maxByOrNull { it.updated ?: 0L }
                 if (lastUpdatedChat != null) {
                     currentChatState.value = lastUpdatedChat
-                    onChatClick.invoke(lastUpdatedChat)
                 }
             } else {
                 currentChatState.value = selectedChat
