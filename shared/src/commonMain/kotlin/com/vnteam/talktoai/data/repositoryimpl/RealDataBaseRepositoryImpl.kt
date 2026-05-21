@@ -231,7 +231,11 @@ class RealDataBaseRepositoryImpl(
             emit(Result.Failure("Not authenticated"))
             return@flow
         }
-        firestoreService.deleteDocument("${userChatsPath(uid)}/${chat.id}", token)
+        val deleted = firestoreService.deleteDocument("${userChatsPath(uid)}/${chat.id}", token)
+        if (!deleted) {
+            emit(Result.Failure("Firestore delete chat failed"))
+            return@flow
+        }
         val query = FirestoreStructuredQuery(
             structuredQuery = FirestoreQuery(
                 from = listOf(FirestoreCollectionSelector(MESSAGES)),

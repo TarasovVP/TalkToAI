@@ -8,6 +8,7 @@ import io.ktor.client.request.header
 import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import secrets.Secrets
 
@@ -35,7 +36,11 @@ class FirestoreService(private val client: FirestoreHttpClient) {
         val response = client.httpClient.delete("$base/$path") {
             header(NetworkConstants.AUTHORIZATION, "Bearer $idToken")
         }
-        response.status.isSuccess()
+        val ok = response.status.isSuccess()
+        if (!ok) {
+            println("firestoreTAG deleteDocument ERROR status=${response.status} body=${response.bodyAsText()} path=$path")
+        }
+        ok
     }.getOrDefault(false)
 
     suspend fun listDocuments(collectionPath: String, idToken: String): List<FirestoreDocument> =
