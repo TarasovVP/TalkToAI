@@ -29,7 +29,11 @@ class DeleteChatUseCase(
                 return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
             realDataBaseRepository.deleteMessagesByChatId(params.id ?: DEFAULT_CHAT_ID).firstOrNull()
-            realDataBaseRepository.deleteChat(params).firstOrNull()
+            when (val result = realDataBaseRepository.deleteChat(params).firstOrNull()) {
+                is Result.Failure -> return result
+                is Result.Success -> Unit
+                else -> return Result.Failure("Firestore delete chat failed")
+            }
         }
         chatRepository.deleteChat(params)
         messageRepository.deleteMessagesFromChat(params.id ?: DEFAULT_CHAT_ID)
