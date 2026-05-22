@@ -7,7 +7,7 @@ import com.vnteam.talktoai.domain.enums.isAuthorisedUser
 import com.vnteam.talktoai.domain.models.Message
 import com.vnteam.talktoai.domain.repositories.MessageRepository
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
-import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
+import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import com.vnteam.talktoai.domain.usecase.UseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.firstOrNull
@@ -16,7 +16,7 @@ class InsertMessageUseCase(
     private val networkState: NetworkState,
     private val preferencesRepository: PreferencesRepository,
     private val messageRepository: MessageRepository,
-    private val realDataBaseRepository: RealDataBaseRepository,
+    private val remoteStoreRepository: RemoteStoreRepository,
 ) : UseCase<Message, Result<Unit>> {
 
     override suspend fun execute(params: Message): Result<Unit> {
@@ -27,7 +27,7 @@ class InsertMessageUseCase(
             if (!network) {
                 return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
-            realDataBaseRepository.insertMessage(params).firstOrNull()
+            remoteStoreRepository.insertMessage(params).firstOrNull()
         }
         messageRepository.insertMessage(params)
         return Result.Success(Unit)

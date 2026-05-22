@@ -7,7 +7,7 @@ import com.vnteam.talktoai.domain.enums.isAuthorisedUser
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.repositories.ChatRepository
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
-import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
+import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import com.vnteam.talktoai.domain.usecase.UseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.firstOrNull
@@ -16,7 +16,7 @@ class UpdateChatUseCase(
     private val networkState: NetworkState,
     private val preferencesRepository: PreferencesRepository,
     private val chatRepository: ChatRepository,
-    private val realDataBaseRepository: RealDataBaseRepository,
+    private val remoteStoreRepository: RemoteStoreRepository,
 ) : UseCase<Chat, Result<Unit>> {
 
     override suspend fun execute(params: Chat): Result<Unit> {
@@ -25,7 +25,7 @@ class UpdateChatUseCase(
             if (!networkState.isNetworkAvailable()) {
                 return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
-            realDataBaseRepository.updateChat(params).firstOrNull()
+            remoteStoreRepository.updateChat(params).firstOrNull()
         }
         chatRepository.updateChat(params)
         return Result.Success(Unit)
