@@ -7,7 +7,7 @@ import com.vnteam.talktoai.domain.models.Message
 import com.vnteam.talktoai.domain.models.RemoteUser
 import kotlinx.coroutines.flow.Flow
 
-interface RealDataBaseRepository {
+interface RemoteStoreRepository {
 
     fun insertRemoteUser(remoteUser: RemoteUser): Flow<Unit>
 
