@@ -6,7 +6,7 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.enums.isAuthorisedUser
 import com.vnteam.talktoai.domain.repositories.MessageRepository
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
-import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
+import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import com.vnteam.talktoai.domain.usecase.UseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.firstOrNull
@@ -15,7 +15,7 @@ class DeleteMessagesUseCase(
     private val networkState: NetworkState,
     private val preferencesRepository: PreferencesRepository,
     private val messageRepository: MessageRepository,
-    private val realDataBaseRepository: RealDataBaseRepository,
+    private val remoteStoreRepository: RemoteStoreRepository,
 ) : UseCase<List<Long>, Result<Unit>> {
 
     override suspend fun execute(params: List<Long>): Result<Unit> {
@@ -24,7 +24,7 @@ class DeleteMessagesUseCase(
             if (!networkState.isNetworkAvailable()) {
                 return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
-            realDataBaseRepository.deleteMessages(params.map { it.toString() }).firstOrNull()
+            remoteStoreRepository.deleteMessages(params.map { it.toString() }).firstOrNull()
         }
         messageRepository.deleteMessages(params)
         return Result.Success(Unit)

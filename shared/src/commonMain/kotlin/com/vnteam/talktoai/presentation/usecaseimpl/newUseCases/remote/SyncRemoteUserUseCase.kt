@@ -4,17 +4,17 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.repositories.ChatRepository
 import com.vnteam.talktoai.domain.repositories.MessageRepository
-import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
+import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import kotlinx.coroutines.flow.firstOrNull
 
 class SyncRemoteUserUseCase(
-    private val realDataBaseRepository: RealDataBaseRepository,
+    private val remoteStoreRepository: RemoteStoreRepository,
     private val chatRepository: ChatRepository,
     private val messageRepository: MessageRepository,
 ) {
 
     suspend fun execute(): Result<RemoteUser> {
-        return when (val result = realDataBaseRepository.getRemoteUser().firstOrNull()) {
+        return when (val result = remoteStoreRepository.getRemoteUser().firstOrNull()) {
             is Result.Success -> {
                 val remoteUser = result.data ?: RemoteUser()
                 messageRepository.clearMessages()

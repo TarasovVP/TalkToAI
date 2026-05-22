@@ -9,7 +9,7 @@ import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.repositories.ChatRepository
 import com.vnteam.talktoai.domain.repositories.MessageRepository
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
-import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
+import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import com.vnteam.talktoai.domain.usecase.UseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.firstOrNull
@@ -19,7 +19,7 @@ class DeleteChatUseCase(
     private val preferencesRepository: PreferencesRepository,
     private val chatRepository: ChatRepository,
     private val messageRepository: MessageRepository,
-    private val realDataBaseRepository: RealDataBaseRepository,
+    private val remoteStoreRepository: RemoteStoreRepository,
 ) : UseCase<Chat, Result<Unit>> {
 
     override suspend fun execute(params: Chat): Result<Unit> {
@@ -28,8 +28,8 @@ class DeleteChatUseCase(
             if (!networkState.isNetworkAvailable()) {
                 return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
-            realDataBaseRepository.deleteMessagesByChatId(params.id ?: DEFAULT_CHAT_ID).firstOrNull()
-            when (val result = realDataBaseRepository.deleteChat(params).firstOrNull()) {
+            remoteStoreRepository.deleteMessagesByChatId(params.id ?: DEFAULT_CHAT_ID).firstOrNull()
+            when (val result = remoteStoreRepository.deleteChat(params).firstOrNull()) {
                 is Result.Failure -> return result
                 is Result.Success -> Unit
                 else -> return Result.Failure("Firestore delete chat failed")

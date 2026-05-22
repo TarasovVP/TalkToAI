@@ -11,14 +11,14 @@ import com.vnteam.talktoai.data.network.firestore.FirestoreHttpClient
 import com.vnteam.talktoai.data.network.firestore.FirestoreService
 import com.vnteam.talktoai.data.repositoryimpl.ChatRepositoryImpl
 import com.vnteam.talktoai.data.repositoryimpl.MessageRepositoryImpl
-import com.vnteam.talktoai.data.repositoryimpl.RealDataBaseRepositoryImpl
+import com.vnteam.talktoai.data.repositoryimpl.RemoteStoreRepositoryImpl
 import com.vnteam.talktoai.domain.mappers.ChatDBMapper
 import com.vnteam.talktoai.domain.mappers.ChatUIMapper
 import com.vnteam.talktoai.domain.mappers.MessageDBMapper
 import com.vnteam.talktoai.domain.mappers.MessageUIMapper
 import com.vnteam.talktoai.domain.repositories.ChatRepository
 import com.vnteam.talktoai.domain.repositories.MessageRepository
-import com.vnteam.talktoai.domain.repositories.RealDataBaseRepository
+import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import com.vnteam.talktoai.presentation.mapperimpls.ChatUIMapperImpl
 import com.vnteam.talktoai.presentation.mapperimpls.MessageUIMapperImpl
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.GetModelsUseCase
@@ -82,7 +82,7 @@ val appModule = module {
     single { FirestoreService(get()) }
 
     // Repositories
-    single<RealDataBaseRepository> { RealDataBaseRepositoryImpl(get(), get()) }
+    single<RemoteStoreRepository> { RemoteStoreRepositoryImpl(get(), get()) }
 
     single<ChatRepository> { ChatRepositoryImpl(get(), get()) }
 
