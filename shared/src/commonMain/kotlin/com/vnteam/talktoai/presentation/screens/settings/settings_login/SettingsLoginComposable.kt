@@ -16,6 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.vnteam.talktoai.CommonExtensions.EMPTY
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.screens.settings.settings_sign_up.TransferDataCard
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
@@ -33,12 +35,20 @@ fun SettingsLoginScreen() {
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
     val transferDataState = remember { mutableStateOf(true) }
 
+    val updatedScreenRoute = remember { mutableStateOf(String.EMPTY) }
+    if (updatedScreenRoute.value.isNotEmpty()) {
+        updateScreenState(screenRoute = updatedScreenRoute.value)
+        updatedScreenRoute.value = String.EMPTY
+    }
+
     val settingsLoginUIStateState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(settingsLoginUIStateState) {
         settingsLoginUIStateState.successAuthorisation?.let { isExistUser ->
             if (transferDataState.value) {
                 viewModel.createRemoteUser(isExistUser)
+            } else {
+                updatedScreenRoute.value = NavigationScreen.SETTINGS_ACCOUNT_SCREEN
             }
         }
         settingsLoginUIStateState.remoteUser?.let { userState ->
@@ -47,6 +57,9 @@ fun SettingsLoginScreen() {
             } else {
                 userState.second?.let { viewModel.insertRemoteCurrentUser(it) }
             }
+        }
+        settingsLoginUIStateState.successRemoteUser?.let {
+            updatedScreenRoute.value = NavigationScreen.SETTINGS_ACCOUNT_SCREEN
         }
     }
 

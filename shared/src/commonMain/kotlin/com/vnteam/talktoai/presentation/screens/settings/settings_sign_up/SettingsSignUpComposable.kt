@@ -24,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.vnteam.talktoai.CommonExtensions.EMPTY
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
@@ -43,6 +45,12 @@ fun SettingsSignUpScreen() {
     val showAccountExistDialog = remember { mutableStateOf(false) }
     val transferDataState = remember { mutableStateOf(true) }
 
+    val updatedScreenRoute = remember { mutableStateOf(String.EMPTY) }
+    if (updatedScreenRoute.value.isNotEmpty()) {
+        updateScreenState(screenRoute = updatedScreenRoute.value)
+        updatedScreenRoute.value = String.EMPTY
+    }
+
     val settingsSignUpUIStateState by viewModel.uiState.collectAsState()
     LaunchedEffect(settingsSignUpUIStateState) {
         settingsSignUpUIStateState.accountExist?.let {
@@ -57,6 +65,8 @@ fun SettingsSignUpScreen() {
         settingsSignUpUIStateState.successAuthorisation?.let { isExistUser ->
             if (transferDataState.value) {
                 viewModel.createRemoteUser(isExistUser)
+            } else {
+                updatedScreenRoute.value = NavigationScreen.SETTINGS_ACCOUNT_SCREEN
             }
         }
         settingsSignUpUIStateState.remoteUser?.let { userState ->
@@ -65,6 +75,9 @@ fun SettingsSignUpScreen() {
             } else {
                 userState.second?.let { viewModel.insertRemoteCurrentUser(it) }
             }
+        }
+        settingsSignUpUIStateState.successRemoteUser?.let {
+            updatedScreenRoute.value = NavigationScreen.SETTINGS_ACCOUNT_SCREEN
         }
     }
 

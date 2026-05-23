@@ -13,10 +13,10 @@ class InsertRemoteUserUseCase(
 ) : UseCase<RemoteUser, Flow<Result<Unit>>> {
 
     override suspend fun execute(params: RemoteUser): Flow<Result<Unit>> {
-        return remoteStoreRepository.insertRemoteUser(params).map {
+        return remoteStoreRepository.insertRemoteUser(params).map<Unit, Result<Unit>> {
             Result.Success(it)
         }.catch {
-            Result.Failure(it.message)
+            emit(Result.Failure(it.message))
         }
     }
 }

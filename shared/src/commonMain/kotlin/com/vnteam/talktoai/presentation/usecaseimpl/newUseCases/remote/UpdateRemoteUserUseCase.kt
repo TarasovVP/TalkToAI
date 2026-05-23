@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.map
 class UpdateRemoteUserUseCase(private val remoteStoreRepository: RemoteStoreRepository) {
 
     fun execute(remoteUser: RemoteUser): Flow<Result<Unit>> {
-        return remoteStoreRepository.updateRemoteUser(remoteUser).map {
+        return remoteStoreRepository.updateRemoteUser(remoteUser).map<Unit, Result<Unit>> {
             Result.Success(it)
         }.catch {
-            Result.Failure(it.message)
+            emit(Result.Failure(it.message))
         }
     }
 }
