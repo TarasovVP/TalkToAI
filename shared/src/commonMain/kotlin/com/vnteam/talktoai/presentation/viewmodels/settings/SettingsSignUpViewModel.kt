@@ -1,17 +1,22 @@
 package com.vnteam.talktoai.presentation.viewmodels.settings
 
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.getDataOrNull
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.SettingsSignUpUIState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ExchangeTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMessagesUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +31,10 @@ class SettingsSignUpViewModel(
     private val getMessagesUseCase: GetMessagesUseCase,
     private val insertRemoteUserUseCase: InsertRemoteUserUseCase,
     private val updateRemoteUserUseCase: UpdateRemoteUserUseCase,
+    private val idTokenUseCase: IdTokenUseCase,
+    private val userEmailUseCase: UserEmailUseCase,
+    private val uidUseCase: UidUseCase,
+    private val exchangeTokenUseCase: ExchangeTokenUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsSignUpUIState())
@@ -44,17 +53,35 @@ class SettingsSignUpViewModel(
     }
 
     fun createUserWithEmailAndPassword(email: String, password: String) {
-        launchWithResult {
-            createUserWithEmailAndPasswordUseCase.execute(Pair(email, password)).onSuccess {
-                updateUIState(SettingsSignUpUIState(successAuthorisation = false))
+        launchWithErrorHandling {
+            when (val result = createUserWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
+                is Result.Success -> {
+                    val firebaseIdToken = result.data?.refreshToken?.let { rt ->
+                        val ex = exchangeTokenUseCase.execute(rt)
+                        (ex as? Result.Success)?.data?.idToken
+                    }
+                    idTokenUseCase.set(firebaseIdToken ?: result.data?.idToken.orEmpty())
+                    userEmailUseCase.set(result.data?.email.orEmpty())
+                    uidUseCase.set(result.data?.localId.orEmpty())
+                    updateUIState(SettingsSignUpUIState(successAuthorisation = false))
+                }
+                is Result.Failure -> onError(Exception(result.errorMessage))
+                is Result.Loading -> Unit
             }
         }
     }
 
     fun signInWithEmailAndPassword(email: String, password: String) {
-        launchWithResult {
-            signInWithEmailAndPasswordUseCase.execute(Pair(email, password)).onSuccess {
-                updateUIState(SettingsSignUpUIState(successAuthorisation = true))
+        launchWithErrorHandling {
+            when (val result = signInWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
+                is Result.Success -> {
+                    idTokenUseCase.set(result.data?.idToken.orEmpty())
+                    userEmailUseCase.set(result.data?.email.orEmpty())
+                    uidUseCase.set(result.data?.localId.orEmpty())
+                    updateUIState(SettingsSignUpUIState(successAuthorisation = true))
+                }
+                is Result.Failure -> onError(Exception(result.errorMessage))
+                is Result.Loading -> Unit
             }
         }
     }
