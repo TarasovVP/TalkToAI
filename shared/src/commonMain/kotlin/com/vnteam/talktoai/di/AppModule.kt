@@ -184,11 +184,18 @@ val appModule = module {
             get(),
             get(),
             get(),
+            get(),
+            get(),
+            get(),
+            get(),
             get()
         )
     }
     viewModel {
         SettingsLoginViewModel(
+            get(),
+            get(),
+            get(),
             get(),
             get(),
             get(),

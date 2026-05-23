@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.presentation.viewmodels.settings
 
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.getDataOrNull
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.models.RemoteUser
@@ -10,6 +11,9 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatsUs
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMessagesUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,15 +26,25 @@ class SettingsLoginViewModel(
     private val getMessagesUseCase: GetMessagesUseCase,
     private val insertRemoteUserUseCase: InsertRemoteUserUseCase,
     private val updateRemoteUserUseCase: UpdateRemoteUserUseCase,
+    private val idTokenUseCase: IdTokenUseCase,
+    private val userEmailUseCase: UserEmailUseCase,
+    private val uidUseCase: UidUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsSignUpUIState())
     val uiState = _uiState.asStateFlow()
 
     fun signInWithEmailAndPassword(email: String, password: String) {
-        launchWithResult {
-            signInWithEmailAndPasswordUseCase.execute(Pair(email, password)).onSuccess {
-                updateUIState(SettingsSignUpUIState(successAuthorisation = true))
+        launchWithErrorHandling {
+            when (val result = signInWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
+                is Result.Success -> {
+                    idTokenUseCase.set(result.data?.idToken.orEmpty())
+                    userEmailUseCase.set(result.data?.email.orEmpty())
+                    uidUseCase.set(result.data?.localId.orEmpty())
+                    updateUIState(SettingsSignUpUIState(successAuthorisation = true))
+                }
+                is Result.Failure -> onError(Exception(result.errorMessage))
+                is Result.Loading -> Unit
             }
         }
     }
