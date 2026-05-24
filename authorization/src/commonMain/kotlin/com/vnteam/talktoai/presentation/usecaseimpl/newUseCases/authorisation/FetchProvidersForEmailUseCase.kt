@@ -11,8 +11,12 @@ class FetchProvidersForEmailUseCase(
 ) : UseCase<String?, Result<List<String>>> {
 
     override suspend fun execute(params: String?): Result<List<String>> {
-        val providersForEmailResponse =
-            repository.fetchProvidersForEmail(ProvidersForEmailBody(params)).getDataOrNull()
-        return Result.Success(providersForEmailResponse?.allProviders.orEmpty())
+        return when (val result = repository.fetchProvidersForEmail(
+            ProvidersForEmailBody(identifier = params, continueUri = "https://localhost")
+        )) {
+            is Result.Success -> Result.Success(result.data?.allProviders.orEmpty())
+            is Result.Failure -> result
+            is Result.Loading -> result
+        }
     }
 }

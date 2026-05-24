@@ -65,7 +65,13 @@ class SettingsSignUpViewModel(
                     uidUseCase.set(result.data?.localId.orEmpty())
                     updateUIState(SettingsSignUpUIState(successAuthorisation = false))
                 }
-                is Result.Failure -> onError(Exception(result.errorMessage))
+                is Result.Failure -> {
+                    if (result.errorMessage?.contains("EMAIL_EXISTS") == true) {
+                        updateUIState(SettingsSignUpUIState(accountExist = email))
+                    } else {
+                        onError(Exception(result.errorMessage))
+                    }
+                }
                 is Result.Loading -> Unit
             }
         }
