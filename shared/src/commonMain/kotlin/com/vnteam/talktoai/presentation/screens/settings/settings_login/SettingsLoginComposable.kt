@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
+import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.screens.settings.settings_sign_up.TransferDataCard
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
@@ -30,7 +31,11 @@ import com.vnteam.talktoai.presentation.updateScreenState
 @Composable
 fun SettingsLoginScreen() {
     val viewModel: SettingsLoginViewModel = koinViewModel()
-    updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
+    val exceptionMessage = viewModel.exceptionMessage.collectAsState()
+    updateScreenState(
+        isProgressVisible = viewModel.progressVisibilityState.collectAsState().value,
+        appMessage = if (exceptionMessage.value.isNotEmpty()) AppMessage(true, exceptionMessage.value) else null
+    )
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }
     val transferDataState = remember { mutableStateOf(true) }
