@@ -46,6 +46,7 @@ sealed class NavigationScreen(val route: String) {
         const val SETTINGS_SIGN_UP_SCREEN = "destination_settings_sign_up_screen"
         const val SETTINGS_LOGIN_SCREEN = "destination_settings_login_screen"
         const val SETTINGS_LIST_SCREEN = "destination_settings_list_screen"
+        const val POP_BACK = "pop_back"
 
         val settingScreens = listOf(
             SettingsListScreen,
