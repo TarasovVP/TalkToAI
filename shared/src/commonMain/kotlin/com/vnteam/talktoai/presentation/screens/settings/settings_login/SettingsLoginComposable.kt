@@ -53,7 +53,7 @@ fun SettingsLoginScreen() {
             if (transferDataState.value) {
                 viewModel.createRemoteUser(isExistUser)
             } else {
-                updatedScreenRoute.value = NavigationScreen.SETTINGS_ACCOUNT_SCREEN
+                updatedScreenRoute.value = NavigationScreen.POP_BACK
             }
         }
         settingsLoginUIStateState.remoteUser?.let { userState ->
@@ -64,7 +64,7 @@ fun SettingsLoginScreen() {
             }
         }
         settingsLoginUIStateState.successRemoteUser?.let {
-            updatedScreenRoute.value = NavigationScreen.SETTINGS_ACCOUNT_SCREEN
+            updatedScreenRoute.value = NavigationScreen.POP_BACK
         }
     }
 

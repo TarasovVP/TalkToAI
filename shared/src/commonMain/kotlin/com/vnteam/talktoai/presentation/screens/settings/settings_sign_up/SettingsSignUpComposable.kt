@@ -71,7 +71,7 @@ fun SettingsSignUpScreen() {
             if (transferDataState.value) {
                 viewModel.createRemoteUser(isExistUser)
             } else {
-                updatedScreenRoute.value = NavigationScreen.SETTINGS_ACCOUNT_SCREEN
+                updatedScreenRoute.value = NavigationScreen.POP_BACK
             }
         }
         settingsSignUpUIStateState.remoteUser?.let { userState ->
@@ -82,7 +82,7 @@ fun SettingsSignUpScreen() {
             }
         }
         settingsSignUpUIStateState.successRemoteUser?.let {
-            updatedScreenRoute.value = NavigationScreen.SETTINGS_ACCOUNT_SCREEN
+            updatedScreenRoute.value = NavigationScreen.POP_BACK
         }
     }
 

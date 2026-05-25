@@ -65,14 +65,14 @@ fun AppContent(appViewModel: AppViewModel) {
     LaunchedEffect(screenState.value.currentScreenRoute) {
         if (drawerState.isOpen) scope.launch { drawerState.close() }
         screenState.value.currentScreenRoute?.let { route ->
-            if (route.startsWith(NavigationScreen.CHAT_DESTINATION)) {
-                navController.navigate(route) {
+            when {
+                route == NavigationScreen.POP_BACK -> navController.navigateUp()
+                route.startsWith(NavigationScreen.CHAT_DESTINATION) -> navController.navigate(route) {
                     popUpTo(navController.graph.startDestinationRoute.orEmpty()) {
                         inclusive = true
                     }
                 }
-            } else {
-                navController.navigate(route)
+                else -> navController.navigate(route)
             }
         }
     }
