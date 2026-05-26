@@ -1,20 +1,19 @@
 package com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation
 
 import com.vnteam.talktoai.data.network.Result
+import com.vnteam.talktoai.data.network.auth.request.AuthBody
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import com.vnteam.talktoai.domain.usecase.UseCase
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 
 class ReAuthenticateUseCase(private val repository: AuthRepository) :
-    UseCase<Nothing?, Flow<Result<Unit>>> {
+    UseCase<Pair<String, String>, Result<String?>> {
 
-    override suspend fun execute(params: Nothing?): Flow<Result<Unit>> {
-        return repository.reAuthenticate().map {
-            Result.Success(it)
-        }.catch {
-            Result.Failure(it.message)
+    override suspend fun execute(params: Pair<String, String>): Result<String?> {
+        val (email, password) = params
+        return when (val result = repository.reAuthenticate(AuthBody(email, password, returnSecureToken = true))) {
+            is Result.Success -> Result.Success(result.data?.idToken)
+            is Result.Failure -> Result.Failure(result.errorMessage)
+            is Result.Loading -> Result.Loading
         }
     }
 }

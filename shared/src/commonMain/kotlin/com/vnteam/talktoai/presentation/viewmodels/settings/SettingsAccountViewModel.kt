@@ -1,6 +1,7 @@
 package com.vnteam.talktoai.presentation.viewmodels.settings
 
 import com.vnteam.talktoai.CommonExtensions.EMPTY
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ChangePasswordUseCase
@@ -60,18 +61,21 @@ class SettingsAccountViewModel(
         }
     }
 
-    fun reAuthenticate() {
-        launchWithNetworkCheck(networkState) {
-            reAuthenticateUseCase.execute().onSuccess {
-                reAuthenticateLiveData.value = true
+    fun deleteUser(password: String) {
+        launchWithErrorHandling {
+            val email = _userEmail.value.orEmpty()
+            val reAuthResult = reAuthenticateUseCase.execute(Pair(email, password))
+            if (reAuthResult is Result.Failure) {
+                onError(Exception(reAuthResult.errorMessage))
+                return@launchWithErrorHandling
             }
-        }
-    }
-
-    fun deleteUser() {
-        launchWithResult {
-            deleteUserUseCase.execute().onSuccess {
+            val freshIdToken = (reAuthResult as Result.Success).data
+            idTokenUseCase.set(freshIdToken.orEmpty())
+            val deleteResult = deleteUserUseCase.execute(freshIdToken)
+            if (deleteResult is Result.Success) {
                 successLiveData.value = true
+            } else if (deleteResult is Result.Failure) {
+                onError(Exception(deleteResult.errorMessage))
             }
         }
     }

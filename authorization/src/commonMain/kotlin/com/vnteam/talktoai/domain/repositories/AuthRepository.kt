@@ -13,8 +13,6 @@ import com.vnteam.talktoai.data.network.auth.response.ResetPasswordResponse
 import com.vnteam.talktoai.data.network.auth.response.SignInAnonymouslyResponse
 import com.vnteam.talktoai.data.network.auth.response.SignInEmailResponse
 import com.vnteam.talktoai.data.network.auth.response.SignUpEmailResponse
-import kotlinx.coroutines.flow.Flow
-
 interface AuthRepository {
 
     suspend fun fetchProvidersForEmail(providersForEmailBody: ProvidersForEmailBody): Result<ProvidersForEmailResponse>
@@ -37,5 +35,5 @@ interface AuthRepository {
 
     suspend fun exchangeRefreshToken(refreshToken: String): Result<ExchangeTokenResponse>
 
-    fun reAuthenticate(): Flow<Unit>
+    suspend fun reAuthenticate(authBody: AuthBody): Result<SignInEmailResponse>
 }
