@@ -17,8 +17,6 @@ import com.vnteam.talktoai.data.network.auth.response.SignUpEmailResponse
 import com.vnteam.talktoai.data.network.handleResponse
 import com.vnteam.talktoai.domain.repositories.AuthRepository
 import io.ktor.client.statement.HttpResponse
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 interface Logger {
     fun debug(tag: String, message: String)
@@ -118,8 +116,8 @@ class AuthRepositoryImpl(
         logger?.debug(TAG, "removeAuthStateListener not implemented")
     }
 
-    override fun reAuthenticate(): Flow<Unit> = flow {
-        logger?.debug(TAG, "reAuthenticate called")
-        throw UnsupportedOperationException("reAuthenticate is not yet implemented")
-    }
+    override suspend fun reAuthenticate(authBody: AuthBody): Result<SignInEmailResponse> =
+        executeAuthRequest("reAuthenticate") {
+            authService.signInWithEmailAndPassword(authBody)
+        }
 }
