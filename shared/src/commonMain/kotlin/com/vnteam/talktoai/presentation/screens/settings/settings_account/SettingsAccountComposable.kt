@@ -78,13 +78,6 @@ fun SettingsAccountScreen() {
         }
     }
     println("SettingsAccountTAG: userEmail: $userEmail authState: ${authState.value}")
-    val reAuthenticateState = viewModel.reAuthenticateLiveData.collectAsState()
-    LaunchedEffect(reAuthenticateState.value) {
-        if (reAuthenticateState.value) {
-            viewModel.deleteUser()
-        }
-    }
-
     val successChangePasswordState = viewModel.successChangePasswordLiveData.collectAsState()
     if (successChangePasswordState.value) {
         updateScreenState(
@@ -135,8 +128,8 @@ fun SettingsAccountScreen() {
             mutableStateOf(TextFieldValue())
         },
         showDeleteEmailAccountDialog
-    ) {
-        viewModel.reAuthenticate()
+    ) { password ->
+        viewModel.deleteUser(password)
         showDeleteEmailAccountDialog.value = false
     }
 }
