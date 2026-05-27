@@ -67,6 +67,10 @@ fun AppContent(appViewModel: AppViewModel) {
         screenState.value.currentScreenRoute?.let { route ->
             when {
                 route == NavigationScreen.POP_BACK -> navController.navigateUp()
+                route == NavigationScreen.LOGIN_SCREEN -> navController.navigate(route) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
+                }
                 route.startsWith(NavigationScreen.CHAT_DESTINATION) -> navController.navigate(route) {
                     popUpTo(navController.graph.startDestinationRoute.orEmpty()) {
                         inclusive = true
