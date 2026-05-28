@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.CommonExtensions.EMPTY
+import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
@@ -86,6 +87,9 @@ fun SignUpScreen() {
                 stringResources.WELCOME_CHAT_NAME,
                 stringResources.WELCOME_MESSAGE
             )
+        }
+        signUpUiState.createCurrentUser?.let {
+            updatedScreenRoute.value = "${NavigationScreen.CHAT_DESTINATION}/${Constants.DEFAULT_CHAT_ID}"
         }
     }
 
