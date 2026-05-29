@@ -54,9 +54,20 @@ class SettingsAccountViewModel(
     }
 
     fun changePassword(currentPassword: String, newPassword: String) {
-        launchWithResult {
-            changePasswordUseCase.execute(Pair(currentPassword, newPassword)).onSuccess {
+        launchWithErrorHandling {
+            val email = _userEmail.value.orEmpty()
+            val reAuthResult = reAuthenticateUseCase.execute(Pair(email, currentPassword))
+            if (reAuthResult is Result.Failure) {
+                onError(Exception(reAuthResult.errorMessage))
+                return@launchWithErrorHandling
+            }
+            val freshIdToken = (reAuthResult as Result.Success).data.orEmpty()
+            idTokenUseCase.set(freshIdToken)
+            val changeResult = changePasswordUseCase.execute(Pair(freshIdToken, newPassword))
+            if (changeResult is Result.Success) {
                 successChangePasswordLiveData.value = true
+            } else if (changeResult is Result.Failure) {
+                onError(Exception(changeResult.errorMessage))
             }
         }
     }
