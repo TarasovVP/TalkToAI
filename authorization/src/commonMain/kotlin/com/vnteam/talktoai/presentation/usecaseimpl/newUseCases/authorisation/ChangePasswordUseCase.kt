@@ -11,10 +11,7 @@ class ChangePasswordUseCase(
 ) : UseCase<Pair<String, String>, Result<ChangePasswordResponse>> {
 
     override suspend fun execute(params: Pair<String, String>): Result<ChangePasswordResponse> {
-        // TODO implement current password check
-        //val idToken = preferencesRepository.getIdToken().firstOrNull()
-        // TODO implement idToken
-        val body = ChangePasswordBody("idToken", params.second)
+        val body = ChangePasswordBody(params.first, params.second)
         return repository.changePassword(body)
     }
 }

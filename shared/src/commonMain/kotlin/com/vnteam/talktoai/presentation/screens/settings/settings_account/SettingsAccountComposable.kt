@@ -53,7 +53,11 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun SettingsAccountScreen() {
     val viewModel = koinViewModel<SettingsAccountViewModel>()
-    updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
+    val exceptionMessage = viewModel.exceptionMessage.collectAsState()
+    updateScreenState(
+        isProgressVisible = viewModel.progressVisibilityState.collectAsState().value,
+        appMessage = if (exceptionMessage.value.isNotEmpty()) AppMessage(true, exceptionMessage.value) else null
+    )
 
     val authState = remember { mutableStateOf<AuthState?>(null) }
     val showLogOutDialog = remember { mutableStateOf(false) }
