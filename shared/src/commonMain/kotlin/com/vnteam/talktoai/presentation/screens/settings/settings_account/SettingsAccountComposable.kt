@@ -46,6 +46,7 @@ import com.vnteam.talktoai.presentation.ui.components.SubmitButtons
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
+import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.updateScreenState
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsAccountViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -83,13 +84,15 @@ fun SettingsAccountScreen() {
     }
     println("SettingsAccountTAG: userEmail: $userEmail authState: ${authState.value}")
     val successChangePasswordState = viewModel.successChangePasswordLiveData.collectAsState()
-    if (successChangePasswordState.value) {
-        updateScreenState(
-            appMessage = AppMessage(
-                false,
-                LocalStringResources.current.SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED
+    val successChangePasswordMessage = LocalStringResources.current.SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED
+    val localScreenState = LocalScreenState.current
+    LaunchedEffect(successChangePasswordState.value) {
+        if (successChangePasswordState.value) {
+            localScreenState.value = localScreenState.value.copy(
+                appMessage = AppMessage(false, successChangePasswordMessage)
             )
-        )
+            viewModel.successChangePasswordLiveData.value = false
+        }
     }
 
     val successState = viewModel.successLiveData.collectAsState()
