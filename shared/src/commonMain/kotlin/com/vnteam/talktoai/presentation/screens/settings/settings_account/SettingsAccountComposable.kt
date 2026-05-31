@@ -245,6 +245,9 @@ fun ChangePasswordDialog(
         val newPasswordInputValue = remember {
             mutableStateOf(TextFieldValue())
         }
+        val confirmPasswordInputValue = remember {
+            mutableStateOf(TextFieldValue())
+        }
         Column {
             Dialog(
                 onDismissRequest = {
@@ -273,8 +276,14 @@ fun ChangePasswordDialog(
                             newPasswordInputValue,
                             LocalStringResources.current.SETTINGS_ACCOUNT_ENTER_NEW_PASSWORD
                         )
+                        PasswordTextField(
+                            confirmPasswordInputValue,
+                            LocalStringResources.current.SETTINGS_ACCOUNT_CONFIRM_NEW_PASSWORD
+                        )
                         SubmitButtons(
-                            currentPasswordInputValue.value.text.isNotEmpty() && newPasswordInputValue.value.text.isNotEmpty(),
+                            currentPasswordInputValue.value.text.isNotEmpty()
+                                && newPasswordInputValue.value.text.isNotEmpty()
+                                && newPasswordInputValue.value.text == confirmPasswordInputValue.value.text,
                             {
                                 showDialog.value = false
                             },
