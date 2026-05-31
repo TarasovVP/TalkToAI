@@ -84,6 +84,7 @@ sealed class StringResources(
     var SETTINGS_ACCOUNT_DELETE_TITLE: String,
     var SETTINGS_ACCOUNT_ENTER_CURRENT_PASSWORD: String,
     var SETTINGS_ACCOUNT_ENTER_NEW_PASSWORD: String,
+    var SETTINGS_ACCOUNT_CONFIRM_NEW_PASSWORD: String,
     var SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED: String,
     var SETTINGS_ACCOUNT_LOG_OUT: String,
     var SETTINGS_ACCOUNT_UNAUTHORISED_LOG_OUT: String,
@@ -251,6 +252,7 @@ class StringResourcesEN : StringResources(
     SETTINGS_ACCOUNT_DELETE_TITLE = "Delete account",
     SETTINGS_ACCOUNT_ENTER_CURRENT_PASSWORD = "Current password",
     SETTINGS_ACCOUNT_ENTER_NEW_PASSWORD = "New password",
+    SETTINGS_ACCOUNT_CONFIRM_NEW_PASSWORD = "Confirm new password",
     SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED = "Password changed successfully",
     SETTINGS_ACCOUNT_LOG_OUT = "Are you sure you want to log out?",
     SETTINGS_ACCOUNT_UNAUTHORISED_LOG_OUT =
@@ -425,6 +427,7 @@ class StringResourcesUK : StringResources(
     SETTINGS_ACCOUNT_DELETE_TITLE = "Видалити обліковий запис",
     SETTINGS_ACCOUNT_ENTER_CURRENT_PASSWORD = "Поточний пароль",
     SETTINGS_ACCOUNT_ENTER_NEW_PASSWORD = "Новий пароль",
+    SETTINGS_ACCOUNT_CONFIRM_NEW_PASSWORD = "Підтвердіть новий пароль",
     SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED = "Пароль успішно змінено",
     SETTINGS_ACCOUNT_LOG_OUT = "Ви дійсно хочете розлогінитися?",
     SETTINGS_ACCOUNT_UNAUTHORISED_LOG_OUT =
