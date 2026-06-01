@@ -47,6 +47,7 @@ fun AppTopBar(
     onEditChatClick: () -> Unit = {},
 ) {
     when {
+        screenState?.isNoToolbarScreen.isTrue() -> Unit
         screenState?.isSecondaryScreen.isTrue() -> SecondaryTopBar(
             settingsScreenNameByRoute(screenState?.currentScreenRoute, LocalStringResources.current),
             onNavigationIconClick
