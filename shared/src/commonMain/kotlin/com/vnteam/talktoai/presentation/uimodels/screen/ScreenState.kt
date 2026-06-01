@@ -35,6 +35,11 @@ data class ScreenState(
                 currentScreenRoute == NavigationScreen.SettingsLoginScreen.route ||
                 NavigationScreen.isSettingsScreen(currentScreenRoute)
 
+    val isNoToolbarScreen: Boolean
+        get() = currentScreenRoute == NavigationScreen.LOGIN_SCREEN ||
+                currentScreenRoute == NavigationScreen.ONBOARDING_SCREEN ||
+                currentScreenRoute == NavigationScreen.SIGN_UP_SCREEN
+
     val isLoggedInUser: Boolean
         get() = idToken.isNullOrEmpty().not()
 
