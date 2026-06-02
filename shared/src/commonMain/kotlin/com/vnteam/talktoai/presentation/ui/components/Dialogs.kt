@@ -117,7 +117,7 @@ fun CreateChatDialog(
     DataEditDialog(
         if (currentChatName.isEmpty()) LocalStringResources.current.CHAT_CREATE_TITLE else LocalStringResources.current.CHAT_RENAME_TITLE,
         LocalStringResources.current.CHAT_NAME,
-        remember(currentChatName) {
+        remember(currentChatName, showDialog.value) {
             mutableStateOf(TextFieldValue(currentChatName))
         },
         showDialog
