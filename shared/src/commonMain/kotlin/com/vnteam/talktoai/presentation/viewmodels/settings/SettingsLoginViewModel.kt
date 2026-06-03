@@ -1,8 +1,8 @@
 package com.vnteam.talktoai.presentation.viewmodels.settings
 
+import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.getDataOrNull
-import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.SettingsSignUpUIState
@@ -10,6 +10,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Si
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMessagesUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
@@ -18,6 +19,7 @@ import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 
 class SettingsLoginViewModel(
     private val networkState: NetworkState,
@@ -29,6 +31,7 @@ class SettingsLoginViewModel(
     private val idTokenUseCase: IdTokenUseCase,
     private val userEmailUseCase: UserEmailUseCase,
     private val uidUseCase: UidUseCase,
+    private val syncRemoteUserUseCase: SyncRemoteUserUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsSignUpUIState())
@@ -62,16 +65,28 @@ class SettingsLoginViewModel(
     }
 
     fun insertRemoteCurrentUser(remoteUser: RemoteUser) {
-        launchWithNetworkCheck(networkState) {
-            insertRemoteUserUseCase.execute(remoteUser).onSuccess {
+        launchWithErrorHandling {
+            if (!networkState.isNetworkAvailable()) {
+                onError(Exception(Constants.APP_NETWORK_UNAVAILABLE_REPEAT))
+                return@launchWithErrorHandling
+            }
+            val result = insertRemoteUserUseCase.execute(remoteUser).firstOrNull()
+            if (result is Result.Success) {
+                syncRemoteUserUseCase.execute()
                 updateUIState(SettingsSignUpUIState(successRemoteUser = true))
             }
         }
     }
 
     fun updateRemoteCurrentUser(remoteUser: RemoteUser) {
-        launchWithNetworkCheck(networkState) {
-            updateRemoteUserUseCase.execute(remoteUser).onSuccess {
+        launchWithErrorHandling {
+            if (!networkState.isNetworkAvailable()) {
+                onError(Exception(Constants.APP_NETWORK_UNAVAILABLE_REPEAT))
+                return@launchWithErrorHandling
+            }
+            val result = updateRemoteUserUseCase.execute(remoteUser).firstOrNull()
+            if (result is Result.Success) {
+                syncRemoteUserUseCase.execute()
                 updateUIState(SettingsSignUpUIState(successRemoteUser = true))
             }
         }
