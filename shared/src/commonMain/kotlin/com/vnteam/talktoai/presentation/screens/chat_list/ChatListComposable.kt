@@ -40,6 +40,8 @@ import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
 import com.vnteam.talktoai.presentation.ui.theme.Primary800
 import com.vnteam.talktoai.presentation.ui.theme.Primary900
+import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
+import com.vnteam.talktoai.presentation.updateScreenState
 import com.vnteam.talktoai.presentation.viewmodels.chats.ChatListViewModel
 import com.vnteam.talktoai.dateToMilliseconds
 import org.jetbrains.compose.resources.DrawableResource
@@ -54,6 +56,10 @@ fun ChatListScreen(
     onSettingsClick: () -> Unit = {},
 ) {
     val viewModel = koinViewModel<ChatListViewModel>()
+    val exceptionMessage = viewModel.exceptionMessage.collectAsState()
+    updateScreenState(
+        appMessage = if (exceptionMessage.value.isNotEmpty()) AppMessage(true, exceptionMessage.value) else null
+    )
 
     LaunchedEffect(Unit) {
         viewModel.getChats()
