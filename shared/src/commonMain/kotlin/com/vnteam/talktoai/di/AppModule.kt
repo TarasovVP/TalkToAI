@@ -140,7 +140,7 @@ val appModule = module {
 
     // ViewModels
     viewModel {
-        AppViewModel(get(), get(), get(), get(), get(), get())
+        AppViewModel(get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         OnBoardingViewModel(get())
