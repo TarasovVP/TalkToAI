@@ -3,13 +3,16 @@ package com.vnteam.talktoai.presentation.viewmodels.settings
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.data.APP_LANG_EN
+import com.vnteam.talktoai.data.network.AuthEventBus
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.onSuccess
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ThemeUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.AnimationUtils
@@ -27,6 +30,7 @@ class AppViewModel(
     private val userEmailUseCase: UserEmailUseCase,
     private val onboardingUseCase: OnboardingUseCase,
     val animationUtils: AnimationUtils,
+    private val uidUseCase: UidUseCase,
 ) : BaseViewModel() {
 
 
@@ -42,9 +46,12 @@ class AppViewModel(
     private val _animationResource = MutableStateFlow<String?>(null)
     val animationResource = _animationResource.asStateFlow()
 
+    val unauthorizedRoute = MutableStateFlow<String?>(null)
+
     init {
         observeScreenState()
         fetchInitialData()
+        observeUnauthorizedEvents()
     }
 
     private fun fetchInitialData() {
@@ -101,5 +108,16 @@ class AppViewModel(
 
     fun updateScreenState(newState: ScreenState) {
         _screenState.value = newState
+    }
+
+    private fun observeUnauthorizedEvents() {
+        launchWithErrorHandling {
+            AuthEventBus.unauthorizedEvent.collect {
+                idTokenUseCase.set(String.EMPTY)
+                userEmailUseCase.set(String.EMPTY)
+                uidUseCase.set(String.EMPTY)
+                unauthorizedRoute.value = NavigationScreen.LOGIN_SCREEN
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.data.network.firestore
 
+import com.vnteam.talktoai.data.network.AuthEventBus
 import com.vnteam.talktoai.data.network.NetworkConstants
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -26,11 +27,9 @@ class FirestoreService(private val client: FirestoreHttpClient) {
             header(NetworkConstants.AUTHORIZATION, "Bearer $idToken")
             setBody(FirestoreDocument(fields = fields))
         }
-        val ok = response.status.isSuccess()
-        ok
-    }.getOrElse { e ->
-        false
-    }
+        if (response.status.value == 401) AuthEventBus.emitUnauthorized()
+        response.status.isSuccess()
+    }.getOrElse { false }
 
     suspend fun deleteDocument(path: String, idToken: String): Boolean = runCatching {
         val response = client.httpClient.delete("$base/$path") {
@@ -38,6 +37,7 @@ class FirestoreService(private val client: FirestoreHttpClient) {
         }
         val ok = response.status.isSuccess()
         if (!ok) {
+            if (response.status.value == 401) AuthEventBus.emitUnauthorized()
             println("firestoreTAG deleteDocument ERROR status=${response.status} body=${response.bodyAsText()} path=$path")
         }
         ok
@@ -51,6 +51,7 @@ class FirestoreService(private val client: FirestoreHttpClient) {
             if (response.status.isSuccess()) {
                 response.body<FirestoreListResponse>().documents.orEmpty()
             } else {
+                if (response.status.value == 401) AuthEventBus.emitUnauthorized()
                 emptyList()
             }
         }.getOrDefault(emptyList())
@@ -68,6 +69,7 @@ class FirestoreService(private val client: FirestoreHttpClient) {
             response.body<List<FirestoreQueryResult>>()
                 .mapNotNull { it.document }
         } else {
+            if (response.status.value == 401) AuthEventBus.emitUnauthorized()
             emptyList()
         }
     }.getOrDefault(emptyList())
@@ -76,6 +78,11 @@ class FirestoreService(private val client: FirestoreHttpClient) {
         val response = client.httpClient.get("$base/$path") {
             header(NetworkConstants.AUTHORIZATION, "Bearer $idToken")
         }
-        if (response.status.isSuccess()) response.body<FirestoreDocument>() else null
+        if (response.status.isSuccess()) {
+            response.body<FirestoreDocument>()
+        } else {
+            if (response.status.value == 401) AuthEventBus.emitUnauthorized()
+            null
+        }
     }.getOrNull()
 }

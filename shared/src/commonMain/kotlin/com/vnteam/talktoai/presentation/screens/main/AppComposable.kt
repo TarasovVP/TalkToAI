@@ -62,6 +62,14 @@ fun AppContent(appViewModel: AppViewModel) {
         }
     }
 
+    val unauthorizedRoute by appViewModel.unauthorizedRoute.collectAsState()
+    LaunchedEffect(unauthorizedRoute) {
+        unauthorizedRoute?.let { route ->
+            screenState.value = screenState.value.copy(currentScreenRoute = route)
+            appViewModel.unauthorizedRoute.value = null
+        }
+    }
+
     LaunchedEffect(screenState.value.currentScreenRoute) {
         if (drawerState.isOpen) scope.launch { drawerState.close() }
         screenState.value.currentScreenRoute?.let { route ->
