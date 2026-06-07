@@ -23,8 +23,8 @@ import androidx.navigation.compose.rememberNavController
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.presentation.AppNavigation
 import com.vnteam.talktoai.presentation.LocalScreenState
-import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.screens.chat.ChatSettingsBottomSheet
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.viewmodels.settings.AppViewModel
 import kotlinx.coroutines.launch
 
@@ -57,7 +57,8 @@ fun AppContent(appViewModel: AppViewModel) {
             drawerState.close()
         }
         if (NavigationScreen.isSettingsScreen(screenState.value.currentScreenRoute) &&
-            !NavigationScreen.isSettingsScreen(actualRoute)) {
+            !NavigationScreen.isSettingsScreen(actualRoute)
+        ) {
             screenState.value = screenState.value.copy(currentScreenRoute = null)
         }
     }
@@ -79,11 +80,13 @@ fun AppContent(appViewModel: AppViewModel) {
                     popUpTo(0) { inclusive = true }
                     launchSingleTop = true
                 }
+
                 route.startsWith(NavigationScreen.CHAT_DESTINATION) -> navController.navigate(route) {
                     popUpTo(navController.graph.startDestinationRoute.orEmpty()) {
                         inclusive = true
                     }
                 }
+
                 else -> navController.navigate(route)
             }
         }
@@ -98,7 +101,9 @@ fun AppContent(appViewModel: AppViewModel) {
             ModalDrawerSheet {
                 if (screenState.value.isLoggedInUser) {
                     DrawerContent(
-                        screenState = screenState.value.copy(currentScreenRoute = actualRoute ?: screenState.value.currentScreenRoute),
+                        screenState = screenState.value.copy(
+                            currentScreenRoute = actualRoute ?: screenState.value.currentScreenRoute
+                        ),
                         onScreenStateUpdate = { newScreenState ->
                             screenState.value = newScreenState
                             scope.launch {
@@ -120,7 +125,9 @@ fun AppContent(appViewModel: AppViewModel) {
         Scaffold(
             topBar = {
                 AppTopBar(
-                    screenState = screenState.value.copy(currentScreenRoute = actualRoute ?: screenState.value.currentScreenRoute),
+                    screenState = screenState.value.copy(
+                        currentScreenRoute = actualRoute ?: screenState.value.currentScreenRoute
+                    ),
                     onNavigationIconClick = {
                         if (isOnSecondaryScreen) {
                             navController.navigateUp()

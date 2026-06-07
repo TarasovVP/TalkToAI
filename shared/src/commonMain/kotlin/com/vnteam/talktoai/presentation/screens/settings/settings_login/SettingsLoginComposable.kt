@@ -17,16 +17,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.CommonExtensions.EMPTY
-import com.vnteam.talktoai.presentation.ui.NavigationScreen
-import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.screens.settings.settings_sign_up.TransferDataCard
+import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
+import com.vnteam.talktoai.presentation.updateScreenState
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsLoginViewModel
 import org.koin.compose.viewmodel.koinViewModel
-import com.vnteam.talktoai.presentation.updateScreenState
 
 @Composable
 fun SettingsLoginScreen() {
@@ -34,7 +34,10 @@ fun SettingsLoginScreen() {
     val exceptionMessage = viewModel.exceptionMessage.collectAsState()
     updateScreenState(
         isProgressVisible = viewModel.progressVisibilityState.collectAsState().value,
-        appMessage = if (exceptionMessage.value.isNotEmpty()) AppMessage(true, exceptionMessage.value) else null
+        appMessage = if (exceptionMessage.value.isNotEmpty()) AppMessage(
+            true,
+            exceptionMessage.value
+        ) else null
     )
     val emailInputValue = remember { mutableStateOf(TextFieldValue()) }
     val passwordInputValue = remember { mutableStateOf(TextFieldValue()) }

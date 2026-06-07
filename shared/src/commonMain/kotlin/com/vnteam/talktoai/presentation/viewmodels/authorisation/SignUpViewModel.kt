@@ -65,7 +65,8 @@ class SignUpViewModel(
 
     fun createUserWithEmailAndPassword(email: String, password: String) {
         launchWithErrorHandling {
-            when (val result = createUserWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
+            when (val result =
+                createUserWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
                 is com.vnteam.talktoai.data.network.Result.Success -> {
                     hideProgress()
                     onboardingUseCase.set(true)
@@ -78,6 +79,7 @@ class SignUpViewModel(
                     pendingUid = result.data?.localId.orEmpty()
                     updateUIState(SignUpUIState(successSignUp = true))
                 }
+
                 is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
                 is com.vnteam.talktoai.data.network.Result.Loading -> showProgress()
             }

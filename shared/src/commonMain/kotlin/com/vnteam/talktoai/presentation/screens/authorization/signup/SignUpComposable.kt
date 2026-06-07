@@ -1,6 +1,7 @@
 package com.vnteam.talktoai.presentation.screens.authorization.signup
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -30,15 +30,15 @@ import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
-import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.ui.components.LinkButton
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
+import com.vnteam.talktoai.presentation.updateScreenState
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.SignUpViewModel
 import org.koin.compose.viewmodel.koinViewModel
-import com.vnteam.talktoai.presentation.updateScreenState
 
 @Composable
 fun SignUpScreen() {
@@ -65,7 +65,10 @@ fun SignUpScreen() {
     val progress = viewModel.progressVisibilityState.collectAsState()
     updateScreenState(
         isProgressVisible = progress.value,
-        appMessage = if (exceptionMessage.value.isNotEmpty()) AppMessage(true, exceptionMessage.value) else null
+        appMessage = if (exceptionMessage.value.isNotEmpty()) AppMessage(
+            true,
+            exceptionMessage.value
+        ) else null
     )
 
     val stringResources = LocalStringResources.current
@@ -89,7 +92,8 @@ fun SignUpScreen() {
             )
         }
         signUpUiState.createCurrentUser?.let {
-            updatedScreenRoute.value = "${NavigationScreen.CHAT_DESTINATION}/${Constants.DEFAULT_CHAT_ID}"
+            updatedScreenRoute.value =
+                "${NavigationScreen.CHAT_DESTINATION}/${Constants.DEFAULT_CHAT_ID}"
         }
     }
 

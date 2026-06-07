@@ -91,7 +91,8 @@ import kotlin.time.Clock
 fun ChatContent(chatId: Long) {
     val viewModel = koinViewModel<ChatViewModel>()
     val chatListViewModel = koinViewModel<ChatListViewModel>()
-    val isMessageActionModeState: MutableState<Boolean?> = rememberSaveable { mutableStateOf(false) }
+    val isMessageActionModeState: MutableState<Boolean?> =
+        rememberSaveable { mutableStateOf(false) }
     val currentChatState = viewModel.currentChatLiveData.collectAsState()
     val messagesState = viewModel.messagesLiveData.collectAsState()
     val showCreateChatDialogue: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
@@ -208,6 +209,7 @@ fun ChatContent(chatId: Long) {
                     ) {
                         CircularProgressIndicator(color = Primary500)
                     }
+
                     else -> MessagesList(
                         messagesState.value!!,
                         isMessageActionModeState,

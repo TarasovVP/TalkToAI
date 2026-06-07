@@ -27,11 +27,11 @@ import com.vnteam.talktoai.ic_flag_ua
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral500
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
+import com.vnteam.talktoai.presentation.updateScreenState
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsLanguageViewModel
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
-import com.vnteam.talktoai.presentation.updateScreenState
 
 @Composable
 fun SettingsLanguageContent() {

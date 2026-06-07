@@ -46,10 +46,12 @@ class LoginViewModel(
                             onError(Exception(syncResult.errorMessage))
                             return@launchWithErrorHandling
                         }
+
                         is com.vnteam.talktoai.data.network.Result.Loading -> Unit
                     }
                     updateUIState(LoginUIState(emailSignInSuccess = true))
                 }
+
                 is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
                 is com.vnteam.talktoai.data.network.Result.Loading -> showProgress()
             }
@@ -67,6 +69,7 @@ class LoginViewModel(
                     uidUseCase.set(result.data?.localId.orEmpty())
                     updateUIState(LoginUIState(anonymousSignInSuccess = true))
                 }
+
                 is com.vnteam.talktoai.data.network.Result.Failure -> onError(Exception(result.errorMessage))
                 is com.vnteam.talktoai.data.network.Result.Loading -> showProgress()
             }

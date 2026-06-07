@@ -57,7 +57,10 @@ fun SettingsAccountScreen() {
     val exceptionMessage = viewModel.exceptionMessage.collectAsState()
     updateScreenState(
         isProgressVisible = viewModel.progressVisibilityState.collectAsState().value,
-        appMessage = if (exceptionMessage.value.isNotEmpty()) AppMessage(true, exceptionMessage.value) else null
+        appMessage = if (exceptionMessage.value.isNotEmpty()) AppMessage(
+            true,
+            exceptionMessage.value
+        ) else null
     )
 
     val authState = remember { mutableStateOf<AuthState?>(null) }
@@ -84,7 +87,8 @@ fun SettingsAccountScreen() {
     }
     println("SettingsAccountTAG: userEmail: $userEmail authState: ${authState.value}")
     val successChangePasswordState = viewModel.successChangePasswordLiveData.collectAsState()
-    val successChangePasswordMessage = LocalStringResources.current.SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED
+    val successChangePasswordMessage =
+        LocalStringResources.current.SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED
     val localScreenState = LocalScreenState.current
     LaunchedEffect(successChangePasswordState.value) {
         if (successChangePasswordState.value) {
@@ -282,8 +286,8 @@ fun ChangePasswordDialog(
                         )
                         SubmitButtons(
                             currentPasswordInputValue.value.text.isNotEmpty()
-                                && newPasswordInputValue.value.text.isNotEmpty()
-                                && newPasswordInputValue.value.text == confirmPasswordInputValue.value.text,
+                                    && newPasswordInputValue.value.text.isNotEmpty()
+                                    && newPasswordInputValue.value.text == confirmPasswordInputValue.value.text,
                             {
                                 showDialog.value = false
                             },

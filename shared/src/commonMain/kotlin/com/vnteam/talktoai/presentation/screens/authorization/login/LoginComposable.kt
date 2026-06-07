@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.CommonExtensions.EMPTY
+import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.DataEditDialog
@@ -33,12 +34,11 @@ import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
 import com.vnteam.talktoai.presentation.ui.components.SecondaryButton
-import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
+import com.vnteam.talktoai.presentation.updateScreenState
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.LoginViewModel
 import org.koin.compose.viewmodel.koinViewModel
-import com.vnteam.talktoai.presentation.updateScreenState
 
 @Composable
 fun LoginScreen() {
@@ -90,10 +90,12 @@ fun LoginScreen() {
             )
         }
         uiState.anonymousSignInSuccess?.let {
-            updatedScreenRoute.value = "${com.vnteam.talktoai.presentation.ui.NavigationScreen.CHAT_DESTINATION}/${com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID}"
+            updatedScreenRoute.value =
+                "${com.vnteam.talktoai.presentation.ui.NavigationScreen.CHAT_DESTINATION}/${com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID}"
         }
         uiState.emailSignInSuccess?.let {
-            updatedScreenRoute.value = "${com.vnteam.talktoai.presentation.ui.NavigationScreen.CHAT_DESTINATION}/${com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID}"
+            updatedScreenRoute.value =
+                "${com.vnteam.talktoai.presentation.ui.NavigationScreen.CHAT_DESTINATION}/${com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID}"
         }
     }
 
