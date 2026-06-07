@@ -3,7 +3,6 @@ package com.vnteam.talktoai.presentation.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,13 +20,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Blue
 import com.vnteam.talktoai.presentation.ui.theme.Neutral400
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
 import com.vnteam.talktoai.presentation.ui.theme.Neutral700
-import com.vnteam.talktoai.presentation.ui.theme.Primary300
 import com.vnteam.talktoai.presentation.ui.theme.Primary400
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import org.jetbrains.compose.resources.DrawableResource
