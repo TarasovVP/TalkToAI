@@ -12,9 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.Constants.PRIVACY_POLICY
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.updateScreenState
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsPrivacyPolicyViewModel
 import org.koin.compose.viewmodel.koinViewModel
-import com.vnteam.talktoai.presentation.updateScreenState
 
 @Composable
 fun SettingsPrivacyPolicyContent() {
@@ -65,8 +65,18 @@ private fun String.stripHtml(): String {
     return this
         .replace(Regex("<!\\[CDATA\\["), "")
         .replace(Regex("]]>"), "")
-        .replace(Regex("<style[^>]*>.*?</style>", setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)), "")
-        .replace(Regex("<head[^>]*>.*?</head>", setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)), "")
+        .replace(
+            Regex(
+                "<style[^>]*>.*?</style>",
+                setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)
+            ), ""
+        )
+        .replace(
+            Regex(
+                "<head[^>]*>.*?</head>",
+                setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)
+            ), ""
+        )
         .replace(Regex("<br\\s*/?>", RegexOption.IGNORE_CASE), "\n")
         .replace(Regex("<p[^>]*>", RegexOption.IGNORE_CASE), "\n")
         .replace(Regex("</p>", RegexOption.IGNORE_CASE), "\n")

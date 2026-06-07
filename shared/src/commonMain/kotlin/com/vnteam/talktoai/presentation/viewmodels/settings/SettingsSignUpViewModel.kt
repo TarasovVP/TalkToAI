@@ -54,7 +54,8 @@ class SettingsSignUpViewModel(
 
     fun createUserWithEmailAndPassword(email: String, password: String) {
         launchWithErrorHandling {
-            when (val result = createUserWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
+            when (val result =
+                createUserWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
                 is Result.Success -> {
                     val firebaseIdToken = result.data?.refreshToken?.let { rt ->
                         val ex = exchangeTokenUseCase.execute(rt)
@@ -65,6 +66,7 @@ class SettingsSignUpViewModel(
                     uidUseCase.set(result.data?.localId.orEmpty())
                     updateUIState(SettingsSignUpUIState(successAuthorisation = false))
                 }
+
                 is Result.Failure -> {
                     if (result.errorMessage?.contains("EMAIL_EXISTS") == true) {
                         updateUIState(SettingsSignUpUIState(accountExist = email))
@@ -72,6 +74,7 @@ class SettingsSignUpViewModel(
                         onError(Exception(result.errorMessage))
                     }
                 }
+
                 is Result.Loading -> Unit
             }
         }
@@ -86,6 +89,7 @@ class SettingsSignUpViewModel(
                     uidUseCase.set(result.data?.localId.orEmpty())
                     updateUIState(SettingsSignUpUIState(successAuthorisation = true))
                 }
+
                 is Result.Failure -> onError(Exception(result.errorMessage))
                 is Result.Loading -> Unit
             }
