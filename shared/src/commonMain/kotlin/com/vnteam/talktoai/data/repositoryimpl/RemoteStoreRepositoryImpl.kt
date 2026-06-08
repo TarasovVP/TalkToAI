@@ -27,7 +27,6 @@ import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 
@@ -209,7 +208,8 @@ class RemoteStoreRepositoryImpl(
             emit(Result.Failure("Not authenticated"))
             return@flow
         }
-        val ok = firestoreService.setDocument("${userChatsPath(uid)}/${chat.id}", chat.toFields(), token)
+        val ok =
+            firestoreService.setDocument("${userChatsPath(uid)}/${chat.id}", chat.toFields(), token)
         if (ok) emit(Result.Success(Unit)) else emit(Result.Failure("Firestore write failed"))
     }
 
@@ -220,7 +220,8 @@ class RemoteStoreRepositoryImpl(
             emit(Result.Failure("Not authenticated"))
             return@flow
         }
-        val ok = firestoreService.setDocument("${userChatsPath(uid)}/${chat.id}", chat.toFields(), token)
+        val ok =
+            firestoreService.setDocument("${userChatsPath(uid)}/${chat.id}", chat.toFields(), token)
         if (ok) emit(Result.Success(Unit)) else emit(Result.Failure("Firestore write failed"))
     }
 
