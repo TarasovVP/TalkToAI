@@ -17,7 +17,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import com.vnteam.talktoai.presentation.LocalScreenState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -29,6 +28,7 @@ import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.ic_arrow_back
 import com.vnteam.talktoai.ic_edit
 import com.vnteam.talktoai.ic_navigation
+import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.NavigationScreen.Companion.settingsScreenNameByRoute
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
@@ -37,7 +37,6 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary700
 import com.vnteam.talktoai.presentation.ui.theme.Primary900
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -49,13 +48,18 @@ fun AppTopBar(
     when {
         screenState?.isNoToolbarScreen.isTrue() -> Unit
         screenState?.isSecondaryScreen.isTrue() -> SecondaryTopBar(
-            settingsScreenNameByRoute(screenState?.currentScreenRoute, LocalStringResources.current),
+            settingsScreenNameByRoute(
+                screenState?.currentScreenRoute,
+                LocalStringResources.current
+            ),
             onNavigationIconClick
         )
+
         screenState?.isLoggedInUser.isNotTrue() -> Unit
         screenState?.isMessageActionModeState?.value.isTrue() -> DeleteModeTopBar(
             LocalStringResources.current.MESSAGE_ACTION_SELECTED
         )
+
         else -> PrimaryTopBar(
             title = screenState?.currentChat?.name ?: LocalStringResources.current.APP_NAME,
             onNavigationIconClick = onNavigationIconClick,
@@ -106,9 +110,11 @@ fun PrimaryTopBar(
 @Composable
 fun SecondaryTopBar(title: String, onNavigationIconClick: () -> Unit) {
     TopAppBar(
-        title = { Text(title, color = Neutral50) }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        title = { Text(title, color = Neutral50) },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = Primary900, titleContentColor = Neutral50
-        ), navigationIcon = {
+        ),
+        navigationIcon = {
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
                     painter = painterResource(Res.drawable.ic_arrow_back),
