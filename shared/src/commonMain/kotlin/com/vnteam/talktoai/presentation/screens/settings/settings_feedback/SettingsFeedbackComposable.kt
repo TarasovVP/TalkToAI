@@ -22,9 +22,9 @@ import com.vnteam.talktoai.domain.models.Feedback
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
+import com.vnteam.talktoai.presentation.updateScreenState
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsFeedbackViewModel
 import org.koin.compose.viewmodel.koinViewModel
-import com.vnteam.talktoai.presentation.updateScreenState
 import kotlin.time.Clock
 
 @Composable

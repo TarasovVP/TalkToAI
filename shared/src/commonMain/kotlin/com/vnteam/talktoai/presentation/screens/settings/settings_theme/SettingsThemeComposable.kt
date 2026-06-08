@@ -22,9 +22,9 @@ import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral500
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
+import com.vnteam.talktoai.presentation.updateScreenState
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsThemeViewModel
 import org.koin.compose.viewmodel.koinViewModel
-import com.vnteam.talktoai.presentation.updateScreenState
 
 @Composable
 fun SettingsThemeContent() {

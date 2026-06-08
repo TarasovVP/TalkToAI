@@ -25,13 +25,14 @@ import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Res
+import com.vnteam.talktoai.dateToMilliseconds
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.empty_state
 import com.vnteam.talktoai.ic_chat
 import com.vnteam.talktoai.ic_chat_add
 import com.vnteam.talktoai.ic_delete
-import com.vnteam.talktoai.ic_settings
 import com.vnteam.talktoai.ic_drag_handle
+import com.vnteam.talktoai.ic_settings
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.CreateChatDialog
 import com.vnteam.talktoai.presentation.ui.components.TextIconButton
@@ -43,7 +44,6 @@ import com.vnteam.talktoai.presentation.ui.theme.Primary900
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.updateScreenState
 import com.vnteam.talktoai.presentation.viewmodels.chats.ChatListViewModel
-import com.vnteam.talktoai.dateToMilliseconds
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -58,7 +58,10 @@ fun ChatListScreen(
     val viewModel = koinViewModel<ChatListViewModel>()
     val exceptionMessage = viewModel.exceptionMessage.collectAsState()
     updateScreenState(
-        appMessage = if (exceptionMessage.value.isNotEmpty()) AppMessage(true, exceptionMessage.value) else null
+        appMessage = if (exceptionMessage.value.isNotEmpty()) AppMessage(
+            true,
+            exceptionMessage.value
+        ) else null
     )
 
     LaunchedEffect(Unit) {

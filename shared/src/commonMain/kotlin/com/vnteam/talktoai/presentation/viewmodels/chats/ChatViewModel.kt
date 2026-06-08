@@ -3,12 +3,11 @@ package com.vnteam.talktoai.presentation.viewmodels.chats
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.SettingsConstants
-import com.vnteam.talktoai.dateToMilliseconds
-import kotlin.time.Clock
 import com.vnteam.talktoai.data.network.ai.request.ApiRequest
 import com.vnteam.talktoai.data.network.ai.request.MessageApi
 import com.vnteam.talktoai.data.network.onError
 import com.vnteam.talktoai.data.network.onSuccess
+import com.vnteam.talktoai.dateToMilliseconds
 import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.mappers.ChatUIMapper
 import com.vnteam.talktoai.domain.mappers.MessageUIMapper
@@ -30,6 +29,7 @@ import com.vnteam.talktoai.utils.ShareUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlin.time.Clock
 
 class ChatViewModel(
     private val messageUIMapper: MessageUIMapper,
@@ -96,7 +96,8 @@ class ChatViewModel(
         launchWithErrorHandling {
             // Guard against re-creating on second launch (reactive DB flow race condition)
             val firstResult = getChatWithIdUseCase.execute(Constants.DEFAULT_CHAT_ID).firstOrNull()
-            val existingChat = (firstResult as? com.vnteam.talktoai.data.network.Result.Success)?.data
+            val existingChat =
+                (firstResult as? com.vnteam.talktoai.data.network.Result.Success)?.data
             if (existingChat?.id != null) {
                 _currentChatLiveData.value = chatUIMapper.mapToImplModel(existingChat)
                 _welcomeChat.value = existingChat
@@ -145,7 +146,9 @@ class ChatViewModel(
                     .toSet()
                 val newMessages = messageUIMapper.mapToImplModelList(result.orEmpty())
                 if (checkedIds.isNotEmpty()) {
-                    newMessages.forEach { if (it.id in checkedIds) it.isCheckedToDelete.value = true }
+                    newMessages.forEach {
+                        if (it.id in checkedIds) it.isCheckedToDelete.value = true
+                    }
                 }
                 _messagesLiveData.value = newMessages
             }

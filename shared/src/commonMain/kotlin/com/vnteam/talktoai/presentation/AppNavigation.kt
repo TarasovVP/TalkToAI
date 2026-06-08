@@ -1,8 +1,8 @@
 package com.vnteam.talktoai.presentation
 
 import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.core.snap
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -19,10 +19,10 @@ import com.vnteam.talktoai.presentation.screens.authorization.onboarding.Onboard
 import com.vnteam.talktoai.presentation.screens.authorization.signup.SignUpScreen
 import com.vnteam.talktoai.presentation.screens.chat.ChatContent
 import com.vnteam.talktoai.presentation.screens.settings.settings_account.SettingsAccountScreen
-import com.vnteam.talktoai.presentation.screens.settings.settings_list.SettingsListScreen
 import com.vnteam.talktoai.presentation.screens.settings.settings_chat.SettingsChatContent
 import com.vnteam.talktoai.presentation.screens.settings.settings_feedback.SettingsFeedbackContent
 import com.vnteam.talktoai.presentation.screens.settings.settings_language.SettingsLanguageContent
+import com.vnteam.talktoai.presentation.screens.settings.settings_list.SettingsListScreen
 import com.vnteam.talktoai.presentation.screens.settings.settings_login.SettingsLoginScreen
 import com.vnteam.talktoai.presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyContent
 import com.vnteam.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpScreen
