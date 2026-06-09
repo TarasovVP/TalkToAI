@@ -13,16 +13,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.avatar_ai
+import com.vnteam.talktoai.presentation.screens.chat_list.ChatListScreen
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import org.jetbrains.compose.resources.painterResource
-import com.vnteam.talktoai.presentation.screens.chat_list.ChatListScreen
 
 @Composable
 fun DrawerContent(
