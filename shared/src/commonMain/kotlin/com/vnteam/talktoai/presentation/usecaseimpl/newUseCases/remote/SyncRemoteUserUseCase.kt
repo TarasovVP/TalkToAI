@@ -23,6 +23,7 @@ class SyncRemoteUserUseCase(
                 messageRepository.insertMessages(remoteUser.messages)
                 Result.Success(remoteUser)
             }
+
             is Result.Failure -> result
             else -> Result.Failure("Remote sync failed")
         }

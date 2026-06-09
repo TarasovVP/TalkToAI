@@ -32,10 +32,10 @@ import androidx.compose.ui.unit.sp
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.ic_delete
+import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
-import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.theme.Neutral500
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.updateScreenState

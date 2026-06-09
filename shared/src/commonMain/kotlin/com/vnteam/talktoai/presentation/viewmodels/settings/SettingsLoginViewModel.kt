@@ -46,6 +46,7 @@ class SettingsLoginViewModel(
                     uidUseCase.set(result.data?.localId.orEmpty())
                     updateUIState(SettingsSignUpUIState(successAuthorisation = true))
                 }
+
                 is Result.Failure -> onError(Exception(result.errorMessage))
                 is Result.Loading -> Unit
             }
