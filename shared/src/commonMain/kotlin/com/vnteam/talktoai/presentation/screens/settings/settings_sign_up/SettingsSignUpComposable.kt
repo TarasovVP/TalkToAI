@@ -74,7 +74,7 @@ fun SettingsSignUpScreen() {
             if (transferDataState.value) {
                 viewModel.createRemoteUser(isExistUser)
             } else {
-                updatedScreenRoute.value = NavigationScreen.POP_BACK
+                viewModel.syncRemoteUser()
             }
         }
         settingsSignUpUIStateState.remoteUser?.let { userState ->
