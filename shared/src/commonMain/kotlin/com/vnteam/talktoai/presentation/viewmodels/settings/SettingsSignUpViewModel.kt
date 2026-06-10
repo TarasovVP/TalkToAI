@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.presentation.viewmodels.settings
 
+import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.getDataOrNull
 import com.vnteam.talktoai.data.network.onSuccess
@@ -13,6 +14,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Si
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMessagesUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
@@ -35,6 +37,7 @@ class SettingsSignUpViewModel(
     private val userEmailUseCase: UserEmailUseCase,
     private val uidUseCase: UidUseCase,
     private val exchangeTokenUseCase: ExchangeTokenUseCase,
+    private val syncRemoteUserUseCase: SyncRemoteUserUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsSignUpUIState())
@@ -121,6 +124,17 @@ class SettingsSignUpViewModel(
             updateRemoteUserUseCase.execute(remoteUser).onSuccess {
                 updateUIState(SettingsSignUpUIState(successRemoteUser = true))
             }
+        }
+    }
+
+    fun syncRemoteUser() {
+        launchWithErrorHandling {
+            if (!networkState.isNetworkAvailable()) {
+                onError(Exception(Constants.APP_NETWORK_UNAVAILABLE_REPEAT))
+                return@launchWithErrorHandling
+            }
+            syncRemoteUserUseCase.execute()
+            updateUIState(SettingsSignUpUIState(successRemoteUser = true))
         }
     }
 

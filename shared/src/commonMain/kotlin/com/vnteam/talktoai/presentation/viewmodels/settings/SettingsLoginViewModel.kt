@@ -93,6 +93,17 @@ class SettingsLoginViewModel(
         }
     }
 
+    fun syncRemoteUser() {
+        launchWithErrorHandling {
+            if (!networkState.isNetworkAvailable()) {
+                onError(Exception(Constants.APP_NETWORK_UNAVAILABLE_REPEAT))
+                return@launchWithErrorHandling
+            }
+            syncRemoteUserUseCase.execute()
+            updateUIState(SettingsSignUpUIState(successRemoteUser = true))
+        }
+    }
+
     private fun updateUIState(newUIState: SettingsSignUpUIState) {
         _uiState.value = newUIState
     }
