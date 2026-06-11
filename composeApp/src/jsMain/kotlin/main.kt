@@ -1,17 +1,14 @@
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.window.CanvasBasedWindow
-import com.vnteam.talktoai.Constants.APP_NAME
+import androidx.compose.ui.window.ComposeViewport
 import com.vnteam.talktoai.di.doInitKoin
-import org.jetbrains.skiko.wasm.onWasmReady
-import org.koin.compose.koinInject
 import com.vnteam.talktoai.presentation.App
+import kotlinx.browser.document
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     doInitKoin()
-    onWasmReady {
-        CanvasBasedWindow(APP_NAME) {
-            App(koinInject())
-        }
+    ComposeViewport(document.body!!) {
+        App(koinInject())
     }
 }
