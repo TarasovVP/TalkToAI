@@ -1,7 +1,7 @@
 package di_ios
 
-import com.vnteam.talktoai.di.appModule
 import com.vnteam.talktoai.di.aiModule
+import com.vnteam.talktoai.di.appModule
 import com.vnteam.talktoai.di.authModule
 import com.vnteam.talktoai.di.settingsModule
 import org.koin.core.context.startKoin
