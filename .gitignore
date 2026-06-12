@@ -9,6 +9,7 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 /.idea/artifacts
+*.preferences_pb
 .DS_Store
 /build
 /captures

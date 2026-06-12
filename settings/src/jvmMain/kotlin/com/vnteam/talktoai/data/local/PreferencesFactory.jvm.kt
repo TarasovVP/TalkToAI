@@ -8,12 +8,16 @@ import com.vnteam.talktoai.data.PREFERENCES_PB
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okio.Path.Companion.toPath
+import java.io.File
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class PreferencesFactory : Preferences {
 
     private val dataStore = PreferenceDataStoreFactory.createWithPath(
-        produceFile = { PREFERENCES_PB.toPath() }
+        produceFile = {
+            val appDir = File(System.getProperty("user.home"), ".talktoai").also { it.mkdirs() }
+            File(appDir, PREFERENCES_PB).absolutePath.toPath()
+        }
     )
 
     actual override suspend fun putString(key: String, value: String) {

@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.presentation.screens.main
 
-import androidx.activity.compose.BackHandler
+import com.vnteam.talktoai.presentation.BackHandlerWrapper
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,7 +47,7 @@ fun AppContent(appViewModel: AppViewModel) {
             actualRoute == NavigationScreen.SettingsSignUpScreen.route ||
             actualRoute == NavigationScreen.SettingsLoginScreen.route
 
-    BackHandler(enabled = isOnSecondaryScreen) {
+    BackHandlerWrapper(enabled = isOnSecondaryScreen) {
         navController.navigateUp()
         screenState.value = screenState.value.copy(currentScreenRoute = null)
     }
