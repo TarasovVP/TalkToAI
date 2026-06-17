@@ -15,45 +15,17 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Blue
-import com.vnteam.talktoai.presentation.ui.theme.Neutral400
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
 import com.vnteam.talktoai.presentation.ui.theme.Neutral700
 import com.vnteam.talktoai.presentation.ui.theme.Primary400
-import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
-
-@Composable
-fun PrimaryButton(
-    text: String,
-    isEnabled: Boolean = true,
-    modifier: Modifier,
-    onClick: () -> Unit,
-) {
-    TextButton(
-        enabled = isEnabled,
-        modifier = modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .fillMaxWidth()
-            .background(
-                color = if (isEnabled) Primary500 else Neutral400,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .testTag("sign_up_button"),
-        onClick = {
-            onClick.invoke()
-        }
-    ) {
-        Text(text = text, color = Color.White)
-    }
-}
 
 @Composable
 fun SecondaryButton(text: String, isDestructive: Boolean, modifier: Modifier, onClick: () -> Unit) {
@@ -67,9 +39,7 @@ fun SecondaryButton(text: String, isDestructive: Boolean, modifier: Modifier, on
                 shape = RoundedCornerShape(16.dp)
             )
             .background(color = Color.Transparent, shape = RoundedCornerShape(16.dp)),
-        onClick = {
-            onClick.invoke()
-        }
+        onClick = { onClick.invoke() }
     ) {
         Text(text = text, color = if (isDestructive) Color.Red else Neutral700)
     }
@@ -135,8 +105,7 @@ fun TextIconButton(text: String, icon: DrawableResource, modifier: Modifier, onC
             Image(
                 painter = painterResource(icon),
                 contentDescription = LocalStringResources.current.CHAT_CREATE_BUTTON,
-                modifier = Modifier
-                    .padding(8.dp)
+                modifier = Modifier.padding(8.dp)
             )
             Text(
                 text = text,
@@ -149,4 +118,3 @@ fun TextIconButton(text: String, icon: DrawableResource, modifier: Modifier, onC
         }
     }
 }
-
