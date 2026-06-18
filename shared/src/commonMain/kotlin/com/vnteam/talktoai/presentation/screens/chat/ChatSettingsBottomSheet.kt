@@ -11,13 +11,12 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberModalBottomSheetState
+import com.vnteam.talktoai.presentation.ui.components.ChatSheetWrapper
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,7 +44,6 @@ fun ChatSettingsBottomSheet(
 ) {
     val viewModel: ChatSettingsViewModel = koinViewModel()
     val stringRes = LocalStringResources.current
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val globalAiModel = viewModel.globalAiModel.collectAsState()
     val globalTemperature = viewModel.globalTemperature.collectAsState()
 
@@ -66,10 +64,7 @@ fun ChatSettingsBottomSheet(
         }
     }
 
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-    ) {
+    ChatSheetWrapper(onDismiss = onDismiss) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
