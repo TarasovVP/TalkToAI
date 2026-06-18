@@ -1,11 +1,11 @@
 package com.vnteam.talktoai.presentation.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,20 +20,17 @@ actual fun PrimaryButton(
     modifier: Modifier,
     onClick: () -> Unit,
 ) {
-    FilledTonalButton(
+    TextButton(
         enabled = isEnabled,
         modifier = modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.filledTonalButtonColors(
-            containerColor = Primary500,
-            contentColor = Color.White,
-            disabledContainerColor = Neutral400,
-            disabledContentColor = Color.White,
-        ),
-        onClick = { onClick() }
+            .fillMaxWidth()
+            .background(
+                color = if (isEnabled) Primary500 else Neutral400,
+                shape = RoundedCornerShape(16.dp)
+            ),
+        onClick = { onClick.invoke() }
     ) {
-        Text(text = text)
+        Text(text = text, color = Color.White)
     }
 }
