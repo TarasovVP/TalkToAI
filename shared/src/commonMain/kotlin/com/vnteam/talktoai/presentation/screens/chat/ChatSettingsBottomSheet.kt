@@ -58,6 +58,11 @@ fun ChatSettingsBottomSheet(
     val effectiveTemperature = chatTemperature.value ?: globalTemperature.value
     val hasOverride = chatModel.value != null || chatTemperature.value != null
 
+    val hasChanges = chatName.value != chat.name.orEmpty() ||
+            chatContext.value != chat.context.orEmpty() ||
+            chatModel.value != chat.aiModel ||
+            chatTemperature.value != chat.temperature
+
     LaunchedEffect(Unit) {
         viewModel.chatSaved.collect {
             onDismiss()
@@ -187,7 +192,7 @@ fun ChatSettingsBottomSheet(
 
             PrimaryButton(
                 text = stringRes.SETTINGS_CHAT_SAVE,
-                isEnabled = true,
+                isEnabled = hasChanges,
                 modifier = Modifier.padding(top = 8.dp)
             ) {
                 val updatedChat = chat.copy(

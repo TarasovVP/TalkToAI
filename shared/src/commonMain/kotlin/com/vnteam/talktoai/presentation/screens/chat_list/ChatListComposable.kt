@@ -103,14 +103,14 @@ fun ChatListScreen(
         String.EMPTY,
         showCreateChatDialog
     ) { chatName ->
-        viewModel.insertChat(
-            Chat(
-                id = Clock.System.now().dateToMilliseconds(),
-                name = chatName,
-                updated = Clock.System.now().dateToMilliseconds(),
-                listOrder = (chats.value.orEmpty().size + 1).toLong()
-            )
+        val newChat = Chat(
+            id = Clock.System.now().dateToMilliseconds(),
+            name = chatName,
+            updated = Clock.System.now().dateToMilliseconds(),
+            listOrder = (chats.value.orEmpty().size + 1).toLong()
         )
+        viewModel.insertChat(newChat)
+        onChatClick(newChat)
     }
 
     ConfirmationDialog(
