@@ -50,7 +50,7 @@ actual class AnimationUtils {
                         modifier = Modifier
                             .size(8.dp)
                             .alpha(alpha)
-                            .background(Color.Gray, CircleShape)
+                            .background(Color.White, CircleShape)
                     )
                 }
             }
