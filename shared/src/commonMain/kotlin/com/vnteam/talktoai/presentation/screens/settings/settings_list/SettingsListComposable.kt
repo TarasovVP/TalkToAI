@@ -29,13 +29,17 @@ import com.vnteam.talktoai.ic_settings_feedback
 import com.vnteam.talktoai.ic_settings_language
 import com.vnteam.talktoai.ic_settings_privacy
 import com.vnteam.talktoai.ic_settings_theme
+import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral100
 import com.vnteam.talktoai.presentation.ui.theme.Neutral200
 import com.vnteam.talktoai.presentation.ui.theme.Neutral500
+import com.vnteam.talktoai.presentation.ui.theme.Neutral700
 import com.vnteam.talktoai.presentation.ui.theme.Neutral800
+import com.vnteam.talktoai.presentation.ui.theme.Neutral900
+import com.vnteam.talktoai.presentation.ui.theme.Primary200
 import com.vnteam.talktoai.presentation.ui.theme.Primary600
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -45,43 +49,70 @@ fun SettingsListComposable(
     currentRouteState: String?,
     onNextScreen: (String) -> Unit,
 ) {
-    val language = LocalScreenState.current.value.language
+    val screenState = LocalScreenState.current.value
+    val language = screenState.language
+    val isDark = screenState.isDarkTheme.isTrue()
+    val backgroundColor = if (isDark) Neutral900 else Neutral100
+    val selectedColor = if (isDark) Neutral700 else Neutral200
+    val textColor = if (isDark) Neutral100 else Neutral800
+    val iconColor = if (isDark) Primary200 else Primary600
+    val dividerColor = if (isDark) Neutral700 else Neutral200
+    val arrowColor = if (isDark) Neutral500 else Neutral500
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Neutral100)
+            .background(backgroundColor)
             .padding(top = 16.dp)
     ) {
         SettingsItem(
             name = LocalStringResources.current.SETTINGS_CHAT,
             mainIcon = Res.drawable.ic_settings_chat,
             isCurrent = currentRouteState == NavigationScreen.SettingsChatScreen.route,
+            backgroundColor = backgroundColor, selectedColor = selectedColor,
+            textColor = textColor, iconColor = iconColor,
+            dividerColor = dividerColor, arrowColor = arrowColor,
         ) { onNextScreen(NavigationScreen.SettingsChatScreen.route) }
         SettingsItem(
             name = LocalStringResources.current.SETTINGS_ACCOUNT,
             mainIcon = Res.drawable.ic_settings_account,
             isCurrent = currentRouteState == NavigationScreen.SettingsAccountScreen.route,
+            backgroundColor = backgroundColor, selectedColor = selectedColor,
+            textColor = textColor, iconColor = iconColor,
+            dividerColor = dividerColor, arrowColor = arrowColor,
         ) { onNextScreen(NavigationScreen.SettingsAccountScreen.route) }
         SettingsItem(
             name = LocalStringResources.current.SETTINGS_LANGUAGE,
             mainIcon = Res.drawable.ic_settings_language,
             isCurrent = currentRouteState == NavigationScreen.SettingsLanguageScreen.route,
             secondaryIcon = if (language == Constants.APP_LANG_UK) Res.drawable.ic_flag_ua else Res.drawable.ic_flag_en,
+            backgroundColor = backgroundColor, selectedColor = selectedColor,
+            textColor = textColor, iconColor = iconColor,
+            dividerColor = dividerColor, arrowColor = arrowColor,
         ) { onNextScreen(NavigationScreen.SettingsLanguageScreen.route) }
         SettingsItem(
             name = LocalStringResources.current.SETTINGS_THEME,
             mainIcon = Res.drawable.ic_settings_theme,
             isCurrent = currentRouteState == NavigationScreen.SettingsThemeScreen.route,
+            backgroundColor = backgroundColor, selectedColor = selectedColor,
+            textColor = textColor, iconColor = iconColor,
+            dividerColor = dividerColor, arrowColor = arrowColor,
         ) { onNextScreen(NavigationScreen.SettingsThemeScreen.route) }
         SettingsItem(
             name = LocalStringResources.current.SETTINGS_FEEDBACK,
             mainIcon = Res.drawable.ic_settings_feedback,
             isCurrent = currentRouteState == NavigationScreen.SettingsFeedbackScreen.route,
+            backgroundColor = backgroundColor, selectedColor = selectedColor,
+            textColor = textColor, iconColor = iconColor,
+            dividerColor = dividerColor, arrowColor = arrowColor,
         ) { onNextScreen(NavigationScreen.SettingsFeedbackScreen.route) }
         SettingsItem(
             name = LocalStringResources.current.SETTINGS_PRIVACY_POLICY,
             mainIcon = Res.drawable.ic_settings_privacy,
             isCurrent = currentRouteState == NavigationScreen.SettingsPrivacyPolicyScreen.route,
+            backgroundColor = backgroundColor, selectedColor = selectedColor,
+            textColor = textColor, iconColor = iconColor,
+            dividerColor = dividerColor, arrowColor = arrowColor,
         ) { onNextScreen(NavigationScreen.SettingsPrivacyPolicyScreen.route) }
     }
 }
@@ -92,13 +123,19 @@ fun SettingsItem(
     mainIcon: DrawableResource,
     isCurrent: Boolean,
     secondaryIcon: DrawableResource? = null,
+    backgroundColor: androidx.compose.ui.graphics.Color,
+    selectedColor: androidx.compose.ui.graphics.Color,
+    textColor: androidx.compose.ui.graphics.Color,
+    iconColor: androidx.compose.ui.graphics.Color,
+    dividerColor: androidx.compose.ui.graphics.Color,
+    arrowColor: androidx.compose.ui.graphics.Color,
     onItemClick: () -> Unit,
 ) {
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(if (isCurrent) Neutral200 else Neutral100)
+                .background(if (isCurrent) selectedColor else backgroundColor)
                 .clickable(enabled = !isCurrent, onClick = onItemClick)
                 .padding(horizontal = 24.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -106,13 +143,13 @@ fun SettingsItem(
             Icon(
                 painter = painterResource(mainIcon),
                 contentDescription = name,
-                tint = Primary600,
+                tint = iconColor,
                 modifier = Modifier.size(24.dp),
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = name,
-                color = Neutral800,
+                color = textColor,
                 fontSize = 16.sp,
                 modifier = Modifier.weight(1f),
             )
@@ -128,10 +165,10 @@ fun SettingsItem(
             Icon(
                 painter = painterResource(Res.drawable.ic_arrow_forward),
                 contentDescription = null,
-                tint = Neutral500,
+                tint = arrowColor,
                 modifier = Modifier.size(20.dp),
             )
         }
-        HorizontalDivider(color = Neutral200, thickness = 1.dp)
+        HorizontalDivider(color = dividerColor, thickness = 1.dp)
     }
 }
