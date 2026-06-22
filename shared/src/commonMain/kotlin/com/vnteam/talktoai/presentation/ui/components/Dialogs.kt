@@ -20,7 +20,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.vnteam.talktoai.CommonExtensions.EMPTY
+import com.vnteam.talktoai.CommonExtensions.isTrue
+import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.ui.theme.Neutral100
+import com.vnteam.talktoai.presentation.ui.theme.Neutral900
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
 
 @Composable
@@ -30,17 +34,18 @@ fun ConfirmationDialog(
     onConfirmationClick: () -> Unit,
 ) {
     if (showDialog.value) {
+        val isDark = LocalScreenState.current.value.isDarkTheme.isTrue()
+        val bgColor = if (isDark) Neutral900 else Color.White
+        val textColor = if (isDark) Neutral100 else Color.Black
         Column {
             Dialog(
-                onDismissRequest = {
-                    showDialog.value = false
-                },
+                onDismissRequest = { showDialog.value = false },
                 content = {
                     Column(
                         modifier = Modifier
                             .wrapContentSize()
                             .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
-                            .background(color = Color.White, shape = RoundedCornerShape(16.dp)),
+                            .background(color = bgColor, shape = RoundedCornerShape(16.dp)),
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
@@ -49,15 +54,14 @@ fun ConfirmationDialog(
                                 .fillMaxWidth()
                                 .padding(16.dp),
                             textAlign = TextAlign.Center,
-                            color = Color.Black,
+                            color = textColor,
                         )
                         SubmitButtons(true, {
                             showDialog.value = false
                         }, {
                             showDialog.value = false
                             onConfirmationClick.invoke()
-                        }
-                        )
+                        })
                     }
                 }
             )
@@ -74,17 +78,18 @@ fun DataEditDialog(
     onConfirmationClick: (String) -> Unit,
 ) {
     if (showDialog.value) {
+        val isDark = LocalScreenState.current.value.isDarkTheme.isTrue()
+        val bgColor = if (isDark) Neutral900 else Color.White
+        val textColor = if (isDark) Neutral100 else Color.Black
         Column {
             Dialog(
-                onDismissRequest = {
-                    showDialog.value = false
-                },
+                onDismissRequest = { showDialog.value = false },
                 content = {
                     Column(
                         modifier = Modifier
                             .wrapContentSize()
                             .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
-                            .background(color = Color.White, shape = RoundedCornerShape(16.dp)),
+                            .background(color = bgColor, shape = RoundedCornerShape(16.dp)),
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
@@ -93,7 +98,7 @@ fun DataEditDialog(
                                 .fillMaxWidth()
                                 .padding(16.dp),
                             textAlign = TextAlign.Center,
-                            color = Color.Black,
+                            color = textColor,
                         )
                         SecondaryTextField(inputValue, placeHolder)
                         SubmitButtons(inputValue.value.text.isNotEmpty(), {
