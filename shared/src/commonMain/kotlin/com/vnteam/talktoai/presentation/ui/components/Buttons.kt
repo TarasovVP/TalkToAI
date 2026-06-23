@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -22,7 +23,6 @@ import androidx.compose.ui.unit.sp
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Blue
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
-import com.vnteam.talktoai.presentation.ui.theme.Neutral700
 import com.vnteam.talktoai.presentation.ui.theme.Primary400
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -41,7 +41,7 @@ fun SecondaryButton(text: String, isDestructive: Boolean, modifier: Modifier, on
             .background(color = Color.Transparent, shape = RoundedCornerShape(16.dp)),
         onClick = { onClick.invoke() }
     ) {
-        Text(text = text, color = if (isDestructive) Color.Red else Neutral700)
+        Text(text = text, color = if (isDestructive) Color.Red else MaterialTheme.colorScheme.onBackground)
     }
 }
 
