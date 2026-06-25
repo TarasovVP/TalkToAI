@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnteam.talktoai.CommonExtensions.EMPTY
@@ -58,6 +59,7 @@ import com.vnteam.talktoai.ic_delete
 import com.vnteam.talktoai.ic_empty_check_box
 import com.vnteam.talktoai.ic_share
 import com.vnteam.talktoai.isDefineSecondsLater
+import com.vnteam.talktoai.millsSecondsToDateTime
 import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.CreateChatDialog
@@ -73,6 +75,7 @@ import com.vnteam.talktoai.presentation.ui.resources.LocalMediumAvatarSize
 import com.vnteam.talktoai.presentation.ui.resources.LocalSmallPadding
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.resources.StringResources
+import com.vnteam.talktoai.presentation.ui.theme.Neutral400
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import com.vnteam.talktoai.presentation.ui.theme.Primary600
@@ -410,50 +413,63 @@ fun Message(
                 )
             }
         }
-        Row(
-            horizontalArrangement = if (isUserAuthor) Arrangement.End else Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Spacer(modifier = Modifier.width(4.dp))
-            Box(
-                modifier = Modifier.wrapContentSize().fillMaxWidth(0.8f)
-                    .widthIn(40.dp, (screenWidth().value * 0.8).dp)
-                    .background(
-                        color = if (isUserAuthor) Primary500 else Primary600,
-                        shape = RoundedCornerShape(
-                            topStart = 16.dp,
-                            topEnd = LocalLargePadding.current.size,
-                            bottomStart = if (isUserAuthor) LocalLargePadding.current.size else LocalSmallPadding.current.size,
-                            bottomEnd = if (isUserAuthor) 2.dp else 16.dp
-                        )
-                    )
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                horizontalArrangement = if (isUserAuthor) Arrangement.End else Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                when {
-                    message.status == MessageStatus.ERROR -> Text(
-                        text = message.errorMessage,
-                        fontSize = 16.sp,
-                        color = Color.Red,
-                        modifier = Modifier.padding(8.dp).wrapContentSize()
-                    )
+                Spacer(modifier = Modifier.width(4.dp))
+                Box(
+                    modifier = Modifier.wrapContentSize().fillMaxWidth(0.8f)
+                        .widthIn(40.dp, (screenWidth().value * 0.8).dp)
+                        .background(
+                            color = if (isUserAuthor) Primary500 else Primary600,
+                            shape = RoundedCornerShape(
+                                topStart = 16.dp,
+                                topEnd = LocalLargePadding.current.size,
+                                bottomStart = if (isUserAuthor) LocalLargePadding.current.size else LocalSmallPadding.current.size,
+                                bottomEnd = if (isUserAuthor) 2.dp else 16.dp
+                            )
+                        )
+                ) {
+                    when {
+                        message.status == MessageStatus.ERROR -> Text(
+                            text = message.errorMessage,
+                            fontSize = 16.sp,
+                            color = Color.Red,
+                            modifier = Modifier.padding(8.dp).wrapContentSize()
+                        )
 
-                    message.status == MessageStatus.REQUESTING && Clock.System.now()
-                        .isDefineSecondsLater(
-                            20, message.updatedAt
-                        ) -> Text(
-                        text = stringRes.UNKNOWN_ERROR,
-                        fontSize = 16.sp,
-                        color = Color.Red,
-                        modifier = Modifier.padding(8.dp).wrapContentSize()
-                    )
+                        message.status == MessageStatus.REQUESTING && Clock.System.now()
+                            .isDefineSecondsLater(
+                                20, message.updatedAt
+                            ) -> Text(
+                            text = stringRes.UNKNOWN_ERROR,
+                            fontSize = 16.sp,
+                            color = Color.Red,
+                            modifier = Modifier.padding(8.dp).wrapContentSize()
+                        )
 
-                    message.status == MessageStatus.REQUESTING -> MessageTypingAnimation()
-                    else -> TruncatableText(
-                        message = message.message,
-                        isTruncated = isTruncatedState,
-                        linesCount = linesCount
-                    )
+                        message.status == MessageStatus.REQUESTING -> MessageTypingAnimation()
+                        else -> TruncatableText(
+                            message = message.message,
+                            isTruncated = isTruncatedState,
+                            linesCount = linesCount
+                        )
+                    }
                 }
+            }
+            if (message.status != MessageStatus.REQUESTING) {
+                Text(
+                    text = (message.updatedAt * 1000).millsSecondsToDateTime(),
+                    fontSize = 11.sp,
+                    color = Neutral400,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp, vertical = 2.dp),
+                    textAlign = if (isUserAuthor) TextAlign.End else TextAlign.Start
+                )
             }
         }
     }
