@@ -462,7 +462,11 @@ fun Message(
             }
             if (message.status != MessageStatus.REQUESTING) {
                 Text(
-                    text = (message.updatedAt * 1000).millsSecondsToDateTime(),
+                    text = if (isUserAuthor) {
+                        (message.updatedAt * 1000).millsSecondsToDateTime()
+                    } else {
+                        "${message.author}  ·  ${(message.updatedAt * 1000).millsSecondsToDateTime()}"
+                    },
                     fontSize = 11.sp,
                     color = Neutral400,
                     modifier = Modifier
