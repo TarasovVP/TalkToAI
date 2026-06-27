@@ -179,12 +179,14 @@ class ChatViewModel(
             insertMessageUseCase.execute(messageUIMapper.mapFromImplModel(tempMsg))
         }
         val currentChat = _currentChatLiveData.value
+        val history = _messagesLiveData.value.orEmpty()
         sendRequest(
             temporaryMessage = tempMsg,
             messageText = messageText,
             systemContext = currentChat?.context,
             chatAiModel = currentChat?.aiModel,
             chatTemperature = currentChat?.temperature,
+            history = history,
         )
     }
 
@@ -194,11 +196,22 @@ class ChatViewModel(
         systemContext: String?,
         chatAiModel: String?,
         chatTemperature: Float?,
+        history: List<MessageUI>,
     ) {
         val messages = buildList {
             if (!systemContext.isNullOrBlank()) {
                 add(MessageApi(role = Constants.MESSAGE_ROLE_SYSTEM, content = systemContext))
             }
+            history
+                .filter { it.status == MessageStatus.SUCCESS && it.message.isNotEmpty() }
+                .forEach { msg ->
+                    add(
+                        MessageApi(
+                            role = if (msg.author == Constants.MESSAGE_ROLE_ME) Constants.MESSAGE_ROLE_USER else Constants.MESSAGE_ROLE_ASSISTANT,
+                            content = msg.message
+                        )
+                    )
+                }
             add(MessageApi(role = Constants.MESSAGE_ROLE_USER, content = messageText))
         }
         val apiRequest = ApiRequest(
