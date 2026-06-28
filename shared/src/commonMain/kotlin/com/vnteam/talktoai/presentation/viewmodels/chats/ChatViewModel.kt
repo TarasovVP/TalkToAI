@@ -198,20 +198,29 @@ class ChatViewModel(
         chatTemperature: Float?,
         history: List<MessageUI>,
     ) {
+        var remainingTokens = MAX_HISTORY_TOKENS -
+                estimateTokens(systemContext.orEmpty()) -
+                estimateTokens(messageText)
+        val trimmedHistory = history
+            .filter { it.status == MessageStatus.SUCCESS && it.message.isNotEmpty() }
+            .reversed()
+            .filter { msg ->
+                val tokens = estimateTokens(msg.message)
+                (tokens <= remainingTokens).also { fits -> if (fits) remainingTokens -= tokens }
+            }
+            .reversed()
         val messages = buildList {
             if (!systemContext.isNullOrBlank()) {
                 add(MessageApi(role = Constants.MESSAGE_ROLE_SYSTEM, content = systemContext))
             }
-            history
-                .filter { it.status == MessageStatus.SUCCESS && it.message.isNotEmpty() }
-                .forEach { msg ->
-                    add(
-                        MessageApi(
-                            role = if (msg.author == Constants.MESSAGE_ROLE_ME) Constants.MESSAGE_ROLE_USER else Constants.MESSAGE_ROLE_ASSISTANT,
-                            content = msg.message
-                        )
+            trimmedHistory.forEach { msg ->
+                add(
+                    MessageApi(
+                        role = if (msg.author == Constants.MESSAGE_ROLE_ME) Constants.MESSAGE_ROLE_USER else Constants.MESSAGE_ROLE_ASSISTANT,
+                        content = msg.message
                     )
-                }
+                )
+            }
             add(MessageApi(role = Constants.MESSAGE_ROLE_USER, content = messageText))
         }
         val apiRequest = ApiRequest(
@@ -267,5 +276,10 @@ class ChatViewModel(
             val resource = Res.readBytes("files/message_typing.json").decodeToString()
             _animationResource.value = resource
         }
+    }
+
+    companion object {
+        private const val MAX_HISTORY_TOKENS = 4000
+        private fun estimateTokens(text: String): Int = (text.length / 4).coerceAtLeast(1)
     }
 }
