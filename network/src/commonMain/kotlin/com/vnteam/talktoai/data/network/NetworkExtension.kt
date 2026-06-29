@@ -25,6 +25,7 @@ suspend inline fun <reified T> HttpResponse?.handleResponse(): Result<T> {
             }
             Result.Failure(message)
         }
+
         else -> {
             try {
                 val result = body<T>()
