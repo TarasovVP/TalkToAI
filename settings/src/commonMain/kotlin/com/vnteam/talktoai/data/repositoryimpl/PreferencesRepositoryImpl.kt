@@ -1,12 +1,12 @@
 package com.vnteam.talktoai.data.repositoryimpl
 
+import com.vnteam.talktoai.data.AI_API_KEY
+import com.vnteam.talktoai.data.AI_MODEL
+import com.vnteam.talktoai.data.AI_TEMPERATURE
 import com.vnteam.talktoai.data.APP_LANGUAGE
 import com.vnteam.talktoai.data.ID_TOKEN
 import com.vnteam.talktoai.data.IS_DARK_THEME
 import com.vnteam.talktoai.data.IS_ONBOARDING_SEEN
-import com.vnteam.talktoai.data.AI_API_KEY
-import com.vnteam.talktoai.data.AI_MODEL
-import com.vnteam.talktoai.data.AI_TEMPERATURE
 import com.vnteam.talktoai.data.IS_REVIEW_VOTE
 import com.vnteam.talktoai.data.UID
 import com.vnteam.talktoai.data.USER_EMAIL
