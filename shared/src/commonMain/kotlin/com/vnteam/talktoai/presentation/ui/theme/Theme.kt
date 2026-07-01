@@ -12,6 +12,8 @@ private val DarkColorPalette = darkColorScheme(
     primary = Primary200,
     primaryContainer = Primary800,
     secondary = Neutral500,
+    secondaryContainer = White.copy(alpha = 0.12f),
+    onSecondaryContainer = Neutral50,
     onBackground = White
 )
 
@@ -19,6 +21,8 @@ private val LightColorPalette = lightColorScheme(
     primary = Primary500,
     primaryContainer = Primary400,
     secondary = Neutral200,
+    secondaryContainer = Primary500,
+    onSecondaryContainer = Neutral50,
     onBackground = Neutral800
 )
 
