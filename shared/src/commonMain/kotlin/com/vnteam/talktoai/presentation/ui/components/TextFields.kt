@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -36,7 +37,6 @@ import com.vnteam.talktoai.presentation.ui.resources.LocalDefaultTextSize
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral600
 import com.vnteam.talktoai.presentation.ui.theme.Primary500
-import com.vnteam.talktoai.presentation.ui.theme.Primary900
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -147,6 +147,9 @@ fun TextFieldWithButton(
 
     val focusManager = LocalFocusManager.current
 
+    val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
+    val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+
     TextField(
         value = inputValue.value,
         onValueChange = { newValue ->
@@ -155,14 +158,14 @@ fun TextFieldWithButton(
         placeholder = {
             Text(
                 text = LocalStringResources.current.MESSAGE_ENTER_REQUEST,
-                style = TextStyle(color = Color.Gray)
+                style = TextStyle(color = fieldContentColor.copy(alpha = 0.6f))
             )
         },
-        textStyle = TextStyle(color = Color.Black),
+        textStyle = TextStyle(color = fieldContentColor),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            disabledContainerColor = Color.White,
+            focusedContainerColor = fieldContainerColor,
+            unfocusedContainerColor = fieldContainerColor,
+            disabledContainerColor = fieldContainerColor,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
@@ -177,7 +180,7 @@ fun TextFieldWithButton(
                 shape = RoundedCornerShape(16.dp)
             )
             .background(
-                color = Color.White,
+                color = fieldContainerColor,
                 shape = RoundedCornerShape(16.dp)
             ),
         maxLines = 6,
@@ -190,7 +193,7 @@ fun TextFieldWithButton(
                 Icon(
                     painter = painterResource(Res.drawable.ic_message_send),
                     contentDescription = LocalStringResources.current.MESSAGE_SEND_BUTTON,
-                    tint = if (isEnabled) Primary900 else Neutral600
+                    tint = if (isEnabled) MaterialTheme.colorScheme.primary else Neutral600
                 )
             }
         }
