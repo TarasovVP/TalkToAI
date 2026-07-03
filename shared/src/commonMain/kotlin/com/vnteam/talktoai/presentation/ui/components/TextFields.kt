@@ -44,13 +44,20 @@ fun PrimaryTextField(
     placeHolder: String,
     inputValue: MutableState<TextFieldValue>,
 ) {
+    val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
+    val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+
     TextField(
         value = inputValue.value,
         onValueChange = { newValue ->
             inputValue.value = newValue
-        }, placeholder = { Text(text = placeHolder) },
+        },
+        placeholder = { Text(text = placeHolder, color = fieldContentColor.copy(alpha = 0.6f)) },
+        textStyle = TextStyle(color = fieldContentColor),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
+            focusedContainerColor = fieldContainerColor,
+            unfocusedContainerColor = fieldContainerColor,
+            disabledContainerColor = fieldContainerColor,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
@@ -61,7 +68,7 @@ fun PrimaryTextField(
             .padding(16.dp)
             .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
             .background(
-                color = Color.White,
+                color = fieldContainerColor,
                 shape = RoundedCornerShape(16.dp)
             ),
         maxLines = 1
@@ -73,15 +80,18 @@ fun SecondaryTextField(
     inputValue: MutableState<TextFieldValue>,
     placeHolder: String,
 ) {
+    val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
+    val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+
     TextField(
         value = inputValue.value,
         onValueChange = { inputValue.value = it },
-        placeholder = { Text(text = placeHolder, color = Color.Gray) },
-        textStyle = TextStyle(color = Color.Black),
+        placeholder = { Text(text = placeHolder, color = fieldContentColor.copy(alpha = 0.6f)) },
+        textStyle = TextStyle(color = fieldContentColor),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            disabledContainerColor = Color.White,
+            focusedContainerColor = fieldContainerColor,
+            unfocusedContainerColor = fieldContainerColor,
+            disabledContainerColor = fieldContainerColor,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
@@ -91,22 +101,27 @@ fun SecondaryTextField(
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
-            .background(color = Color.White, shape = RoundedCornerShape(16.dp))
+            .background(color = fieldContainerColor, shape = RoundedCornerShape(16.dp))
     )
 }
 
 @Composable
 fun PasswordTextField(inputValue: MutableState<TextFieldValue>, placeHolder: String) {
     val passwordVisible = remember { mutableStateOf(false) }
+    val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
+    val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
 
     TextField(
         value = inputValue.value,
         onValueChange = { newValue ->
             inputValue.value = newValue
         },
-        placeholder = { Text(text = placeHolder) },
+        placeholder = { Text(text = placeHolder, color = fieldContentColor.copy(alpha = 0.6f)) },
+        textStyle = TextStyle(color = fieldContentColor),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
+            focusedContainerColor = fieldContainerColor,
+            unfocusedContainerColor = fieldContainerColor,
+            disabledContainerColor = fieldContainerColor,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
@@ -117,7 +132,7 @@ fun PasswordTextField(inputValue: MutableState<TextFieldValue>, placeHolder: Str
             .padding(16.dp)
             .border(1.dp, Primary500, shape = RoundedCornerShape(16.dp))
             .background(
-                color = Color.White,
+                color = fieldContainerColor,
                 shape = RoundedCornerShape(16.dp)
             ),
         maxLines = 1,
@@ -128,7 +143,8 @@ fun PasswordTextField(inputValue: MutableState<TextFieldValue>, placeHolder: Str
             ) {
                 Icon(
                     painter = painterResource(if (passwordVisible.value) Res.drawable.ic_toggle_password_enabled else Res.drawable.ic_toggle_password_disabled),
-                    contentDescription = LocalStringResources.current.AUTHORIZATION_PASSWORD
+                    contentDescription = LocalStringResources.current.AUTHORIZATION_PASSWORD,
+                    tint = fieldContentColor
                 )
             }
         }
