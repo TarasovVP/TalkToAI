@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,16 +25,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.vnteam.talktoai.CommonExtensions.EMPTY
+import com.vnteam.talktoai.CommonExtensions.isTrue
+import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.components.PrimaryTextField
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.ui.theme.Neutral200
+import com.vnteam.talktoai.presentation.ui.theme.Neutral400
+import com.vnteam.talktoai.presentation.ui.theme.Neutral50
+import com.vnteam.talktoai.presentation.ui.theme.Neutral700
 import com.vnteam.talktoai.presentation.ui.theme.Primary300
+import com.vnteam.talktoai.presentation.ui.theme.Primary500
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.updateScreenState
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsSignUpViewModel
@@ -153,9 +162,21 @@ fun TransferDataCard(transferDataState: MutableState<Boolean>) {
                         .weight(1f)
                         .padding(start = 8.dp)
                 )
-                Switch(checked = transferDataState.value, onCheckedChange = { isChecked ->
-                    transferDataState.value = isChecked
-                })
+                val isDarkTheme = LocalScreenState.current.value.isDarkTheme.isTrue()
+                Switch(
+                    checked = transferDataState.value,
+                    onCheckedChange = { isChecked ->
+                        transferDataState.value = isChecked
+                    },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color.White,
+                        checkedTrackColor = Primary500,
+                        checkedBorderColor = Primary500,
+                        uncheckedThumbColor = if (isDarkTheme) Neutral400 else Neutral50,
+                        uncheckedTrackColor = if (isDarkTheme) Neutral700 else Neutral200,
+                        uncheckedBorderColor = Neutral400
+                    )
+                )
             }
             Box(
                 modifier = Modifier
