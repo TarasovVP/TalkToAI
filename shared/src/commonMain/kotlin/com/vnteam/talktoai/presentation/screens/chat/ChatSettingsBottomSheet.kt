@@ -11,6 +11,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
@@ -23,7 +24,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -114,16 +114,18 @@ fun ChatSettingsBottomSheet(
                 } else {
                     effectiveModel
                 }
+                val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
+                val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
                 OutlinedTextField(
                     value = displayModel,
                     onValueChange = {},
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownExpanded.value) },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = fieldContainerColor,
+                        unfocusedContainerColor = fieldContainerColor,
                     ),
-                    textStyle = TextStyle(color = Color.Black),
+                    textStyle = TextStyle(color = fieldContentColor),
                     modifier = Modifier.fillMaxWidth().menuAnchor()
                 )
                 ExposedDropdownMenu(
@@ -134,7 +136,7 @@ fun ChatSettingsBottomSheet(
                         text = {
                             Text(
                                 text = "${globalAiModel.value} (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})",
-                                color = Color.Black
+                                color = fieldContentColor
                             )
                         },
                         onClick = {
@@ -144,7 +146,7 @@ fun ChatSettingsBottomSheet(
                     )
                     SettingsConstants.AI_MODELS.forEach { model ->
                         DropdownMenuItem(
-                            text = { Text(text = model, color = Color.Black) },
+                            text = { Text(text = model, color = fieldContentColor) },
                             onClick = {
                                 chatModel.value = model
                                 dropdownExpanded.value = false

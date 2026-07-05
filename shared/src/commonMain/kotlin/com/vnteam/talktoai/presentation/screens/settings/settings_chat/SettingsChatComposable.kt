@@ -13,6 +13,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
@@ -83,16 +84,18 @@ fun SettingsChatContent() {
             onExpandedChange = { dropdownExpanded.value = it },
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         ) {
+            val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
+            val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
             OutlinedTextField(
                 value = aiModel.value,
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownExpanded.value) },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = fieldContainerColor,
+                    unfocusedContainerColor = fieldContainerColor,
                 ),
-                textStyle = TextStyle(color = Color.Black),
+                textStyle = TextStyle(color = fieldContentColor),
                 modifier = Modifier.fillMaxWidth().menuAnchor()
             )
             ExposedDropdownMenu(
@@ -101,7 +104,7 @@ fun SettingsChatContent() {
             ) {
                 availableModels.value.forEach { model ->
                     DropdownMenuItem(
-                        text = { Text(text = model, color = Color.Black) },
+                        text = { Text(text = model, color = fieldContentColor) },
                         onClick = {
                             viewModel.onModelSelected(model)
                             dropdownExpanded.value = false
