@@ -53,6 +53,7 @@ import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.sealed_classes.MessageAction
 import com.vnteam.talktoai.ic_chat_add
+import com.vnteam.talktoai.ic_chat_add_light
 import com.vnteam.talktoai.ic_checked_check_box
 import com.vnteam.talktoai.ic_copy
 import com.vnteam.talktoai.ic_delete
@@ -491,11 +492,15 @@ fun MessageTypingAnimation() {
 
 @Composable
 fun CreateChatScreen(onClick: () -> Unit) {
+    val isDarkTheme = LocalScreenState.current.value.isDarkTheme.isTrue()
     Row(
         Modifier.padding(16.dp).height(TextFieldDefaults.MinHeight)
     ) {
         TextIconButton(
-            LocalStringResources.current.NEW_CHAT, Res.drawable.ic_chat_add, Modifier, onClick
+            LocalStringResources.current.NEW_CHAT,
+            if (isDarkTheme) Res.drawable.ic_chat_add else Res.drawable.ic_chat_add_light,
+            Modifier,
+            onClick = onClick
         )
     }
 }

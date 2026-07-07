@@ -30,9 +30,11 @@ import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.empty_state
 import com.vnteam.talktoai.ic_chat
 import com.vnteam.talktoai.ic_chat_add
+import com.vnteam.talktoai.ic_chat_add_light
 import com.vnteam.talktoai.ic_delete
 import com.vnteam.talktoai.ic_drag_handle
 import com.vnteam.talktoai.ic_settings
+import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.components.ConfirmationDialog
 import com.vnteam.talktoai.presentation.ui.components.CreateChatDialog
 import com.vnteam.talktoai.presentation.ui.components.TextIconButton
@@ -179,9 +181,10 @@ fun ChatListContent(
                     })
             }
         }
+        val isDarkTheme = LocalScreenState.current.value.isDarkTheme.isTrue()
         TextIconButton(
             LocalStringResources.current.NEW_CHAT,
-            Res.drawable.ic_chat_add,
+            if (isDarkTheme) Res.drawable.ic_chat_add else Res.drawable.ic_chat_add_light,
             Modifier.padding(top = 0.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
         ) {
             showCreateChatDialog.value = true
