@@ -95,7 +95,12 @@ fun LinkButton(
 }
 
 @Composable
-fun TextIconButton(text: String, icon: DrawableResource, modifier: Modifier, onClick: () -> Unit) {
+fun TextIconButton(
+    text: String,
+    icon: DrawableResource,
+    modifier: Modifier,
+    onClick: () -> Unit,
+) {
     Button(
         onClick = onClick,
         modifier = modifier,
