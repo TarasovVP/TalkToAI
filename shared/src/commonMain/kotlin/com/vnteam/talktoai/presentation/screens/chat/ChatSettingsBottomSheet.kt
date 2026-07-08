@@ -56,7 +56,8 @@ fun ChatSettingsBottomSheet(
 
     val effectiveModel = chatModel.value ?: globalAiModel.value
     val effectiveTemperature = chatTemperature.value ?: globalTemperature.value
-    val hasOverride = chatModel.value != null || chatTemperature.value != null
+    val hasOverride = (chatModel.value != null && chatModel.value != globalAiModel.value) ||
+            (chatTemperature.value != null && chatTemperature.value != globalTemperature.value)
 
     val hasChanges = chatName.value != chat.name.orEmpty() ||
             chatContext.value != chat.context.orEmpty() ||
