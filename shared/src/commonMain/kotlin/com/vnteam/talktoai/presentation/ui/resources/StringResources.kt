@@ -496,7 +496,7 @@ class StringResourcesUK : StringResources(
     MESSAGE_ACTION_SHARE = "Відправити",
     MESSAGE_TRANSFER_CONFIRMATION = "Ви хочете перенести?",
     MESSAGE_DELETE_CONFIRMATION = "Ви хочете видалити?",
-    MESSAGE_EMPTY_STATE = "Введіть своє питання",
+    MESSAGE_EMPTY_STATE = "Список повідомлень порожній",
     MESSAGE_DELETE_BUTTON = "Кнопка видалення повідомлення",
     MESSAGE_SHARE_BUTTON = "Кнопка переміщення повідомлення",
     MESSAGE_COPY_BUTTON = "Кнопка копіювання повідомлення",
