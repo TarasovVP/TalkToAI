@@ -67,14 +67,14 @@ private fun String.stripHtml(): String {
         .replace(Regex("]]>"), "")
         .replace(
             Regex(
-                "<style[^>]*>.*?</style>",
-                setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)
+                "<style[^>]*>[\\s\\S]*?</style>",
+                RegexOption.IGNORE_CASE
             ), ""
         )
         .replace(
             Regex(
-                "<head[^>]*>.*?</head>",
-                setOf(RegexOption.IGNORE_CASE, RegexOption.DOT_MATCHES_ALL)
+                "<head[^>]*>[\\s\\S]*?</head>",
+                RegexOption.IGNORE_CASE
             ), ""
         )
         .replace(Regex("<br\\s*/?>", RegexOption.IGNORE_CASE), "\n")
