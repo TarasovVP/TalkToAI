@@ -1,8 +1,11 @@
 package com.vnteam.talktoai.data.database.dao
 
 import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.vnteam.talktoai.ChatDB
 import com.vnteam.talktoai.data.database.SharedDatabase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -33,9 +36,7 @@ class ChatDaoImpl(private val appDatabase: SharedDatabase) : ChatDao {
 
     override suspend fun getChats(): Flow<List<ChatDB>> {
         return appDatabase { db ->
-            db.appDatabaseQueries.getChats().asFlow().map { query ->
-                query.executeAsList()
-            }
+            db.appDatabaseQueries.getChats().asFlow().mapToList(Dispatchers.Default)
         }
     }
 
@@ -71,17 +72,13 @@ class ChatDaoImpl(private val appDatabase: SharedDatabase) : ChatDao {
 
     override suspend fun getLastUpdatedChat(): Flow<ChatDB?> {
         return appDatabase { db ->
-            db.appDatabaseQueries.getLastUpdatedChat().asFlow().map { query ->
-                query.executeAsOneOrNull()
-            }
+            db.appDatabaseQueries.getLastUpdatedChat().asFlow().mapToOneOrNull(Dispatchers.Default)
         }
     }
 
     override suspend fun getChatById(chatId: Long): Flow<ChatDB?> {
         return appDatabase { db ->
-            db.appDatabaseQueries.getChatById(chatId).asFlow().map { query ->
-                query.executeAsOneOrNull()
-            }
+            db.appDatabaseQueries.getChatById(chatId).asFlow().mapToOneOrNull(Dispatchers.Default)
         }
     }
 

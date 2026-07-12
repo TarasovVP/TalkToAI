@@ -139,7 +139,7 @@ fun ChatContent(chatId: Long) {
     }
 
     LaunchedEffect(currentChatState.value?.id) {
-        if (chatId == DEFAULT_CHAT_ID && currentChatState.value?.id == DEFAULT_CHAT_ID) {
+        if (chatId == DEFAULT_CHAT_ID && currentChatState.value?.id == null) {
             isWelcomeChatPending.value = true
             viewModel.createWelcomeChat(stringRes.WELCOME_CHAT_NAME, stringRes.WELCOME_MESSAGE)
         }

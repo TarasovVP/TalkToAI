@@ -17,9 +17,9 @@ class GetChatWithIdUseCase(private val chatRepository: ChatRepository) :
             DEFAULT_CHAT_ID -> chatRepository.getLastUpdatedChat()
             else -> chatRepository.getChatById(params.toString())
         }.map {
-            Result.Success(it ?: Chat())
-        }.catch {
-            Result.Failure(it.message)
+            Result.Success(it ?: Chat()) as Result<Chat>
+        }.catch { e ->
+            emit(Result.Failure(e.message))
         }
     }
 }
