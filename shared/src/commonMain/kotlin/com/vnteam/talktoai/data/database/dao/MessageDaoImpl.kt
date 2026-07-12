@@ -1,10 +1,11 @@
 package com.vnteam.talktoai.data.database.dao
 
 import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import com.vnteam.talktoai.MessageDB
 import com.vnteam.talktoai.data.database.SharedDatabase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class MessageDaoImpl(private val appDatabase: SharedDatabase) : MessageDao {
 
@@ -54,39 +55,13 @@ class MessageDaoImpl(private val appDatabase: SharedDatabase) : MessageDao {
 
     override suspend fun getMessages(): Flow<List<MessageDB>> {
         return appDatabase { db ->
-            db.appDatabaseQueries.getMessages().asFlow().map {
-                it.executeAsList().map { message ->
-                    MessageDB(
-                        message.id,
-                        message.chatId,
-                        message.author,
-                        message.message,
-                        message.updatedAt,
-                        message.status,
-                        message.errorMessage,
-                        message.truncated
-                    )
-                }
-            }
+            db.appDatabaseQueries.getMessages().asFlow().mapToList(Dispatchers.Default)
         }
     }
 
     override suspend fun getMessagesFromChat(chatId: Long): Flow<List<MessageDB>> {
         return appDatabase { db ->
-            db.appDatabaseQueries.getMessagesFromChat(chatId).asFlow().map {
-                it.executeAsList().map { query ->
-                    MessageDB(
-                        query.id,
-                        query.chatId,
-                        query.author,
-                        query.message,
-                        query.updatedAt,
-                        query.status,
-                        query.errorMessage,
-                        query.truncated
-                    )
-                }
-            }
+            db.appDatabaseQueries.getMessagesFromChat(chatId).asFlow().mapToList(Dispatchers.Default)
         }
     }
 

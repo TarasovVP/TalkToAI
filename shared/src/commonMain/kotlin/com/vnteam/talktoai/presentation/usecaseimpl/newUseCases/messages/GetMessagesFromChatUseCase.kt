@@ -13,9 +13,9 @@ class GetMessagesFromChatUseCase(private val messageRepository: MessageRepositor
 
     override suspend fun execute(params: Long): Flow<Result<List<Message>>> {
         return messageRepository.getMessagesFromChat(params).map {
-            Result.Success(it)
-        }.catch {
-            Result.Failure(it.message)
+            Result.Success(it) as Result<List<Message>>
+        }.catch { e ->
+            emit(Result.Failure(e.message))
         }
     }
 }
