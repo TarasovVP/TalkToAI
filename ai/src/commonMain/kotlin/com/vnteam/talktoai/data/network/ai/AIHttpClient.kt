@@ -21,8 +21,6 @@ class AIHttpClient(json: Json) {
         install(DefaultRequest) {
             url(Secrets.AI_BASE_URL)
             contentType(ContentType.Application.Json)
-        }
-        install(DefaultRequest) {
             header(NetworkConstants.AUTHORIZATION, "Bearer ${Secrets.AI_API_KEY}")
             header(NetworkConstants.OPENAI_ORGANIZATION, Secrets.ORGANIZATION_ID)
             header(NetworkConstants.OPENAI_PROJECT, Secrets.PROJECT_ID)

@@ -174,12 +174,10 @@ class ChatViewModel(
             updatedAt = now.dateToMilliseconds() + 1,
             status = MessageStatus.REQUESTING
         )
-        launchWithErrorHandling {
-            insertMessageUseCase.execute(messageUIMapper.mapFromImplModel(userMsg))
-            insertMessageUseCase.execute(messageUIMapper.mapFromImplModel(tempMsg))
-        }
         val currentChat = _currentChatLiveData.value
         val history = _messagesLiveData.value.orEmpty()
+        insertMessage(userMsg)
+        insertMessage(tempMsg)
         sendRequest(
             temporaryMessage = tempMsg,
             messageText = messageText,
