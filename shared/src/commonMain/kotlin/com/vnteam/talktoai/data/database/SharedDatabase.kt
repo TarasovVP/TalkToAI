@@ -1,20 +1,23 @@
 package com.vnteam.talktoai.data.database
 
 import com.vnteam.talktoai.AppDatabase
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class SharedDatabase(private val databaseDriverFactory: DatabaseDriverFactory) {
     private var database: AppDatabase? = null
+    private val initMutex = Mutex()
 
     private suspend fun initDatabase() {
-        database.takeIf { it != null } ?: run {
+        if (database != null) return
+        initMutex.withLock {
+            if (database != null) return
             database = AppDatabase(databaseDriverFactory.createDriver())
         }
     }
 
     suspend operator fun <R> invoke(block: suspend (AppDatabase) -> R): R {
         initDatabase()
-        return database.takeIf { it != null }?.let {
-            block(it)
-        } ?: throw IllegalStateException("Database is not initialized")
+        return block(database!!)
     }
 }
