@@ -63,8 +63,8 @@ fun PrivacyPolicyTextContent(htmlContent: String) {
 
 private fun String.stripHtml(): String {
     return this
-        .replace(Regex("<!\\[CDATA\\["), "")
-        .replace(Regex("]]>"), "")
+        .replace("<![CDATA[", "")
+        .replace("]]>", "")
         .replace(
             Regex(
                 "<style[^>]*>[\\s\\S]*?</style>",
