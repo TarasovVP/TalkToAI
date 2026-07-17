@@ -1,7 +1,6 @@
 package com.vnteam.talktoai.data.repositoryimpl
 
 import com.vnteam.talktoai.Constants.CHATS
-import com.vnteam.talktoai.Constants.FEEDBACK
 import com.vnteam.talktoai.Constants.MESSAGES
 import com.vnteam.talktoai.Constants.PRIVACY_POLICY
 import com.vnteam.talktoai.Constants.USERS
@@ -21,7 +20,6 @@ import com.vnteam.talktoai.data.network.firestore.firestoreInt
 import com.vnteam.talktoai.data.network.firestore.firestoreString
 import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.models.Chat
-import com.vnteam.talktoai.domain.models.Feedback
 import com.vnteam.talktoai.domain.models.Message
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
@@ -330,30 +328,5 @@ class RemoteStoreRepositoryImpl(
         val doc = firestoreService.getDocument("$PRIVACY_POLICY/$appLang", "")
         val text = doc?.fields?.get("text")?.stringValue.orEmpty()
         emit(text)
-    }
-
-    override fun insertFeedback(feedback: Feedback): Flow<Unit> = flow {
-        val token = idToken()
-        val fields = mapOf(
-            "user" to firestoreString(feedback.user),
-            "message" to firestoreString(feedback.message),
-            "time" to firestoreInt(feedback.time),
-        )
-        firestoreService.setDocument("$FEEDBACK/${feedback.time}", fields, token)
-        emit(Unit)
-    }
-
-    override fun getFeedbacks(): Flow<List<Feedback>> = flow {
-        val token = idToken()
-        val docs = firestoreService.listDocuments(FEEDBACK, token)
-        val feedbacks = docs.mapNotNull { doc ->
-            val f = doc.fields ?: return@mapNotNull null
-            Feedback(
-                user = f["user"]?.stringValue.orEmpty(),
-                message = f["message"]?.stringValue.orEmpty(),
-                time = f["time"]?.integerValue?.toLongOrNull() ?: 0L,
-            )
-        }
-        emit(feedbacks)
     }
 }

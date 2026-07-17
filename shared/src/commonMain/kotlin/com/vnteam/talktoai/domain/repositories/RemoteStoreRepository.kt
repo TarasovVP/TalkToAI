@@ -2,7 +2,6 @@ package com.vnteam.talktoai.domain.repositories
 
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.models.Chat
-import com.vnteam.talktoai.domain.models.Feedback
 import com.vnteam.talktoai.domain.models.Message
 import com.vnteam.talktoai.domain.models.RemoteUser
 import kotlinx.coroutines.flow.Flow
@@ -40,10 +39,6 @@ interface RemoteStoreRepository {
     fun deleteMessagesByChatId(chatId: Long): Flow<Result<Unit>>
 
     fun setReviewVoted(): Flow<Unit>
-
-    fun insertFeedback(feedback: Feedback): Flow<Unit>
-
-    fun getFeedbacks(): Flow<List<Feedback>>
 
     fun getPrivacyPolicy(appLang: String): Flow<String>
 }
