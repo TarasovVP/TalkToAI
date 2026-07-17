@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -20,8 +22,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
@@ -166,6 +175,14 @@ fun TextFieldWithButton(
     val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
     val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
 
+    val sendMessage = {
+        if (inputValue.value.text.isNotBlank() && isEnabled) {
+            onSendClick.invoke(inputValue.value.text.trim())
+            focusManager.clearFocus()
+            inputValue.value = TextFieldValue(String.EMPTY)
+        }
+    }
+
     TextField(
         value = inputValue.value,
         onValueChange = { newValue ->
@@ -187,6 +204,8 @@ fun TextFieldWithButton(
             disabledIndicatorColor = Color.Transparent,
         ),
         shape = RoundedCornerShape(16.dp),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+        keyboardActions = KeyboardActions(onSend = { sendMessage() }),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -198,13 +217,21 @@ fun TextFieldWithButton(
             .background(
                 color = fieldContainerColor,
                 shape = RoundedCornerShape(16.dp)
-            ),
+            )
+            .onPreviewKeyEvent { keyEvent ->
+                if (keyEvent.key == Key.Enter && !keyEvent.isShiftPressed
+                    && keyEvent.type == KeyEventType.KeyDown
+                ) {
+                    sendMessage()
+                    true
+                } else {
+                    false
+                }
+            },
         maxLines = 6,
         trailingIcon = {
             IconButton(enabled = isEnabled && inputValue.value.text.isNotBlank(), onClick = {
-                onSendClick.invoke(inputValue.value.text.trim())
-                focusManager.clearFocus()
-                inputValue.value = TextFieldValue(String.EMPTY)
+                sendMessage()
             }) {
                 Icon(
                     painter = painterResource(Res.drawable.ic_message_send),
