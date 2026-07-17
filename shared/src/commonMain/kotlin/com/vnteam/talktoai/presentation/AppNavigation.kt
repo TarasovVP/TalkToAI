@@ -20,7 +20,6 @@ import com.vnteam.talktoai.presentation.screens.authorization.signup.SignUpScree
 import com.vnteam.talktoai.presentation.screens.chat.ChatContent
 import com.vnteam.talktoai.presentation.screens.settings.settings_account.SettingsAccountScreen
 import com.vnteam.talktoai.presentation.screens.settings.settings_chat.SettingsChatContent
-import com.vnteam.talktoai.presentation.screens.settings.settings_feedback.SettingsFeedbackContent
 import com.vnteam.talktoai.presentation.screens.settings.settings_language.SettingsLanguageContent
 import com.vnteam.talktoai.presentation.screens.settings.settings_list.SettingsListScreen
 import com.vnteam.talktoai.presentation.screens.settings.settings_login.SettingsLoginScreen
@@ -93,9 +92,6 @@ fun AppNavigation(
         }
         composable(NavigationScreen.SETTINGS_THEME_SCREEN) {
             Screen { SettingsThemeContent() }
-        }
-        composable(NavigationScreen.SETTINGS_FEEDBACK_SCREEN) {
-            Screen { SettingsFeedbackContent() }
         }
         composable(NavigationScreen.SETTINGS_PRIVACY_POLICY_SCREEN) {
             Screen { SettingsPrivacyPolicyContent() }

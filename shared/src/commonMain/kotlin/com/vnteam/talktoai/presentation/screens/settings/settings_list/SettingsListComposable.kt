@@ -25,7 +25,6 @@ import com.vnteam.talktoai.ic_flag_en
 import com.vnteam.talktoai.ic_flag_ua
 import com.vnteam.talktoai.ic_settings_account
 import com.vnteam.talktoai.ic_settings_chat
-import com.vnteam.talktoai.ic_settings_feedback
 import com.vnteam.talktoai.ic_settings_language
 import com.vnteam.talktoai.ic_settings_privacy
 import com.vnteam.talktoai.ic_settings_theme
@@ -98,14 +97,6 @@ fun SettingsListComposable(
             textColor = textColor, iconColor = iconColor,
             dividerColor = dividerColor, arrowColor = arrowColor,
         ) { onNextScreen(NavigationScreen.SettingsThemeScreen.route) }
-        SettingsItem(
-            name = LocalStringResources.current.SETTINGS_FEEDBACK,
-            mainIcon = Res.drawable.ic_settings_feedback,
-            isCurrent = currentRouteState == NavigationScreen.SettingsFeedbackScreen.route,
-            backgroundColor = backgroundColor, selectedColor = selectedColor,
-            textColor = textColor, iconColor = iconColor,
-            dividerColor = dividerColor, arrowColor = arrowColor,
-        ) { onNextScreen(NavigationScreen.SettingsFeedbackScreen.route) }
         SettingsItem(
             name = LocalStringResources.current.SETTINGS_PRIVACY_POLICY,
             mainIcon = Res.drawable.ic_settings_privacy,

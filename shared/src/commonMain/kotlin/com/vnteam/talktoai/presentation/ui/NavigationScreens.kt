@@ -23,8 +23,6 @@ sealed class NavigationScreen(val route: String) {
 
     data object SettingsThemeScreen : NavigationScreen(SETTINGS_THEME_SCREEN)
 
-    data object SettingsFeedbackScreen : NavigationScreen(SETTINGS_FEEDBACK_SCREEN)
-
     data object SettingsPrivacyPolicyScreen : NavigationScreen(SETTINGS_PRIVACY_POLICY_SCREEN)
 
     data object SettingsListScreen : NavigationScreen(SETTINGS_LIST_SCREEN)
@@ -41,7 +39,6 @@ sealed class NavigationScreen(val route: String) {
         const val SETTINGS_ACCOUNT_SCREEN = "destination_settings_account_screen"
         const val SETTINGS_LANGUAGE_SCREEN = "destination_settings_language_screen"
         const val SETTINGS_THEME_SCREEN = "destination_settings_theme_screen"
-        const val SETTINGS_FEEDBACK_SCREEN = "destination_settings_feedback_screen"
         const val SETTINGS_PRIVACY_POLICY_SCREEN = "destination_settings_privacy_policy_screen"
         const val SETTINGS_SIGN_UP_SCREEN = "destination_settings_sign_up_screen"
         const val SETTINGS_LOGIN_SCREEN = "destination_settings_login_screen"
@@ -54,7 +51,6 @@ sealed class NavigationScreen(val route: String) {
             SettingsAccountScreen,
             SettingsLanguageScreen,
             SettingsThemeScreen,
-            SettingsFeedbackScreen,
             SettingsPrivacyPolicyScreen
         )
 
@@ -69,7 +65,6 @@ sealed class NavigationScreen(val route: String) {
                 SettingsAccountScreen.route -> return stringRes.SETTINGS_ACCOUNT
                 SettingsLanguageScreen.route -> return stringRes.SETTINGS_LANGUAGE
                 SettingsThemeScreen.route -> return stringRes.SETTINGS_THEME
-                SettingsFeedbackScreen.route -> return stringRes.SETTINGS_FEEDBACK
                 SettingsPrivacyPolicyScreen.route -> return stringRes.SETTINGS_PRIVACY_POLICY
                 else -> stringRes.APP_NAME
             }

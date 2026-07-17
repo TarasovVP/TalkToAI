@@ -39,7 +39,6 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertM
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.FeedbackUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GetPrivacyPolicyUseCase
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.LoginViewModel
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.OnBoardingViewModel
@@ -50,7 +49,6 @@ import com.vnteam.talktoai.presentation.viewmodels.chats.ChatViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.AppViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsAccountViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsChatViewModel
-import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsFeedbackViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsLanguageViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsLoginViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsPrivacyPolicyViewModel
@@ -94,8 +92,6 @@ val appModule = module {
 
     // UseCases
     // preferences
-    single { FeedbackUseCase(get()) }
-
     single { GetPrivacyPolicyUseCase(get()) }
 
     // ai
@@ -192,9 +188,6 @@ val appModule = module {
     }
     viewModel {
         SettingsChatViewModel(get(), get(), get(), get(), get(), get())
-    }
-    viewModel {
-        SettingsFeedbackViewModel(get(), get(), get())
     }
     viewModel {
         SettingsLanguageViewModel(get())

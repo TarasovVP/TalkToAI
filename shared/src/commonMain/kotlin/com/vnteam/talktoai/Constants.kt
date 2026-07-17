@@ -31,7 +31,6 @@ object Constants {
     const val USERS = "users"
     const val CHATS = "chats"
     const val MESSAGES = "messages"
-    const val FEEDBACK = "feedback"
     const val PRIVACY_POLICY = "privacyPolicy"
 
     //WebView

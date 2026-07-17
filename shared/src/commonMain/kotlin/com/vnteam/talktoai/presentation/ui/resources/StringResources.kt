@@ -63,7 +63,6 @@ sealed class StringResources(
     var SETTINGS_ACCOUNT: String,
     var SETTINGS_LANGUAGE: String,
     var SETTINGS_THEME: String,
-    var SETTINGS_FEEDBACK: String,
     var SETTINGS_PRIVACY_POLICY: String,
     // Settings chat
     var SETTINGS_CHAT_MODEL_TITLE: String,
@@ -105,12 +104,6 @@ sealed class StringResources(
     var SETTINGS_THEME_DAY: String,
     var SETTINGS_THEME_NIGHT: String,
     var SETTINGS_THEME_AUTO: String,
-
-    // Settings feedback
-    var SETTINGS_FEEDBACK_TITLE: String,
-    var SETTINGS_FEEDBACK_HINT: String,
-    var SETTINGS_FEEDBACK_SEND_BUTTON: String,
-    var SETTINGS_FEEDBACK_SEND_SUCCESS: String,
 
     // Settings privacy
     var PRIVACY_POLICY: String,
@@ -232,7 +225,6 @@ class StringResourcesEN : StringResources(
     SETTINGS_ACCOUNT = "Your account",
     SETTINGS_LANGUAGE = "Language",
     SETTINGS_THEME = "Selecting a theme",
-    SETTINGS_FEEDBACK = "Contact developer",
     SETTINGS_PRIVACY_POLICY = "Privacy Policy",
     // Settings chat
     SETTINGS_CHAT_MODEL_TITLE = "AI Model",
@@ -279,13 +271,6 @@ class StringResourcesEN : StringResources(
     SETTINGS_THEME_DAY = "Light",
     SETTINGS_THEME_NIGHT = "Dark",
     SETTINGS_THEME_AUTO = "According to phone settings",
-
-    // Settings feedback
-    SETTINGS_FEEDBACK_TITLE =
-        "If you have any suggestions or comments, please describe them below",
-    SETTINGS_FEEDBACK_HINT = "Message",
-    SETTINGS_FEEDBACK_SEND_BUTTON = "Submit",
-    SETTINGS_FEEDBACK_SEND_SUCCESS = "Message sent successfully!",
 
     // Settings privacy
     PRIVACY_POLICY =
@@ -407,7 +392,6 @@ class StringResourcesUK : StringResources(
     SETTINGS_ACCOUNT = "Ваш обліковий запис",
     SETTINGS_LANGUAGE = "Мова",
     SETTINGS_THEME = "Вибір теми",
-    SETTINGS_FEEDBACK = "Написати розробнику",
     SETTINGS_PRIVACY_POLICY = "Політика конфіденційності",
     // Settings chat
     SETTINGS_CHAT_MODEL_TITLE = "Модель AI",
@@ -454,13 +438,6 @@ class StringResourcesUK : StringResources(
     SETTINGS_THEME_DAY = "Світла",
     SETTINGS_THEME_NIGHT = "Темна",
     SETTINGS_THEME_AUTO = "Згідно з налаштуваннями телефону",
-
-    // Settings feedback
-    SETTINGS_FEEDBACK_TITLE =
-        "Якщо у вас є пропозиції або зауваження, ви можете їх описати нижче",
-    SETTINGS_FEEDBACK_HINT = "Повідомлення",
-    SETTINGS_FEEDBACK_SEND_BUTTON = "Надіслати",
-    SETTINGS_FEEDBACK_SEND_SUCCESS = "Повідомлення успішно надіслано!",
 
     // Settings privacy
     PRIVACY_POLICY =
