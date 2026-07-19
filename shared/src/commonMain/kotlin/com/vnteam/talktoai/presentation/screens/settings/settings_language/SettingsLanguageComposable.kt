@@ -28,6 +28,7 @@ import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral500
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
 import com.vnteam.talktoai.presentation.updateScreenState
+import com.vnteam.talktoai.presentation.viewmodels.settings.AppViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsLanguageViewModel
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -37,6 +38,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SettingsLanguageContent() {
 
     val viewModel: SettingsLanguageViewModel = koinViewModel()
+    val appViewModel: AppViewModel = koinViewModel()
     updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
     val appLanguageState = remember { mutableStateOf<String?>(null) }
 
@@ -60,6 +62,7 @@ fun SettingsLanguageContent() {
             Res.drawable.ic_flag_en
         ) {
             viewModel.setAppLanguage(Constants.APP_LANG_EN)
+            appViewModel.updateLanguage(Constants.APP_LANG_EN)
         }
         SettingsLanguageItem(
             LocalStringResources.current.SETTINGS_LANGUAGE_UKRAINIAN,
@@ -67,6 +70,7 @@ fun SettingsLanguageContent() {
             Res.drawable.ic_flag_ua
         ) {
             viewModel.setAppLanguage(Constants.APP_LANG_UK)
+            appViewModel.updateLanguage(Constants.APP_LANG_UK)
         }
     }
 }
