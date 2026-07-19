@@ -110,6 +110,10 @@ class AppViewModel(
         _screenState.value = newState
     }
 
+    fun updateLanguage(lang: String) {
+        _language.value = lang
+    }
+
     private fun observeUnauthorizedEvents() {
         launchWithErrorHandling {
             AuthEventBus.unauthorizedEvent.collect {
