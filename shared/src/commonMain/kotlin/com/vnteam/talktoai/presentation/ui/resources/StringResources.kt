@@ -71,6 +71,8 @@ sealed class StringResources(
     var SETTINGS_CHAT_TEMPERATURE_TITLE: String,
     var SETTINGS_CHAT_SAVE: String,
     var SETTINGS_CHAT_SAVED: String,
+    var SETTINGS_CHAT_GLOBAL_CONTEXT_TITLE: String,
+    var SETTINGS_CHAT_GLOBAL_CONTEXT_HINT: String,
     // Chat settings override
     var CHAT_SETTINGS_USE_GLOBAL: String,
     var CHAT_SETTINGS_GLOBAL_LABEL: String,
@@ -233,6 +235,8 @@ class StringResourcesEN : StringResources(
     SETTINGS_CHAT_TEMPERATURE_TITLE = "Temperature",
     SETTINGS_CHAT_SAVE = "Save",
     SETTINGS_CHAT_SAVED = "Settings saved",
+    SETTINGS_CHAT_GLOBAL_CONTEXT_TITLE = "Global system context",
+    SETTINGS_CHAT_GLOBAL_CONTEXT_HINT = "Applied to all chats by default (optional)",
     CHAT_SETTINGS_USE_GLOBAL = "Reset to global settings",
     CHAT_SETTINGS_GLOBAL_LABEL = "global",
 
@@ -400,6 +404,8 @@ class StringResourcesUK : StringResources(
     SETTINGS_CHAT_TEMPERATURE_TITLE = "Температура",
     SETTINGS_CHAT_SAVE = "Зберегти",
     SETTINGS_CHAT_SAVED = "Налаштування збережено",
+    SETTINGS_CHAT_GLOBAL_CONTEXT_TITLE = "Глобальний системний контекст",
+    SETTINGS_CHAT_GLOBAL_CONTEXT_HINT = "Застосовується до всіх чатів за замовчуванням (необов'язково)",
     CHAT_SETTINGS_USE_GLOBAL = "Скинути до глобальних налаштувань",
     CHAT_SETTINGS_GLOBAL_LABEL = "глобально",
 

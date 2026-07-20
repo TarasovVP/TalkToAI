@@ -180,6 +180,7 @@ val appModule = module {
             get(),
             get(),
             get(),
+            get(),
             get()
         )
     }
@@ -187,7 +188,7 @@ val appModule = module {
         SettingsAccountViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
-        SettingsChatViewModel(get(), get(), get(), get(), get(), get())
+        SettingsChatViewModel(get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         SettingsLanguageViewModel(get())

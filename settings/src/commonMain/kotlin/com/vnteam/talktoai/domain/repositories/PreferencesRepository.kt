@@ -40,6 +40,10 @@ interface PreferencesRepository {
 
     suspend fun setTemperature(temperature: String)
 
+    fun getGlobalSystemContext(): Flow<String?>
+
+    suspend fun setGlobalSystemContext(context: String)
+
     fun getUid(): Flow<String?>
 
     suspend fun setUid(uid: String)

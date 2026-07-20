@@ -22,6 +22,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMess
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ApiKeyUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GlobalContextUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.TemperatureUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.AnimationUtils
@@ -45,6 +46,7 @@ class ChatViewModel(
     private val aiModelUseCase: AiModelUseCase,
     private val apiKeyUseCase: ApiKeyUseCase,
     private val temperatureUseCase: TemperatureUseCase,
+    private val globalContextUseCase: GlobalContextUseCase,
 ) : BaseViewModel() {
 
     private val _currentChatLiveData = MutableStateFlow<ChatUI?>(null)
@@ -58,6 +60,7 @@ class ChatViewModel(
     private val _aiModel = MutableStateFlow(SettingsConstants.AI_MODEL_DEFAULT)
     private val _apiKey = MutableStateFlow<String?>(null)
     private val _temperature = MutableStateFlow(SettingsConstants.AI_TEMPERATURE_DEFAULT)
+    private val _globalContext = MutableStateFlow<String?>(null)
 
     init {
         launchWithErrorHandling {
@@ -78,6 +81,13 @@ class ChatViewModel(
             temperatureUseCase.get().firstOrNull()?.let { result ->
                 if (result is com.vnteam.talktoai.data.network.Result.Success) {
                     _temperature.value = result.data ?: SettingsConstants.AI_TEMPERATURE_DEFAULT
+                }
+            }
+        }
+        launchWithErrorHandling {
+            globalContextUseCase.get().firstOrNull()?.let { result ->
+                if (result is com.vnteam.talktoai.data.network.Result.Success) {
+                    _globalContext.value = result.data
                 }
             }
         }
@@ -178,10 +188,14 @@ class ChatViewModel(
         val history = _messagesLiveData.value.orEmpty()
         insertMessage(userMsg)
         insertMessage(tempMsg)
+        val combinedContext = listOfNotNull(
+            _globalContext.value?.takeIf { it.isNotBlank() },
+            currentChat?.context?.takeIf { it.isNotBlank() }
+        ).joinToString("\n").takeIf { it.isNotBlank() }
         sendRequest(
             temporaryMessage = tempMsg,
             messageText = messageText,
-            systemContext = currentChat?.context,
+            systemContext = combinedContext,
             chatAiModel = currentChat?.aiModel,
             chatTemperature = currentChat?.temperature,
             history = history,
