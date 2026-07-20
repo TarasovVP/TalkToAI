@@ -57,6 +57,7 @@ fun SettingsChatContent() {
     val temperature = viewModel.temperature.collectAsState()
     val hasChanges = viewModel.hasChanges.collectAsState()
     val savedApiKey = viewModel.savedApiKey.collectAsState()
+    val globalContext = viewModel.globalContext.collectAsState()
 
     val localScreenState = LocalScreenState.current
     LaunchedEffect(Unit) {
@@ -69,6 +70,7 @@ fun SettingsChatContent() {
 
     val dropdownExpanded = remember { mutableStateOf(false) }
     val apiKeyState = remember { mutableStateOf(TextFieldValue("")) }
+    val globalContextState = remember(globalContext.value) { mutableStateOf(globalContext.value) }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -143,10 +145,38 @@ fun SettingsChatContent() {
             SavedApiKeyRow(savedApiKey.value) { viewModel.clearApiKey() }
         }
 
+        Text(
+            text = stringRes.SETTINGS_CHAT_GLOBAL_CONTEXT_TITLE,
+            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+        )
+        val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
+        val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+        OutlinedTextField(
+            value = globalContextState.value,
+            onValueChange = {
+                globalContextState.value = it
+                viewModel.onGlobalContextChanged(it)
+            },
+            placeholder = {
+                Text(
+                    text = stringRes.SETTINGS_CHAT_GLOBAL_CONTEXT_HINT,
+                    color = fieldContentColor.copy(alpha = 0.6f)
+                )
+            },
+            textStyle = TextStyle(color = fieldContentColor),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = fieldContainerColor,
+                unfocusedContainerColor = fieldContainerColor,
+            ),
+            minLines = 3,
+            maxLines = 6,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+        )
+
         PrimaryButton(
             text = stringRes.SETTINGS_CHAT_SAVE,
             isEnabled = apiKeyState.value.text.isNotEmpty() || hasChanges.value,
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier.padding(top = 8.dp)
         ) {
             if (apiKeyState.value.text.isNotEmpty()) {
                 viewModel.onApiKeyChanged(apiKeyState.value.text)

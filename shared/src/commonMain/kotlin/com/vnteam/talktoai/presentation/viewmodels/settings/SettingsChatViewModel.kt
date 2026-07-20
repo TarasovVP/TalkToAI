@@ -7,6 +7,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.GetModelsUseC
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ApiKeyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GlobalContextUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.TemperatureUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
@@ -22,6 +23,7 @@ class SettingsChatViewModel(
     private val apiKeyUseCase: ApiKeyUseCase,
     private val getModelsUseCase: GetModelsUseCase,
     private val temperatureUseCase: TemperatureUseCase,
+    private val globalContextUseCase: GlobalContextUseCase,
 ) : BaseViewModel() {
 
     private val _aiModel = MutableStateFlow(SettingsConstants.AI_MODEL_DEFAULT)
@@ -45,9 +47,13 @@ class SettingsChatViewModel(
     private val _savedApiKey = MutableStateFlow(String.EMPTY)
     val savedApiKey = _savedApiKey.asStateFlow()
 
+    private val _globalContext = MutableStateFlow(String.EMPTY)
+    val globalContext = _globalContext.asStateFlow()
+
     private var initialAiModel = SettingsConstants.AI_MODEL_DEFAULT
     private var initialApiKey = String.EMPTY
     private var initialTemperature = SettingsConstants.AI_TEMPERATURE_DEFAULT
+    private var initialGlobalContext = String.EMPTY
 
     init {
         loadSettings()
@@ -69,7 +75,8 @@ class SettingsChatViewModel(
     private fun updateHasChanges() {
         _hasChanges.value = _aiModel.value != initialAiModel ||
                 _apiKey.value != initialApiKey ||
-                _temperature.value != initialTemperature
+                _temperature.value != initialTemperature ||
+                _globalContext.value != initialGlobalContext
     }
 
     private fun loadSettings() {
@@ -106,6 +113,16 @@ class SettingsChatViewModel(
                 }
             }
         }
+        launchWithErrorHandling {
+            globalContextUseCase.get().collect { result ->
+                if (result is Result.Success) {
+                    val ctx = result.data.orEmpty()
+                    _globalContext.value = ctx
+                    initialGlobalContext = ctx
+                    updateHasChanges()
+                }
+            }
+        }
     }
 
     fun onModelSelected(model: String) {
@@ -123,14 +140,21 @@ class SettingsChatViewModel(
         updateHasChanges()
     }
 
+    fun onGlobalContextChanged(context: String) {
+        _globalContext.value = context
+        updateHasChanges()
+    }
+
     fun saveSettings() {
         launchWithErrorHandling {
             aiModelUseCase.set(_aiModel.value)
             apiKeyUseCase.set(_apiKey.value)
             temperatureUseCase.set(_temperature.value)
+            globalContextUseCase.set(_globalContext.value)
             initialAiModel = _aiModel.value
             initialApiKey = _apiKey.value
             initialTemperature = _temperature.value
+            initialGlobalContext = _globalContext.value
             _savedApiKey.value = _apiKey.value
             _hasChanges.value = false
             _settingsSaved.emit(Unit)
