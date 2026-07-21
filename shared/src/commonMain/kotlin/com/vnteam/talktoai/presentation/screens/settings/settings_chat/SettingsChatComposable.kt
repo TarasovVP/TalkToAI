@@ -132,22 +132,8 @@ fun SettingsChatContent() {
         )
 
         Text(
-            text = stringRes.SETTINGS_CHAT_API_KEY_TITLE,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        PasswordTextField(
-            inputValue = apiKeyState,
-            placeHolder = stringRes.SETTINGS_CHAT_API_KEY_HINT
-        )
-
-        if (savedApiKey.value.isNotEmpty()) {
-            SavedApiKeyRow(savedApiKey.value) { viewModel.clearApiKey() }
-        }
-
-        Text(
             text = stringRes.SETTINGS_CHAT_GLOBAL_CONTEXT_TITLE,
-            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 8.dp)
         )
         val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
         val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
@@ -170,8 +156,22 @@ fun SettingsChatContent() {
             ),
             minLines = 3,
             maxLines = 6,
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         )
+
+        Text(
+            text = stringRes.SETTINGS_CHAT_API_KEY_TITLE,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        PasswordTextField(
+            inputValue = apiKeyState,
+            placeHolder = stringRes.SETTINGS_CHAT_API_KEY_HINT
+        )
+
+        if (savedApiKey.value.isNotEmpty()) {
+            SavedApiKeyRow(savedApiKey.value) { viewModel.clearApiKey() }
+        }
 
         PrimaryButton(
             text = stringRes.SETTINGS_CHAT_SAVE,
