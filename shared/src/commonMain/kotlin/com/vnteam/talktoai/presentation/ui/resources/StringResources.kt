@@ -235,8 +235,8 @@ class StringResourcesEN : StringResources(
     SETTINGS_CHAT_TEMPERATURE_TITLE = "Temperature",
     SETTINGS_CHAT_SAVE = "Save",
     SETTINGS_CHAT_SAVED = "Settings saved",
-    SETTINGS_CHAT_GLOBAL_CONTEXT_TITLE = "Global system context",
-    SETTINGS_CHAT_GLOBAL_CONTEXT_HINT = "Applied to all chats by default (optional)",
+    SETTINGS_CHAT_GLOBAL_CONTEXT_TITLE = "Global system context (optional)",
+    SETTINGS_CHAT_GLOBAL_CONTEXT_HINT = "Applied to all chats by default",
     CHAT_SETTINGS_USE_GLOBAL = "Reset to global settings",
     CHAT_SETTINGS_GLOBAL_LABEL = "global",
 
@@ -404,8 +404,8 @@ class StringResourcesUK : StringResources(
     SETTINGS_CHAT_TEMPERATURE_TITLE = "Температура",
     SETTINGS_CHAT_SAVE = "Зберегти",
     SETTINGS_CHAT_SAVED = "Налаштування збережено",
-    SETTINGS_CHAT_GLOBAL_CONTEXT_TITLE = "Глобальний системний контекст",
-    SETTINGS_CHAT_GLOBAL_CONTEXT_HINT = "Застосовується до всіх чатів за замовчуванням (необов'язково)",
+    SETTINGS_CHAT_GLOBAL_CONTEXT_TITLE = "Глобальний системний контекст (необов'язково)",
+    SETTINGS_CHAT_GLOBAL_CONTEXT_HINT = "Застосовується до всіх чатів за замовчуванням",
     CHAT_SETTINGS_USE_GLOBAL = "Скинути до глобальних налаштувань",
     CHAT_SETTINGS_GLOBAL_LABEL = "глобально",
 
