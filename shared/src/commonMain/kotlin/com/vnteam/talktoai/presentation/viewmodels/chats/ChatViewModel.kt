@@ -85,7 +85,7 @@ class ChatViewModel(
             }
         }
         launchWithErrorHandling {
-            globalContextUseCase.get().firstOrNull()?.let { result ->
+            globalContextUseCase.get().collect { result ->
                 if (result is com.vnteam.talktoai.data.network.Result.Success) {
                     _globalContext.value = result.data
                 }
