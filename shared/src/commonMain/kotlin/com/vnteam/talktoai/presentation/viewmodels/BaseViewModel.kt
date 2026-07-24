@@ -6,6 +6,7 @@ import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.utils.NetworkState
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -87,6 +88,8 @@ open class BaseViewModel : ViewModel() {
     }) {
         try {
             block()
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             onError(e)
         }
