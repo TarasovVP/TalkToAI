@@ -27,6 +27,8 @@ sealed class NavigationScreen(val route: String) {
 
     data object SettingsListScreen : NavigationScreen(SETTINGS_LIST_SCREEN)
 
+    data object LoadersScreen : NavigationScreen(SETTINGS_LOADERS_SCREEN)
+
     companion object {
 
         const val ONBOARDING_SCREEN = "destination_onboarding_screen"
@@ -43,6 +45,7 @@ sealed class NavigationScreen(val route: String) {
         const val SETTINGS_SIGN_UP_SCREEN = "destination_settings_sign_up_screen"
         const val SETTINGS_LOGIN_SCREEN = "destination_settings_login_screen"
         const val SETTINGS_LIST_SCREEN = "destination_settings_list_screen"
+        const val SETTINGS_LOADERS_SCREEN = "destination_settings_loaders_screen"
         const val POP_BACK = "pop_back"
 
         val settingScreens = listOf(
@@ -51,7 +54,8 @@ sealed class NavigationScreen(val route: String) {
             SettingsAccountScreen,
             SettingsLanguageScreen,
             SettingsThemeScreen,
-            SettingsPrivacyPolicyScreen
+            SettingsPrivacyPolicyScreen,
+            LoadersScreen
         )
 
         fun isSettingsScreen(route: String?): Boolean {
@@ -66,6 +70,7 @@ sealed class NavigationScreen(val route: String) {
                 SettingsLanguageScreen.route -> return stringRes.SETTINGS_LANGUAGE
                 SettingsThemeScreen.route -> return stringRes.SETTINGS_THEME
                 SettingsPrivacyPolicyScreen.route -> return stringRes.SETTINGS_PRIVACY_POLICY
+                LoadersScreen.route -> return stringRes.SETTINGS_LOADERS
                 else -> stringRes.APP_NAME
             }
         }
