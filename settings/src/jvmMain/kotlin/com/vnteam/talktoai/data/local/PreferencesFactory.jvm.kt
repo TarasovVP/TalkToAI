@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.vnteam.talktoai.data.PREFERENCES_PB
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import okio.Path.Companion.toPath
 import java.io.File
@@ -31,7 +32,7 @@ actual class PreferencesFactory : Preferences {
         val preferencesKey = stringPreferencesKey(key)
         return dataStore.data.map { preferences ->
             preferences[preferencesKey]
-        }
+        }.distinctUntilChanged()
     }
 
     actual override suspend fun putBoolean(key: String, value: Boolean) {
@@ -45,6 +46,6 @@ actual class PreferencesFactory : Preferences {
         val preferencesKey = booleanPreferencesKey(key)
         return dataStore.data.map { preferences ->
             preferences[preferencesKey] ?: false
-        }
+        }.distinctUntilChanged()
     }
 }
