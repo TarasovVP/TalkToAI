@@ -25,6 +25,7 @@ import com.vnteam.talktoai.presentation.screens.settings.settings_list.SettingsL
 import com.vnteam.talktoai.presentation.screens.settings.settings_login.SettingsLoginScreen
 import com.vnteam.talktoai.presentation.screens.settings.settings_privacy_policy.SettingsPrivacyPolicyContent
 import com.vnteam.talktoai.presentation.screens.settings.settings_sign_up.SettingsSignUpScreen
+import com.vnteam.talktoai.presentation.screens.settings.settings_loaders.LoadersShowcaseContent
 import com.vnteam.talktoai.presentation.screens.settings.settings_theme.SettingsThemeContent
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 
@@ -101,6 +102,9 @@ fun AppNavigation(
         }
         composable(NavigationScreen.SETTINGS_LOGIN_SCREEN) {
             Screen { SettingsLoginScreen() }
+        }
+        composable(NavigationScreen.SETTINGS_LOADERS_SCREEN) {
+            Screen { LoadersShowcaseContent() }
         }
     }
 }

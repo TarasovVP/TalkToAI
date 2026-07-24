@@ -64,6 +64,7 @@ sealed class StringResources(
     var SETTINGS_LANGUAGE: String,
     var SETTINGS_THEME: String,
     var SETTINGS_PRIVACY_POLICY: String,
+    var SETTINGS_LOADERS: String,
     // Settings chat
     var SETTINGS_CHAT_MODEL_TITLE: String,
     var SETTINGS_CHAT_API_KEY_TITLE: String,
@@ -228,6 +229,7 @@ class StringResourcesEN : StringResources(
     SETTINGS_LANGUAGE = "Language",
     SETTINGS_THEME = "Selecting a theme",
     SETTINGS_PRIVACY_POLICY = "Privacy Policy",
+    SETTINGS_LOADERS = "Loader showcase",
     // Settings chat
     SETTINGS_CHAT_MODEL_TITLE = "AI Model",
     SETTINGS_CHAT_API_KEY_TITLE = "API Key",
@@ -397,6 +399,7 @@ class StringResourcesUK : StringResources(
     SETTINGS_LANGUAGE = "Мова",
     SETTINGS_THEME = "Вибір теми",
     SETTINGS_PRIVACY_POLICY = "Політика конфіденційності",
+    SETTINGS_LOADERS = "Демо лоадерів",
     // Settings chat
     SETTINGS_CHAT_MODEL_TITLE = "Модель AI",
     SETTINGS_CHAT_API_KEY_TITLE = "API ключ",

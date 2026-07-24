@@ -1,5 +1,6 @@
 [versions]
 compileSdk = "36"
+compose-loaders = "1.0.0"
 datastorePreferences = "1.2.0"
 firebaseCrashlyticsGradle = "3.0.6"
 freetts = "1.2.2"
@@ -85,6 +86,7 @@ jdbc-driver = { module = "app.cash.sqldelight:jdbc-driver", version.ref = "sqlde
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+compose-loaders = { module = "io.github.coding-meet:compose-loaders", version.ref = "compose-loaders" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coilCompose" }
 
 navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }

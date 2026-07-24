@@ -105,6 +105,14 @@ fun SettingsListComposable(
             textColor = textColor, iconColor = iconColor,
             dividerColor = dividerColor, arrowColor = arrowColor,
         ) { onNextScreen(NavigationScreen.SettingsPrivacyPolicyScreen.route) }
+        SettingsItem(
+            name = LocalStringResources.current.SETTINGS_LOADERS,
+            mainIcon = Res.drawable.ic_settings_theme,
+            isCurrent = currentRouteState == NavigationScreen.LoadersScreen.route,
+            backgroundColor = backgroundColor, selectedColor = selectedColor,
+            textColor = textColor, iconColor = iconColor,
+            dividerColor = dividerColor, arrowColor = arrowColor,
+        ) { onNextScreen(NavigationScreen.LoadersScreen.route) }
     }
 }
 
