@@ -3,6 +3,7 @@ package com.vnteam.talktoai.presentation.viewmodels.settings
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.data.network.Result
+import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.GetModelsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ApiKeyUseCase
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 
 class SettingsChatViewModel(
     private val onboardingUseCase: OnboardingUseCase,
@@ -24,6 +26,7 @@ class SettingsChatViewModel(
     private val getModelsUseCase: GetModelsUseCase,
     private val temperatureUseCase: TemperatureUseCase,
     private val globalContextUseCase: GlobalContextUseCase,
+    private val remoteStoreRepository: RemoteStoreRepository,
 ) : BaseViewModel() {
 
     private val _aiModel = MutableStateFlow(SettingsConstants.AI_MODEL_DEFAULT)
@@ -151,6 +154,14 @@ class SettingsChatViewModel(
             apiKeyUseCase.set(_apiKey.value)
             temperatureUseCase.set(_temperature.value)
             globalContextUseCase.set(_globalContext.value)
+            remoteStoreRepository.setRemoteSettings(
+                mapOf(
+                    "aiModel" to _aiModel.value,
+                    "apiKey" to _apiKey.value,
+                    "temperature" to _temperature.value.toString(),
+                    "globalContext" to _globalContext.value,
+                )
+            ).firstOrNull()
             initialAiModel = _aiModel.value
             initialApiKey = _apiKey.value
             initialTemperature = _temperature.value

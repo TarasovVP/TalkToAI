@@ -3,6 +3,7 @@ package com.vnteam.talktoai.data.repositoryimpl
 import com.vnteam.talktoai.Constants.CHATS
 import com.vnteam.talktoai.Constants.MESSAGES
 import com.vnteam.talktoai.Constants.PRIVACY_POLICY
+import com.vnteam.talktoai.Constants.SETTINGS
 import com.vnteam.talktoai.Constants.USERS
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.firestore.FirestoreCollectionSelector
@@ -45,6 +46,7 @@ class RemoteStoreRepositoryImpl(
 
     private fun userChatsPath(uid: String) = "$USERS/$uid/$CHATS"
     private fun userMessagesPath(uid: String) = "$USERS/$uid/$MESSAGES"
+    private fun userSettingsPath(uid: String) = "$USERS/$uid/$SETTINGS/global"
 
     // ---- Chat extensions ----
 
@@ -328,5 +330,34 @@ class RemoteStoreRepositoryImpl(
         val doc = firestoreService.getDocument("$PRIVACY_POLICY/$appLang", "")
         val text = doc?.fields?.get("text")?.stringValue.orEmpty()
         emit(text)
+    }
+
+    override fun getRemoteSettings(): Flow<Result<Map<String, String?>>> = flow {
+        val token = idToken()
+        val uid = uid()
+        if (token.isEmpty() || uid.isEmpty()) {
+            emit(Result.Failure("Not authenticated"))
+            return@flow
+        }
+        val doc = firestoreService.getDocument(userSettingsPath(uid), token)
+        val f = doc?.fields
+        emit(Result.Success(mapOf(
+            "aiModel" to f?.get("aiModel")?.stringValue,
+            "apiKey" to f?.get("apiKey")?.stringValue,
+            "temperature" to f?.get("temperature")?.stringValue,
+            "globalContext" to f?.get("globalContext")?.stringValue,
+        )))
+    }
+
+    override fun setRemoteSettings(settings: Map<String, String?>): Flow<Result<Unit>> = flow {
+        val token = idToken()
+        val uid = uid()
+        if (token.isEmpty() || uid.isEmpty()) {
+            emit(Result.Failure("Not authenticated"))
+            return@flow
+        }
+        val fields = settings.mapValues { (_, v) -> firestoreString(v) }
+        val ok = firestoreService.setDocument(userSettingsPath(uid), fields, token)
+        if (ok) emit(Result.Success(Unit)) else emit(Result.Failure("Firestore write failed"))
     }
 }
