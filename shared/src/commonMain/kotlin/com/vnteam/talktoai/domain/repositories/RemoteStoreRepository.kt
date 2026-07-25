@@ -41,4 +41,8 @@ interface RemoteStoreRepository {
     fun setReviewVoted(): Flow<Unit>
 
     fun getPrivacyPolicy(appLang: String): Flow<String>
+
+    fun getRemoteSettings(): Flow<Result<Map<String, String?>>>
+
+    fun setRemoteSettings(settings: Map<String, String?>): Flow<Result<Unit>>
 }
