@@ -37,6 +37,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMess
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessagesUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteSettingsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GetPrivacyPolicyUseCase
@@ -132,11 +133,13 @@ val appModule = module {
 
     single { UpdateRemoteUserUseCase(get()) }
 
+    single { SyncRemoteSettingsUseCase(get(), get()) }
+
     single { SyncRemoteUserUseCase(get(), get(), get(), get()) }
 
     // ViewModels
     viewModel {
-        AppViewModel(get(), get(), get(), get(), get(), get(), get())
+        AppViewModel(get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         OnBoardingViewModel(get())
@@ -188,7 +191,7 @@ val appModule = module {
         SettingsAccountViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
-        SettingsChatViewModel(get(), get(), get(), get(), get(), get(), get(), get())
+        SettingsChatViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         SettingsLanguageViewModel(get())

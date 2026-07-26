@@ -8,6 +8,7 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteSettingsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.firstOrNull
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 class AppViewModel(
@@ -31,6 +33,7 @@ class AppViewModel(
     private val onboardingUseCase: OnboardingUseCase,
     val animationUtils: AnimationUtils,
     private val uidUseCase: UidUseCase,
+    private val syncRemoteSettingsUseCase: SyncRemoteSettingsUseCase,
 ) : BaseViewModel() {
 
 
@@ -61,6 +64,17 @@ class AppViewModel(
         fetchAndSet(_userEmail, userEmailUseCase::get, String.EMPTY)
         fetchAndSet(_onBoardingSeen, onboardingUseCase::get, false)
         loadAnimationResource()
+        syncRemoteSettingsIfAuthenticated()
+    }
+
+    private fun syncRemoteSettingsIfAuthenticated() {
+        launchWithErrorHandling {
+            val tokenResult = idTokenUseCase.get().firstOrNull()
+            val token = (tokenResult as? Result.Success)?.data
+            if (!token.isNullOrEmpty()) {
+                syncRemoteSettingsUseCase.execute()
+            }
+        }
     }
 
     private fun <T, R> fetchAndSet(

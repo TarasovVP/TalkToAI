@@ -5,6 +5,7 @@ import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.GetModelsUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteSettingsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ApiKeyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
@@ -27,6 +28,7 @@ class SettingsChatViewModel(
     private val temperatureUseCase: TemperatureUseCase,
     private val globalContextUseCase: GlobalContextUseCase,
     private val remoteStoreRepository: RemoteStoreRepository,
+    private val syncRemoteSettingsUseCase: SyncRemoteSettingsUseCase,
 ) : BaseViewModel() {
 
     private val _aiModel = MutableStateFlow(SettingsConstants.AI_MODEL_DEFAULT)
@@ -83,6 +85,9 @@ class SettingsChatViewModel(
     }
 
     private fun loadSettings() {
+        launchWithErrorHandling {
+            syncRemoteSettingsUseCase.execute()
+        }
         launchWithErrorHandling {
             aiModelUseCase.get().collect { result ->
                 if (result is Result.Success) {
@@ -154,7 +159,7 @@ class SettingsChatViewModel(
             apiKeyUseCase.set(_apiKey.value)
             temperatureUseCase.set(_temperature.value)
             globalContextUseCase.set(_globalContext.value)
-            remoteStoreRepository.setRemoteSettings(
+            val remoteResult = remoteStoreRepository.setRemoteSettings(
                 mapOf(
                     "aiModel" to _aiModel.value,
                     "apiKey" to _apiKey.value,
@@ -162,6 +167,12 @@ class SettingsChatViewModel(
                     "globalContext" to _globalContext.value,
                 )
             ).firstOrNull()
+            // Local save always succeeds; remote failure is non-fatal for anonymous/offline users
+            if (remoteResult is Result.Failure &&
+                remoteResult.errorMessage != "Not authenticated"
+            ) {
+                remoteResult.errorMessage?.takeIf { it.isNotEmpty() }?.let { showMessage(it) }
+            }
             initialAiModel = _aiModel.value
             initialApiKey = _apiKey.value
             initialTemperature = _temperature.value
