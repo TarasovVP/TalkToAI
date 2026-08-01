@@ -3,8 +3,8 @@ package com.vnteam.talktoai.data.repositoryimpl
 import com.vnteam.talktoai.data.AI_API_KEY
 import com.vnteam.talktoai.data.AI_MODEL
 import com.vnteam.talktoai.data.AI_TEMPERATURE
-import com.vnteam.talktoai.data.GLOBAL_SYSTEM_CONTEXT
 import com.vnteam.talktoai.data.APP_LANGUAGE
+import com.vnteam.talktoai.data.GLOBAL_SYSTEM_CONTEXT
 import com.vnteam.talktoai.data.ID_TOKEN
 import com.vnteam.talktoai.data.IS_DARK_THEME
 import com.vnteam.talktoai.data.IS_ONBOARDING_SEEN
