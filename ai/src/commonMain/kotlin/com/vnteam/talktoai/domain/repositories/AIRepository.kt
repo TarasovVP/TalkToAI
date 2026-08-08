@@ -8,7 +8,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface AIRepository {
 
-    suspend fun sendRequest(apiRequest: ApiRequest, apiKey: String? = null): Flow<Result<ApiResponse>>
+    suspend fun sendRequest(
+        apiRequest: ApiRequest,
+        apiKey: String? = null,
+    ): Flow<Result<ApiResponse>>
 
     suspend fun getModels(apiKey: String? = null): Flow<Result<ModelsResponse>>
 }
