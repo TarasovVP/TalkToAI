@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.ic_arrow_forward
@@ -28,7 +29,6 @@ import com.vnteam.talktoai.ic_settings_chat
 import com.vnteam.talktoai.ic_settings_language
 import com.vnteam.talktoai.ic_settings_privacy
 import com.vnteam.talktoai.ic_settings_theme
-import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources

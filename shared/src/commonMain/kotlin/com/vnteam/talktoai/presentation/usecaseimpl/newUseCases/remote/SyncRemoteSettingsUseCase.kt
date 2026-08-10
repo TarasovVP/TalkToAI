@@ -14,8 +14,10 @@ class SyncRemoteSettingsUseCase(
         val result = remoteStoreRepository.getRemoteSettings().firstOrNull()
         if (result is Result.Success) {
             val settings = result.data ?: return
-            settings["aiModel"]?.takeIf { it.isNotEmpty() }?.let { preferencesRepository.setAiModel(it) }
-            settings["apiKey"]?.takeIf { it.isNotEmpty() }?.let { preferencesRepository.setApiKey(it) }
+            settings["aiModel"]?.takeIf { it.isNotEmpty() }
+                ?.let { preferencesRepository.setAiModel(it) }
+            settings["apiKey"]?.takeIf { it.isNotEmpty() }
+                ?.let { preferencesRepository.setApiKey(it) }
             settings["temperature"]?.takeIf { it.isNotEmpty() }?.let {
                 preferencesRepository.setTemperature(it)
             }

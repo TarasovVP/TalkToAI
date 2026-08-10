@@ -41,7 +41,10 @@ fun SecondaryButton(text: String, isDestructive: Boolean, modifier: Modifier, on
             .background(color = Color.Transparent, shape = RoundedCornerShape(16.dp)),
         onClick = { onClick.invoke() }
     ) {
-        Text(text = text, color = if (isDestructive) Color.Red else MaterialTheme.colorScheme.onBackground)
+        Text(
+            text = text,
+            color = if (isDestructive) Color.Red else MaterialTheme.colorScheme.onBackground
+        )
     }
 }
 

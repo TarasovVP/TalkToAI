@@ -341,12 +341,16 @@ class RemoteStoreRepositoryImpl(
         }
         val doc = firestoreService.getDocument(userSettingsPath(uid), token)
         val f = doc?.fields
-        emit(Result.Success(mapOf(
-            "aiModel" to f?.get("aiModel")?.stringValue,
-            "apiKey" to f?.get("apiKey")?.stringValue,
-            "temperature" to f?.get("temperature")?.stringValue,
-            "globalContext" to f?.get("globalContext")?.stringValue,
-        )))
+        emit(
+            Result.Success(
+                mapOf(
+                    "aiModel" to f?.get("aiModel")?.stringValue,
+                    "apiKey" to f?.get("apiKey")?.stringValue,
+                    "temperature" to f?.get("temperature")?.stringValue,
+                    "globalContext" to f?.get("globalContext")?.stringValue,
+                )
+            )
+        )
     }
 
     override fun setRemoteSettings(settings: Map<String, String?>): Flow<Result<Unit>> = flow {
