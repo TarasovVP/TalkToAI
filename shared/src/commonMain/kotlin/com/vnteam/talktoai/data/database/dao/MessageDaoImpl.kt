@@ -61,7 +61,8 @@ class MessageDaoImpl(private val appDatabase: SharedDatabase) : MessageDao {
 
     override suspend fun getMessagesFromChat(chatId: Long): Flow<List<MessageDB>> {
         return appDatabase { db ->
-            db.appDatabaseQueries.getMessagesFromChat(chatId).asFlow().mapToList(Dispatchers.Default)
+            db.appDatabaseQueries.getMessagesFromChat(chatId).asFlow()
+                .mapToList(Dispatchers.Default)
         }
     }
 

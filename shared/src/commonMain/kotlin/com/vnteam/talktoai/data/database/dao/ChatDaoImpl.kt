@@ -7,7 +7,6 @@ import com.vnteam.talktoai.ChatDB
 import com.vnteam.talktoai.data.database.SharedDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class ChatDaoImpl(private val appDatabase: SharedDatabase) : ChatDao {
     override suspend fun clearChats() {
