@@ -11,12 +11,15 @@ import kotlinx.coroutines.flow.map
 import okio.Path.Companion.toPath
 import java.io.File
 
+private const val JVM_USER_HOME_PROPERTY = "user.home"
+private const val JVM_APP_DIR_NAME = ".talktoai"
+
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class PreferencesFactory : Preferences {
 
     private val dataStore = PreferenceDataStoreFactory.createWithPath(
         produceFile = {
-            val appDir = File(System.getProperty("user.home"), ".talktoai").also { it.mkdirs() }
+            val appDir = File(System.getProperty(JVM_USER_HOME_PROPERTY), JVM_APP_DIR_NAME).also { it.mkdirs() }
             File(appDir, PREFERENCES_PB).absolutePath.toPath()
         }
     )

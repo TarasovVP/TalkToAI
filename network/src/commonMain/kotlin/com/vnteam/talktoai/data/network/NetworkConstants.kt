@@ -5,4 +5,8 @@ object NetworkConstants {
     const val AUTHORIZATION = "Authorization"
     const val OPENAI_ORGANIZATION = "OpenAI-Organization"
     const val OPENAI_PROJECT = "OpenAI-Project"
+
+    // JSON error response field names
+    const val ERROR_KEY = "error"
+    const val MESSAGE_KEY = "message"
 }

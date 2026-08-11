@@ -15,9 +15,11 @@ import platform.Foundation.NSURLRequest
 import platform.Foundation.NSURLResponse
 import platform.Foundation.sendSynchronousRequest
 
+private const val CONNECTIVITY_CHECK_URL = "https://www.google.com"
+
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 fun isNetworkAvailable(): Boolean {
-    val url = NSURL.URLWithString("https://www.google.com")
+    val url = NSURL.URLWithString(CONNECTIVITY_CHECK_URL)
     val request = url?.let { NSURLRequest.requestWithURL(it) }
 
     val responsePtr = nativeHeap.alloc<ObjCObjectVar<NSURLResponse?>>().ptr
