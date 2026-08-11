@@ -18,7 +18,7 @@ fun List<MessageUI>?.clearCheckToAction() {
 fun List<MessageUI>?.textToAction(): String {
     return this?.filter { it.isCheckedToDelete.value }
         ?.joinToString(separator = "\n") {
-            val author = if (it.author == Constants.MESSAGE_ROLE_ME) "Me" else "AI"
+            val author = if (it.author == Constants.MESSAGE_ROLE_ME) Constants.MESSAGE_AUTHOR_LABEL_ME else Constants.MESSAGE_AUTHOR_LABEL_AI
             val text = it.message.ifEmpty { it.errorMessage }
             "$author: $text"
         }.orEmpty()

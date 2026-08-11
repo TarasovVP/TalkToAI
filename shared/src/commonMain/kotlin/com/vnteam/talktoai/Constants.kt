@@ -47,6 +47,10 @@ object Constants {
     const val MESSAGE_ACTION_TRANSFER = "Transfer"
     const val MESSAGE_ACTION_SHARE = "Share"
 
+    //Message author labels
+    const val MESSAGE_AUTHOR_LABEL_ME = "Me"
+    const val MESSAGE_AUTHOR_LABEL_AI = "AI"
+
     //Message roles
     const val MESSAGE_ROLE_ME = "me"
     const val MESSAGE_ROLE_USER = "user"

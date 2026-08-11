@@ -17,6 +17,7 @@ import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.avatar_ai
 import com.vnteam.talktoai.presentation.screens.chat_list.ChatListScreen
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
+import com.vnteam.talktoai.presentation.ui.NavigationScreen.Companion.CHAT_DESTINATION
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Neutral50
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
@@ -36,10 +37,7 @@ fun DrawerContent(
             onScreenStateUpdate(
                 screenState.copy(
                     currentChat = chat,
-                    currentScreenRoute = NavigationScreen.ChatScreen.route.replace(
-                        "/{chatId}",
-                        "/${chat?.id}"
-                    )
+                    currentScreenRoute = "$CHAT_DESTINATION/${chat?.id}"
                 )
             )
         },

@@ -5,8 +5,30 @@ import com.vnteam.talktoai.Constants.MESSAGES
 import com.vnteam.talktoai.Constants.PRIVACY_POLICY
 import com.vnteam.talktoai.Constants.SETTINGS
 import com.vnteam.talktoai.Constants.USERS
+import com.vnteam.talktoai.data.ERROR_FIRESTORE_DELETE_CHAT_FAILED
+import com.vnteam.talktoai.data.ERROR_FIRESTORE_WRITE_FAILED
+import com.vnteam.talktoai.data.ERROR_NOT_AUTHENTICATED
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.firestore.FirestoreCollectionSelector
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_AI_MODEL
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_API_KEY
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_AUTHOR
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_CHAT_ID
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_CONTEXT
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_ERROR_MESSAGE
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_GLOBAL_CONTEXT
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_ID
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_LIST_ORDER
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_MESSAGE
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_NAME
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_STATUS
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_TEMPERATURE
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_TEXT
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_TRUNCATED
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_UPDATED
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_UPDATED_AT
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_VOTED
 import com.vnteam.talktoai.data.network.firestore.FirestoreDocument
 import com.vnteam.talktoai.data.network.firestore.FirestoreFieldFilter
 import com.vnteam.talktoai.data.network.firestore.FirestoreFieldReference
@@ -46,59 +68,59 @@ class RemoteStoreRepositoryImpl(
 
     private fun userChatsPath(uid: String) = "$USERS/$uid/$CHATS"
     private fun userMessagesPath(uid: String) = "$USERS/$uid/$MESSAGES"
-    private fun userSettingsPath(uid: String) = "$USERS/$uid/$SETTINGS/global"
+    private fun userSettingsPath(uid: String) = "$USERS/$uid/$SETTINGS/${FirestoreConstants.PATH_GLOBAL}"
 
     // ---- Chat extensions ----
 
     private fun Chat.toFields(): Map<String, FirestoreValue> = mapOf(
-        "id" to firestoreInt(id),
-        "name" to firestoreString(name),
-        "updated" to firestoreInt(updated),
-        "listOrder" to firestoreInt(listOrder),
-        "aiModel" to firestoreString(aiModel),
-        "temperature" to firestoreDouble(temperature?.toDouble()),
-        "context" to firestoreString(context),
+        FIELD_ID to firestoreInt(id),
+        FIELD_NAME to firestoreString(name),
+        FIELD_UPDATED to firestoreInt(updated),
+        FIELD_LIST_ORDER to firestoreInt(listOrder),
+        FIELD_AI_MODEL to firestoreString(aiModel),
+        FIELD_TEMPERATURE to firestoreDouble(temperature?.toDouble()),
+        FIELD_CONTEXT to firestoreString(context),
     )
 
     private fun FirestoreDocument.toChat(): Chat? {
         val f = fields ?: return null
         return Chat(
-            id = f["id"]?.integerValue?.toLongOrNull(),
-            name = f["name"]?.stringValue,
-            updated = f["updated"]?.integerValue?.toLongOrNull(),
-            listOrder = f["listOrder"]?.integerValue?.toLongOrNull(),
-            aiModel = f["aiModel"]?.stringValue,
-            temperature = f["temperature"]?.doubleValue?.toFloat(),
-            context = f["context"]?.stringValue,
+            id = f[FIELD_ID]?.integerValue?.toLongOrNull(),
+            name = f[FIELD_NAME]?.stringValue,
+            updated = f[FIELD_UPDATED]?.integerValue?.toLongOrNull(),
+            listOrder = f[FIELD_LIST_ORDER]?.integerValue?.toLongOrNull(),
+            aiModel = f[FIELD_AI_MODEL]?.stringValue,
+            temperature = f[FIELD_TEMPERATURE]?.doubleValue?.toFloat(),
+            context = f[FIELD_CONTEXT]?.stringValue,
         )
     }
 
     // ---- Message extensions ----
 
     private fun Message.toFields(): Map<String, FirestoreValue> = mapOf(
-        "id" to firestoreInt(id),
-        "chatId" to firestoreInt(chatId),
-        "author" to firestoreString(author),
-        "message" to firestoreString(message),
-        "updatedAt" to firestoreInt(updatedAt),
-        "status" to firestoreString(status?.name),
-        "errorMessage" to firestoreString(errorMessage),
-        "truncated" to firestoreBool(truncated),
+        FIELD_ID to firestoreInt(id),
+        FIELD_CHAT_ID to firestoreInt(chatId),
+        FIELD_AUTHOR to firestoreString(author),
+        FIELD_MESSAGE to firestoreString(message),
+        FIELD_UPDATED_AT to firestoreInt(updatedAt),
+        FIELD_STATUS to firestoreString(status?.name),
+        FIELD_ERROR_MESSAGE to firestoreString(errorMessage),
+        FIELD_TRUNCATED to firestoreBool(truncated),
     )
 
     private fun FirestoreDocument.toMessage(): Message? {
         val f = fields ?: return null
         return Message(
-            id = f["id"]?.integerValue?.toLongOrNull(),
-            chatId = f["chatId"]?.integerValue?.toLongOrNull(),
-            author = f["author"]?.stringValue,
-            message = f["message"]?.stringValue,
-            updatedAt = f["updatedAt"]?.integerValue?.toLongOrNull(),
-            status = f["status"]?.stringValue?.let {
+            id = f[FIELD_ID]?.integerValue?.toLongOrNull(),
+            chatId = f[FIELD_CHAT_ID]?.integerValue?.toLongOrNull(),
+            author = f[FIELD_AUTHOR]?.stringValue,
+            message = f[FIELD_MESSAGE]?.stringValue,
+            updatedAt = f[FIELD_UPDATED_AT]?.integerValue?.toLongOrNull(),
+            status = f[FIELD_STATUS]?.stringValue?.let {
                 runCatching { MessageStatus.valueOf(it) }.getOrNull()
             },
-            errorMessage = f["errorMessage"]?.stringValue.orEmpty(),
-            truncated = f["truncated"]?.booleanValue ?: false,
+            errorMessage = f[FIELD_ERROR_MESSAGE]?.stringValue.orEmpty(),
+            truncated = f[FIELD_TRUNCATED]?.booleanValue ?: false,
         )
     }
 
@@ -142,7 +164,7 @@ class RemoteStoreRepositoryImpl(
         val token = idToken()
         val uid = uid()
         if (token.isEmpty() || uid.isEmpty()) {
-            emit(Result.Failure("Not authenticated"))
+            emit(Result.Failure(ERROR_NOT_AUTHENTICATED))
             return@flow
         }
 
@@ -165,7 +187,7 @@ class RemoteStoreRepositoryImpl(
         val token = idToken()
         val uid = uid()
         if (token.isEmpty() || uid.isEmpty()) {
-            emit(Result.Failure("Not authenticated"))
+            emit(Result.Failure(ERROR_NOT_AUTHENTICATED))
             return@flow
         }
         chats.forEach { chat ->
@@ -178,7 +200,7 @@ class RemoteStoreRepositoryImpl(
         val token = idToken()
         val uid = uid()
         if (token.isEmpty() || uid.isEmpty()) {
-            emit(Result.Failure("Not authenticated"))
+            emit(Result.Failure(ERROR_NOT_AUTHENTICATED))
             return@flow
         }
         val chats = firestoreService.listDocuments(userChatsPath(uid), token)
@@ -205,36 +227,36 @@ class RemoteStoreRepositoryImpl(
         val token = idToken()
         val uid = uid()
         if (token.isEmpty() || uid.isEmpty()) {
-            emit(Result.Failure("Not authenticated"))
+            emit(Result.Failure(ERROR_NOT_AUTHENTICATED))
             return@flow
         }
         val ok =
             firestoreService.setDocument("${userChatsPath(uid)}/${chat.id}", chat.toFields(), token)
-        if (ok) emit(Result.Success(Unit)) else emit(Result.Failure("Firestore write failed"))
+        if (ok) emit(Result.Success(Unit)) else emit(Result.Failure(ERROR_FIRESTORE_WRITE_FAILED))
     }
 
     override fun updateChat(chat: Chat): Flow<Result<Unit>> = flow {
         val token = idToken()
         val uid = uid()
         if (token.isEmpty() || uid.isEmpty()) {
-            emit(Result.Failure("Not authenticated"))
+            emit(Result.Failure(ERROR_NOT_AUTHENTICATED))
             return@flow
         }
         val ok =
             firestoreService.setDocument("${userChatsPath(uid)}/${chat.id}", chat.toFields(), token)
-        if (ok) emit(Result.Success(Unit)) else emit(Result.Failure("Firestore write failed"))
+        if (ok) emit(Result.Success(Unit)) else emit(Result.Failure(ERROR_FIRESTORE_WRITE_FAILED))
     }
 
     override fun deleteChat(chat: Chat): Flow<Result<Unit>> = flow {
         val token = idToken()
         val uid = uid()
         if (token.isEmpty() || uid.isEmpty()) {
-            emit(Result.Failure("Not authenticated"))
+            emit(Result.Failure(ERROR_NOT_AUTHENTICATED))
             return@flow
         }
         val deleted = firestoreService.deleteDocument("${userChatsPath(uid)}/${chat.id}", token)
         if (!deleted) {
-            emit(Result.Failure("Firestore delete chat failed"))
+            emit(Result.Failure(ERROR_FIRESTORE_DELETE_CHAT_FAILED))
             return@flow
         }
         val query = FirestoreStructuredQuery(
@@ -242,8 +264,8 @@ class RemoteStoreRepositoryImpl(
                 from = listOf(FirestoreCollectionSelector(MESSAGES)),
                 where = FirestoreFilter(
                     fieldFilter = FirestoreFieldFilter(
-                        field = FirestoreFieldReference("chatId"),
-                        op = "EQUAL",
+                        field = FirestoreFieldReference(FIELD_CHAT_ID),
+                        op = FirestoreConstants.FILTER_OP_EQUAL,
                         value = FirestoreValue(integerValue = chat.id.toString()),
                     )
                 )
@@ -262,7 +284,7 @@ class RemoteStoreRepositoryImpl(
         val token = idToken()
         val uid = uid()
         if (token.isEmpty() || uid.isEmpty()) {
-            emit(Result.Failure("Not authenticated"))
+            emit(Result.Failure(ERROR_NOT_AUTHENTICATED))
             return@flow
         }
         val ok = firestoreService.setDocument(
@@ -270,14 +292,14 @@ class RemoteStoreRepositoryImpl(
             message.toFields(),
             token
         )
-        if (ok) emit(Result.Success(Unit)) else emit(Result.Failure("Firestore write failed"))
+        if (ok) emit(Result.Success(Unit)) else emit(Result.Failure(ERROR_FIRESTORE_WRITE_FAILED))
     }
 
     override fun deleteMessages(messageIds: List<String>): Flow<Result<Unit>> = flow {
         val token = idToken()
         val uid = uid()
         if (token.isEmpty() || uid.isEmpty()) {
-            emit(Result.Failure("Not authenticated"))
+            emit(Result.Failure(ERROR_NOT_AUTHENTICATED))
             return@flow
         }
         messageIds.forEach { id ->
@@ -290,7 +312,7 @@ class RemoteStoreRepositoryImpl(
         val token = idToken()
         val uid = uid()
         if (token.isEmpty() || uid.isEmpty()) {
-            emit(Result.Failure("Not authenticated"))
+            emit(Result.Failure(ERROR_NOT_AUTHENTICATED))
             return@flow
         }
         val query = FirestoreStructuredQuery(
@@ -298,8 +320,8 @@ class RemoteStoreRepositoryImpl(
                 from = listOf(FirestoreCollectionSelector(MESSAGES)),
                 where = FirestoreFilter(
                     fieldFilter = FirestoreFieldFilter(
-                        field = FirestoreFieldReference("chatId"),
-                        op = "EQUAL",
+                        field = FirestoreFieldReference(FIELD_CHAT_ID),
+                        op = FirestoreConstants.FILTER_OP_EQUAL,
                         value = FirestoreValue(integerValue = chatId.toString()),
                     )
                 )
@@ -319,8 +341,8 @@ class RemoteStoreRepositoryImpl(
         val uid = uid()
         if (token.isEmpty() || uid.isEmpty()) return@flow
         firestoreService.setDocument(
-            "$USERS/$uid/meta/review",
-            mapOf("voted" to firestoreBool(true)),
+            "$USERS/$uid/${FirestoreConstants.PATH_META_REVIEW}",
+            mapOf(FIELD_VOTED to firestoreBool(true)),
             token
         )
         emit(Unit)
@@ -328,7 +350,7 @@ class RemoteStoreRepositoryImpl(
 
     override fun getPrivacyPolicy(appLang: String): Flow<String> = flow {
         val doc = firestoreService.getDocument("$PRIVACY_POLICY/$appLang", "")
-        val text = doc?.fields?.get("text")?.stringValue.orEmpty()
+        val text = doc?.fields?.get(FIELD_TEXT)?.stringValue.orEmpty()
         emit(text)
     }
 
@@ -336,7 +358,7 @@ class RemoteStoreRepositoryImpl(
         val token = idToken()
         val uid = uid()
         if (token.isEmpty() || uid.isEmpty()) {
-            emit(Result.Failure("Not authenticated"))
+            emit(Result.Failure(ERROR_NOT_AUTHENTICATED))
             return@flow
         }
         val doc = firestoreService.getDocument(userSettingsPath(uid), token)
@@ -344,10 +366,10 @@ class RemoteStoreRepositoryImpl(
         emit(
             Result.Success(
                 mapOf(
-                    "aiModel" to f?.get("aiModel")?.stringValue,
-                    "apiKey" to f?.get("apiKey")?.stringValue,
-                    "temperature" to f?.get("temperature")?.stringValue,
-                    "globalContext" to f?.get("globalContext")?.stringValue,
+                    FIELD_AI_MODEL to f?.get(FIELD_AI_MODEL)?.stringValue,
+                    FIELD_API_KEY to f?.get(FIELD_API_KEY)?.stringValue,
+                    FIELD_TEMPERATURE to f?.get(FIELD_TEMPERATURE)?.stringValue,
+                    FIELD_GLOBAL_CONTEXT to f?.get(FIELD_GLOBAL_CONTEXT)?.stringValue,
                 )
             )
         )
@@ -357,11 +379,11 @@ class RemoteStoreRepositoryImpl(
         val token = idToken()
         val uid = uid()
         if (token.isEmpty() || uid.isEmpty()) {
-            emit(Result.Failure("Not authenticated"))
+            emit(Result.Failure(ERROR_NOT_AUTHENTICATED))
             return@flow
         }
         val fields = settings.mapValues { (_, v) -> firestoreString(v) }
         val ok = firestoreService.setDocument(userSettingsPath(uid), fields, token)
-        if (ok) emit(Result.Success(Unit)) else emit(Result.Failure("Firestore write failed"))
+        if (ok) emit(Result.Success(Unit)) else emit(Result.Failure(ERROR_FIRESTORE_WRITE_FAILED))
     }
 }
