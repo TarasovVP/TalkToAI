@@ -61,13 +61,13 @@ data class FirestoreFieldReference(
 )
 
 fun firestoreString(value: String?) =
-    value?.let { FirestoreValue(stringValue = it) } ?: FirestoreValue(nullValue = "NULL_VALUE")
+    value?.let { FirestoreValue(stringValue = it) } ?: FirestoreValue(nullValue = FirestoreConstants.NULL_VALUE)
 
 fun firestoreInt(value: Long?) =
     value?.let { FirestoreValue(integerValue = it.toString()) }
-        ?: FirestoreValue(nullValue = "NULL_VALUE")
+        ?: FirestoreValue(nullValue = FirestoreConstants.NULL_VALUE)
 
 fun firestoreDouble(value: Double?) =
-    value?.let { FirestoreValue(doubleValue = it) } ?: FirestoreValue(nullValue = "NULL_VALUE")
+    value?.let { FirestoreValue(doubleValue = it) } ?: FirestoreValue(nullValue = FirestoreConstants.NULL_VALUE)
 
 fun firestoreBool(value: Boolean) = FirestoreValue(booleanValue = value)
