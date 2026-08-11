@@ -19,7 +19,7 @@ suspend inline fun <reified T> HttpResponse?.handleResponse(): Result<T> {
             println("Error $text")
             val message = try {
                 val root = errorJson.parseToJsonElement(text).jsonObject
-                root["error"]?.jsonObject?.get("message")?.jsonPrimitive?.content ?: text
+                root[NetworkConstants.ERROR_KEY]?.jsonObject?.get(NetworkConstants.MESSAGE_KEY)?.jsonPrimitive?.content ?: text
             } catch (e: Exception) {
                 text
             }
