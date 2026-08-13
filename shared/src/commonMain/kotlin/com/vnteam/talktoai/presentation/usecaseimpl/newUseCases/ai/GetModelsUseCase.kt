@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 class GetModelsUseCase(private val aiRepository: AIRepository) {
 
-    suspend fun execute(apiKey: String? = null): Flow<Result<ModelsResponse>> {
+    fun execute(apiKey: String? = null): Flow<Result<ModelsResponse>> {
         return aiRepository.getModels(apiKey)
     }
 }

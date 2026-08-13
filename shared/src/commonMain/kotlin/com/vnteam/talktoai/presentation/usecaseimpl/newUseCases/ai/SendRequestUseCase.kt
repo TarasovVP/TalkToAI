@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 class SendRequestUseCase(private val aiRepository: AIRepository) {
 
-    suspend fun execute(apiRequest: ApiRequest, apiKey: String? = null): Flow<Result<ApiResponse>> {
+    fun execute(apiRequest: ApiRequest, apiKey: String? = null): Flow<Result<ApiResponse>> {
         return aiRepository.sendRequest(apiRequest, apiKey)
     }
 }

@@ -11,31 +11,20 @@ import io.ktor.client.statement.HttpResponse
 class AIService(
     private val aiHttpClient: AIHttpClient,
 ) {
-    suspend fun sendRequest(apiRequest: ApiRequest, apiKey: String? = null): HttpResponse? {
-        val httpResponse = try {
-            aiHttpClient.getHttpClient.post(CHAT_COMPLETION) {
-                if (!apiKey.isNullOrEmpty()) {
-                    header(NetworkConstants.AUTHORIZATION, "Bearer $apiKey")
-                }
-                setBody(apiRequest)
+    suspend fun sendRequest(apiRequest: ApiRequest, apiKey: String? = null): HttpResponse {
+        return aiHttpClient.httpClient.post(CHAT_COMPLETION) {
+            if (!apiKey.isNullOrEmpty()) {
+                headers[NetworkConstants.AUTHORIZATION] = "Bearer $apiKey"
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+            setBody(apiRequest)
         }
-        return httpResponse
     }
 
-    suspend fun getModels(apiKey: String? = null): HttpResponse? {
-        return try {
-            aiHttpClient.getHttpClient.get(MODELS) {
-                if (!apiKey.isNullOrEmpty()) {
-                    header(NetworkConstants.AUTHORIZATION, "Bearer $apiKey")
-                }
+    suspend fun getModels(apiKey: String? = null): HttpResponse {
+        return aiHttpClient.httpClient.get(MODELS) {
+            if (!apiKey.isNullOrEmpty()) {
+                headers[NetworkConstants.AUTHORIZATION] = "Bearer $apiKey"
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
         }
     }
 }
