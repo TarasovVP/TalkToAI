@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class ApiResponse(
     val id: String?,
     @SerialName("object") val chatObject: String?,
-    val created: String?,
+    val created: Long?,
     val model: String?,
     val usage: Usage?,
     val choices: List<Choice>?,

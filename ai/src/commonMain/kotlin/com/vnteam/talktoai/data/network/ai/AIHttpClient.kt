@@ -14,7 +14,7 @@ import kotlinx.serialization.json.Json
 import secrets.Secrets
 
 class AIHttpClient(json: Json) {
-    val getHttpClient = HttpClient {
+    internal val httpClient = HttpClient {
         install(ContentNegotiation) {
             json(json)
         }
@@ -27,7 +27,7 @@ class AIHttpClient(json: Json) {
         }
         install(Logging) {
             logger = platformLogger()
-            level = LogLevel.ALL
+            level = LogLevel.NONE
         }
     }
 }
