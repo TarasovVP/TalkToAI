@@ -87,13 +87,14 @@ class LoginViewModel(
     }
 
     private suspend fun exchangeForFirebaseToken(refreshToken: String?): String? {
-        if (refreshToken.isNullOrEmpty()) {
-            return null
+        if (refreshToken.isNullOrEmpty()) return null
+        return when (val result = exchangeTokenUseCase.execute(refreshToken)) {
+            is com.vnteam.talktoai.data.network.Result.Success -> {
+                result.data?.refreshToken?.let { refreshTokenUseCase.set(it) }
+                result.data?.idToken
+            }
+            else -> null
         }
-        val result = exchangeTokenUseCase.execute(refreshToken)
-        val response = (result as? com.vnteam.talktoai.data.network.Result.Success)?.data
-        response?.refreshToken?.let { refreshTokenUseCase.set(it) }
-        return response?.idToken
     }
 
     private fun updateUIState(newUIState: LoginUIState) {

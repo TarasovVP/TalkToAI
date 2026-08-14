@@ -14,11 +14,7 @@ class FetchProvidersForEmailUseCase(
         return when (val result = repository.fetchProvidersForEmail(
             ProvidersForEmailBody(identifier = params, continueUri = AuthConstants.Firebase.CONTINUE_URI_LOCALHOST)
         )) {
-            is Result.Success -> {
-                val providers = result.data?.allProviders
-                if (providers == null) Result.Failure("No providers returned")
-                else Result.Success(providers)
-            }
+            is Result.Success -> Result.Success(result.data?.allProviders.orEmpty())
             is Result.Failure -> result
             is Result.Loading -> result
         }

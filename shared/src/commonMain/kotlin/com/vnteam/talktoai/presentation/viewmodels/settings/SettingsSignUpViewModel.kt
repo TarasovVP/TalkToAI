@@ -63,10 +63,13 @@ class SettingsSignUpViewModel(
                 createUserWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
                 is Result.Success -> {
                     val firebaseIdToken = result.data?.refreshToken?.let { rt ->
-                        val ex = exchangeTokenUseCase.execute(rt)
-                        val exchanged = (ex as? Result.Success)?.data
-                        exchanged?.refreshToken?.let { refreshTokenUseCase.set(it) }
-                        exchanged?.idToken
+                        when (val ex = exchangeTokenUseCase.execute(rt)) {
+                            is Result.Success -> {
+                                ex.data?.refreshToken?.let { refreshTokenUseCase.set(it) }
+                                ex.data?.idToken
+                            }
+                            else -> null
+                        }
                     }
                     idTokenUseCase.set(firebaseIdToken ?: result.data?.idToken.orEmpty())
                     userEmailUseCase.set(result.data?.email.orEmpty())

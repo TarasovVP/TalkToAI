@@ -8,10 +8,12 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ExchangeTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteSettingsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.RefreshTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ThemeUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
@@ -34,6 +36,8 @@ class AppViewModel(
     val animationUtils: AnimationUtils,
     private val uidUseCase: UidUseCase,
     private val syncRemoteSettingsUseCase: SyncRemoteSettingsUseCase,
+    private val refreshTokenUseCase: RefreshTokenUseCase,
+    private val exchangeTokenUseCase: ExchangeTokenUseCase,
 ) : BaseViewModel() {
 
 
@@ -131,9 +135,23 @@ class AppViewModel(
     private fun observeUnauthorizedEvents() {
         launchWithErrorHandling {
             AuthEventBus.unauthorizedEvent.collect {
+                val storedRefreshToken =
+                    (refreshTokenUseCase.get().firstOrNull() as? Result.Success)?.data
+                if (!storedRefreshToken.isNullOrEmpty()) {
+                    val exchangeResult = exchangeTokenUseCase.execute(storedRefreshToken)
+                    val exchanged = (exchangeResult as? Result.Success)?.data
+                    val newIdToken = exchanged?.idToken
+                    val newRefreshToken = exchanged?.refreshToken
+                    if (!newIdToken.isNullOrEmpty()) {
+                        idTokenUseCase.set(newIdToken)
+                        newRefreshToken?.let { refreshTokenUseCase.set(it) }
+                        return@collect
+                    }
+                }
                 idTokenUseCase.set(String.EMPTY)
                 userEmailUseCase.set(String.EMPTY)
                 uidUseCase.set(String.EMPTY)
+                refreshTokenUseCase.set(String.EMPTY)
                 unauthorizedRoute.value = NavigationScreen.LOGIN_SCREEN
             }
         }
