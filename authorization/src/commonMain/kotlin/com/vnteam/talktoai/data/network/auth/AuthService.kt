@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.data.network.auth
 
+import com.vnteam.talktoai.data.network.NetworkConstants
 import com.vnteam.talktoai.data.network.auth.AuthConstants.Endpoints.ACCOUNT_CREATE_AUTH_URI
 import com.vnteam.talktoai.data.network.auth.AuthConstants.Endpoints.ACCOUNT_DELETE
 import com.vnteam.talktoai.data.network.auth.AuthConstants.Endpoints.ACCOUNT_SEND_OOB_CODE
@@ -20,6 +21,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.parameters
+import secrets.Secrets
 
 class AuthService(
     private val authHttpClient: AuthHttpClient,
@@ -117,6 +119,11 @@ class AuthService(
     suspend fun exchangeRefreshToken(refreshToken: String): HttpResponse? {
         return try {
             authHttpClient.getHttpClient.post(SECURE_TOKEN_URL) {
+                url {
+                    // SECURE_TOKEN_URL is fully absolute; append key explicitly since
+                    // DefaultRequest query params may not merge into absolute-URL requests.
+                    parameters.append(NetworkConstants.KEY, Secrets.AUTH_API_KEY)
+                }
                 setBody(FormDataContent(parameters {
                     append(GRANT_TYPE, GRANT_TYPE_REFRESH_TOKEN)
                     append(REFRESH_TOKEN_KEY, refreshToken)

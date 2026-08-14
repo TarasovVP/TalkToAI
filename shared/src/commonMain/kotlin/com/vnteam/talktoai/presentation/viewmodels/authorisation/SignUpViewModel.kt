@@ -73,10 +73,13 @@ class SignUpViewModel(
                     hideProgress()
                     onboardingUseCase.set(true)
                     val firebaseIdToken = result.data?.refreshToken?.let { rt ->
-                        val ex = exchangeTokenUseCase.execute(rt)
-                        val exchanged = (ex as? com.vnteam.talktoai.data.network.Result.Success)?.data
-                        exchanged?.refreshToken?.let { refreshTokenUseCase.set(it) }
-                        exchanged?.idToken
+                        when (val ex = exchangeTokenUseCase.execute(rt)) {
+                            is com.vnteam.talktoai.data.network.Result.Success -> {
+                                ex.data?.refreshToken?.let { refreshTokenUseCase.set(it) }
+                                ex.data?.idToken
+                            }
+                            else -> null
+                        }
                     }
                     pendingIdToken = firebaseIdToken ?: result.data?.idToken.orEmpty()
                     pendingEmail = result.data?.email.orEmpty()
