@@ -10,6 +10,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Si
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.RefreshTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
@@ -25,6 +26,7 @@ class LoginViewModel(
     private val uidUseCase: UidUseCase,
     private val exchangeTokenUseCase: ExchangeTokenUseCase,
     private val syncRemoteUserUseCase: SyncRemoteUserUseCase,
+    private val refreshTokenUseCase: RefreshTokenUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUIState())
@@ -89,8 +91,9 @@ class LoginViewModel(
             return null
         }
         val result = exchangeTokenUseCase.execute(refreshToken)
-        val idToken = (result as? com.vnteam.talktoai.data.network.Result.Success)?.data?.idToken
-        return idToken
+        val response = (result as? com.vnteam.talktoai.data.network.Result.Success)?.data
+        response?.refreshToken?.let { refreshTokenUseCase.set(it) }
+        return response?.idToken
     }
 
     private fun updateUIState(newUIState: LoginUIState) {

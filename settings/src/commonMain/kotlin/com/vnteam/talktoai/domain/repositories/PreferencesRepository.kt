@@ -47,4 +47,8 @@ interface PreferencesRepository {
     fun getUid(): Flow<String?>
 
     suspend fun setUid(uid: String)
+
+    fun getRefreshToken(): Flow<String?>
+
+    suspend fun setRefreshToken(refreshToken: String)
 }

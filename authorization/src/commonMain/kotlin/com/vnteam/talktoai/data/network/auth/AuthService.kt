@@ -1,9 +1,15 @@
 package com.vnteam.talktoai.data.network.auth
 
-import com.vnteam.talktoai.data.network.NetworkConstants
-import com.vnteam.talktoai.data.network.auth.AuthConstants.GRANT_TYPE
-import com.vnteam.talktoai.data.network.auth.AuthConstants.GRANT_TYPE_REFRESH_TOKEN
-import com.vnteam.talktoai.data.network.auth.AuthConstants.REFRESH_TOKEN_KEY
+import com.vnteam.talktoai.data.network.auth.AuthConstants.Endpoints.ACCOUNT_CREATE_AUTH_URI
+import com.vnteam.talktoai.data.network.auth.AuthConstants.Endpoints.ACCOUNT_DELETE
+import com.vnteam.talktoai.data.network.auth.AuthConstants.Endpoints.ACCOUNT_SEND_OOB_CODE
+import com.vnteam.talktoai.data.network.auth.AuthConstants.Endpoints.ACCOUNT_SIGN_IN_WITH_PASSWORD
+import com.vnteam.talktoai.data.network.auth.AuthConstants.Endpoints.ACCOUNT_SIGN_UP
+import com.vnteam.talktoai.data.network.auth.AuthConstants.Endpoints.ACCOUNT_UPDATE
+import com.vnteam.talktoai.data.network.auth.AuthConstants.Endpoints.SECURE_TOKEN_URL
+import com.vnteam.talktoai.data.network.auth.AuthConstants.OAuth.GRANT_TYPE
+import com.vnteam.talktoai.data.network.auth.AuthConstants.OAuth.GRANT_TYPE_REFRESH_TOKEN
+import com.vnteam.talktoai.data.network.auth.AuthConstants.OAuth.REFRESH_TOKEN_KEY
 import com.vnteam.talktoai.data.network.auth.request.AuthBody
 import com.vnteam.talktoai.data.network.auth.request.ChangePasswordBody
 import com.vnteam.talktoai.data.network.auth.request.DeleteAccountBody
@@ -14,7 +20,6 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.parameters
-import secrets.Secrets
 
 class AuthService(
     private val authHttpClient: AuthHttpClient,
@@ -112,9 +117,6 @@ class AuthService(
     suspend fun exchangeRefreshToken(refreshToken: String): HttpResponse? {
         return try {
             authHttpClient.getHttpClient.post(SECURE_TOKEN_URL) {
-                url {
-                    parameters.append(NetworkConstants.KEY, Secrets.AUTH_API_KEY)
-                }
                 setBody(FormDataContent(parameters {
                     append(GRANT_TYPE, GRANT_TYPE_REFRESH_TOKEN)
                     append(REFRESH_TOKEN_KEY, refreshToken)
@@ -126,11 +128,3 @@ class AuthService(
         }
     }
 }
-
-private const val SECURE_TOKEN_URL = "https://securetoken.googleapis.com/v1/token"
-private const val ACCOUNT_CREATE_AUTH_URI = "/v1/accounts:createAuthUri"
-private const val ACCOUNT_SIGN_IN_WITH_PASSWORD = "/v1/accounts:signInWithPassword"
-private const val ACCOUNT_SEND_OOB_CODE = "/v1/accounts:sendOobCode"
-private const val ACCOUNT_SIGN_UP = "/v1/accounts:signUp"
-private const val ACCOUNT_UPDATE = "/v1/accounts:update"
-private const val ACCOUNT_DELETE = "/v1/accounts:delete"

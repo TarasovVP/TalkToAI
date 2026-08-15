@@ -17,6 +17,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRem
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.RefreshTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
@@ -38,6 +39,7 @@ class SettingsSignUpViewModel(
     private val uidUseCase: UidUseCase,
     private val exchangeTokenUseCase: ExchangeTokenUseCase,
     private val syncRemoteUserUseCase: SyncRemoteUserUseCase,
+    private val refreshTokenUseCase: RefreshTokenUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsSignUpUIState())
@@ -62,7 +64,9 @@ class SettingsSignUpViewModel(
                 is Result.Success -> {
                     val firebaseIdToken = result.data?.refreshToken?.let { rt ->
                         val ex = exchangeTokenUseCase.execute(rt)
-                        (ex as? Result.Success)?.data?.idToken
+                        val exchanged = (ex as? Result.Success)?.data
+                        exchanged?.refreshToken?.let { refreshTokenUseCase.set(it) }
+                        exchanged?.idToken
                     }
                     idTokenUseCase.set(firebaseIdToken ?: result.data?.idToken.orEmpty())
                     userEmailUseCase.set(result.data?.email.orEmpty())
