@@ -12,6 +12,7 @@ const val AI_API_KEY = "aiApiKey"
 const val AI_TEMPERATURE = "aiTemperature"
 const val GLOBAL_SYSTEM_CONTEXT = "globalSystemContext"
 const val UID = "uid"
+const val REFRESH_TOKEN = "refreshToken"
 const val APP_LANG_EN = "en"
 const val APP_LANG_UK = "uk"
 

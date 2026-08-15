@@ -9,6 +9,7 @@ import com.vnteam.talktoai.data.ID_TOKEN
 import com.vnteam.talktoai.data.IS_DARK_THEME
 import com.vnteam.talktoai.data.IS_ONBOARDING_SEEN
 import com.vnteam.talktoai.data.IS_REVIEW_VOTE
+import com.vnteam.talktoai.data.REFRESH_TOKEN
 import com.vnteam.talktoai.data.UID
 import com.vnteam.talktoai.data.USER_EMAIL
 import com.vnteam.talktoai.data.local.PreferencesFactory
@@ -104,5 +105,13 @@ class PreferencesRepositoryImpl(private val preferencesFactory: PreferencesFacto
 
     override suspend fun setUid(uid: String) {
         preferencesFactory.putString(UID, uid)
+    }
+
+    override fun getRefreshToken(): Flow<String?> {
+        return preferencesFactory.getString(REFRESH_TOKEN)
+    }
+
+    override suspend fun setRefreshToken(refreshToken: String) {
+        preferencesFactory.putString(REFRESH_TOKEN, refreshToken)
     }
 }

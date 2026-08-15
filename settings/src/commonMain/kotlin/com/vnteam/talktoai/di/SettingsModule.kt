@@ -11,6 +11,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.Onboard
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ReviewUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.TemperatureUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ThemeUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.RefreshTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import org.koin.dsl.module
@@ -40,4 +41,6 @@ val settingsModule = module {
     single { GlobalContextUseCase(get()) }
 
     single { UidUseCase(get()) }
+
+    single { RefreshTokenUseCase(get()) }
 }
