@@ -8,7 +8,7 @@ import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.SettingsSignUpUIState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ExchangeTokenUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ExchangeAndStoreTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatsUseCase
@@ -37,7 +37,7 @@ class SettingsSignUpViewModel(
     private val idTokenUseCase: IdTokenUseCase,
     private val userEmailUseCase: UserEmailUseCase,
     private val uidUseCase: UidUseCase,
-    private val exchangeTokenUseCase: ExchangeTokenUseCase,
+    private val exchangeAndStoreTokenUseCase: ExchangeAndStoreTokenUseCase,
     private val syncRemoteUserUseCase: SyncRemoteUserUseCase,
     private val refreshTokenUseCase: RefreshTokenUseCase,
 ) : BaseViewModel() {
@@ -62,15 +62,8 @@ class SettingsSignUpViewModel(
             when (val result =
                 createUserWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
                 is Result.Success -> {
-                    val firebaseIdToken = result.data?.refreshToken?.let { rt ->
-                        when (val ex = exchangeTokenUseCase.execute(rt)) {
-                            is Result.Success -> {
-                                ex.data?.refreshToken?.let { refreshTokenUseCase.set(it) }
-                                ex.data?.idToken
-                            }
-                            else -> null
-                        }
-                    }
+                    val firebaseIdToken = result.data?.refreshToken
+                        ?.let { exchangeAndStoreTokenUseCase.execute(it) }
                     idTokenUseCase.set(firebaseIdToken ?: result.data?.idToken.orEmpty())
                     userEmailUseCase.set(result.data?.email.orEmpty())
                     uidUseCase.set(result.data?.localId.orEmpty())
@@ -94,6 +87,7 @@ class SettingsSignUpViewModel(
         launchWithErrorHandling {
             when (val result = signInWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
                 is Result.Success -> {
+                    result.data?.refreshToken?.let { refreshTokenUseCase.set(it) }
                     idTokenUseCase.set(result.data?.idToken.orEmpty())
                     userEmailUseCase.set(result.data?.email.orEmpty())
                     uidUseCase.set(result.data?.localId.orEmpty())

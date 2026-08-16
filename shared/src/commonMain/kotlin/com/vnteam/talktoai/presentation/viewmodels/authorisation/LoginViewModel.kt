@@ -4,13 +4,12 @@ import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.LoginUIState
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ExchangeTokenUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ExchangeAndStoreTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ResetPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.RefreshTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
@@ -24,9 +23,8 @@ class LoginViewModel(
     private val userEmailUseCase: UserEmailUseCase,
     private val idTokenUseCase: IdTokenUseCase,
     private val uidUseCase: UidUseCase,
-    private val exchangeTokenUseCase: ExchangeTokenUseCase,
+    private val exchangeAndStoreTokenUseCase: ExchangeAndStoreTokenUseCase,
     private val syncRemoteUserUseCase: SyncRemoteUserUseCase,
-    private val refreshTokenUseCase: RefreshTokenUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUIState())
@@ -37,7 +35,8 @@ class LoginViewModel(
             when (val result = signInWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
                 is com.vnteam.talktoai.data.network.Result.Success -> {
                     hideProgress()
-                    val firebaseIdToken = exchangeForFirebaseToken(result.data?.refreshToken)
+                    val firebaseIdToken = result.data?.refreshToken
+                        ?.let { exchangeAndStoreTokenUseCase.execute(it) }
                     val finalToken = firebaseIdToken ?: result.data?.idToken.orEmpty()
                     idTokenUseCase.set(finalToken)
                     userEmailUseCase.set(result.data?.email.orEmpty())
@@ -48,7 +47,6 @@ class LoginViewModel(
                             onError(Exception(syncResult.errorMessage))
                             return@launchWithErrorHandling
                         }
-
                         is com.vnteam.talktoai.data.network.Result.Loading -> Unit
                     }
                     updateUIState(LoginUIState(emailSignInSuccess = true))
@@ -65,7 +63,8 @@ class LoginViewModel(
             when (val result = signInAnonymouslyUseCase.execute()) {
                 is com.vnteam.talktoai.data.network.Result.Success -> {
                     hideProgress()
-                    val firebaseIdToken = exchangeForFirebaseToken(result.data?.refreshToken)
+                    val firebaseIdToken = result.data?.refreshToken
+                        ?.let { exchangeAndStoreTokenUseCase.execute(it) }
                     idTokenUseCase.set(firebaseIdToken ?: result.data?.idToken.orEmpty())
                     userEmailUseCase.set(String.EMPTY)
                     uidUseCase.set(result.data?.localId.orEmpty())
@@ -83,17 +82,6 @@ class LoginViewModel(
             resetPasswordUseCase.execute(email).onSuccess {
                 updateUIState(LoginUIState(successPasswordReset = true))
             }
-        }
-    }
-
-    private suspend fun exchangeForFirebaseToken(refreshToken: String?): String? {
-        if (refreshToken.isNullOrEmpty()) return null
-        return when (val result = exchangeTokenUseCase.execute(refreshToken)) {
-            is com.vnteam.talktoai.data.network.Result.Success -> {
-                result.data?.refreshToken?.let { refreshTokenUseCase.set(it) }
-                result.data?.idToken
-            }
-            else -> null
         }
     }
 

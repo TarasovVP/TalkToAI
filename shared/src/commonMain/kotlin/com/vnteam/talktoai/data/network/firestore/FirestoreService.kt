@@ -27,7 +27,10 @@ class FirestoreService(private val client: FirestoreHttpClient) {
             header(NetworkConstants.AUTHORIZATION, "Bearer $idToken")
             setBody(FirestoreDocument(fields = fields))
         }
-        response.status.isSuccess()
+        if (!response.status.isSuccess()) {
+            if (response.status.value == 401) AuthEventBus.emitUnauthorized()
+            false
+        } else true
     }.getOrElse { false }
 
     suspend fun deleteDocument(path: String, idToken: String): Boolean = runCatching {
@@ -36,6 +39,7 @@ class FirestoreService(private val client: FirestoreHttpClient) {
         }
         val ok = response.status.isSuccess()
         if (!ok) {
+            if (response.status.value == 401) AuthEventBus.emitUnauthorized()
             println("firestoreTAG deleteDocument ERROR status=${response.status} body=${response.bodyAsText()} path=$path")
         }
         ok
