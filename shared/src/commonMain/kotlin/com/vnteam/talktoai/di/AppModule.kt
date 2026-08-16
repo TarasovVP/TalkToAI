@@ -40,6 +40,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRem
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteSettingsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ExchangeAndStoreTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GetPrivacyPolicyUseCase
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.LoginViewModel
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.OnBoardingViewModel
@@ -128,6 +129,9 @@ val appModule = module {
 
     single { InsertMessageUseCase(get(), get(), get(), get()) }
 
+    // auth
+    single { ExchangeAndStoreTokenUseCase(get(), get()) }
+
     // remote
     single { InsertRemoteUserUseCase(get()) }
 
@@ -145,11 +149,10 @@ val appModule = module {
         OnBoardingViewModel(get())
     }
     viewModel {
-        LoginViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get())
+        LoginViewModel(get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         SignUpViewModel(
-            get(),
             get(),
             get(),
             get(),
@@ -220,6 +223,7 @@ val appModule = module {
     }
     viewModel {
         SettingsLoginViewModel(
+            get(),
             get(),
             get(),
             get(),

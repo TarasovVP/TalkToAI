@@ -13,6 +13,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRem
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.RefreshTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
@@ -32,6 +33,7 @@ class SettingsLoginViewModel(
     private val userEmailUseCase: UserEmailUseCase,
     private val uidUseCase: UidUseCase,
     private val syncRemoteUserUseCase: SyncRemoteUserUseCase,
+    private val refreshTokenUseCase: RefreshTokenUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsSignUpUIState())
@@ -41,6 +43,7 @@ class SettingsLoginViewModel(
         launchWithErrorHandling {
             when (val result = signInWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
                 is Result.Success -> {
+                    result.data?.refreshToken?.let { refreshTokenUseCase.set(it) }
                     idTokenUseCase.set(result.data?.idToken.orEmpty())
                     userEmailUseCase.set(result.data?.email.orEmpty())
                     uidUseCase.set(result.data?.localId.orEmpty())
