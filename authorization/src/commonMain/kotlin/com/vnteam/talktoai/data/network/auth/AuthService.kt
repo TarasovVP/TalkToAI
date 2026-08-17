@@ -2,7 +2,8 @@ package com.vnteam.talktoai.data.network.auth
 
 import com.vnteam.talktoai.data.network.NetworkConstants
 import com.vnteam.talktoai.data.network.auth.AuthConstants.GRANT_TYPE
-import com.vnteam.talktoai.data.network.auth.AuthConstants.REFRESH_TOKEN
+import com.vnteam.talktoai.data.network.auth.AuthConstants.GRANT_TYPE_REFRESH_TOKEN
+import com.vnteam.talktoai.data.network.auth.AuthConstants.REFRESH_TOKEN_KEY
 import com.vnteam.talktoai.data.network.auth.request.AuthBody
 import com.vnteam.talktoai.data.network.auth.request.ChangePasswordBody
 import com.vnteam.talktoai.data.network.auth.request.DeleteAccountBody
@@ -115,8 +116,8 @@ class AuthService(
                     parameters.append(NetworkConstants.KEY, Secrets.AUTH_API_KEY)
                 }
                 setBody(FormDataContent(parameters {
-                    append(GRANT_TYPE, REFRESH_TOKEN)
-                    append(REFRESH_TOKEN, refreshToken)
+                    append(GRANT_TYPE, GRANT_TYPE_REFRESH_TOKEN)
+                    append(REFRESH_TOKEN_KEY, refreshToken)
                 }))
             }
         } catch (e: Exception) {

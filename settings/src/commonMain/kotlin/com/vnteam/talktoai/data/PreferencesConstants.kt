@@ -14,3 +14,6 @@ const val GLOBAL_SYSTEM_CONTEXT = "globalSystemContext"
 const val UID = "uid"
 const val APP_LANG_EN = "en"
 const val APP_LANG_UK = "uk"
+
+const val JVM_USER_HOME_PROPERTY = "user.home"
+const val JVM_APP_DIR_NAME = ".talktoai"
