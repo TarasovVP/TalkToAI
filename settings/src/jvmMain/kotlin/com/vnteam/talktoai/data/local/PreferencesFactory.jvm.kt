@@ -4,15 +4,14 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.vnteam.talktoai.data.JVM_APP_DIR_NAME
+import com.vnteam.talktoai.data.JVM_USER_HOME_PROPERTY
 import com.vnteam.talktoai.data.PREFERENCES_PB
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import okio.Path.Companion.toPath
 import java.io.File
-
-private const val JVM_USER_HOME_PROPERTY = "user.home"
-private const val JVM_APP_DIR_NAME = ".talktoai"
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class PreferencesFactory : Preferences {
