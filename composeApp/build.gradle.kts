@@ -19,7 +19,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            freeCompilerArgs += "-Xbinary=bundleId=com.vnteam.architecturetemplates.composeApp"
+            freeCompilerArgs += "-Xbinary=bundleId=com.vnteam.talktoai"
             linkerOpts.add("-lsqlite3")
             baseName = "composeApp"
             isStatic = true
@@ -115,7 +115,7 @@ android {
     signingConfigs {
         val localProperties = file(rootProject.file("local.properties"))
         val properties = Properties().apply {
-            load(localProperties.inputStream())
+            if (localProperties.exists()) load(localProperties.inputStream())
         }
         create("release") {
             storeFile = file(project.rootProject.file(properties.getProperty("STORE_FILE", "")))
@@ -127,7 +127,7 @@ android {
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
