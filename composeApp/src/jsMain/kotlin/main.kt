@@ -8,7 +8,8 @@ import org.koin.compose.koinInject
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     doInitKoin()
-    ComposeViewport(document.body!!) {
+    val body = document.body ?: return
+    ComposeViewport(body) {
         App(koinInject())
     }
 }
