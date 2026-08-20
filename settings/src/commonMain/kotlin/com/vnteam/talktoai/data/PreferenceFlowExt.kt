@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
 fun <T> Flow<T>.asPreferenceResult(): Flow<Result<T>> =
-    map { Result.Success(it) }
+    map<T, Result<T>> { Result.Success(it) }
         .catch { emit(Result.Failure(it.message)) }
