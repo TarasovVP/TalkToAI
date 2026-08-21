@@ -65,7 +65,6 @@ class AuthService(
     }
 
     suspend fun resetPassword(resetPasswordBody: ResetPasswordBody): HttpResponse? {
-        println("authTAG resetPassword resetPasswordBody: $resetPasswordBody")
         val httpResponse = try {
             authHttpClient.getHttpClient.post(ACCOUNT_SEND_OOB_CODE) {
                 setBody(resetPasswordBody)
