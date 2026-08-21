@@ -11,7 +11,6 @@ import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.SignUpUIState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.CreateUserWithEmailAndPasswordUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ExchangeAndStoreTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.FetchProvidersForEmailUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.ClearLocalDataUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.InsertChatUseCase
@@ -19,6 +18,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertM
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.InsertRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.RefreshTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
@@ -41,7 +41,7 @@ class SignUpViewModel(
     private val insertMessageUseCase: InsertMessageUseCase,
     private val clearLocalDataUseCase: ClearLocalDataUseCase,
     private val uidUseCase: UidUseCase,
-    private val exchangeAndStoreTokenUseCase: ExchangeAndStoreTokenUseCase,
+    private val refreshTokenUseCase: RefreshTokenUseCase,
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUIState())
@@ -70,9 +70,8 @@ class SignUpViewModel(
                 is com.vnteam.talktoai.data.network.Result.Success -> {
                     hideProgress()
                     onboardingUseCase.set(true)
-                    val firebaseIdToken = result.data?.refreshToken
-                        ?.let { exchangeAndStoreTokenUseCase.execute(it) }
-                    pendingIdToken = firebaseIdToken ?: result.data?.idToken.orEmpty()
+                    result.data?.refreshToken?.let { refreshTokenUseCase.set(it) }
+                    pendingIdToken = result.data?.idToken.orEmpty()
                     pendingEmail = result.data?.email.orEmpty()
                     pendingUid = result.data?.localId.orEmpty()
                     updateUIState(SignUpUIState(successSignUp = true))

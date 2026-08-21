@@ -26,111 +26,49 @@ import secrets.Secrets
 class AuthService(
     private val authHttpClient: AuthHttpClient,
 ) {
-    suspend fun fetchProvidersForEmail(providersForEmailBody: ProvidersForEmailBody): HttpResponse? {
-        val httpResponse = try {
-            authHttpClient.getHttpClient
-                .post(ACCOUNT_CREATE_AUTH_URI) {
-                    setBody(providersForEmailBody)
-                }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+    suspend fun fetchProvidersForEmail(providersForEmailBody: ProvidersForEmailBody): HttpResponse =
+        authHttpClient.getHttpClient.post(ACCOUNT_CREATE_AUTH_URI) {
+            setBody(providersForEmailBody)
         }
-        return httpResponse
-    }
 
-    suspend fun signInWithEmailAndPassword(authBody: AuthBody): HttpResponse? {
-        val httpResponse = try {
-            authHttpClient.getHttpClient
-                .post(ACCOUNT_SIGN_IN_WITH_PASSWORD) {
-                    setBody(authBody)
-                }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+    suspend fun signInWithEmailAndPassword(authBody: AuthBody): HttpResponse =
+        authHttpClient.getHttpClient.post(ACCOUNT_SIGN_IN_WITH_PASSWORD) {
+            setBody(authBody)
         }
-        return httpResponse
-    }
 
-    suspend fun signInAnonymously(authBody: AuthBody): HttpResponse? {
-        val httpResponse = try {
-            authHttpClient.getHttpClient.post(ACCOUNT_SIGN_UP) {
-                setBody(authBody)
+    suspend fun signInAnonymously(authBody: AuthBody): HttpResponse =
+        authHttpClient.getHttpClient.post(ACCOUNT_SIGN_UP) {
+            setBody(authBody)
+        }
+
+    suspend fun resetPassword(resetPasswordBody: ResetPasswordBody): HttpResponse =
+        authHttpClient.getHttpClient.post(ACCOUNT_SEND_OOB_CODE) {
+            setBody(resetPasswordBody)
+        }
+
+    suspend fun createUserWithEmailAndPassword(authBody: AuthBody): HttpResponse =
+        authHttpClient.getHttpClient.post(ACCOUNT_SIGN_UP) {
+            setBody(authBody)
+        }
+
+    suspend fun changePassword(changePasswordBody: ChangePasswordBody): HttpResponse =
+        authHttpClient.getHttpClient.post(ACCOUNT_UPDATE) {
+            setBody(changePasswordBody)
+        }
+
+    suspend fun deleteAccount(deleteAccountBody: DeleteAccountBody): HttpResponse =
+        authHttpClient.getHttpClient.post(ACCOUNT_DELETE) {
+            setBody(deleteAccountBody)
+        }
+
+    suspend fun exchangeRefreshToken(refreshToken: String): HttpResponse =
+        authHttpClient.getHttpClient.post(SECURE_TOKEN_URL) {
+            url {
+                parameters.append(NetworkConstants.KEY, Secrets.AUTH_API_KEY)
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+            setBody(FormDataContent(parameters {
+                append(GRANT_TYPE, GRANT_TYPE_REFRESH_TOKEN)
+                append(REFRESH_TOKEN_KEY, refreshToken)
+            }))
         }
-        return httpResponse
-    }
-
-    suspend fun resetPassword(resetPasswordBody: ResetPasswordBody): HttpResponse? {
-        val httpResponse = try {
-            authHttpClient.getHttpClient.post(ACCOUNT_SEND_OOB_CODE) {
-                setBody(resetPasswordBody)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-        return httpResponse
-    }
-
-    suspend fun createUserWithEmailAndPassword(authBody: AuthBody): HttpResponse? {
-        val httpResponse = try {
-            authHttpClient.getHttpClient
-                .post(ACCOUNT_SIGN_UP) {
-                    setBody(authBody)
-                }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-        return httpResponse
-    }
-
-    suspend fun changePassword(changePasswordBody: ChangePasswordBody): HttpResponse? {
-        val httpResponse = try {
-            authHttpClient.getHttpClient
-                .post(ACCOUNT_UPDATE) {
-                    setBody(changePasswordBody)
-                }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-        return httpResponse
-    }
-
-    suspend fun deleteAccount(deleteAccountBody: DeleteAccountBody): HttpResponse? {
-        val httpResponse = try {
-            authHttpClient.getHttpClient
-                .post(ACCOUNT_DELETE) {
-                    setBody(deleteAccountBody)
-                }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-        return httpResponse
-    }
-
-    suspend fun exchangeRefreshToken(refreshToken: String): HttpResponse? {
-        return try {
-            authHttpClient.getHttpClient.post(SECURE_TOKEN_URL) {
-                url {
-                    // SECURE_TOKEN_URL is fully absolute; append key explicitly since
-                    // DefaultRequest query params may not merge into absolute-URL requests.
-                    parameters.append(NetworkConstants.KEY, Secrets.AUTH_API_KEY)
-                }
-                setBody(FormDataContent(parameters {
-                    append(GRANT_TYPE, GRANT_TYPE_REFRESH_TOKEN)
-                    append(REFRESH_TOKEN_KEY, refreshToken)
-                }))
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
 }

@@ -5,7 +5,7 @@ import com.vnteam.talktoai.domain.models.RemoteUser
 data class SettingsSignUpUIState(
     var accountExist: String? = null,
     val createEmailAccount: Boolean? = null,
-    val successAuthorisation: Boolean? = null,
+    val signedInAsExistingUser: Boolean? = null,
     val createCurrentUser: Boolean? = null,
     val remoteUser: Pair<Boolean, RemoteUser?>? = null,
     val successRemoteUser: Boolean? = null,

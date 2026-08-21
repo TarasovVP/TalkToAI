@@ -23,7 +23,7 @@ suspend inline fun <reified T> HttpResponse?.handleResponse(): Result<T> {
             } catch (e: Exception) {
                 text
             }
-            Result.Failure(message)
+            Result.Failure(message, statusCode = status.value)
         }
 
         else -> {
