@@ -8,13 +8,12 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ExchangeAndStoreTokenUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.TokenRefreshManager
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.TokenRefreshNetworkException
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteSettingsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.RefreshTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ThemeUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
@@ -37,10 +36,8 @@ class AppViewModel(
     val animationUtils: AnimationUtils,
     private val uidUseCase: UidUseCase,
     private val syncRemoteSettingsUseCase: SyncRemoteSettingsUseCase,
-    private val refreshTokenUseCase: RefreshTokenUseCase,
-    private val exchangeAndStoreTokenUseCase: ExchangeAndStoreTokenUseCase,
+    private val tokenRefreshManager: TokenRefreshManager,
 ) : BaseViewModel() {
-
 
     private val _screenState = MutableStateFlow(ScreenState())
     val screenState = _screenState.asStateFlow()
@@ -137,20 +134,15 @@ class AppViewModel(
         launchWithErrorHandling {
             AuthEventBus.unauthorizedEvent.collect {
                 try {
-                    val storedRefreshToken =
-                        (refreshTokenUseCase.get().firstOrNull() as? Result.Success)?.data
-                    if (!storedRefreshToken.isNullOrEmpty()) {
-                        val newIdToken = exchangeAndStoreTokenUseCase.execute(storedRefreshToken)
-                        if (!newIdToken.isNullOrEmpty()) {
-                            idTokenUseCase.set(newIdToken)
-                            syncRemoteSettingsUseCase.execute()
-                            return@collect
-                        }
+                    val newIdToken = tokenRefreshManager.tryRefreshToken()
+                    if (!newIdToken.isNullOrEmpty()) {
+                        idTokenUseCase.set(newIdToken)
+                        syncRemoteSettingsUseCase.execute()
+                        return@collect
                     }
                     idTokenUseCase.set(String.EMPTY)
                     userEmailUseCase.set(String.EMPTY)
                     uidUseCase.set(String.EMPTY)
-                    refreshTokenUseCase.set(String.EMPTY)
                     unauthorizedRoute.value = NavigationScreen.LOGIN_SCREEN
                 } catch (_: TokenRefreshNetworkException) {
                     // Transient network error — don't force logout; will retry on next unauthorized event

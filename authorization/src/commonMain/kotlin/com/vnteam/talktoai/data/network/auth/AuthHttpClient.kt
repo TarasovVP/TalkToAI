@@ -1,6 +1,5 @@
 package com.vnteam.talktoai.data.network.auth
 
-import com.vnteam.talktoai.data.network.NetworkConstants
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.HttpTimeout
@@ -28,7 +27,7 @@ class AuthHttpClient(
         install(DefaultRequest) {
             url(Secrets.AUTH_BASE_URL)
             url {
-                parameters.append(NetworkConstants.KEY, Secrets.AUTH_API_KEY)
+                parameters.append(AuthConstants.API_KEY_PARAM, Secrets.AUTH_API_KEY)
             }
             contentType(ContentType.Application.Json)
         }

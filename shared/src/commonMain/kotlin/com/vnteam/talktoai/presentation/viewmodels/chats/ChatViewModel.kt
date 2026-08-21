@@ -240,10 +240,8 @@ class ChatViewModel(
             temperature = chatTemperature ?: _temperature.value,
             messages = messages,
         )
-        println("messageTAG ChatViewModel.sendRequest: apiRequest = $apiRequest")
         launchWithResultHandling {
             sendRequestUseCase.execute(apiRequest, _apiKey.value).onSuccess { apiResponse ->
-                println("messageTAG ChatViewModel.sendRequest: apiResponse = $apiResponse")
                 insertMessage(
                     temporaryMessage.copy(
                         author = apiResponse?.model.orEmpty(),
@@ -264,7 +262,6 @@ class ChatViewModel(
 
     fun insertMessage(message: MessageUI) {
         launchWithErrorHandling {
-            println("messageTAG ChatViewModel.insertMessage: message = $message")
             insertMessageUseCase.execute(messageUIMapper.mapFromImplModel(message))
             val current = _messagesLiveData.value.orEmpty().toMutableList()
             val idx = current.indexOfFirst { it.id == message.id }

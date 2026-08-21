@@ -85,7 +85,6 @@ fun SettingsAccountScreen() {
             }
         }
     }
-    println("SettingsAccountTAG: userEmail: $userEmail authState: ${authState.value}")
     val successChangePasswordState = viewModel.successChangePasswordLiveData.collectAsState()
     val successChangePasswordMessage =
         LocalStringResources.current.SETTINGS_ACCOUNT_CHANGE_PASSWORD_SUCCEED

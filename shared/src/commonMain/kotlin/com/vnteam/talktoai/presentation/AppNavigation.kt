@@ -40,7 +40,6 @@ fun AppNavigation(
     navController: NavHostController,
     startDestination: String,
 ) {
-    println("AppContentTAG AppNavigationTAG: startDestination: $startDestination")
     navController.checkCurrentDestUpdateWithStartDest(startDestination)
     NavHost(
         navController = navController,

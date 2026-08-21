@@ -29,12 +29,10 @@ open class BaseViewModel : ViewModel() {
 
     fun showProgress() {
         _innerProgress.value = true
-        println("appTAG BaseViewModel showProgress: progressVisibilityState ${progressVisibilityState.value}")
     }
 
     fun hideProgress() {
         _innerProgress.value = false
-        println("appTAG BaseViewModel hideProgress: progressVisibilityState ${progressVisibilityState.value}")
     }
 
     fun showMessage(message: String) {
@@ -62,7 +60,6 @@ open class BaseViewModel : ViewModel() {
         block: suspend CoroutineScope.() -> Flow<Result<T>>,
     ): Job = launchWithErrorHandling {
         block().collect { result ->
-            println("appTAG BaseViewModel launchWithConditionsTest: result $result")
             when (result) {
                 is Result.Success -> hideProgress()
                 is Result.Failure -> onError(Exception(result.errorMessage))
@@ -96,7 +93,6 @@ open class BaseViewModel : ViewModel() {
     }
 
     protected open fun onError(throwable: Throwable) {
-        throwable.printStackTrace()
         showMessage(throwable.message.orEmpty())
         hideProgress()
     }

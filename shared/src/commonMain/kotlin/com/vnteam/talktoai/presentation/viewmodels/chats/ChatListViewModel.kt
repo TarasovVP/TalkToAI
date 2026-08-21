@@ -28,7 +28,6 @@ class ChatListViewModel(
     fun getChats() {
         launchWithResultHandling {
             getChatsUseCase.execute().onSuccess { chats ->
-                println("flowTAG ChatListViewModel getChats chats: $chats")
                 _chatsList.value = chats
                 hideProgress()
             }
