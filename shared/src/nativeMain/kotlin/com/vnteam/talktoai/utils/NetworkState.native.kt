@@ -10,6 +10,9 @@ import platform.SystemConfiguration.SCNetworkReachabilityCreateWithName
 import platform.SystemConfiguration.SCNetworkReachabilityFlagsVar
 import platform.SystemConfiguration.SCNetworkReachabilityGetFlags
 
+// kSCNetworkReachabilityFlagsReachable = 1 << 1 per SystemConfiguration.framework
+private const val SC_REACHABILITY_FLAG_REACHABLE = 2
+
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class NetworkState {
     @OptIn(ExperimentalForeignApi::class)
@@ -20,7 +23,7 @@ actual class NetworkState {
             memScoped {
                 val flags = alloc<SCNetworkReachabilityFlagsVar>()
                 val isReachable = SCNetworkReachabilityGetFlags(reachability, flags.ptr)
-                isReachable && (flags.value.toInt() and 2) != 0
+                isReachable && (flags.value.toInt() and SC_REACHABILITY_FLAG_REACHABLE) != 0
             }
         } finally {
             CFRelease(reachability)

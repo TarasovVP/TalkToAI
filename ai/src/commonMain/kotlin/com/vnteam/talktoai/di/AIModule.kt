@@ -5,11 +5,12 @@ import com.vnteam.talktoai.data.network.ai.AIService
 import com.vnteam.talktoai.data.repositoryimpl.AIRepositoryImpl
 import com.vnteam.talktoai.domain.repositories.AIRepository
 import kotlinx.serialization.json.Json
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val aiModule = module {
 
-    single {
+    single(named("aiJson")) {
         Json {
             prettyPrint = true
             isLenient = true
@@ -17,7 +18,7 @@ val aiModule = module {
         }
     }
 
-    single { AIHttpClient(get()) }
+    single { AIHttpClient(get(named("aiJson"))) }
 
     single { AIService(get()) }
 

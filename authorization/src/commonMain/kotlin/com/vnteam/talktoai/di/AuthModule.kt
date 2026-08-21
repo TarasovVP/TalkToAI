@@ -15,12 +15,13 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.Re
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
 import kotlinx.serialization.json.Json
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val authModule = module {
 
     single { AuthService(get()) }
-    single {
+    single(named("authJson")) {
         Json {
             prettyPrint = true
             isLenient = true
@@ -29,7 +30,7 @@ val authModule = module {
         }
     }
 
-    single { AuthHttpClient(get()) }
+    single { AuthHttpClient(get(named("authJson"))) }
 
     single<AuthRepository> { AuthRepositoryImpl(get()) }
 

@@ -40,7 +40,6 @@ class FirestoreService(private val client: FirestoreHttpClient) {
         val ok = response.status.isSuccess()
         if (!ok) {
             if (response.status.value == 401) AuthEventBus.emitUnauthorized()
-            println("firestoreTAG deleteDocument ERROR status=${response.status} body=${response.bodyAsText()} path=$path")
         }
         ok
     }.getOrDefault(false)

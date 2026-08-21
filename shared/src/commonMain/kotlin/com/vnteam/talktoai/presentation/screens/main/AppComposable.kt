@@ -39,7 +39,6 @@ fun AppContent(appViewModel: AppViewModel) {
     val showChatSettingsSheet = remember { mutableStateOf(false) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-    println("AppContentTAG: AppContent screenState.value: ${screenState.value}")
 
     val actualRoute = navBackStackEntry?.destination?.route
 
@@ -156,7 +155,6 @@ fun AppContent(appViewModel: AppViewModel) {
                 AppNavigation(navController, stableStartDestination)
                 if (screenState.value.isProgressVisible) {
                     val animationResourceState = appViewModel.animationResource.collectAsState()
-                    println("AppTAG AppNavigation screenState.value?.isProgressVisible.isTrue(): ${screenState.value.isProgressVisible.isTrue()}")
                     appViewModel.animationUtils.MainProgressAnimation(
                         animationResourceState.value.orEmpty()
                     )

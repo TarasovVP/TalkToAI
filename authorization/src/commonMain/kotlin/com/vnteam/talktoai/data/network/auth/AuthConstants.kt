@@ -1,6 +1,8 @@
 package com.vnteam.talktoai.data.network.auth
 
 object AuthConstants {
+    const val API_KEY_PARAM = "key"
+
     object OAuth {
         const val GRANT_TYPE = "grant_type"
         // GRANT_TYPE_REFRESH_TOKEN is the grant_type value; REFRESH_TOKEN_KEY is the form param name — both happen to equal "refresh_token" per RFC 6749.

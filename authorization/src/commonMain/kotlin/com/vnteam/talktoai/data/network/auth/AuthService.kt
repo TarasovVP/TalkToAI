@@ -1,6 +1,5 @@
 package com.vnteam.talktoai.data.network.auth
 
-import com.vnteam.talktoai.data.network.NetworkConstants
 import com.vnteam.talktoai.data.network.auth.AuthConstants.Endpoints.ACCOUNT_CREATE_AUTH_URI
 import com.vnteam.talktoai.data.network.auth.AuthConstants.Endpoints.ACCOUNT_DELETE
 import com.vnteam.talktoai.data.network.auth.AuthConstants.Endpoints.ACCOUNT_SEND_OOB_CODE
@@ -64,7 +63,7 @@ class AuthService(
     suspend fun exchangeRefreshToken(refreshToken: String): HttpResponse =
         authHttpClient.getHttpClient.post(SECURE_TOKEN_URL) {
             url {
-                parameters.append(NetworkConstants.KEY, Secrets.AUTH_API_KEY)
+                parameters.append(AuthConstants.API_KEY_PARAM, Secrets.AUTH_API_KEY)
             }
             setBody(FormDataContent(parameters {
                 append(GRANT_TYPE, GRANT_TYPE_REFRESH_TOKEN)
