@@ -13,11 +13,17 @@ class ExchangeAndStoreTokenUseCase(
                 result.data?.refreshToken?.let { refreshTokenUseCase.set(it) }
                 result.data?.idToken
             }
-            else -> {
-                // Exchange failed — persist original token so next attempt can retry
-                refreshTokenUseCase.set(originalRefreshToken)
+            is Result.Failure -> {
+                if (result.statusCode == null) {
+                    // No HTTP status means a network/IO error — let callers distinguish from auth failure
+                    throw TokenRefreshNetworkException(result.errorMessage)
+                }
+                // HTTP auth error (e.g. 400 TOKEN_EXPIRED) — token is invalid
                 null
             }
+            is Result.Loading -> null
         }
     }
 }
+
+class TokenRefreshNetworkException(message: String?) : Exception(message)

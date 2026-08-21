@@ -52,7 +52,7 @@ fun SettingsLoginScreen() {
     val settingsLoginUIStateState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(settingsLoginUIStateState) {
-        settingsLoginUIStateState.successAuthorisation?.let { isExistUser ->
+        settingsLoginUIStateState.signedInAsExistingUser?.let { isExistUser ->
             if (transferDataState.value) {
                 viewModel.createRemoteUser(isExistUser)
             } else {

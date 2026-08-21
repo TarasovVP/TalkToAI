@@ -9,6 +9,7 @@ import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ExchangeAndStoreTokenUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.TokenRefreshNetworkException
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteSettingsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
@@ -151,6 +152,8 @@ class AppViewModel(
                     uidUseCase.set(String.EMPTY)
                     refreshTokenUseCase.set(String.EMPTY)
                     unauthorizedRoute.value = NavigationScreen.LOGIN_SCREEN
+                } catch (_: TokenRefreshNetworkException) {
+                    // Transient network error — don't force logout; will retry on next unauthorized event
                 } catch (_: Exception) {
                     unauthorizedRoute.value = NavigationScreen.LOGIN_SCREEN
                 }

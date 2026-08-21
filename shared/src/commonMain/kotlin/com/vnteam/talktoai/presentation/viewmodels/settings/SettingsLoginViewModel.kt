@@ -47,7 +47,7 @@ class SettingsLoginViewModel(
                     idTokenUseCase.set(result.data?.idToken.orEmpty())
                     userEmailUseCase.set(result.data?.email.orEmpty())
                     uidUseCase.set(result.data?.localId.orEmpty())
-                    updateUIState(SettingsSignUpUIState(successAuthorisation = true))
+                    updateUIState(SettingsSignUpUIState(signedInAsExistingUser = true))
                 }
 
                 is Result.Failure -> onError(Exception(result.errorMessage))

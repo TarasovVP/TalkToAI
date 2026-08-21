@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.map
 sealed class Result<out T> {
     data object Loading : Result<Nothing>()
     data class Success<out T>(val data: T? = null) : Result<T>()
-    data class Failure(val errorMessage: String? = null) : Result<Nothing>()
+    data class Failure(val errorMessage: String? = null, val statusCode: Int? = null) : Result<Nothing>()
 }
 
 fun <T> Flow<Result<T>>.onSuccess(action: (T?) -> Unit): Flow<Result<T>> = map { result ->

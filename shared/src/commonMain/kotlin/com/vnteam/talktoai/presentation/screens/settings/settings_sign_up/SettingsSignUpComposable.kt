@@ -80,7 +80,7 @@ fun SettingsSignUpScreen() {
                 passwordInputValue.value.text
             )
         }
-        settingsSignUpUIStateState.successAuthorisation?.let { isExistUser ->
+        settingsSignUpUIStateState.signedInAsExistingUser?.let { isExistUser ->
             if (transferDataState.value) {
                 viewModel.createRemoteUser(isExistUser)
             } else {

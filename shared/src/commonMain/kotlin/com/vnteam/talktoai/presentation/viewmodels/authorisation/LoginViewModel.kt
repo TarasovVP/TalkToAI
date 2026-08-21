@@ -4,12 +4,12 @@ import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.LoginUIState
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ExchangeAndStoreTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ResetPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInAnonymouslyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.SignInWithEmailAndPasswordUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.RefreshTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
@@ -23,7 +23,7 @@ class LoginViewModel(
     private val userEmailUseCase: UserEmailUseCase,
     private val idTokenUseCase: IdTokenUseCase,
     private val uidUseCase: UidUseCase,
-    private val exchangeAndStoreTokenUseCase: ExchangeAndStoreTokenUseCase,
+    private val refreshTokenUseCase: RefreshTokenUseCase,
     private val syncRemoteUserUseCase: SyncRemoteUserUseCase,
 ) : BaseViewModel() {
 
@@ -35,10 +35,8 @@ class LoginViewModel(
             when (val result = signInWithEmailAndPasswordUseCase.execute(Pair(email, password))) {
                 is com.vnteam.talktoai.data.network.Result.Success -> {
                     hideProgress()
-                    val firebaseIdToken = result.data?.refreshToken
-                        ?.let { exchangeAndStoreTokenUseCase.execute(it) }
-                    val finalToken = firebaseIdToken ?: result.data?.idToken.orEmpty()
-                    idTokenUseCase.set(finalToken)
+                    result.data?.refreshToken?.let { refreshTokenUseCase.set(it) }
+                    idTokenUseCase.set(result.data?.idToken.orEmpty())
                     userEmailUseCase.set(result.data?.email.orEmpty())
                     uidUseCase.set(result.data?.localId.orEmpty())
                     when (val syncResult = syncRemoteUserUseCase.execute()) {
@@ -63,9 +61,8 @@ class LoginViewModel(
             when (val result = signInAnonymouslyUseCase.execute()) {
                 is com.vnteam.talktoai.data.network.Result.Success -> {
                     hideProgress()
-                    val firebaseIdToken = result.data?.refreshToken
-                        ?.let { exchangeAndStoreTokenUseCase.execute(it) }
-                    idTokenUseCase.set(firebaseIdToken ?: result.data?.idToken.orEmpty())
+                    result.data?.refreshToken?.let { refreshTokenUseCase.set(it) }
+                    idTokenUseCase.set(result.data?.idToken.orEmpty())
                     userEmailUseCase.set(String.EMPTY)
                     uidUseCase.set(result.data?.localId.orEmpty())
                     updateUIState(LoginUIState(anonymousSignInSuccess = true))
