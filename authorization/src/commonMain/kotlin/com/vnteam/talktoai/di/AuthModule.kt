@@ -29,7 +29,7 @@ val authModule = module {
         }
     }
 
-    single { AuthHttpClient(get(), enableLogging = true) }
+    single { AuthHttpClient(get()) }
 
     single<AuthRepository> { AuthRepositoryImpl(get()) }
 
