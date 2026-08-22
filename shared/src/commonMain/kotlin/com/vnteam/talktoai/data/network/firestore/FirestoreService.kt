@@ -28,7 +28,7 @@ class FirestoreService(private val client: FirestoreHttpClient) {
             setBody(FirestoreDocument(fields = fields))
         }
         if (!response.status.isSuccess()) {
-            if (response.status.value == 401) AuthEventBus.emitUnauthorized()
+            if (response.status.value in 401..403) AuthEventBus.emitUnauthorized()
             false
         } else true
     }.getOrElse { false }
@@ -39,7 +39,7 @@ class FirestoreService(private val client: FirestoreHttpClient) {
         }
         val ok = response.status.isSuccess()
         if (!ok) {
-            if (response.status.value == 401) AuthEventBus.emitUnauthorized()
+            if (response.status.value in 401..403) AuthEventBus.emitUnauthorized()
         }
         ok
     }.getOrDefault(false)
@@ -52,7 +52,7 @@ class FirestoreService(private val client: FirestoreHttpClient) {
             if (response.status.isSuccess()) {
                 response.body<FirestoreListResponse>().documents.orEmpty()
             } else {
-                if (response.status.value == 401) AuthEventBus.emitUnauthorized()
+                if (response.status.value in 401..403) AuthEventBus.emitUnauthorized()
                 emptyList()
             }
         }.getOrDefault(emptyList())
@@ -70,7 +70,7 @@ class FirestoreService(private val client: FirestoreHttpClient) {
             response.body<List<FirestoreQueryResult>>()
                 .mapNotNull { it.document }
         } else {
-            if (response.status.value == 401) AuthEventBus.emitUnauthorized()
+            if (response.status.value in 401..403) AuthEventBus.emitUnauthorized()
             emptyList()
         }
     }.getOrDefault(emptyList())
@@ -82,7 +82,7 @@ class FirestoreService(private val client: FirestoreHttpClient) {
         if (response.status.isSuccess()) {
             response.body<FirestoreDocument>()
         } else {
-            if (response.status.value == 401) AuthEventBus.emitUnauthorized()
+            if (response.status.value in 401..403) AuthEventBus.emitUnauthorized()
             null
         }
     }.getOrNull()

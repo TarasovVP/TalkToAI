@@ -16,7 +16,6 @@ suspend inline fun <reified T> HttpResponse?.handleResponse(): Result<T> {
         this == null -> Result.Failure(UNKNOWN_ERROR)
         status.value !in 200..299 -> {
             val text = bodyAsText()
-            println("Error $text")
             val message = try {
                 val root = errorJson.parseToJsonElement(text).jsonObject
                 root[NetworkConstants.ERROR_KEY]?.jsonObject?.get(NetworkConstants.MESSAGE_KEY)?.jsonPrimitive?.content ?: text
