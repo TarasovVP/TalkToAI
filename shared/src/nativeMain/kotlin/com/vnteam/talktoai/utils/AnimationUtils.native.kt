@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 actual class AnimationUtils {
     @Composable
     actual fun MessageTypingAnimation(animationResource: String) {
-        TODO("Not yet implemented")
     }
 
     @Composable

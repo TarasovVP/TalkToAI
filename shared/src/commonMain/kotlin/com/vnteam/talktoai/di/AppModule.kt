@@ -43,6 +43,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRem
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ExchangeAndStoreTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.TokenRefreshManager
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GetPrivacyPolicyUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.RefreshTokenUseCase
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.LoginViewModel
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.OnBoardingViewModel
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.SignUpViewModel
@@ -58,6 +59,7 @@ import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsPrivacyPolic
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsSignUpViewModel
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsThemeViewModel
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val appModule = module {
@@ -79,7 +81,7 @@ val appModule = module {
     single<MessageDBMapper> { MessageDBMapperImpl() }
 
     // Firestore
-    single { FirestoreHttpClient(get()) }
+    single { FirestoreHttpClient(get(named("authJson"))) }
     single { FirestoreService(get()) }
 
     // Repositories
@@ -194,7 +196,7 @@ val appModule = module {
         )
     }
     viewModel {
-        SettingsAccountViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get())
+        SettingsAccountViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         SettingsChatViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get())
