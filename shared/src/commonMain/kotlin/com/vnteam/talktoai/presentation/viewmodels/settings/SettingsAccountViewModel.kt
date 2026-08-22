@@ -10,6 +10,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.De
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ReAuthenticateUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.ClearLocalDataUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.RefreshTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
@@ -22,6 +23,7 @@ class SettingsAccountViewModel(
     private val idTokenUseCase: IdTokenUseCase,
     private val userEmailUseCase: UserEmailUseCase,
     private val uidUseCase: UidUseCase,
+    private val refreshTokenUseCase: RefreshTokenUseCase,
     private val changePasswordUseCase: ChangePasswordUseCase,
     private val reAuthenticateUseCase: ReAuthenticateUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
@@ -32,7 +34,6 @@ class SettingsAccountViewModel(
     private val _userEmail = MutableStateFlow<String?>(null)
     val userEmail = _userEmail.asStateFlow()
 
-    val reAuthenticateLiveData = MutableStateFlow(false)
     val successLiveData = MutableStateFlow(false)
     val successChangePasswordLiveData = MutableStateFlow(false)
 
@@ -49,6 +50,7 @@ class SettingsAccountViewModel(
             idTokenUseCase.set(String.EMPTY)
             userEmailUseCase.set(String.EMPTY)
             uidUseCase.set(String.EMPTY)
+            refreshTokenUseCase.set(String.EMPTY)
             successLiveData.value = true
         }
     }
@@ -95,6 +97,10 @@ class SettingsAccountViewModel(
         launchWithErrorHandling {
             clearLocalDataUseCase.execute()
             clearDataUseCase.execute()
+            idTokenUseCase.set(String.EMPTY)
+            userEmailUseCase.set(String.EMPTY)
+            uidUseCase.set(String.EMPTY)
+            refreshTokenUseCase.set(String.EMPTY)
         }
     }
 }
