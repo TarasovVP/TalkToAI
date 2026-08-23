@@ -44,8 +44,10 @@ import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.android_architecture_template
 import com.vnteam.talktoai.domain.models.InfoMessage
 import com.vnteam.talktoai.ic_empty_state
-import com.vnteam.talktoai.presentation.ui.resources.LocalMediumTextSize
-import com.vnteam.talktoai.presentation.ui.resources.LocalSmallPadding
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
 import com.vnteam.talktoai.presentation.ui.theme.Primary300
 import com.vnteam.talktoai.presentation.ui.theme.Primary700
@@ -217,19 +219,15 @@ fun charsInLine(paddings: Float, textSize: Float): Float {
 
 @Composable
 fun measureScreenWidth(): Float {
-    // TODO
-    /*val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
-    return screenWidthDp.value*/
-    return LocalSmallPadding.current.size.value
+    val density = LocalDensity.current
+    val windowInfo = LocalWindowInfo.current
+    return with(density) { windowInfo.containerSize.width.toDp().value }
 }
 
 @Composable
 fun measureCharWidth(textSize: Float): Float {
-    // TODO
-    /*val density = LocalDensity.current.density
-    val textPaint = TextPaint().apply {
-        this.textSize = textSize * density
-    }
-    return textPaint.measureText(" ")*/
-    return LocalMediumTextSize.current.textSize.value
+    val textMeasurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    val measured = textMeasurer.measure(text = "M", style = TextStyle(fontSize = textSize.sp))
+    return with(density) { measured.size.width.toDp().value }
 }

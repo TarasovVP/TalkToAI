@@ -34,12 +34,11 @@ class AuthRepositoryImpl(
 
     private suspend inline fun <reified T> executeAuthRequest(
         operation: String,
-        crossinline block: suspend () -> HttpResponse?
+        crossinline block: suspend () -> HttpResponse
     ): Result<T> {
         return try {
             logger?.debug(TAG, "Executing $operation")
-            val httpResponse = block()
-            val result = httpResponse.handleResponse<T>()
+            val result = block().handleResponse<T>()
 
             when (result) {
                 is Result.Success -> logger?.debug(TAG, "$operation completed successfully")
