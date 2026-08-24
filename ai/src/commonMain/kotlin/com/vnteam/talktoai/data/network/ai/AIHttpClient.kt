@@ -21,9 +21,9 @@ class AIHttpClient(json: Json) {
         install(DefaultRequest) {
             url(Secrets.OPENAI_BASE_URL)
             contentType(ContentType.Application.Json)
-            header(NetworkConstants.AUTHORIZATION, "Bearer ${Secrets.OPENAI_API_KEY}")
-            header(NetworkConstants.OPENAI_ORGANIZATION, Secrets.ORGANIZATION_ID)
-            header(NetworkConstants.OPENAI_PROJECT, Secrets.PROJECT_ID)
+            header(NetworkConstants.OPENAI_AUTHORIZATION_HEADER, "Bearer ${Secrets.OPENAI_API_KEY}")
+            header(NetworkConstants.OPENAI_ORGANIZATION_HEADER, Secrets.ORGANIZATION_ID)
+            header(NetworkConstants.OPENAI_PROJECT_HEADER, Secrets.PROJECT_ID)
         }
         install(Logging) {
             logger = platformLogger()
