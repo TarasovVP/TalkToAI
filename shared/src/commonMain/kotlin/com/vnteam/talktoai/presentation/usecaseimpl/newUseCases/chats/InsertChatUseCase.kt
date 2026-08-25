@@ -26,16 +26,15 @@ class InsertChatUseCase(
 
     override suspend fun execute(params: Chat): Result<Chat> {
         val chat = params.withDefaultAiSettings()
+        chatRepository.insertChat(chat)
         val userAuth = preferencesRepository.getUserEmail().firstOrNull()
         val authState = userAuth.getUserAuth()
         if (authState.isAuthorisedUser()) {
-            val network = networkState.isNetworkAvailable()
-            if (!network) {
+            if (!networkState.isNetworkAvailable()) {
                 return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
             remoteStoreRepository.insertChat(chat).firstOrNull()
         }
-        chatRepository.insertChat(chat)
         return Result.Success(chat)
     }
 

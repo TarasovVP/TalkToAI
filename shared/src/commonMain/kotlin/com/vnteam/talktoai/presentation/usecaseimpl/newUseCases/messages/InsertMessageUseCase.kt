@@ -20,16 +20,15 @@ class InsertMessageUseCase(
 ) : UseCase<Message, Result<Unit>> {
 
     override suspend fun execute(params: Message): Result<Unit> {
+        messageRepository.insertMessage(params)
         val userAuth = preferencesRepository.getUserEmail().firstOrNull()
         val authState = userAuth.getUserAuth()
         if (authState.isAuthorisedUser()) {
-            val network = networkState.isNetworkAvailable()
-            if (!network) {
+            if (!networkState.isNetworkAvailable()) {
                 return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
             }
             remoteStoreRepository.insertMessage(params).firstOrNull()
         }
-        messageRepository.insertMessage(params)
         return Result.Success(Unit)
     }
 }
