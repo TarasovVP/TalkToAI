@@ -2,6 +2,7 @@ package com.vnteam.talktoai.data.network.firestore
 
 import com.vnteam.talktoai.data.network.AuthEventBus
 import com.vnteam.talktoai.data.network.NetworkConstants
+import com.vnteam.talktoai.data.network.Result
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
@@ -44,18 +45,18 @@ class FirestoreService(private val client: FirestoreHttpClient) {
         ok
     }.getOrDefault(false)
 
-    suspend fun listDocuments(collectionPath: String, idToken: String): List<FirestoreDocument> =
+    suspend fun listDocuments(collectionPath: String, idToken: String): Result<List<FirestoreDocument>> =
         runCatching {
             val response = client.httpClient.get("$base/$collectionPath") {
                 header(NetworkConstants.AUTHORIZATION, "Bearer $idToken")
             }
             if (response.status.isSuccess()) {
-                response.body<FirestoreListResponse>().documents.orEmpty()
+                Result.Success(response.body<FirestoreListResponse>().documents.orEmpty())
             } else {
                 if (response.status.value in 401..403) AuthEventBus.emitUnauthorized()
-                emptyList()
+                Result.Failure("Firestore error ${response.status.value}", statusCode = response.status.value)
             }
-        }.getOrDefault(emptyList())
+        }.getOrElse { Result.Failure(it.message ?: "Unknown error") }
 
     suspend fun runQuery(
         parentPath: String,

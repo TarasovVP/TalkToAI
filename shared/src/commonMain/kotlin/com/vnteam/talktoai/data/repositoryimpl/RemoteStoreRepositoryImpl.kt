@@ -168,19 +168,19 @@ class RemoteStoreRepositoryImpl(
             return@flow
         }
 
-        val chats = firestoreService.listDocuments(userChatsPath(uid), token)
-            .mapNotNull { it.toChat() }
-        val messages = firestoreService.listDocuments(userMessagesPath(uid), token)
-            .mapNotNull { it.toMessage() }
-
-        emit(
-            Result.Success(
-                RemoteUser(
-                    chats = ArrayList(chats),
-                    messages = ArrayList(messages),
-                )
-            )
-        )
+        val chatsResult = firestoreService.listDocuments(userChatsPath(uid), token)
+        if (chatsResult is Result.Failure) {
+            emit(chatsResult)
+            return@flow
+        }
+        val messagesResult = firestoreService.listDocuments(userMessagesPath(uid), token)
+        if (messagesResult is Result.Failure) {
+            emit(messagesResult)
+            return@flow
+        }
+        val chats = (chatsResult as Result.Success).data.mapNotNull { it.toChat() }
+        val messages = (messagesResult as Result.Success).data.mapNotNull { it.toMessage() }
+        emit(Result.Success(RemoteUser(chats = ArrayList(chats), messages = ArrayList(messages))))
     }
 
     override fun updateRemoteChats(chats: List<Chat>): Flow<Result<Unit>> = flow {
@@ -203,13 +203,13 @@ class RemoteStoreRepositoryImpl(
             emit(Result.Failure(ERROR_NOT_AUTHENTICATED))
             return@flow
         }
-        val chats = firestoreService.listDocuments(userChatsPath(uid), token)
+        val chats = (firestoreService.listDocuments(userChatsPath(uid), token) as? Result.Success)?.data.orEmpty()
         chats.forEach { doc ->
             doc.name?.substringAfterLast('/')?.let { id ->
                 firestoreService.deleteDocument("${userChatsPath(uid)}/$id", token)
             }
         }
-        val messages = firestoreService.listDocuments(userMessagesPath(uid), token)
+        val messages = (firestoreService.listDocuments(userMessagesPath(uid), token) as? Result.Success)?.data.orEmpty()
         messages.forEach { doc ->
             doc.name?.substringAfterLast('/')?.let { id ->
                 firestoreService.deleteDocument("${userMessagesPath(uid)}/$id", token)
