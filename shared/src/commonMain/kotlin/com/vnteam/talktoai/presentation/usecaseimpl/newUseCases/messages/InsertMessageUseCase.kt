@@ -1,7 +1,6 @@
 package com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages
 
 import com.vnteam.talktoai.CommonExtensions.getUserAuth
-import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.enums.isAuthorisedUser
 import com.vnteam.talktoai.domain.models.Message
@@ -23,10 +22,7 @@ class InsertMessageUseCase(
         messageRepository.insertMessage(params)
         val userAuth = preferencesRepository.getUserEmail().firstOrNull()
         val authState = userAuth.getUserAuth()
-        if (authState.isAuthorisedUser()) {
-            if (!networkState.isNetworkAvailable()) {
-                return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
-            }
+        if (authState.isAuthorisedUser() && networkState.isNetworkAvailable()) {
             remoteStoreRepository.insertMessage(params).firstOrNull()
         }
         return Result.Success(Unit)

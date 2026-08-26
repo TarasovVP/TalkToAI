@@ -1,7 +1,6 @@
 package com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats
 
 import com.vnteam.talktoai.CommonExtensions.getUserAuth
-import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.enums.isAuthorisedUser
@@ -29,10 +28,7 @@ class InsertChatUseCase(
         chatRepository.insertChat(chat)
         val userAuth = preferencesRepository.getUserEmail().firstOrNull()
         val authState = userAuth.getUserAuth()
-        if (authState.isAuthorisedUser()) {
-            if (!networkState.isNetworkAvailable()) {
-                return Result.Failure(Constants.APP_NETWORK_UNAVAILABLE_REPEAT)
-            }
+        if (authState.isAuthorisedUser() && networkState.isNetworkAvailable()) {
             remoteStoreRepository.insertChat(chat).firstOrNull()
         }
         return Result.Success(chat)
