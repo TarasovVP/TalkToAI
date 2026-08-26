@@ -178,8 +178,8 @@ class RemoteStoreRepositoryImpl(
             emit(messagesResult)
             return@flow
         }
-        val chats = (chatsResult as Result.Success).data.mapNotNull { it.toChat() }
-        val messages = (messagesResult as Result.Success).data.mapNotNull { it.toMessage() }
+        val chats = (chatsResult as Result.Success).data.orEmpty().mapNotNull { it.toChat() }
+        val messages = (messagesResult as Result.Success).data.orEmpty().mapNotNull { it.toMessage() }
         emit(Result.Success(RemoteUser(chats = ArrayList(chats), messages = ArrayList(messages))))
     }
 
@@ -203,14 +203,22 @@ class RemoteStoreRepositoryImpl(
             emit(Result.Failure(ERROR_NOT_AUTHENTICATED))
             return@flow
         }
-        val chats = (firestoreService.listDocuments(userChatsPath(uid), token) as? Result.Success)?.data.orEmpty()
-        chats.forEach { doc ->
+        val chatsResult = firestoreService.listDocuments(userChatsPath(uid), token)
+        if (chatsResult is Result.Failure) {
+            emit(chatsResult)
+            return@flow
+        }
+        (chatsResult as Result.Success).data.orEmpty().forEach { doc ->
             doc.name?.substringAfterLast('/')?.let { id ->
                 firestoreService.deleteDocument("${userChatsPath(uid)}/$id", token)
             }
         }
-        val messages = (firestoreService.listDocuments(userMessagesPath(uid), token) as? Result.Success)?.data.orEmpty()
-        messages.forEach { doc ->
+        val messagesResult = firestoreService.listDocuments(userMessagesPath(uid), token)
+        if (messagesResult is Result.Failure) {
+            emit(messagesResult)
+            return@flow
+        }
+        (messagesResult as Result.Success).data.orEmpty().forEach { doc ->
             doc.name?.substringAfterLast('/')?.let { id ->
                 firestoreService.deleteDocument("${userMessagesPath(uid)}/$id", token)
             }
