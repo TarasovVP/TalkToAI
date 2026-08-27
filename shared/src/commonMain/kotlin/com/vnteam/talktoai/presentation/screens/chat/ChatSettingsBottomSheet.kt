@@ -28,6 +28,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnteam.talktoai.SettingsConstants
+import com.vnteam.talktoai.domain.enums.AiProviderType
+import com.vnteam.talktoai.domain.enums.ModelTier
+import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.presentation.ui.components.ChatSheetWrapper
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
@@ -49,7 +52,9 @@ fun ChatSettingsBottomSheet(
 
     val chatName = remember(chat.id) { mutableStateOf(chat.name.orEmpty()) }
     val chatContext = remember(chat.id) { mutableStateOf(chat.context.orEmpty()) }
-    val chatModel = remember(chat.id) { mutableStateOf(chat.aiModel) }
+    val validatedChatModel = chat.aiModel?.takeIf { id -> AiModels.OPENAI.any { it.id == id } }
+        ?: chat.aiModel?.let { AiModels.balancedFor(AiProviderType.OPENAI).id }
+    val chatModel = remember(chat.id) { mutableStateOf(validatedChatModel) }
     val chatTemperature = remember(chat.id) { mutableStateOf(chat.temperature) }
 
     val dropdownExpanded = remember { mutableStateOf(false) }
@@ -110,10 +115,12 @@ fun ChatSettingsBottomSheet(
                 onExpandedChange = { dropdownExpanded.value = it },
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
             ) {
+                val effectiveModelName = AiModels.OPENAI.find { it.id == effectiveModel }?.displayName ?: effectiveModel
+                val globalModelName = AiModels.OPENAI.find { it.id == globalAiModel.value }?.displayName ?: globalAiModel.value
                 val displayModel = if (chatModel.value == null) {
-                    "${effectiveModel} (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})"
+                    "$effectiveModelName (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})"
                 } else {
-                    effectiveModel
+                    effectiveModelName
                 }
                 val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
                 val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
@@ -136,7 +143,7 @@ fun ChatSettingsBottomSheet(
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = "${globalAiModel.value} (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})",
+                                text = "$globalModelName (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})",
                                 color = fieldContentColor
                             )
                         },
@@ -145,11 +152,11 @@ fun ChatSettingsBottomSheet(
                             dropdownExpanded.value = false
                         }
                     )
-                    SettingsConstants.AI_MODELS.forEach { model ->
+                    AiModels.OPENAI.forEach { model ->
                         DropdownMenuItem(
-                            text = { Text(text = model, color = fieldContentColor) },
+                            text = { Text(text = model.displayName, color = fieldContentColor) },
                             onClick = {
-                                chatModel.value = model
+                                chatModel.value = model.id
                                 dropdownExpanded.value = false
                             }
                         )

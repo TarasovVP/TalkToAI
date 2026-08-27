@@ -3,9 +3,9 @@ package com.vnteam.talktoai.presentation.viewmodels.chats
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.SettingsConstants
+import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.ai.openai.request.ApiRequest
 import com.vnteam.talktoai.data.network.ai.openai.request.MessageApi
-import com.vnteam.talktoai.data.network.onError
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.dateToMilliseconds
 import com.vnteam.talktoai.domain.enums.MessageStatus
@@ -17,6 +17,7 @@ import com.vnteam.talktoai.presentation.uimodels.MessageUI
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.SendRequestUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.GetChatWithIdUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.InsertChatUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.UpdateChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.DeleteMessagesUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMessagesFromChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessageUseCase
@@ -27,7 +28,9 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.Tempera
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.AnimationUtils
 import com.vnteam.talktoai.utils.ShareUtils
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlin.time.Clock
@@ -43,6 +46,7 @@ class ChatViewModel(
     private val getMessagesFromChatUseCase: GetMessagesFromChatUseCase,
     private val insertMessageUseCase: InsertMessageUseCase,
     private val sendRequestUseCase: SendRequestUseCase,
+    private val updateChatUseCase: UpdateChatUseCase,
     private val aiModelUseCase: AiModelUseCase,
     private val apiKeyUseCase: ApiKeyUseCase,
     private val temperatureUseCase: TemperatureUseCase,
@@ -57,36 +61,39 @@ class ChatViewModel(
     val messagesLiveData = _messagesLiveData.asStateFlow()
     private val _animationResource = MutableStateFlow("")
     val animationResource = _animationResource.asStateFlow()
-    private val _aiModel = MutableStateFlow(SettingsConstants.AI_MODEL_DEFAULT)
+    private val _aiModel = MutableStateFlow(SettingsConstants.OPENAI_AI_MODEL_DEFAULT)
     private val _apiKey = MutableStateFlow<String?>(null)
     private val _temperature = MutableStateFlow(SettingsConstants.AI_TEMPERATURE_DEFAULT)
     private val _globalContext = MutableStateFlow<String?>(null)
 
+    private val _modelFallback = MutableSharedFlow<Pair<String, String>>(extraBufferCapacity = 1)
+    val modelFallback = _modelFallback.asSharedFlow()
+
     init {
         launchWithErrorHandling {
             aiModelUseCase.get().firstOrNull()?.let { result ->
-                if (result is com.vnteam.talktoai.data.network.Result.Success && !result.data.isNullOrEmpty()) {
+                if (result is Result.Success && !result.data.isNullOrEmpty()) {
                     _aiModel.value = result.data!!
                 }
             }
         }
         launchWithErrorHandling {
             apiKeyUseCase.get().firstOrNull()?.let { result ->
-                if (result is com.vnteam.talktoai.data.network.Result.Success && !result.data.isNullOrEmpty()) {
+                if (result is Result.Success && !result.data.isNullOrEmpty()) {
                     _apiKey.value = result.data
                 }
             }
         }
         launchWithErrorHandling {
             temperatureUseCase.get().firstOrNull()?.let { result ->
-                if (result is com.vnteam.talktoai.data.network.Result.Success) {
+                if (result is Result.Success) {
                     _temperature.value = result.data ?: SettingsConstants.AI_TEMPERATURE_DEFAULT
                 }
             }
         }
         launchWithErrorHandling {
             globalContextUseCase.get().collect { result ->
-                if (result is com.vnteam.talktoai.data.network.Result.Success) {
+                if (result is Result.Success) {
                     _globalContext.value = result.data
                 }
             }
@@ -104,10 +111,8 @@ class ChatViewModel(
 
     fun createWelcomeChat(chatName: String, welcomeMessage: String) {
         launchWithErrorHandling {
-            // Guard against re-creating on second launch (reactive DB flow race condition)
             val firstResult = getChatWithIdUseCase.execute(Constants.DEFAULT_CHAT_ID).firstOrNull()
-            val existingChat =
-                (firstResult as? com.vnteam.talktoai.data.network.Result.Success)?.data
+            val existingChat = (firstResult as? Result.Success)?.data
             if (existingChat?.id != null) {
                 _currentChatLiveData.value = chatUIMapper.mapToImplModel(existingChat)
                 _welcomeChat.value = existingChat
@@ -116,7 +121,7 @@ class ChatViewModel(
             val chatId = Clock.System.now().dateToMilliseconds()
             val chat = Chat(id = chatId, name = chatName, updated = chatId, listOrder = 1)
             val insertedChat = when (val result = insertChatUseCase.execute(chat)) {
-                is com.vnteam.talktoai.data.network.Result.Success -> result.data
+                is Result.Success -> result.data
                 else -> null
             } ?: return@launchWithErrorHandling
             insertMessageUseCase.execute(
@@ -240,22 +245,39 @@ class ChatViewModel(
             temperature = chatTemperature ?: _temperature.value,
             messages = messages,
         )
-        launchWithResultHandling {
-            sendRequestUseCase.execute(apiRequest, _apiKey.value).onSuccess { apiResponse ->
-                insertMessage(
-                    temporaryMessage.copy(
-                        author = apiResponse?.model.orEmpty(),
-                        message = apiResponse?.choices?.firstOrNull()?.message?.content.orEmpty(),
-                        status = MessageStatus.SUCCESS
+        launchWithErrorHandling {
+            val result = sendRequestUseCase.execute(apiRequest, _apiKey.value).firstOrNull()
+            when (result) {
+                is Result.Success -> {
+                    val aiResponse = result.data
+                    val fallbackFrom = aiResponse?.fallbackFrom
+                    if (fallbackFrom != null) {
+                        val currentChat = _currentChatLiveData.value
+                        val chatDomain = currentChat?.let { chatUIMapper.mapFromImplModel(it) }
+                        if (chatDomain?.aiModel == fallbackFrom) {
+                            val updated = chatDomain.copy(aiModel = aiResponse.model)
+                            updateChatUseCase.execute(updated)
+                            _currentChatLiveData.value = chatUIMapper.mapToImplModel(updated)
+                        }
+                        _modelFallback.emit(Pair(fallbackFrom, aiResponse.model))
+                    }
+                    insertMessage(
+                        temporaryMessage.copy(
+                            author = aiResponse?.model.orEmpty(),
+                            message = aiResponse?.content.orEmpty(),
+                            status = MessageStatus.SUCCESS
+                        )
                     )
-                )
-            }.onError { error ->
-                insertMessage(
-                    temporaryMessage.copy(
-                        status = MessageStatus.ERROR,
-                        errorMessage = error.orEmpty()
+                }
+                is Result.Failure -> {
+                    insertMessage(
+                        temporaryMessage.copy(
+                            status = MessageStatus.ERROR,
+                            errorMessage = result.errorMessage.orEmpty()
+                        )
                     )
-                )
+                }
+                else -> Unit
             }
         }
     }

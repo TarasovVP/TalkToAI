@@ -37,7 +37,7 @@ class InsertChatUseCase(
     private suspend fun Chat.withDefaultAiSettings(): Chat {
         val model = aiModel ?: (
                 aiModelUseCase.get().firstOrNull() as? Result.Success
-                )?.data?.takeIf { it.isNotBlank() } ?: SettingsConstants.AI_MODEL_DEFAULT
+                )?.data?.takeIf { it.isNotBlank() } ?: SettingsConstants.OPENAI_AI_MODEL_DEFAULT
         val temp = temperature ?: (
                 temperatureUseCase.get().firstOrNull() as? Result.Success
                 )?.data ?: SettingsConstants.AI_TEMPERATURE_DEFAULT

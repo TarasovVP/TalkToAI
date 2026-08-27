@@ -11,6 +11,24 @@ const val UNKNOWN_ERROR = "Unknown error"
 
 val errorJson = Json { ignoreUnknownKeys = true }
 
+fun parseErrorMessage(body: String): String = try {
+    val root = errorJson.parseToJsonElement(body).jsonObject
+    root[NetworkConstants.ERROR_KEY]?.jsonObject
+        ?.get(NetworkConstants.MESSAGE_KEY)?.jsonPrimitive?.content ?: body
+} catch (e: Exception) { body }
+
+fun isModelNotSupportedError(statusCode: Int, body: String): Boolean {
+    if (statusCode != 400) return false
+    return try {
+        val errorObj = errorJson.parseToJsonElement(body).jsonObject[NetworkConstants.ERROR_KEY]?.jsonObject
+            ?: return false
+        val type = errorObj["type"]?.jsonPrimitive?.content.orEmpty()
+        val message = errorObj[NetworkConstants.MESSAGE_KEY]?.jsonPrimitive?.content.orEmpty()
+        (type == "not_found_error" || type == "invalid_request_error") &&
+                message.contains("model", ignoreCase = true)
+    } catch (e: Exception) { false }
+}
+
 suspend inline fun <reified T> HttpResponse?.handleResponse(): Result<T> {
     return when {
         this == null -> Result.Failure(UNKNOWN_ERROR)
