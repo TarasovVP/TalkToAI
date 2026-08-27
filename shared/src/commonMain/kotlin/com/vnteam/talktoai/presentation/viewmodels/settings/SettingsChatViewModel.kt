@@ -3,8 +3,9 @@ package com.vnteam.talktoai.presentation.viewmodels.settings
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.data.network.Result
+import com.vnteam.talktoai.domain.models.AiModel
+import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.GetModelsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteSettingsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ApiKeyUseCase
@@ -24,14 +25,13 @@ class SettingsChatViewModel(
     private val userEmailUseCase: UserEmailUseCase,
     private val aiModelUseCase: AiModelUseCase,
     private val apiKeyUseCase: ApiKeyUseCase,
-    private val getModelsUseCase: GetModelsUseCase,
     private val temperatureUseCase: TemperatureUseCase,
     private val globalContextUseCase: GlobalContextUseCase,
     private val remoteStoreRepository: RemoteStoreRepository,
     private val syncRemoteSettingsUseCase: SyncRemoteSettingsUseCase,
 ) : BaseViewModel() {
 
-    private val _aiModel = MutableStateFlow(SettingsConstants.AI_MODEL_DEFAULT)
+    private val _aiModel = MutableStateFlow(SettingsConstants.OPENAI_AI_MODEL_DEFAULT)
     val aiModel = _aiModel.asStateFlow()
 
     private val _apiKey = MutableStateFlow(String.EMPTY)
@@ -43,7 +43,7 @@ class SettingsChatViewModel(
     private val _settingsSaved = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val settingsSaved = _settingsSaved.asSharedFlow()
 
-    private val _availableModels = MutableStateFlow(SettingsConstants.AI_MODELS)
+    private val _availableModels = MutableStateFlow<List<AiModel>>(AiModels.OPENAI)
     val availableModels = _availableModels.asStateFlow()
 
     private val _hasChanges = MutableStateFlow(false)
@@ -55,26 +55,13 @@ class SettingsChatViewModel(
     private val _globalContext = MutableStateFlow(String.EMPTY)
     val globalContext = _globalContext.asStateFlow()
 
-    private var initialAiModel = SettingsConstants.AI_MODEL_DEFAULT
+    private var initialAiModel = SettingsConstants.OPENAI_AI_MODEL_DEFAULT
     private var initialApiKey = String.EMPTY
     private var initialTemperature = SettingsConstants.AI_TEMPERATURE_DEFAULT
     private var initialGlobalContext = String.EMPTY
 
     init {
         loadSettings()
-    }
-
-    private fun loadModels(apiKey: String) {
-        launchWithErrorHandling {
-            getModelsUseCase.execute(apiKey.takeIf { it.isNotEmpty() }).collect { result ->
-                if (result is Result.Success) {
-                    val models = result.data?.data?.map { it.id }
-                    if (!models.isNullOrEmpty()) {
-                        _availableModels.value = models
-                    }
-                }
-            }
-        }
     }
 
     private fun updateHasChanges() {
@@ -91,11 +78,12 @@ class SettingsChatViewModel(
         launchWithErrorHandling {
             aiModelUseCase.get().collect { result ->
                 if (result is Result.Success) {
-                    result.data?.takeIf { it.isNotEmpty() }?.let {
-                        _aiModel.value = it
-                        initialAiModel = it
-                        updateHasChanges()
-                    }
+                    val saved = result.data?.takeIf { it.isNotEmpty() } ?: return@collect
+                    val validated = if (AiModels.OPENAI.any { it.id == saved }) saved
+                    else AiModels.OPENAI.first { it.tier == com.vnteam.talktoai.domain.enums.ModelTier.BALANCED }.id
+                    _aiModel.value = validated
+                    initialAiModel = validated
+                    updateHasChanges()
                 }
             }
         }
@@ -107,7 +95,6 @@ class SettingsChatViewModel(
                     initialApiKey = key
                     _savedApiKey.value = key
                     updateHasChanges()
-                    loadModels(key)
                 }
             }
         }
@@ -167,7 +154,6 @@ class SettingsChatViewModel(
                     "globalContext" to _globalContext.value,
                 )
             ).firstOrNull()
-            // Local save always succeeds; remote failure is non-fatal for anonymous/offline users
             if (remoteResult is Result.Failure &&
                 remoteResult.errorMessage != "Not authenticated"
             ) {

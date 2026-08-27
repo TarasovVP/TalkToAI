@@ -92,8 +92,9 @@ fun SettingsChatContent() {
         ) {
             val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
             val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+            val displayedModelName = availableModels.value.find { it.id == aiModel.value }?.displayName ?: aiModel.value
             OutlinedTextField(
-                value = aiModel.value,
+                value = displayedModelName,
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownExpanded.value) },
@@ -110,9 +111,9 @@ fun SettingsChatContent() {
             ) {
                 availableModels.value.forEach { model ->
                     DropdownMenuItem(
-                        text = { Text(text = model, color = fieldContentColor) },
+                        text = { Text(text = model.displayName, color = fieldContentColor) },
                         onClick = {
-                            viewModel.onModelSelected(model)
+                            viewModel.onModelSelected(model.id)
                             dropdownExpanded.value = false
                         }
                     )

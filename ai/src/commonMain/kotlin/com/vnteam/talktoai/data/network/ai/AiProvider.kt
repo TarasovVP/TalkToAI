@@ -13,4 +13,8 @@ interface AiProvider {
     ): Flow<Result<AiTextResponse>>
 }
 
-data class AiTextResponse(val model: String, val content: String)
+data class AiTextResponse(
+    val model: String,
+    val content: String,
+    val fallbackFrom: String? = null,
+)

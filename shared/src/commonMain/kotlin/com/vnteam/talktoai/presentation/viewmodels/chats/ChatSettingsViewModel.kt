@@ -1,6 +1,8 @@
 package com.vnteam.talktoai.presentation.viewmodels.chats
 
 import com.vnteam.talktoai.SettingsConstants
+import com.vnteam.talktoai.domain.enums.AiProviderType
+import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.UpdateChatUseCase
@@ -18,7 +20,7 @@ class ChatSettingsViewModel(
     private val temperatureUseCase: TemperatureUseCase,
 ) : BaseViewModel() {
 
-    private val _globalAiModel = MutableStateFlow(SettingsConstants.AI_MODEL_DEFAULT)
+    private val _globalAiModel = MutableStateFlow(AiModels.balancedFor(AiProviderType.OPENAI).id)
     val globalAiModel = _globalAiModel.asStateFlow()
 
     private val _globalTemperature = MutableStateFlow(SettingsConstants.AI_TEMPERATURE_DEFAULT)
