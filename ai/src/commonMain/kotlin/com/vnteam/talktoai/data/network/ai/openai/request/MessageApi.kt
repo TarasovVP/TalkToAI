@@ -1,4 +1,4 @@
-package com.vnteam.talktoai.data.network.ai.request
+package com.vnteam.talktoai.data.network.ai.openai.request
 
 import kotlinx.serialization.Serializable
 

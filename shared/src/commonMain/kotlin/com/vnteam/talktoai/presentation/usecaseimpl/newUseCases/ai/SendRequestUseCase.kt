@@ -1,8 +1,8 @@
 package com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai
 
 import com.vnteam.talktoai.data.network.Result
-import com.vnteam.talktoai.data.network.ai.request.ApiRequest
-import com.vnteam.talktoai.data.network.ai.responses.ApiResponse
+import com.vnteam.talktoai.data.network.ai.openai.request.ApiRequest
+import com.vnteam.talktoai.data.network.ai.openai.response.ApiResponse
 import com.vnteam.talktoai.domain.repositories.AIRepository
 import kotlinx.coroutines.flow.Flow
 

@@ -3,8 +3,8 @@ package com.vnteam.talktoai.presentation.viewmodels.chats
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.SettingsConstants
-import com.vnteam.talktoai.data.network.ai.request.ApiRequest
-import com.vnteam.talktoai.data.network.ai.request.MessageApi
+import com.vnteam.talktoai.data.network.ai.openai.request.ApiRequest
+import com.vnteam.talktoai.data.network.ai.openai.request.MessageApi
 import com.vnteam.talktoai.data.network.onError
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.dateToMilliseconds
