@@ -1,7 +1,7 @@
 package com.vnteam.talktoai.di
 
-import com.vnteam.talktoai.data.network.ai.AIHttpClient
-import com.vnteam.talktoai.data.network.ai.AIService
+import com.vnteam.talktoai.data.network.ai.openai.OpenAiHttpClient
+import com.vnteam.talktoai.data.network.ai.openai.OpenAiService
 import com.vnteam.talktoai.data.repositoryimpl.AIRepositoryImpl
 import com.vnteam.talktoai.domain.repositories.AIRepository
 import kotlinx.serialization.json.Json
@@ -18,9 +18,9 @@ val aiModule = module {
         }
     }
 
-    single { AIHttpClient(get(named("aiJson"))) }
+    single { OpenAiHttpClient(get(named("aiJson"))) }
 
-    single { AIService(get()) }
+    single { OpenAiService(get()) }
 
     single<AIRepository> { AIRepositoryImpl(get()) }
 }

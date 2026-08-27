@@ -1,6 +1,6 @@
-package com.vnteam.talktoai.data.network.ai.responses
+package com.vnteam.talktoai.data.network.ai.openai.response
 
-import com.vnteam.talktoai.data.network.ai.request.MessageApi
+import com.vnteam.talktoai.data.network.ai.openai.request.MessageApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

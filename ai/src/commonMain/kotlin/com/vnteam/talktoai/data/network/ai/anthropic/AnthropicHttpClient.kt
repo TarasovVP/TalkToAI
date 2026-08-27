@@ -1,6 +1,7 @@
-package com.vnteam.talktoai.data.network.ai
+package com.vnteam.talktoai.data.network.ai.anthropic
 
 import com.vnteam.talktoai.data.network.NetworkConstants
+import com.vnteam.talktoai.data.network.ai.platformLogger
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -13,21 +14,24 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import secrets.Secrets
 
-class AIHttpClient(json: Json) {
+class AnthropicHttpClient(json: Json) {
     internal val httpClient = HttpClient {
         install(ContentNegotiation) {
             json(json)
         }
         install(DefaultRequest) {
-            url(Secrets.OPENAI_BASE_URL)
+            url(BASE_URL)
             contentType(ContentType.Application.Json)
-            header(NetworkConstants.OPENAI_AUTHORIZATION_HEADER, "Bearer ${Secrets.OPENAI_API_KEY}")
-            header(NetworkConstants.OPENAI_ORGANIZATION_HEADER, Secrets.ORGANIZATION_ID)
-            header(NetworkConstants.OPENAI_PROJECT_HEADER, Secrets.PROJECT_ID)
+            header(NetworkConstants.ANTHROPIC_API_KEY_HEADER, Secrets.CLAUDE_API_KEY)
+            header(NetworkConstants.ANTHROPIC_VERSION_HEADER, NetworkConstants.ANTHROPIC_VERSION)
         }
         install(Logging) {
             logger = platformLogger()
             level = LogLevel.NONE
         }
+    }
+
+    companion object {
+        private const val BASE_URL = "https://api.anthropic.com"
     }
 }

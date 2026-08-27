@@ -1,9 +1,9 @@
 package com.vnteam.talktoai.domain.repositories
 
 import com.vnteam.talktoai.data.network.Result
-import com.vnteam.talktoai.data.network.ai.request.ApiRequest
-import com.vnteam.talktoai.data.network.ai.responses.ApiResponse
-import com.vnteam.talktoai.data.network.ai.responses.ModelsResponse
+import com.vnteam.talktoai.data.network.ai.openai.request.ApiRequest
+import com.vnteam.talktoai.data.network.ai.openai.response.ApiResponse
+import com.vnteam.talktoai.data.network.ai.openai.response.ModelsResponse
 import kotlinx.coroutines.flow.Flow
 
 interface AIRepository {
