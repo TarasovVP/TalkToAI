@@ -1,9 +1,14 @@
 package com.vnteam.talktoai.data.network
 
 object NetworkConstants {
-    const val AUTHORIZATION = "Authorization"
-    const val OPENAI_ORGANIZATION = "OpenAI-Organization"
-    const val OPENAI_PROJECT = "OpenAI-Project"
+    const val OPENAI_AUTHORIZATION_HEADER = "Authorization"
+    const val OPENAI_ORGANIZATION_HEADER = "OpenAI-Organization"
+    const val OPENAI_PROJECT_HEADER = "OpenAI-Project"
+
+    // Anthropic
+    const val ANTHROPIC_API_KEY_HEADER = "x-api-key"
+    const val ANTHROPIC_VERSION_HEADER = "anthropic-version"
+    const val ANTHROPIC_VERSION = "2023-06-01"
 
     // JSON error response field names
     const val ERROR_KEY = "error"
