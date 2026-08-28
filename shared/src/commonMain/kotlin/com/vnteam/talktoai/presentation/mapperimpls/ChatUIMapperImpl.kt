@@ -16,7 +16,8 @@ class ChatUIMapperImpl : ChatUIMapper {
             listOrder = from.listOrder.orZero(),
             aiModel = from.aiModel,
             temperature = from.temperature,
-            context = from.context
+            context = from.context,
+            aiProvider = from.aiProvider
         )
     }
 
@@ -28,7 +29,8 @@ class ChatUIMapperImpl : ChatUIMapper {
             listOrder = to.listOrder,
             aiModel = to.aiModel,
             temperature = to.temperature,
-            context = to.context
+            context = to.context,
+            aiProvider = to.aiProvider
         )
     }
 
