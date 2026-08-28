@@ -13,4 +13,5 @@ data class ChatUI(
     val aiModel: String? = null,
     val temperature: Float? = null,
     val context: String? = null,
+    val aiProvider: String? = null,
 )
