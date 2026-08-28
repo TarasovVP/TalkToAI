@@ -24,7 +24,7 @@ class FirestoreService(private val client: FirestoreHttpClient) {
         idToken: String,
     ): Boolean = runCatching {
         val response = client.httpClient.patch("$base/$path") {
-            header(NetworkConstants.OPENAI_AUTHORIZATION_HEADER, "Bearer $idToken")
+            header(NetworkConstants.OPENAI_AUTHORIZATION_HEADER, "${NetworkConstants.BEARER_PREFIX}$idToken")
             setBody(FirestoreDocument(fields = fields))
         }
         if (!response.status.isSuccess()) {
@@ -35,7 +35,7 @@ class FirestoreService(private val client: FirestoreHttpClient) {
 
     suspend fun deleteDocument(path: String, idToken: String): Boolean = runCatching {
         val response = client.httpClient.delete("$base/$path") {
-            header(NetworkConstants.OPENAI_AUTHORIZATION_HEADER, "Bearer $idToken")
+            header(NetworkConstants.OPENAI_AUTHORIZATION_HEADER, "${NetworkConstants.BEARER_PREFIX}$idToken")
         }
         val ok = response.status.isSuccess()
         if (!ok) {
@@ -47,7 +47,7 @@ class FirestoreService(private val client: FirestoreHttpClient) {
     suspend fun listDocuments(collectionPath: String, idToken: String): Result<List<FirestoreDocument>> =
         runCatching {
             val response = client.httpClient.get("$base/$collectionPath") {
-                header(NetworkConstants.OPENAI_AUTHORIZATION_HEADER, "Bearer $idToken")
+                header(NetworkConstants.OPENAI_AUTHORIZATION_HEADER, "${NetworkConstants.BEARER_PREFIX}$idToken")
             }
             if (response.status.isSuccess()) {
                 Result.Success(response.body<FirestoreListResponse>().documents.orEmpty())
@@ -63,7 +63,7 @@ class FirestoreService(private val client: FirestoreHttpClient) {
         idToken: String,
     ): List<FirestoreDocument> = runCatching {
         val response = client.httpClient.post("$base/$parentPath:runQuery") {
-            header(NetworkConstants.OPENAI_AUTHORIZATION_HEADER, "Bearer $idToken")
+            header(NetworkConstants.OPENAI_AUTHORIZATION_HEADER, "${NetworkConstants.BEARER_PREFIX}$idToken")
             setBody(query)
         }
         if (response.status.isSuccess()) {
@@ -77,7 +77,7 @@ class FirestoreService(private val client: FirestoreHttpClient) {
 
     suspend fun getDocument(path: String, idToken: String): FirestoreDocument? = runCatching {
         val response = client.httpClient.get("$base/$path") {
-            header(NetworkConstants.OPENAI_AUTHORIZATION_HEADER, "Bearer $idToken")
+            header(NetworkConstants.OPENAI_AUTHORIZATION_HEADER, "${NetworkConstants.BEARER_PREFIX}$idToken")
         }
         if (response.status.isSuccess()) {
             response.body<FirestoreDocument>()

@@ -22,10 +22,10 @@ fun isModelNotSupportedError(statusCode: Int, body: String): Boolean {
     return try {
         val errorObj = errorJson.parseToJsonElement(body).jsonObject[NetworkConstants.ERROR_KEY]?.jsonObject
             ?: return false
-        val type = errorObj["type"]?.jsonPrimitive?.content.orEmpty()
+        val type = errorObj[NetworkConstants.TYPE_KEY]?.jsonPrimitive?.content.orEmpty()
         val message = errorObj[NetworkConstants.MESSAGE_KEY]?.jsonPrimitive?.content.orEmpty()
-        (type == "not_found_error" || type == "invalid_request_error") &&
-                message.contains("model", ignoreCase = true)
+        (type == NetworkConstants.ERROR_TYPE_NOT_FOUND || type == NetworkConstants.ERROR_TYPE_INVALID_REQUEST) &&
+                message.contains(NetworkConstants.MODEL_KEYWORD, ignoreCase = true)
     } catch (e: Exception) { false }
 }
 

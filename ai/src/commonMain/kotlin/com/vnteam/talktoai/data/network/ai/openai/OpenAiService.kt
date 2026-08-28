@@ -12,7 +12,7 @@ class OpenAiService(
     suspend fun sendRequest(apiRequest: ApiRequest, apiKey: String? = null): HttpResponse {
         return openAiHttpClient.httpClient.post(CHAT_COMPLETION) {
             if (!apiKey.isNullOrEmpty()) {
-                headers[NetworkConstants.OPENAI_AUTHORIZATION_HEADER] = "Bearer $apiKey"
+                headers[NetworkConstants.OPENAI_AUTHORIZATION_HEADER] = "${NetworkConstants.BEARER_PREFIX}$apiKey"
             }
             setBody(apiRequest)
         }
