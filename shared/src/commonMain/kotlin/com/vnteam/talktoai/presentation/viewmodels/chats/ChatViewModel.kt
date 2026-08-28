@@ -4,10 +4,9 @@ import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.data.network.Result
-import com.vnteam.talktoai.data.network.ai.openai.request.ApiRequest
-import com.vnteam.talktoai.data.network.ai.openai.request.MessageApi
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.dateToMilliseconds
+import com.vnteam.talktoai.domain.enums.AiProviderType
 import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.mappers.ChatUIMapper
 import com.vnteam.talktoai.domain.mappers.MessageUIMapper
@@ -34,6 +33,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlin.time.Clock
+import com.vnteam.talktoai.data.network.ai.request.Message as AiMessage
 
 class ChatViewModel(
     private val messageUIMapper: MessageUIMapper,
@@ -228,25 +228,22 @@ class ChatViewModel(
             .reversed()
         val messages = buildList {
             if (!systemContext.isNullOrBlank()) {
-                add(MessageApi(role = Constants.MESSAGE_ROLE_SYSTEM, content = systemContext))
+                add(AiMessage(role = Constants.MESSAGE_ROLE_SYSTEM, content = systemContext))
             }
             trimmedHistory.forEach { msg ->
                 add(
-                    MessageApi(
+                    AiMessage(
                         role = if (msg.author == Constants.MESSAGE_ROLE_ME) Constants.MESSAGE_ROLE_USER else Constants.MESSAGE_ROLE_ASSISTANT,
                         content = msg.message
                     )
                 )
             }
-            add(MessageApi(role = Constants.MESSAGE_ROLE_USER, content = messageText))
+            add(AiMessage(role = Constants.MESSAGE_ROLE_USER, content = messageText))
         }
-        val apiRequest = ApiRequest(
-            model = chatAiModel ?: _aiModel.value,
-            temperature = chatTemperature ?: _temperature.value,
-            messages = messages,
-        )
+        val model = chatAiModel ?: _aiModel.value
+        val temperature = chatTemperature ?: _temperature.value
         launchWithErrorHandling {
-            val result = sendRequestUseCase.execute(apiRequest, _apiKey.value).firstOrNull()
+            val result = sendRequestUseCase.execute(model, temperature, messages, _apiKey.value, AiProviderType.OPENAI).firstOrNull()
             when (result) {
                 is Result.Success -> {
                     val aiResponse = result.data
