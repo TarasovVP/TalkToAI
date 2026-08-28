@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.data.network.ai.anthropic.request
 
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -8,7 +9,7 @@ data class AnthropicRequest(
     val model: String,
     @SerialName("max_tokens") val maxTokens: Int = DEFAULT_MAX_TOKENS,
     val temperature: Float,
-    val system: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val system: String? = null,
     val messages: List<AnthropicMessage>,
     val stream: Boolean = true,
 ) {
