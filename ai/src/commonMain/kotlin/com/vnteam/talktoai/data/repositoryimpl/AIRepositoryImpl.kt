@@ -9,7 +9,6 @@ import com.vnteam.talktoai.data.network.ai.openai.response.ApiResponse
 import com.vnteam.talktoai.data.network.isModelNotSupportedError
 import com.vnteam.talktoai.data.network.parseErrorMessage
 import com.vnteam.talktoai.domain.enums.AiProviderType
-import com.vnteam.talktoai.domain.enums.ModelTier
 import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.repositories.AIRepository
 import io.ktor.client.call.body
