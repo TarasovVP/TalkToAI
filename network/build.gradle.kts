@@ -42,6 +42,9 @@ kotlin {
             // Koin
             implementation(libs.koin.core)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
         androidMain.dependencies {
             // Ktor
             implementation(libs.ktor.client.android)
