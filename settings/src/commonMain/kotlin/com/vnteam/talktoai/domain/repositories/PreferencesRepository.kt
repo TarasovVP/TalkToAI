@@ -32,6 +32,10 @@ interface PreferencesRepository {
 
     suspend fun setAiModel(model: String)
 
+    fun getAiProvider(): Flow<String?>
+
+    suspend fun setAiProvider(provider: String)
+
     fun getApiKey(): Flow<String?>
 
     suspend fun setApiKey(apiKey: String)

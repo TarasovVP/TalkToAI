@@ -65,6 +65,7 @@ sealed class StringResources(
     var SETTINGS_THEME: String,
     var SETTINGS_PRIVACY_POLICY: String,
     // Settings chat
+    var SETTINGS_CHAT_PROVIDER_TITLE: String,
     var SETTINGS_CHAT_MODEL_TITLE: String,
     var SETTINGS_CHAT_API_KEY_TITLE: String,
     var SETTINGS_CHAT_API_KEY_HINT: String,
@@ -229,6 +230,7 @@ class StringResourcesEN : StringResources(
     SETTINGS_THEME = "Selecting a theme",
     SETTINGS_PRIVACY_POLICY = "Privacy Policy",
     // Settings chat
+    SETTINGS_CHAT_PROVIDER_TITLE = "AI Provider",
     SETTINGS_CHAT_MODEL_TITLE = "AI Model",
     SETTINGS_CHAT_API_KEY_TITLE = "API Key",
     SETTINGS_CHAT_API_KEY_HINT = "Enter your OpenAI API key",
@@ -398,6 +400,7 @@ class StringResourcesUK : StringResources(
     SETTINGS_THEME = "Вибір теми",
     SETTINGS_PRIVACY_POLICY = "Політика конфіденційності",
     // Settings chat
+    SETTINGS_CHAT_PROVIDER_TITLE = "AI провайдер",
     SETTINGS_CHAT_MODEL_TITLE = "Модель AI",
     SETTINGS_CHAT_API_KEY_TITLE = "API ключ",
     SETTINGS_CHAT_API_KEY_HINT = "Введіть ваш OpenAI API ключ",
