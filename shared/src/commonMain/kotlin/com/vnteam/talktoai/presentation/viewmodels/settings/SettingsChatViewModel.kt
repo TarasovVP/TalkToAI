@@ -3,11 +3,13 @@ package com.vnteam.talktoai.presentation.viewmodels.settings
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.data.network.Result
+import com.vnteam.talktoai.domain.enums.AiProviderType
 import com.vnteam.talktoai.domain.models.AiModel
 import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteSettingsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiProviderUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ApiKeyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GlobalContextUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
@@ -24,12 +26,16 @@ class SettingsChatViewModel(
     private val onboardingUseCase: OnboardingUseCase,
     private val userEmailUseCase: UserEmailUseCase,
     private val aiModelUseCase: AiModelUseCase,
+    private val aiProviderUseCase: AiProviderUseCase,
     private val apiKeyUseCase: ApiKeyUseCase,
     private val temperatureUseCase: TemperatureUseCase,
     private val globalContextUseCase: GlobalContextUseCase,
     private val remoteStoreRepository: RemoteStoreRepository,
     private val syncRemoteSettingsUseCase: SyncRemoteSettingsUseCase,
 ) : BaseViewModel() {
+
+    private val _aiProvider = MutableStateFlow(AiProviderType.OPENAI)
+    val aiProvider = _aiProvider.asStateFlow()
 
     private val _aiModel = MutableStateFlow(SettingsConstants.OPENAI_AI_MODEL_DEFAULT)
     val aiModel = _aiModel.asStateFlow()
@@ -55,6 +61,7 @@ class SettingsChatViewModel(
     private val _globalContext = MutableStateFlow(String.EMPTY)
     val globalContext = _globalContext.asStateFlow()
 
+    private var initialAiProvider = AiProviderType.OPENAI
     private var initialAiModel = SettingsConstants.OPENAI_AI_MODEL_DEFAULT
     private var initialApiKey = String.EMPTY
     private var initialTemperature = SettingsConstants.AI_TEMPERATURE_DEFAULT
@@ -65,7 +72,8 @@ class SettingsChatViewModel(
     }
 
     private fun updateHasChanges() {
-        _hasChanges.value = _aiModel.value != initialAiModel ||
+        _hasChanges.value = _aiProvider.value != initialAiProvider ||
+                _aiModel.value != initialAiModel ||
                 _apiKey.value != initialApiKey ||
                 _temperature.value != initialTemperature ||
                 _globalContext.value != initialGlobalContext
@@ -76,11 +84,24 @@ class SettingsChatViewModel(
             syncRemoteSettingsUseCase.execute()
         }
         launchWithErrorHandling {
+            aiProviderUseCase.get().collect { result ->
+                if (result is Result.Success) {
+                    val saved = result.data?.takeIf { it.isNotEmpty() } ?: return@collect
+                    val provider = runCatching { AiProviderType.valueOf(saved) }.getOrNull() ?: AiProviderType.OPENAI
+                    _aiProvider.value = provider
+                    initialAiProvider = provider
+                    _availableModels.value = AiModels.forProvider(provider)
+                    updateHasChanges()
+                }
+            }
+        }
+        launchWithErrorHandling {
             aiModelUseCase.get().collect { result ->
                 if (result is Result.Success) {
                     val saved = result.data?.takeIf { it.isNotEmpty() } ?: return@collect
-                    val validated = if (AiModels.OPENAI.any { it.id == saved }) saved
-                    else AiModels.OPENAI.first { it.tier == com.vnteam.talktoai.domain.enums.ModelTier.BALANCED }.id
+                    val providerModels = AiModels.forProvider(_aiProvider.value)
+                    val validated = if (providerModels.any { it.id == saved }) saved
+                    else AiModels.balancedFor(_aiProvider.value).id
                     _aiModel.value = validated
                     initialAiModel = validated
                     updateHasChanges()
@@ -120,6 +141,13 @@ class SettingsChatViewModel(
         }
     }
 
+    fun onProviderSelected(provider: AiProviderType) {
+        _aiProvider.value = provider
+        _availableModels.value = AiModels.forProvider(provider)
+        _aiModel.value = AiModels.balancedFor(provider).id
+        updateHasChanges()
+    }
+
     fun onModelSelected(model: String) {
         _aiModel.value = model
         updateHasChanges()
@@ -142,6 +170,7 @@ class SettingsChatViewModel(
 
     fun saveSettings() {
         launchWithErrorHandling {
+            aiProviderUseCase.set(_aiProvider.value.name)
             aiModelUseCase.set(_aiModel.value)
             apiKeyUseCase.set(_apiKey.value)
             temperatureUseCase.set(_temperature.value)
@@ -159,6 +188,7 @@ class SettingsChatViewModel(
             ) {
                 remoteResult.errorMessage?.takeIf { it.isNotEmpty() }?.let { showMessage(it) }
             }
+            initialAiProvider = _aiProvider.value
             initialAiModel = _aiModel.value
             initialApiKey = _apiKey.value
             initialTemperature = _temperature.value

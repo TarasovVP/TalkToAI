@@ -52,11 +52,17 @@ fun ChatSettingsBottomSheet(
 
     val chatName = remember(chat.id) { mutableStateOf(chat.name.orEmpty()) }
     val chatContext = remember(chat.id) { mutableStateOf(chat.context.orEmpty()) }
-    val validatedChatModel = chat.aiModel?.takeIf { id -> AiModels.OPENAI.any { it.id == id } }
-        ?: chat.aiModel?.let { AiModels.balancedFor(AiProviderType.OPENAI).id }
+    val initialProvider = chat.aiProvider
+        ?.let { runCatching { AiProviderType.valueOf(it) }.getOrNull() }
+        ?: AiProviderType.OPENAI
+    val chatProvider = remember(chat.id) { mutableStateOf(initialProvider) }
+    val validatedChatModel = chat.aiModel
+        ?.takeIf { id -> AiModels.forProvider(initialProvider).any { it.id == id } }
+        ?: chat.aiModel?.let { AiModels.balancedFor(initialProvider).id }
     val chatModel = remember(chat.id) { mutableStateOf(validatedChatModel) }
     val chatTemperature = remember(chat.id) { mutableStateOf(chat.temperature) }
 
+    val providerDropdownExpanded = remember { mutableStateOf(false) }
     val dropdownExpanded = remember { mutableStateOf(false) }
 
     val effectiveModel = chatModel.value ?: globalAiModel.value
@@ -67,7 +73,8 @@ fun ChatSettingsBottomSheet(
     val hasChanges = chatName.value != chat.name.orEmpty() ||
             chatContext.value != chat.context.orEmpty() ||
             chatModel.value != chat.aiModel ||
-            chatTemperature.value != chat.temperature
+            chatTemperature.value != chat.temperature ||
+            chatProvider.value != initialProvider
 
     LaunchedEffect(Unit) {
         viewModel.chatSaved.collect {
@@ -106,6 +113,49 @@ fun ChatSettingsBottomSheet(
             )
 
             Text(
+                text = stringRes.SETTINGS_CHAT_PROVIDER_TITLE,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            ExposedDropdownMenuBox(
+                expanded = providerDropdownExpanded.value,
+                onExpandedChange = { providerDropdownExpanded.value = it },
+                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+            ) {
+                val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
+                val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                OutlinedTextField(
+                    value = chatProvider.value.name,
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = providerDropdownExpanded.value) },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = fieldContainerColor,
+                        unfocusedContainerColor = fieldContainerColor,
+                    ),
+                    textStyle = TextStyle(color = fieldContentColor),
+                    modifier = Modifier.fillMaxWidth().menuAnchor()
+                )
+                ExposedDropdownMenu(
+                    expanded = providerDropdownExpanded.value,
+                    onDismissRequest = { providerDropdownExpanded.value = false }
+                ) {
+                    AiProviderType.entries.forEach { provider ->
+                        DropdownMenuItem(
+                            text = { Text(text = provider.name, color = fieldContentColor) },
+                            onClick = {
+                                if (chatProvider.value != provider) {
+                                    chatProvider.value = provider
+                                    chatModel.value = AiModels.balancedFor(provider).id
+                                }
+                                providerDropdownExpanded.value = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            Text(
                 text = stringRes.SETTINGS_CHAT_MODEL_TITLE,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -115,8 +165,9 @@ fun ChatSettingsBottomSheet(
                 onExpandedChange = { dropdownExpanded.value = it },
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
             ) {
-                val effectiveModelName = AiModels.OPENAI.find { it.id == effectiveModel }?.displayName ?: effectiveModel
-                val globalModelName = AiModels.OPENAI.find { it.id == globalAiModel.value }?.displayName ?: globalAiModel.value
+                val providerModels = AiModels.forProvider(chatProvider.value)
+                val effectiveModelName = providerModels.find { it.id == effectiveModel }?.displayName ?: effectiveModel
+                val globalModelName = providerModels.find { it.id == globalAiModel.value }?.displayName ?: globalAiModel.value
                 val displayModel = if (chatModel.value == null) {
                     "$effectiveModelName (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})"
                 } else {
@@ -152,7 +203,7 @@ fun ChatSettingsBottomSheet(
                             dropdownExpanded.value = false
                         }
                     )
-                    AiModels.OPENAI.forEach { model ->
+                    providerModels.forEach { model ->
                         DropdownMenuItem(
                             text = { Text(text = model.displayName, color = fieldContentColor) },
                             onClick = {
@@ -210,6 +261,7 @@ fun ChatSettingsBottomSheet(
                     context = chatContext.value.takeIf { it.isNotBlank() },
                     aiModel = chatModel.value,
                     temperature = chatTemperature.value,
+                    aiProvider = chatProvider.value.name,
                 )
                 viewModel.saveChat(updatedChat)
                 onChatUpdated(updatedChat)

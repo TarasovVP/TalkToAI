@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.SettingsConstants
+import com.vnteam.talktoai.domain.enums.AiProviderType
 import com.vnteam.talktoai.ic_delete
 import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
@@ -53,6 +54,7 @@ fun SettingsChatContent() {
     updateScreenState(viewModel.progressVisibilityState.collectAsState().value)
 
     val stringRes = LocalStringResources.current
+    val aiProvider = viewModel.aiProvider.collectAsState()
     val aiModel = viewModel.aiModel.collectAsState()
     val availableModels = viewModel.availableModels.collectAsState()
     val temperature = viewModel.temperature.collectAsState()
@@ -69,6 +71,7 @@ fun SettingsChatContent() {
         }
     }
 
+    val providerDropdownExpanded = remember { mutableStateOf(false) }
     val dropdownExpanded = remember { mutableStateOf(false) }
     val apiKeyState = remember { mutableStateOf(TextFieldValue("")) }
     val globalContextState = remember(globalContext.value) { mutableStateOf(globalContext.value) }
@@ -80,6 +83,46 @@ fun SettingsChatContent() {
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
+        Text(
+            text = stringRes.SETTINGS_CHAT_PROVIDER_TITLE,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        ExposedDropdownMenuBox(
+            expanded = providerDropdownExpanded.value,
+            onExpandedChange = { providerDropdownExpanded.value = it },
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+        ) {
+            val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
+            val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+            OutlinedTextField(
+                value = aiProvider.value.name,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = providerDropdownExpanded.value) },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = fieldContainerColor,
+                    unfocusedContainerColor = fieldContainerColor,
+                ),
+                textStyle = TextStyle(color = fieldContentColor),
+                modifier = Modifier.fillMaxWidth().menuAnchor()
+            )
+            ExposedDropdownMenu(
+                expanded = providerDropdownExpanded.value,
+                onDismissRequest = { providerDropdownExpanded.value = false }
+            ) {
+                AiProviderType.entries.forEach { provider ->
+                    DropdownMenuItem(
+                        text = { Text(text = provider.name, color = fieldContentColor) },
+                        onClick = {
+                            viewModel.onProviderSelected(provider)
+                            providerDropdownExpanded.value = false
+                        }
+                    )
+                }
+            }
+        }
+
         Text(
             text = stringRes.SETTINGS_CHAT_MODEL_TITLE,
             modifier = Modifier.padding(bottom = 8.dp)

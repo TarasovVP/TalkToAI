@@ -2,6 +2,7 @@ package com.vnteam.talktoai.data.repositoryimpl
 
 import com.vnteam.talktoai.data.AI_API_KEY
 import com.vnteam.talktoai.data.AI_MODEL
+import com.vnteam.talktoai.data.AI_PROVIDER
 import com.vnteam.talktoai.data.AI_TEMPERATURE
 import com.vnteam.talktoai.data.APP_LANGUAGE
 import com.vnteam.talktoai.data.GLOBAL_SYSTEM_CONTEXT
@@ -72,6 +73,14 @@ class PreferencesRepositoryImpl(private val preferencesFactory: PreferencesFacto
 
     override suspend fun setAiModel(model: String) {
         preferencesFactory.putString(AI_MODEL, model)
+    }
+
+    override fun getAiProvider(): Flow<String?> {
+        return preferencesFactory.getString(AI_PROVIDER)
+    }
+
+    override suspend fun setAiProvider(provider: String) {
+        preferencesFactory.putString(AI_PROVIDER, provider)
     }
 
     override fun getApiKey(): Flow<String?> {
