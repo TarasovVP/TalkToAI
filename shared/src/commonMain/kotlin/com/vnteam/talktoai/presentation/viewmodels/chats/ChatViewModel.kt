@@ -22,6 +22,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMess
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiProviderUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AnthropicApiKeyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ApiKeyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GlobalContextUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.TemperatureUseCase
@@ -51,6 +52,7 @@ class ChatViewModel(
     private val aiModelUseCase: AiModelUseCase,
     private val aiProviderUseCase: AiProviderUseCase,
     private val apiKeyUseCase: ApiKeyUseCase,
+    private val anthropicApiKeyUseCase: AnthropicApiKeyUseCase,
     private val temperatureUseCase: TemperatureUseCase,
     private val globalContextUseCase: GlobalContextUseCase,
 ) : BaseViewModel() {
@@ -65,7 +67,8 @@ class ChatViewModel(
     val animationResource = _animationResource.asStateFlow()
     private val _aiModel = MutableStateFlow(SettingsConstants.OPENAI_AI_MODEL_DEFAULT)
     private val _globalProvider = MutableStateFlow(AiProviderType.OPENAI)
-    private val _apiKey = MutableStateFlow<String?>(null)
+    private val _openAiApiKey = MutableStateFlow<String?>(null)
+    private val _anthropicApiKey = MutableStateFlow<String?>(null)
     private val _temperature = MutableStateFlow(SettingsConstants.AI_TEMPERATURE_DEFAULT)
     private val _globalContext = MutableStateFlow<String?>(null)
 
@@ -90,7 +93,14 @@ class ChatViewModel(
         launchWithErrorHandling {
             apiKeyUseCase.get().firstOrNull()?.let { result ->
                 if (result is Result.Success && !result.data.isNullOrEmpty()) {
-                    _apiKey.value = result.data
+                    _openAiApiKey.value = result.data
+                }
+            }
+        }
+        launchWithErrorHandling {
+            anthropicApiKeyUseCase.get().firstOrNull()?.let { result ->
+                if (result is Result.Success && !result.data.isNullOrEmpty()) {
+                    _anthropicApiKey.value = result.data
                 }
             }
         }
@@ -255,8 +265,12 @@ class ChatViewModel(
         val providerType = _currentChatLiveData.value?.aiProvider
             ?.let { runCatching { AiProviderType.valueOf(it) }.getOrNull() }
             ?: _globalProvider.value
+        val apiKey = when (providerType) {
+            AiProviderType.ANTHROPIC -> _anthropicApiKey.value
+            AiProviderType.OPENAI -> _openAiApiKey.value
+        }
         launchWithErrorHandling {
-            val result = sendRequestUseCase.execute(model, temperature, messages, _apiKey.value, providerType).firstOrNull()
+            val result = sendRequestUseCase.execute(model, temperature, messages, apiKey, providerType).firstOrNull()
             when (result) {
                 is Result.Success -> {
                     val aiResponse = result.data

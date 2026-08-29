@@ -40,6 +40,10 @@ interface PreferencesRepository {
 
     suspend fun setApiKey(apiKey: String)
 
+    fun getAnthropicApiKey(): Flow<String?>
+
+    suspend fun setAnthropicApiKey(apiKey: String)
+
     fun getTemperature(): Flow<String?>
 
     suspend fun setTemperature(temperature: String)
