@@ -60,6 +60,7 @@ fun SettingsChatContent() {
     val temperature = viewModel.temperature.collectAsState()
     val hasChanges = viewModel.hasChanges.collectAsState()
     val savedApiKey = viewModel.savedApiKey.collectAsState()
+    val savedAnthropicApiKey = viewModel.savedAnthropicApiKey.collectAsState()
     val globalContext = viewModel.globalContext.collectAsState()
 
     val localScreenState = LocalScreenState.current
@@ -74,6 +75,7 @@ fun SettingsChatContent() {
     val providerDropdownExpanded = remember { mutableStateOf(false) }
     val dropdownExpanded = remember { mutableStateOf(false) }
     val apiKeyState = remember { mutableStateOf(TextFieldValue("")) }
+    val anthropicApiKeyState = remember { mutableStateOf(TextFieldValue("")) }
     val globalContextState = remember(globalContext.value) { mutableStateOf(globalContext.value) }
 
     Column(
@@ -221,16 +223,36 @@ fun SettingsChatContent() {
             SavedApiKeyRow(savedApiKey.value) { viewModel.clearApiKey() }
         }
 
+        Text(
+            text = stringRes.SETTINGS_CHAT_ANTHROPIC_API_KEY_TITLE,
+            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+        )
+
+        PasswordTextField(
+            inputValue = anthropicApiKeyState,
+            placeHolder = stringRes.SETTINGS_CHAT_ANTHROPIC_API_KEY_HINT
+        )
+
+        if (savedAnthropicApiKey.value.isNotEmpty()) {
+            SavedApiKeyRow(savedAnthropicApiKey.value) { viewModel.clearAnthropicApiKey() }
+        }
+
         PrimaryButton(
             text = stringRes.SETTINGS_CHAT_SAVE,
-            isEnabled = apiKeyState.value.text.isNotEmpty() || hasChanges.value,
+            isEnabled = apiKeyState.value.text.isNotEmpty() ||
+                    anthropicApiKeyState.value.text.isNotEmpty() ||
+                    hasChanges.value,
             modifier = Modifier.padding(top = 8.dp)
         ) {
             if (apiKeyState.value.text.isNotEmpty()) {
                 viewModel.onApiKeyChanged(apiKeyState.value.text)
             }
+            if (anthropicApiKeyState.value.text.isNotEmpty()) {
+                viewModel.onAnthropicApiKeyChanged(anthropicApiKeyState.value.text)
+            }
             viewModel.saveSettings()
             apiKeyState.value = TextFieldValue("")
+            anthropicApiKeyState.value = TextFieldValue("")
         }
     }
 }

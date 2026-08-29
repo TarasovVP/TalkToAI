@@ -22,7 +22,7 @@ class AnthropicHttpClient(json: Json) {
         install(DefaultRequest) {
             url(BASE_URL)
             contentType(ContentType.Application.Json)
-            header(NetworkConstants.ANTHROPIC_API_KEY_HEADER, Secrets.CLAUDE_API_KEY)
+            header(NetworkConstants.ANTHROPIC_API_KEY_HEADER, Secrets.ANTHROPIC_API_KEY)
             header(NetworkConstants.ANTHROPIC_VERSION_HEADER, NetworkConstants.ANTHROPIC_VERSION)
         }
         install(Logging) {
