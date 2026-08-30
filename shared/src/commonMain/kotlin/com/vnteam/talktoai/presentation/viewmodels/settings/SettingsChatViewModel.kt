@@ -10,8 +10,6 @@ import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteSettingsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiProviderUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AnthropicApiKeyUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ApiKeyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GlobalContextUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.TemperatureUseCase
@@ -28,8 +26,6 @@ class SettingsChatViewModel(
     private val userEmailUseCase: UserEmailUseCase,
     private val aiModelUseCase: AiModelUseCase,
     private val aiProviderUseCase: AiProviderUseCase,
-    private val apiKeyUseCase: ApiKeyUseCase,
-    private val anthropicApiKeyUseCase: AnthropicApiKeyUseCase,
     private val temperatureUseCase: TemperatureUseCase,
     private val globalContextUseCase: GlobalContextUseCase,
     private val remoteStoreRepository: RemoteStoreRepository,
@@ -41,12 +37,6 @@ class SettingsChatViewModel(
 
     private val _aiModel = MutableStateFlow(SettingsConstants.OPENAI_AI_MODEL_DEFAULT)
     val aiModel = _aiModel.asStateFlow()
-
-    private val _apiKey = MutableStateFlow(String.EMPTY)
-    val apiKey = _apiKey.asStateFlow()
-
-    private val _anthropicApiKey = MutableStateFlow(String.EMPTY)
-    val anthropicApiKey = _anthropicApiKey.asStateFlow()
 
     private val _temperature = MutableStateFlow(SettingsConstants.AI_TEMPERATURE_DEFAULT)
     val temperature = _temperature.asStateFlow()
@@ -60,19 +50,11 @@ class SettingsChatViewModel(
     private val _hasChanges = MutableStateFlow(false)
     val hasChanges = _hasChanges.asStateFlow()
 
-    private val _savedApiKey = MutableStateFlow(String.EMPTY)
-    val savedApiKey = _savedApiKey.asStateFlow()
-
-    private val _savedAnthropicApiKey = MutableStateFlow(String.EMPTY)
-    val savedAnthropicApiKey = _savedAnthropicApiKey.asStateFlow()
-
     private val _globalContext = MutableStateFlow(String.EMPTY)
     val globalContext = _globalContext.asStateFlow()
 
     private var initialAiProvider = AiProviderType.OPENAI
     private var initialAiModel = SettingsConstants.OPENAI_AI_MODEL_DEFAULT
-    private var initialApiKey = String.EMPTY
-    private var initialAnthropicApiKey = String.EMPTY
     private var initialTemperature = SettingsConstants.AI_TEMPERATURE_DEFAULT
     private var initialGlobalContext = String.EMPTY
 
@@ -83,8 +65,6 @@ class SettingsChatViewModel(
     private fun updateHasChanges() {
         _hasChanges.value = _aiProvider.value != initialAiProvider ||
                 _aiModel.value != initialAiModel ||
-                _apiKey.value != initialApiKey ||
-                _anthropicApiKey.value != initialAnthropicApiKey ||
                 _temperature.value != initialTemperature ||
                 _globalContext.value != initialGlobalContext
     }
@@ -114,28 +94,6 @@ class SettingsChatViewModel(
                     else AiModels.balancedFor(_aiProvider.value).id
                     _aiModel.value = validated
                     initialAiModel = validated
-                    updateHasChanges()
-                }
-            }
-        }
-        launchWithErrorHandling {
-            apiKeyUseCase.get().collect { result ->
-                if (result is Result.Success) {
-                    val key = result.data.orEmpty()
-                    _apiKey.value = key
-                    initialApiKey = key
-                    _savedApiKey.value = key
-                    updateHasChanges()
-                }
-            }
-        }
-        launchWithErrorHandling {
-            anthropicApiKeyUseCase.get().collect { result ->
-                if (result is Result.Success) {
-                    val key = result.data.orEmpty()
-                    _anthropicApiKey.value = key
-                    initialAnthropicApiKey = key
-                    _savedAnthropicApiKey.value = key
                     updateHasChanges()
                 }
             }
@@ -174,16 +132,6 @@ class SettingsChatViewModel(
         updateHasChanges()
     }
 
-    fun onApiKeyChanged(key: String) {
-        _apiKey.value = key
-        updateHasChanges()
-    }
-
-    fun onAnthropicApiKeyChanged(key: String) {
-        _anthropicApiKey.value = key
-        updateHasChanges()
-    }
-
     fun onTemperatureChanged(temperature: Float) {
         _temperature.value = (temperature * 10).toInt() / 10f
         updateHasChanges()
@@ -198,14 +146,11 @@ class SettingsChatViewModel(
         launchWithErrorHandling {
             aiProviderUseCase.set(_aiProvider.value.name)
             aiModelUseCase.set(_aiModel.value)
-            apiKeyUseCase.set(_apiKey.value)
-            anthropicApiKeyUseCase.set(_anthropicApiKey.value)
             temperatureUseCase.set(_temperature.value)
             globalContextUseCase.set(_globalContext.value)
             val remoteResult = remoteStoreRepository.setRemoteSettings(
                 mapOf(
                     "aiModel" to _aiModel.value,
-                    "apiKey" to _apiKey.value,
                     "temperature" to _temperature.value.toString(),
                     "globalContext" to _globalContext.value,
                 )
@@ -217,34 +162,10 @@ class SettingsChatViewModel(
             }
             initialAiProvider = _aiProvider.value
             initialAiModel = _aiModel.value
-            initialApiKey = _apiKey.value
-            initialAnthropicApiKey = _anthropicApiKey.value
             initialTemperature = _temperature.value
             initialGlobalContext = _globalContext.value
-            _savedApiKey.value = _apiKey.value
-            _savedAnthropicApiKey.value = _anthropicApiKey.value
             _hasChanges.value = false
             _settingsSaved.emit(Unit)
-        }
-    }
-
-    fun clearApiKey() {
-        launchWithErrorHandling {
-            apiKeyUseCase.set(String.EMPTY)
-            _apiKey.value = String.EMPTY
-            initialApiKey = String.EMPTY
-            _savedApiKey.value = String.EMPTY
-            updateHasChanges()
-        }
-    }
-
-    fun clearAnthropicApiKey() {
-        launchWithErrorHandling {
-            anthropicApiKeyUseCase.set(String.EMPTY)
-            _anthropicApiKey.value = String.EMPTY
-            initialAnthropicApiKey = String.EMPTY
-            _savedAnthropicApiKey.value = String.EMPTY
-            updateHasChanges()
         }
     }
 

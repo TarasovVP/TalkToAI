@@ -5,15 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -24,26 +21,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.domain.enums.AiProviderType
-import com.vnteam.talktoai.ic_delete
 import com.vnteam.talktoai.presentation.LocalScreenState
-import com.vnteam.talktoai.presentation.ui.components.PasswordTextField
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
-import com.vnteam.talktoai.presentation.ui.theme.Neutral500
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.updateScreenState
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsChatViewModel
-import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,8 +47,6 @@ fun SettingsChatContent() {
     val availableModels = viewModel.availableModels.collectAsState()
     val temperature = viewModel.temperature.collectAsState()
     val hasChanges = viewModel.hasChanges.collectAsState()
-    val savedApiKey = viewModel.savedApiKey.collectAsState()
-    val savedAnthropicApiKey = viewModel.savedAnthropicApiKey.collectAsState()
     val globalContext = viewModel.globalContext.collectAsState()
 
     val localScreenState = LocalScreenState.current
@@ -74,8 +60,6 @@ fun SettingsChatContent() {
 
     val providerDropdownExpanded = remember { mutableStateOf(false) }
     val dropdownExpanded = remember { mutableStateOf(false) }
-    val apiKeyState = remember { mutableStateOf(TextFieldValue("")) }
-    val anthropicApiKeyState = remember { mutableStateOf(TextFieldValue("")) }
     val globalContextState = remember(globalContext.value) { mutableStateOf(globalContext.value) }
 
     Column(
@@ -209,76 +193,13 @@ fun SettingsChatContent() {
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         )
 
-        Text(
-            text = stringRes.SETTINGS_CHAT_API_KEY_TITLE,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        PasswordTextField(
-            inputValue = apiKeyState,
-            placeHolder = stringRes.SETTINGS_CHAT_API_KEY_HINT
-        )
-
-        if (savedApiKey.value.isNotEmpty()) {
-            SavedApiKeyRow(savedApiKey.value) { viewModel.clearApiKey() }
-        }
-
-        Text(
-            text = stringRes.SETTINGS_CHAT_ANTHROPIC_API_KEY_TITLE,
-            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-        )
-
-        PasswordTextField(
-            inputValue = anthropicApiKeyState,
-            placeHolder = stringRes.SETTINGS_CHAT_ANTHROPIC_API_KEY_HINT
-        )
-
-        if (savedAnthropicApiKey.value.isNotEmpty()) {
-            SavedApiKeyRow(savedAnthropicApiKey.value) { viewModel.clearAnthropicApiKey() }
-        }
-
         PrimaryButton(
             text = stringRes.SETTINGS_CHAT_SAVE,
-            isEnabled = apiKeyState.value.text.isNotEmpty() ||
-                    anthropicApiKeyState.value.text.isNotEmpty() ||
-                    hasChanges.value,
+            isEnabled = hasChanges.value,
             modifier = Modifier.padding(top = 8.dp)
         ) {
-            if (apiKeyState.value.text.isNotEmpty()) {
-                viewModel.onApiKeyChanged(apiKeyState.value.text)
-            }
-            if (anthropicApiKeyState.value.text.isNotEmpty()) {
-                viewModel.onAnthropicApiKeyChanged(anthropicApiKeyState.value.text)
-            }
             viewModel.saveSettings()
-            apiKeyState.value = TextFieldValue("")
-            anthropicApiKeyState.value = TextFieldValue("")
         }
     }
 }
 
-@Composable
-private fun SavedApiKeyRow(apiKey: String, onDelete: () -> Unit) {
-    val masked = if (apiKey.length <= 4) "*".repeat(apiKey.length)
-    else "****" + apiKey.takeLast(4)
-
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = masked,
-            fontSize = 14.sp,
-            color = Neutral500,
-            modifier = Modifier.weight(1f)
-        )
-        IconButton(onClick = onDelete, modifier = Modifier.size(36.dp)) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_delete),
-                contentDescription = null,
-                tint = Color.Red,
-                modifier = Modifier.size(20.dp)
-            )
-        }
-    }
-}
