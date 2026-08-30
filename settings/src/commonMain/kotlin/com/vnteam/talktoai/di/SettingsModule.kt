@@ -4,8 +4,6 @@ import com.vnteam.talktoai.data.repositoryimpl.PreferencesRepositoryImpl
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiProviderUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AnthropicApiKeyUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ApiKeyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GlobalContextUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
@@ -37,10 +35,6 @@ val settingsModule = module {
     single { AiModelUseCase(get()) }
 
     single { AiProviderUseCase(get()) }
-
-    single { ApiKeyUseCase(get()) }
-
-    single { AnthropicApiKeyUseCase(get()) }
 
     single { TemperatureUseCase(get()) }
 
