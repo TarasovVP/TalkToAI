@@ -1,6 +1,7 @@
 package com.vnteam.talktoai.data.network.ai
 
 import android.util.Log
+import com.vnteam.talktoai.ai.BuildConfig
 import io.ktor.client.plugins.logging.Logger
 
 actual fun platformLogger(): Logger = object : Logger {
@@ -8,3 +9,5 @@ actual fun platformLogger(): Logger = object : Logger {
         Log.d("Ktor", message)
     }
 }
+
+actual val isDebug: Boolean = BuildConfig.DEBUG

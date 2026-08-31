@@ -1,6 +1,7 @@
 package com.vnteam.talktoai.data.network.ai.anthropic
 
 import com.vnteam.talktoai.data.network.NetworkConstants
+import com.vnteam.talktoai.data.network.ai.isDebug
 import com.vnteam.talktoai.data.network.ai.platformLogger
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
@@ -27,7 +28,7 @@ class AnthropicHttpClient(json: Json) {
         }
         install(Logging) {
             logger = platformLogger()
-            level = LogLevel.NONE
+            level = if (isDebug) LogLevel.ALL else LogLevel.NONE
         }
     }
 
