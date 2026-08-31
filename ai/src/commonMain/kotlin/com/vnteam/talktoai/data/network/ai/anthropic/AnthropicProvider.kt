@@ -19,7 +19,6 @@ class AnthropicProvider(private val service: AnthropicService) : AiProvider {
 
     override fun sendMessage(
         model: String,
-        temperature: Float,
         messages: List<Message>,
         apiKey: String?,
     ): Flow<Result<AiTextResponse>> = flow {

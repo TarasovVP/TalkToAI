@@ -6,5 +6,4 @@ import kotlinx.serialization.Serializable
 data class ApiRequest(
     val model: String,
     val messages: List<MessageApi>,
-    val temperature: Float,
 )

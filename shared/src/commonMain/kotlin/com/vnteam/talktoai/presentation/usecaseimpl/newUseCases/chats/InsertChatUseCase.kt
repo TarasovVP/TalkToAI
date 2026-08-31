@@ -10,7 +10,6 @@ import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import com.vnteam.talktoai.domain.usecase.UseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.TemperatureUseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.firstOrNull
 
@@ -20,7 +19,6 @@ class InsertChatUseCase(
     private val chatRepository: ChatRepository,
     private val remoteStoreRepository: RemoteStoreRepository,
     private val aiModelUseCase: AiModelUseCase,
-    private val temperatureUseCase: TemperatureUseCase,
 ) : UseCase<Chat, Result<Chat>> {
 
     override suspend fun execute(params: Chat): Result<Chat> {
@@ -38,10 +36,7 @@ class InsertChatUseCase(
         val model = aiModel ?: (
                 aiModelUseCase.get().firstOrNull() as? Result.Success
                 )?.data?.takeIf { it.isNotBlank() } ?: SettingsConstants.OPENAI_AI_MODEL_DEFAULT
-        val temp = temperature ?: (
-                temperatureUseCase.get().firstOrNull() as? Result.Success
-                )?.data ?: SettingsConstants.AI_TEMPERATURE_DEFAULT
 
-        return copy(aiModel = model, temperature = temp)
+        return copy(aiModel = model)
     }
 }

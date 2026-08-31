@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 interface AIRepository {
     fun sendRequest(
         model: String,
-        temperature: Float,
         messages: List<Message>,
         apiKey: String? = null,
         providerType: AiProviderType = AiProviderType.OPENAI,

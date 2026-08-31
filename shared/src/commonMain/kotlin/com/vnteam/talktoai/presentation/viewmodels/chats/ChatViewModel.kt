@@ -23,7 +23,6 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertM
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiProviderUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GlobalContextUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.TemperatureUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.AnimationUtils
 import com.vnteam.talktoai.utils.ShareUtils
@@ -49,7 +48,6 @@ class ChatViewModel(
     private val updateChatUseCase: UpdateChatUseCase,
     private val aiModelUseCase: AiModelUseCase,
     private val aiProviderUseCase: AiProviderUseCase,
-    private val temperatureUseCase: TemperatureUseCase,
     private val globalContextUseCase: GlobalContextUseCase,
 ) : BaseViewModel() {
 
@@ -63,7 +61,6 @@ class ChatViewModel(
     val animationResource = _animationResource.asStateFlow()
     private val _aiModel = MutableStateFlow(SettingsConstants.OPENAI_AI_MODEL_DEFAULT)
     private val _globalProvider = MutableStateFlow(AiProviderType.OPENAI)
-    private val _temperature = MutableStateFlow(SettingsConstants.AI_TEMPERATURE_DEFAULT)
     private val _globalContext = MutableStateFlow<String?>(null)
 
     private val _modelFallback = MutableSharedFlow<Pair<String, String>>(extraBufferCapacity = 1)
@@ -81,13 +78,6 @@ class ChatViewModel(
             aiProviderUseCase.get().firstOrNull()?.let { result ->
                 if (result is Result.Success && !result.data.isNullOrEmpty()) {
                     _globalProvider.value = runCatching { AiProviderType.valueOf(result.data!!) }.getOrDefault(AiProviderType.OPENAI)
-                }
-            }
-        }
-        launchWithErrorHandling {
-            temperatureUseCase.get().firstOrNull()?.let { result ->
-                if (result is Result.Success) {
-                    _temperature.value = result.data ?: SettingsConstants.AI_TEMPERATURE_DEFAULT
                 }
             }
         }
@@ -202,7 +192,6 @@ class ChatViewModel(
             messageText = messageText,
             systemContext = combinedContext,
             chatAiModel = currentChat?.aiModel,
-            chatTemperature = currentChat?.temperature,
             history = history,
         )
     }
@@ -212,7 +201,6 @@ class ChatViewModel(
         messageText: String,
         systemContext: String?,
         chatAiModel: String?,
-        chatTemperature: Float?,
         history: List<MessageUI>,
     ) {
         var remainingTokens = MAX_HISTORY_TOKENS -
@@ -241,12 +229,11 @@ class ChatViewModel(
             add(AiMessage(role = Constants.MESSAGE_ROLE_USER, content = messageText))
         }
         val model = chatAiModel ?: _aiModel.value
-        val temperature = chatTemperature ?: _temperature.value
         val providerType = _currentChatLiveData.value?.aiProvider
             ?.let { runCatching { AiProviderType.valueOf(it) }.getOrNull() }
             ?: _globalProvider.value
         launchWithErrorHandling {
-            val result = sendRequestUseCase.execute(model, temperature, messages, null, providerType).firstOrNull()
+            val result = sendRequestUseCase.execute(model, messages, null, providerType).firstOrNull()
             when (result) {
                 is Result.Success -> {
                     val aiResponse = result.data

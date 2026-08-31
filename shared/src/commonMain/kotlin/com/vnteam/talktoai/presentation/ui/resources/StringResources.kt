@@ -67,7 +67,6 @@ sealed class StringResources(
     // Settings chat
     var SETTINGS_CHAT_PROVIDER_TITLE: String,
     var SETTINGS_CHAT_MODEL_TITLE: String,
-    var SETTINGS_CHAT_TEMPERATURE_TITLE: String,
     var SETTINGS_CHAT_SAVE: String,
     var SETTINGS_CHAT_SAVED: String,
     var SETTINGS_CHAT_GLOBAL_CONTEXT_TITLE: String,
@@ -230,7 +229,6 @@ class StringResourcesEN : StringResources(
     // Settings chat
     SETTINGS_CHAT_PROVIDER_TITLE = "AI Provider",
     SETTINGS_CHAT_MODEL_TITLE = "AI Model",
-    SETTINGS_CHAT_TEMPERATURE_TITLE = "Temperature",
     SETTINGS_CHAT_SAVE = "Save",
     SETTINGS_CHAT_SAVED = "Settings saved",
     SETTINGS_CHAT_GLOBAL_CONTEXT_TITLE = "Global system context (optional)",
@@ -398,7 +396,6 @@ class StringResourcesUK : StringResources(
     // Settings chat
     SETTINGS_CHAT_PROVIDER_TITLE = "AI провайдер",
     SETTINGS_CHAT_MODEL_TITLE = "Модель AI",
-    SETTINGS_CHAT_TEMPERATURE_TITLE = "Температура",
     SETTINGS_CHAT_SAVE = "Зберегти",
     SETTINGS_CHAT_SAVED = "Налаштування збережено",
     SETTINGS_CHAT_GLOBAL_CONTEXT_TITLE = "Глобальний системний контекст (необов'язково)",

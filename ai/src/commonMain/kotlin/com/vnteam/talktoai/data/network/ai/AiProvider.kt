@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface AiProvider {
     fun sendMessage(
         model: String,
-        temperature: Float,
         messages: List<Message>,
         apiKey: String? = null,
     ): Flow<Result<AiTextResponse>>

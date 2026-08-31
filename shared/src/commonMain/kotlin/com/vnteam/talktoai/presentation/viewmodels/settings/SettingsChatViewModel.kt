@@ -12,7 +12,6 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModel
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiProviderUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GlobalContextUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.TemperatureUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UserEmailUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,7 +25,6 @@ class SettingsChatViewModel(
     private val userEmailUseCase: UserEmailUseCase,
     private val aiModelUseCase: AiModelUseCase,
     private val aiProviderUseCase: AiProviderUseCase,
-    private val temperatureUseCase: TemperatureUseCase,
     private val globalContextUseCase: GlobalContextUseCase,
     private val remoteStoreRepository: RemoteStoreRepository,
     private val syncRemoteSettingsUseCase: SyncRemoteSettingsUseCase,
@@ -37,9 +35,6 @@ class SettingsChatViewModel(
 
     private val _aiModel = MutableStateFlow(SettingsConstants.OPENAI_AI_MODEL_DEFAULT)
     val aiModel = _aiModel.asStateFlow()
-
-    private val _temperature = MutableStateFlow(SettingsConstants.AI_TEMPERATURE_DEFAULT)
-    val temperature = _temperature.asStateFlow()
 
     private val _settingsSaved = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val settingsSaved = _settingsSaved.asSharedFlow()
@@ -55,7 +50,6 @@ class SettingsChatViewModel(
 
     private var initialAiProvider = AiProviderType.OPENAI
     private var initialAiModel = SettingsConstants.OPENAI_AI_MODEL_DEFAULT
-    private var initialTemperature = SettingsConstants.AI_TEMPERATURE_DEFAULT
     private var initialGlobalContext = String.EMPTY
 
     init {
@@ -65,7 +59,6 @@ class SettingsChatViewModel(
     private fun updateHasChanges() {
         _hasChanges.value = _aiProvider.value != initialAiProvider ||
                 _aiModel.value != initialAiModel ||
-                _temperature.value != initialTemperature ||
                 _globalContext.value != initialGlobalContext
     }
 
@@ -99,16 +92,6 @@ class SettingsChatViewModel(
             }
         }
         launchWithErrorHandling {
-            temperatureUseCase.get().collect { result ->
-                if (result is Result.Success) {
-                    val temp = result.data ?: SettingsConstants.AI_TEMPERATURE_DEFAULT
-                    _temperature.value = temp
-                    initialTemperature = temp
-                    updateHasChanges()
-                }
-            }
-        }
-        launchWithErrorHandling {
             globalContextUseCase.get().collect { result ->
                 if (result is Result.Success) {
                     val ctx = result.data.orEmpty()
@@ -132,11 +115,6 @@ class SettingsChatViewModel(
         updateHasChanges()
     }
 
-    fun onTemperatureChanged(temperature: Float) {
-        _temperature.value = (temperature * 10).toInt() / 10f
-        updateHasChanges()
-    }
-
     fun onGlobalContextChanged(context: String) {
         _globalContext.value = context
         updateHasChanges()
@@ -146,12 +124,10 @@ class SettingsChatViewModel(
         launchWithErrorHandling {
             aiProviderUseCase.set(_aiProvider.value.name)
             aiModelUseCase.set(_aiModel.value)
-            temperatureUseCase.set(_temperature.value)
             globalContextUseCase.set(_globalContext.value)
             val remoteResult = remoteStoreRepository.setRemoteSettings(
                 mapOf(
                     "aiModel" to _aiModel.value,
-                    "temperature" to _temperature.value.toString(),
                     "globalContext" to _globalContext.value,
                 )
             ).firstOrNull()
@@ -162,7 +138,6 @@ class SettingsChatViewModel(
             }
             initialAiProvider = _aiProvider.value
             initialAiModel = _aiModel.value
-            initialTemperature = _temperature.value
             initialGlobalContext = _globalContext.value
             _hasChanges.value = false
             _settingsSaved.emit(Unit)

@@ -2,7 +2,6 @@ package com.vnteam.talktoai.presentation.screens.settings.settings_chat
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -14,7 +13,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.domain.enums.AiProviderType
 import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
@@ -45,7 +42,6 @@ fun SettingsChatContent() {
     val aiProvider = viewModel.aiProvider.collectAsState()
     val aiModel = viewModel.aiModel.collectAsState()
     val availableModels = viewModel.availableModels.collectAsState()
-    val temperature = viewModel.temperature.collectAsState()
     val hasChanges = viewModel.hasChanges.collectAsState()
     val globalContext = viewModel.globalContext.collectAsState()
 
@@ -149,21 +145,6 @@ fun SettingsChatContent() {
                 }
             }
         }
-
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(text = stringRes.SETTINGS_CHAT_TEMPERATURE_TITLE)
-            Text(text = temperature.value.toString())
-        }
-        Slider(
-            value = temperature.value,
-            onValueChange = { viewModel.onTemperatureChanged(it) },
-            valueRange = SettingsConstants.AI_TEMPERATURE_MIN..SettingsConstants.AI_TEMPERATURE_MAX,
-            steps = 19,
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-        )
 
         Text(
             text = stringRes.SETTINGS_CHAT_GLOBAL_CONTEXT_TITLE,

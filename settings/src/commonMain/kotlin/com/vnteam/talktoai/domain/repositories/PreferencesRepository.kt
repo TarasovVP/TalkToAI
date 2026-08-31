@@ -36,10 +36,6 @@ interface PreferencesRepository {
 
     suspend fun setAiProvider(provider: String)
 
-    fun getTemperature(): Flow<String?>
-
-    suspend fun setTemperature(temperature: String)
-
     fun getGlobalSystemContext(): Flow<String?>
 
     suspend fun setGlobalSystemContext(context: String)
