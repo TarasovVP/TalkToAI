@@ -10,6 +10,7 @@ import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
+import com.vnteam.talktoai.data.network.ai.isDebug
 import com.vnteam.talktoai.data.network.ai.platformLogger
 import kotlinx.serialization.json.Json
 import secrets.Secrets
@@ -28,7 +29,7 @@ class OpenAiHttpClient(json: Json) {
         }
         install(Logging) {
             logger = platformLogger()
-            level = LogLevel.NONE
+            level = if (isDebug) LogLevel.ALL else LogLevel.NONE
         }
     }
 }

@@ -7,3 +7,5 @@ actual fun platformLogger(): Logger = object : Logger {
         console.log("Ktor: $message")
     }
 }
+
+actual val isDebug: Boolean = false

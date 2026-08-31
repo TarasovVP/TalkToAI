@@ -7,3 +7,5 @@ actual fun platformLogger(): Logger = object : Logger {
         println("Ktor: $message")
     }
 }
+
+actual val isDebug: Boolean = true
