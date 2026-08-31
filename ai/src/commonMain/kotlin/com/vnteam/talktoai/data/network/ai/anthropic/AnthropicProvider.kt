@@ -24,7 +24,7 @@ class AnthropicProvider(private val service: AnthropicService) : AiProvider {
         apiKey: String?,
     ): Flow<Result<AiTextResponse>> = flow {
         val apiMessages = messages.map { MessageApi(role = it.role, content = it.content) }
-        val request = apiMessages.toAnthropicRequest(model, temperature)
+        val request = apiMessages.toAnthropicRequest(model)
         val response = try {
             service.sendMessage(request, apiKey)
         } catch (e: Exception) {
