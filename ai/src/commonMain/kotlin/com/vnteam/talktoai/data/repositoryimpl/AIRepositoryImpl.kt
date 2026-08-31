@@ -21,17 +21,15 @@ class AIRepositoryImpl(
 
     override fun sendRequest(
         model: String,
-        temperature: Float,
         messages: List<Message>,
         apiKey: String?,
         providerType: AiProviderType,
     ) = flow {
-        emit(doSendRequest(model, temperature, messages, apiKey, providerType, isRetry = false))
+        emit(doSendRequest(model, messages, apiKey, providerType, isRetry = false))
     }
 
     private suspend fun doSendRequest(
         model: String,
-        temperature: Float,
         messages: List<Message>,
         apiKey: String?,
         providerType: AiProviderType,
@@ -41,7 +39,7 @@ class AIRepositoryImpl(
             AiProviderType.OPENAI -> openAiProvider
             AiProviderType.ANTHROPIC -> anthropicProvider
         }
-        val result = provider.sendMessage(model, temperature, messages, apiKey).firstOrNull()
+        val result = provider.sendMessage(model, messages, apiKey).firstOrNull()
             ?: return Result.Failure(UNKNOWN_ERROR)
 
         if (result is Result.Success) return result
@@ -53,7 +51,7 @@ class AIRepositoryImpl(
         if (!isRetry && isModelNotSupportedError(statusCode, rawBody)) {
             val balanced = AiModels.balancedFor(providerType)
             if (balanced.id != model) {
-                val retryResult = doSendRequest(balanced.id, temperature, messages, apiKey, providerType, isRetry = true)
+                val retryResult = doSendRequest(balanced.id, messages, apiKey, providerType, isRetry = true)
                 return when (retryResult) {
                     is Result.Success -> Result.Success(retryResult.data!!.copy(fallbackFrom = model))
                     else -> retryResult

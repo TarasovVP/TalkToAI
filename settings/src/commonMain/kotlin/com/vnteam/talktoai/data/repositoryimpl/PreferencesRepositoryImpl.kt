@@ -2,7 +2,6 @@ package com.vnteam.talktoai.data.repositoryimpl
 
 import com.vnteam.talktoai.data.AI_MODEL
 import com.vnteam.talktoai.data.AI_PROVIDER
-import com.vnteam.talktoai.data.AI_TEMPERATURE
 import com.vnteam.talktoai.data.APP_LANGUAGE
 import com.vnteam.talktoai.data.GLOBAL_SYSTEM_CONTEXT
 import com.vnteam.talktoai.data.ID_TOKEN
@@ -80,14 +79,6 @@ class PreferencesRepositoryImpl(private val preferencesFactory: PreferencesFacto
 
     override suspend fun setAiProvider(provider: String) {
         preferencesFactory.putString(AI_PROVIDER, provider)
-    }
-
-    override fun getTemperature(): Flow<String?> {
-        return preferencesFactory.getString(AI_TEMPERATURE)
-    }
-
-    override suspend fun setTemperature(temperature: String) {
-        preferencesFactory.putString(AI_TEMPERATURE, temperature)
     }
 
     override fun getGlobalSystemContext(): Flow<String?> {

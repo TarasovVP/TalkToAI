@@ -11,11 +11,10 @@ class SendRequestUseCase(private val aiRepository: AIRepository) {
 
     fun execute(
         model: String,
-        temperature: Float,
         messages: List<Message>,
         apiKey: String? = null,
         providerType: AiProviderType = AiProviderType.OPENAI,
     ): Flow<Result<AiTextResponse>> {
-        return aiRepository.sendRequest(model, temperature, messages, apiKey, providerType)
+        return aiRepository.sendRequest(model, messages, apiKey, providerType)
     }
 }

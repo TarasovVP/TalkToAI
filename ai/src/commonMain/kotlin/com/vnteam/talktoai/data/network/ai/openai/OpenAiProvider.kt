@@ -17,12 +17,11 @@ class OpenAiProvider(private val service: OpenAiService) : AiProvider {
 
     override fun sendMessage(
         model: String,
-        temperature: Float,
         messages: List<Message>,
         apiKey: String?,
     ): Flow<Result<AiTextResponse>> = flow {
         val apiMessages = messages.map { MessageApi(role = it.role, content = it.content) }
-        val request = ApiRequest(model = model, temperature = temperature, messages = apiMessages)
+        val request = ApiRequest(model = model, messages = apiMessages)
         val response = try {
             service.sendRequest(request, apiKey)
         } catch (e: Exception) {

@@ -112,7 +112,7 @@ val appModule = module {
 
     single { InsertChatsUseCase(get()) }
 
-    single { InsertChatUseCase(get(), get(), get(), get(), get(), get()) }
+    single { InsertChatUseCase(get(), get(), get(), get(), get()) }
 
     single { UpdateChatsUseCase(get(), get(), get(), get()) }
 
@@ -172,11 +172,10 @@ val appModule = module {
         ChatListViewModel(get(), get(), get(), get(), get())
     }
     viewModel {
-        ChatSettingsViewModel(get(), get(), get())
+        ChatSettingsViewModel(get(), get())
     }
     viewModel {
         ChatViewModel(
-            get(),
             get(),
             get(),
             get(),
@@ -197,7 +196,7 @@ val appModule = module {
         SettingsAccountViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
-        SettingsChatViewModel(get(), get(), get(), get(), get(), get(), get(), get())
+        SettingsChatViewModel(get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         SettingsLanguageViewModel(get())

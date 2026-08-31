@@ -9,7 +9,6 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdToken
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ReviewUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.TemperatureUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.ThemeUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.RefreshTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.UidUseCase
@@ -35,8 +34,6 @@ val settingsModule = module {
     single { AiModelUseCase(get()) }
 
     single { AiProviderUseCase(get()) }
-
-    single { TemperatureUseCase(get()) }
 
     single { GlobalContextUseCase(get()) }
 

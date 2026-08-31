@@ -1,8 +1,6 @@
 package com.vnteam.talktoai.presentation.screens.chat
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,7 +12,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -27,7 +24,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.domain.enums.AiProviderType
 import com.vnteam.talktoai.domain.enums.ModelTier
 import com.vnteam.talktoai.domain.models.AiModels
@@ -48,7 +44,6 @@ fun ChatSettingsBottomSheet(
     val viewModel: ChatSettingsViewModel = koinViewModel()
     val stringRes = LocalStringResources.current
     val globalAiModel = viewModel.globalAiModel.collectAsState()
-    val globalTemperature = viewModel.globalTemperature.collectAsState()
 
     val chatName = remember(chat.id) { mutableStateOf(chat.name.orEmpty()) }
     val chatContext = remember(chat.id) { mutableStateOf(chat.context.orEmpty()) }
@@ -60,20 +55,15 @@ fun ChatSettingsBottomSheet(
         ?.takeIf { id -> AiModels.forProvider(initialProvider).any { it.id == id } }
         ?: chat.aiModel?.let { AiModels.balancedFor(initialProvider).id }
     val chatModel = remember(chat.id) { mutableStateOf(validatedChatModel) }
-    val chatTemperature = remember(chat.id) { mutableStateOf(chat.temperature) }
-
     val providerDropdownExpanded = remember { mutableStateOf(false) }
     val dropdownExpanded = remember { mutableStateOf(false) }
 
     val effectiveModel = chatModel.value ?: globalAiModel.value
-    val effectiveTemperature = chatTemperature.value ?: globalTemperature.value
-    val hasOverride = (chatModel.value != null && chatModel.value != globalAiModel.value) ||
-            (chatTemperature.value != null && chatTemperature.value != globalTemperature.value)
+    val hasOverride = chatModel.value != null && chatModel.value != globalAiModel.value
 
     val hasChanges = chatName.value != chat.name.orEmpty() ||
             chatContext.value != chat.context.orEmpty() ||
             chatModel.value != chat.aiModel ||
-            chatTemperature.value != chat.temperature ||
             chatProvider.value != initialProvider
 
     LaunchedEffect(Unit) {
@@ -215,33 +205,10 @@ fun ChatSettingsBottomSheet(
                 }
             }
 
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = stringRes.SETTINGS_CHAT_TEMPERATURE_TITLE)
-                val tempLabel = if (chatTemperature.value == null) {
-                    "${effectiveTemperature} (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})"
-                } else {
-                    effectiveTemperature.toString()
-                }
-                Text(text = tempLabel)
-            }
-            Slider(
-                value = effectiveTemperature,
-                onValueChange = { newVal ->
-                    chatTemperature.value = (newVal * 10).toInt() / 10f
-                },
-                valueRange = SettingsConstants.AI_TEMPERATURE_MIN..SettingsConstants.AI_TEMPERATURE_MAX,
-                steps = 19,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-            )
-
             if (hasOverride) {
                 TextButton(
                     onClick = {
                         chatModel.value = null
-                        chatTemperature.value = null
                     },
                     modifier = Modifier.padding(bottom = 8.dp)
                 ) {
@@ -260,7 +227,6 @@ fun ChatSettingsBottomSheet(
                     name = chatName.value.takeIf { it.isNotBlank() } ?: chat.name,
                     context = chatContext.value.takeIf { it.isNotBlank() },
                     aiModel = chatModel.value,
-                    temperature = chatTemperature.value,
                     aiProvider = chatProvider.value.name,
                 )
                 viewModel.saveChat(updatedChat)
