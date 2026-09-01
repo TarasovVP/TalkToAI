@@ -12,6 +12,7 @@
 *.preferences_pb
 .DS_Store
 /build
+**/build/generated/
 /captures
 .externalNativeBuild
 .cxx
