@@ -11,7 +11,7 @@ object AiModels {
     )
 
     val ANTHROPIC = listOf(
-        AiModel("claude-haiku-4-5-20251001", "Claude Haiku 4.5", ModelTier.FAST),
+        AiModel("claude-haiku-4-5-20251001", "Claude Haiku 4.5", ModelTier.FAST, supportsTemperature = true),
         AiModel("claude-sonnet-5",           "Claude Sonnet 5",  ModelTier.BALANCED),
         AiModel("claude-opus-4-8",           "Claude Opus 4.8",  ModelTier.POWERFUL),
     )

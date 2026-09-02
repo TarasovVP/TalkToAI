@@ -22,4 +22,5 @@ object NetworkConstants {
 
     // Error message keywords
     const val MODEL_KEYWORD = "model"
+    const val TEMPERATURE_KEYWORD = "temperature"
 }

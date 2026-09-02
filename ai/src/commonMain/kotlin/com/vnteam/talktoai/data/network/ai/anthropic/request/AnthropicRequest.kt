@@ -9,6 +9,7 @@ data class AnthropicRequest(
     val model: String,
     @EncodeDefault @SerialName("max_tokens") val maxTokens: Int = DEFAULT_MAX_TOKENS,
     @EncodeDefault(EncodeDefault.Mode.NEVER) val system: String? = null,
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val temperature: Float? = null,
     val messages: List<AnthropicMessage>,
     @EncodeDefault val stream: Boolean = true,
 ) {

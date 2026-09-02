@@ -7,6 +7,7 @@ import com.vnteam.talktoai.data.network.ai.anthropic.AnthropicProvider
 import com.vnteam.talktoai.data.network.ai.openai.OpenAiProvider
 import com.vnteam.talktoai.data.network.ai.request.Message
 import com.vnteam.talktoai.data.network.isModelNotSupportedError
+import com.vnteam.talktoai.data.network.isTemperatureDeprecatedError
 import com.vnteam.talktoai.data.network.parseErrorMessage
 import com.vnteam.talktoai.domain.enums.AiProviderType
 import com.vnteam.talktoai.domain.models.AiModels
@@ -24,8 +25,9 @@ class AIRepositoryImpl(
         messages: List<Message>,
         apiKey: String?,
         providerType: AiProviderType,
+        temperature: Float?,
     ) = flow {
-        emit(doSendRequest(model, messages, apiKey, providerType, isRetry = false))
+        emit(doSendRequest(model, messages, apiKey, providerType, temperature, isRetry = false))
     }
 
     private suspend fun doSendRequest(
@@ -33,13 +35,14 @@ class AIRepositoryImpl(
         messages: List<Message>,
         apiKey: String?,
         providerType: AiProviderType,
+        temperature: Float?,
         isRetry: Boolean,
     ): Result<AiTextResponse> {
         val provider = when (providerType) {
             AiProviderType.OPENAI -> openAiProvider
             AiProviderType.ANTHROPIC -> anthropicProvider
         }
-        val result = provider.sendMessage(model, messages, apiKey).firstOrNull()
+        val result = provider.sendMessage(model, messages, apiKey, temperature).firstOrNull()
             ?: return Result.Failure(UNKNOWN_ERROR)
 
         if (result is Result.Success) return result
@@ -48,10 +51,14 @@ class AIRepositoryImpl(
         val rawBody = failure.errorMessage.orEmpty()
         val statusCode = failure.statusCode ?: 0
 
+        if (!isRetry && isTemperatureDeprecatedError(statusCode, rawBody) && temperature != null) {
+            return doSendRequest(model, messages, apiKey, providerType, null, isRetry = true)
+        }
+
         if (!isRetry && isModelNotSupportedError(statusCode, rawBody)) {
             val balanced = AiModels.balancedFor(providerType)
             if (balanced.id != model) {
-                val retryResult = doSendRequest(balanced.id, messages, apiKey, providerType, isRetry = true)
+                val retryResult = doSendRequest(balanced.id, messages, apiKey, providerType, temperature, isRetry = true)
                 return when (retryResult) {
                     is Result.Success -> Result.Success(retryResult.data!!.copy(fallbackFrom = model))
                     else -> retryResult

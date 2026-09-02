@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Slider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -48,6 +49,7 @@ fun ChatSettingsBottomSheet(
 
     val chatName = remember(chat.id) { mutableStateOf(chat.name.orEmpty()) }
     val chatContext = remember(chat.id) { mutableStateOf(chat.context.orEmpty()) }
+    val chatTemperature = remember(chat.id) { mutableStateOf(chat.temperature ?: 1.0f) }
     val initialProvider = chat.aiProvider
         ?.let { runCatching { AiProviderType.valueOf(it) }.getOrNull() }
         ?: globalProvider.value
@@ -61,11 +63,14 @@ fun ChatSettingsBottomSheet(
 
     val effectiveModel = chatModel.value ?: globalAiModel.value
     val hasOverride = chatModel.value != null && chatModel.value != globalAiModel.value
+    val currentModelSupportsTemperature = AiModels.forProvider(chatProvider.value)
+        .find { it.id == effectiveModel }?.supportsTemperature == true
 
     val hasChanges = chatName.value != chat.name.orEmpty() ||
             chatContext.value != chat.context.orEmpty() ||
             chatModel.value != chat.aiModel ||
-            chatProvider.value != initialProvider
+            chatProvider.value != initialProvider ||
+            (currentModelSupportsTemperature && chatTemperature.value != (chat.temperature ?: 1.0f))
 
     LaunchedEffect(Unit) {
         viewModel.chatSaved.collect {
@@ -219,6 +224,20 @@ fun ChatSettingsBottomSheet(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
+            if (currentModelSupportsTemperature) {
+                val displayTemp = (kotlin.math.round(chatTemperature.value * 10) / 10.0f).toString()
+                Text(
+                    text = "${stringRes.CHAT_SETTINGS_TEMPERATURE_LABEL}: $displayTemp",
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                Slider(
+                    value = chatTemperature.value,
+                    onValueChange = { chatTemperature.value = it },
+                    valueRange = 0f..1f,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                )
+            }
+
             PrimaryButton(
                 text = stringRes.SETTINGS_CHAT_SAVE,
                 isEnabled = hasChanges,
@@ -229,6 +248,7 @@ fun ChatSettingsBottomSheet(
                     context = chatContext.value.takeIf { it.isNotBlank() },
                     aiModel = chatModel.value,
                     aiProvider = chatProvider.value.name,
+                    temperature = if (currentModelSupportsTemperature) chatTemperature.value else null,
                 )
                 viewModel.saveChat(updatedChat)
                 onChatUpdated(updatedChat)
