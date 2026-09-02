@@ -12,6 +12,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.vnteam.talktoai.CommonExtensions.isTrue
+import com.vnteam.talktoai.domain.models.resolveEffectiveProvider
 import com.vnteam.talktoai.presentation.AppNavigation
 import com.vnteam.talktoai.presentation.BackHandlerWrapper
 import com.vnteam.talktoai.presentation.LocalScreenState
@@ -36,6 +38,7 @@ fun AppContent(appViewModel: AppViewModel) {
     val navController = rememberNavController()
 
     val screenState = LocalScreenState.current
+    val globalProvider = appViewModel.globalProvider.collectAsState()
     val showChatSettingsSheet = remember { mutableStateOf(false) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
@@ -140,6 +143,10 @@ fun AppContent(appViewModel: AppViewModel) {
                         }
                     },
                     onEditChatClick = { showChatSettingsSheet.value = true },
+                    providerTag = resolveEffectiveProvider(
+                        screenState.value.currentChat?.aiProvider,
+                        globalProvider.value
+                    ).name,
                 )
             },
             snackbarHost = {
