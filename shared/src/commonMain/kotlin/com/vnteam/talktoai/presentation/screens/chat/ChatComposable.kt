@@ -135,6 +135,7 @@ fun ChatContent(chatId: Long) {
                         aiModel = chat.aiModel,
                         temperature = chat.temperature,
                         context = chat.context,
+                        aiProvider = chat.aiProvider,
                     )
                 )
             }

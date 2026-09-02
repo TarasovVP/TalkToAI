@@ -7,6 +7,7 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.dateToMilliseconds
 import com.vnteam.talktoai.domain.enums.AiProviderType
+import com.vnteam.talktoai.domain.models.resolveEffectiveProvider
 import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.mappers.ChatUIMapper
 import com.vnteam.talktoai.domain.mappers.MessageUIMapper
@@ -61,6 +62,7 @@ class ChatViewModel(
     val animationResource = _animationResource.asStateFlow()
     private val _aiModel = MutableStateFlow(SettingsConstants.OPENAI_AI_MODEL_DEFAULT)
     private val _globalProvider = MutableStateFlow(AiProviderType.OPENAI)
+    val globalProvider = _globalProvider.asStateFlow()
     private val _globalContext = MutableStateFlow<String?>(null)
 
     private val _modelFallback = MutableSharedFlow<Pair<String, String>>(extraBufferCapacity = 1)
@@ -75,7 +77,7 @@ class ChatViewModel(
             }
         }
         launchWithErrorHandling {
-            aiProviderUseCase.get().firstOrNull()?.let { result ->
+            aiProviderUseCase.get().collect { result ->
                 if (result is Result.Success && !result.data.isNullOrEmpty()) {
                     _globalProvider.value = runCatching { AiProviderType.valueOf(result.data!!) }.getOrDefault(AiProviderType.OPENAI)
                 }
@@ -229,9 +231,7 @@ class ChatViewModel(
             add(AiMessage(role = Constants.MESSAGE_ROLE_USER, content = messageText))
         }
         val model = chatAiModel ?: _aiModel.value
-        val providerType = _currentChatLiveData.value?.aiProvider
-            ?.let { runCatching { AiProviderType.valueOf(it) }.getOrNull() }
-            ?: _globalProvider.value
+        val providerType = resolveEffectiveProvider(_currentChatLiveData.value?.aiProvider, _globalProvider.value)
         launchWithErrorHandling {
             val result = sendRequestUseCase.execute(model, messages, null, providerType).firstOrNull()
             when (result) {

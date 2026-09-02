@@ -4,6 +4,7 @@ import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.data.APP_LANG_EN
 import com.vnteam.talktoai.data.network.AuthEventBus
+import com.vnteam.talktoai.domain.enums.AiProviderType
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.presentation.ui.NavigationScreen
@@ -11,6 +12,7 @@ import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.TokenRefreshManager
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.TokenRefreshNetworkException
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteSettingsUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiProviderUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
@@ -37,6 +39,7 @@ class AppViewModel(
     private val uidUseCase: UidUseCase,
     private val syncRemoteSettingsUseCase: SyncRemoteSettingsUseCase,
     private val tokenRefreshManager: TokenRefreshManager,
+    private val aiProviderUseCase: AiProviderUseCase,
 ) : BaseViewModel() {
 
     private val _screenState = MutableStateFlow(ScreenState())
@@ -48,6 +51,9 @@ class AppViewModel(
     private val _isDarkTheme = MutableStateFlow<Boolean?>(null)
     private val _language = MutableStateFlow<String?>(null)
 
+    private val _globalProvider = MutableStateFlow(AiProviderType.OPENAI)
+    val globalProvider = _globalProvider.asStateFlow()
+
     private val _animationResource = MutableStateFlow<String?>(null)
     val animationResource = _animationResource.asStateFlow()
 
@@ -57,6 +63,18 @@ class AppViewModel(
         observeScreenState()
         fetchInitialData()
         observeUnauthorizedEvents()
+        observeGlobalProvider()
+    }
+
+    private fun observeGlobalProvider() {
+        launchWithErrorHandling {
+            aiProviderUseCase.get().collect { result ->
+                if (result is Result.Success && !result.data.isNullOrEmpty()) {
+                    _globalProvider.value = runCatching { AiProviderType.valueOf(result.data!!) }
+                        .getOrDefault(AiProviderType.OPENAI)
+                }
+            }
+        }
     }
 
     private fun fetchInitialData() {

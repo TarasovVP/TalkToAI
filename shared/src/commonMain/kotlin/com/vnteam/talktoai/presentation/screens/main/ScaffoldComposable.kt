@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.CommonExtensions.isNotTrue
 import com.vnteam.talktoai.CommonExtensions.isTrue
@@ -44,6 +45,7 @@ fun AppTopBar(
     screenState: ScreenState?,
     onNavigationIconClick: () -> Unit,
     onEditChatClick: () -> Unit = {},
+    providerTag: String? = null,
 ) {
     when {
         screenState?.isNoToolbarScreen.isTrue() -> Unit
@@ -65,6 +67,7 @@ fun AppTopBar(
             onNavigationIconClick = onNavigationIconClick,
             isEditVisible = screenState?.isChatScreen.isTrue() && screenState?.currentChat != null,
             onEditClick = onEditChatClick,
+            providerTag = if (screenState?.isChatScreen.isTrue() && screenState?.currentChat != null) providerTag else null,
         )
     }
 }
@@ -77,6 +80,7 @@ fun PrimaryTopBar(
     onNavigationIconClick: () -> Unit,
     isEditVisible: Boolean,
     onEditClick: () -> Unit,
+    providerTag: String? = null,
 ) {
     TopAppBar(
         title = { Text(title, color = Neutral50) },
@@ -93,6 +97,13 @@ fun PrimaryTopBar(
             }
         },
         actions = {
+            providerTag?.let {
+                Text(
+                    text = it,
+                    color = Primary100,
+                    fontSize = 11.sp,
+                )
+            }
             if (isEditVisible) {
                 IconButton(onClick = onEditClick) {
                     Icon(

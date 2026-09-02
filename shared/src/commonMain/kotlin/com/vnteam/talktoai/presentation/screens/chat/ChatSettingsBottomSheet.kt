@@ -44,12 +44,13 @@ fun ChatSettingsBottomSheet(
     val viewModel: ChatSettingsViewModel = koinViewModel()
     val stringRes = LocalStringResources.current
     val globalAiModel = viewModel.globalAiModel.collectAsState()
+    val globalProvider = viewModel.globalProvider.collectAsState()
 
     val chatName = remember(chat.id) { mutableStateOf(chat.name.orEmpty()) }
     val chatContext = remember(chat.id) { mutableStateOf(chat.context.orEmpty()) }
     val initialProvider = chat.aiProvider
         ?.let { runCatching { AiProviderType.valueOf(it) }.getOrNull() }
-        ?: AiProviderType.OPENAI
+        ?: globalProvider.value
     val chatProvider = remember(chat.id) { mutableStateOf(initialProvider) }
     val validatedChatModel = chat.aiModel
         ?.takeIf { id -> AiModels.forProvider(initialProvider).any { it.id == id } }

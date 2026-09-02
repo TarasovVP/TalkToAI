@@ -41,6 +41,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemot
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.UpdateRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.ExchangeAndStoreTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.TokenRefreshManager
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiProviderUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GetPrivacyPolicyUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.RefreshTokenUseCase
 import com.vnteam.talktoai.presentation.viewmodels.authorisation.LoginViewModel
@@ -144,7 +145,7 @@ val appModule = module {
 
     // ViewModels
     viewModel {
-        AppViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get())
+        AppViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         OnBoardingViewModel(get())
@@ -172,7 +173,7 @@ val appModule = module {
         ChatListViewModel(get(), get(), get(), get(), get())
     }
     viewModel {
-        ChatSettingsViewModel(get(), get())
+        ChatSettingsViewModel(get(), get(), get())
     }
     viewModel {
         ChatViewModel(
