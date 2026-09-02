@@ -111,4 +111,40 @@ class AnthropicRequestTest {
         assertTrue("\"system\"" in json)
         assertTrue("Be helpful" in json)
     }
+
+    @Test
+    fun serializationWithNullTemperatureOmitsTemperatureKey() {
+        val request = AnthropicRequest(
+            model = "claude-3-5-sonnet-20241022",
+            temperature = null,
+            messages = listOf(AnthropicMessage("user", listOf(AnthropicContentBlock(text = "Hello")))),
+        )
+        val json = testJson.encodeToString(request)
+        assertFalse("temperature" in json)
+    }
+
+    @Test
+    fun serializationWithFilledTemperatureIncludesTemperatureValue() {
+        val request = AnthropicRequest(
+            model = "claude-haiku-4-5-20251001",
+            temperature = 0.7f,
+            messages = listOf(AnthropicMessage("user", listOf(AnthropicContentBlock(text = "Hello")))),
+        )
+        val json = testJson.encodeToString(request)
+        assertTrue("\"temperature\"" in json)
+    }
+
+    @Test
+    fun mapperPassesTemperatureToRequest() {
+        val messages = listOf(MessageApi(role = "user", content = "Hello"))
+        val request = messages.toAnthropicRequest(model = "claude-haiku-4-5-20251001", temperature = 0.5f)
+        assertEquals(0.5f, request.temperature)
+    }
+
+    @Test
+    fun mapperDefaultsTemperatureToNull() {
+        val messages = listOf(MessageApi(role = "user", content = "Hello"))
+        val request = messages.toAnthropicRequest(model = "claude-haiku-4-5-20251001")
+        assertEquals(null, request.temperature)
+    }
 }

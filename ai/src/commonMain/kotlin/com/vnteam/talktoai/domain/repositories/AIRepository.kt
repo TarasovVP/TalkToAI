@@ -12,5 +12,6 @@ interface AIRepository {
         messages: List<Message>,
         apiKey: String? = null,
         providerType: AiProviderType = AiProviderType.OPENAI,
+        temperature: Float? = null,
     ): Flow<Result<AiTextResponse>>
 }

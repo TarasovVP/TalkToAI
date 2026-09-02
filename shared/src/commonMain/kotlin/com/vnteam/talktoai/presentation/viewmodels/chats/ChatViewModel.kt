@@ -11,6 +11,7 @@ import com.vnteam.talktoai.domain.models.resolveEffectiveProvider
 import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.mappers.ChatUIMapper
 import com.vnteam.talktoai.domain.mappers.MessageUIMapper
+import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.presentation.uimodels.ChatUI
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
@@ -194,6 +195,7 @@ class ChatViewModel(
             messageText = messageText,
             systemContext = combinedContext,
             chatAiModel = currentChat?.aiModel,
+            chatTemperature = currentChat?.temperature,
             history = history,
         )
     }
@@ -203,6 +205,7 @@ class ChatViewModel(
         messageText: String,
         systemContext: String?,
         chatAiModel: String?,
+        chatTemperature: Float?,
         history: List<MessageUI>,
     ) {
         var remainingTokens = MAX_HISTORY_TOKENS -
@@ -232,8 +235,10 @@ class ChatViewModel(
         }
         val model = chatAiModel ?: _aiModel.value
         val providerType = resolveEffectiveProvider(_currentChatLiveData.value?.aiProvider, _globalProvider.value)
+        val supportsTemperature = AiModels.forProvider(providerType).find { it.id == model }?.supportsTemperature ?: false
+        val temperature = if (supportsTemperature) chatTemperature else null
         launchWithErrorHandling {
-            val result = sendRequestUseCase.execute(model, messages, null, providerType).firstOrNull()
+            val result = sendRequestUseCase.execute(model, messages, null, providerType, temperature).firstOrNull()
             when (result) {
                 is Result.Success -> {
                     val aiResponse = result.data

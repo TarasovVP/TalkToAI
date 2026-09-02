@@ -19,9 +19,10 @@ class OpenAiProvider(private val service: OpenAiService) : AiProvider {
         model: String,
         messages: List<Message>,
         apiKey: String?,
+        temperature: Float?,
     ): Flow<Result<AiTextResponse>> = flow {
         val apiMessages = messages.map { MessageApi(role = it.role, content = it.content) }
-        val request = ApiRequest(model = model, messages = apiMessages)
+        val request = ApiRequest(model = model, messages = apiMessages, temperature = temperature)
         val response = try {
             service.sendRequest(request, apiKey)
         } catch (e: Exception) {

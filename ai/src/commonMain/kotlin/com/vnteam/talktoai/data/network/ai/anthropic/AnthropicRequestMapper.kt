@@ -11,6 +11,7 @@ private const val ROLE_ASSISTANT = "assistant"
 
 fun List<MessageApi>.toAnthropicRequest(
     model: String,
+    temperature: Float? = null,
 ): AnthropicRequest {
     val systemContent = filter { it.role == ROLE_SYSTEM }
         .mapNotNull { it.content }
@@ -28,6 +29,7 @@ fun List<MessageApi>.toAnthropicRequest(
     return AnthropicRequest(
         model = model,
         system = systemContent,
+        temperature = temperature,
         messages = anthropicMessages,
     )
 }

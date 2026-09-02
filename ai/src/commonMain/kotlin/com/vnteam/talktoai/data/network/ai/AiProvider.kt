@@ -9,6 +9,7 @@ interface AiProvider {
         model: String,
         messages: List<Message>,
         apiKey: String? = null,
+        temperature: Float? = null,
     ): Flow<Result<AiTextResponse>>
 }
 

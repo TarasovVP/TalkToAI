@@ -17,6 +17,16 @@ fun parseErrorMessage(body: String): String = try {
         ?.get(NetworkConstants.MESSAGE_KEY)?.jsonPrimitive?.content ?: body
 } catch (e: Exception) { body }
 
+fun isTemperatureDeprecatedError(statusCode: Int, body: String): Boolean {
+    if (statusCode != 400) return false
+    return try {
+        val errorObj = errorJson.parseToJsonElement(body).jsonObject[NetworkConstants.ERROR_KEY]?.jsonObject
+            ?: return false
+        val message = errorObj[NetworkConstants.MESSAGE_KEY]?.jsonPrimitive?.content.orEmpty()
+        message.contains(NetworkConstants.TEMPERATURE_KEYWORD, ignoreCase = true)
+    } catch (e: Exception) { false }
+}
+
 fun isModelNotSupportedError(statusCode: Int, body: String): Boolean {
     if (statusCode != 400) return false
     return try {

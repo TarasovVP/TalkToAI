@@ -62,4 +62,16 @@ class AiModelsTest {
     fun forProviderReturnsCorrectListForAnthropic() {
         assertEquals(AiModels.ANTHROPIC, AiModels.forProvider(AiProviderType.ANTHROPIC))
     }
+
+    @Test
+    fun onlyHaikuSupportsTemperatureInAnthropicList() {
+        val temperatureModels = AiModels.ANTHROPIC.filter { it.supportsTemperature }
+        assertEquals(1, temperatureModels.size)
+        assertEquals("claude-haiku-4-5-20251001", temperatureModels.first().id)
+    }
+
+    @Test
+    fun noOpenAiModelSupportsTemperature() {
+        assertTrue(AiModels.OPENAI.none { it.supportsTemperature })
+    }
 }
