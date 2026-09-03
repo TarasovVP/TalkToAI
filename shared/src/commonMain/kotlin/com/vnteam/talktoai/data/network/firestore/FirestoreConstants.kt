@@ -23,6 +23,7 @@ object FirestoreConstants {
     const val FIELD_TRUNCATED = "truncated"
 
     // Settings fields
+    const val FIELD_AI_PROVIDER = "aiProvider"
     const val FIELD_API_KEY = "apiKey"
     const val FIELD_GLOBAL_CONTEXT = "globalContext"
     const val FIELD_TEXT = "text"

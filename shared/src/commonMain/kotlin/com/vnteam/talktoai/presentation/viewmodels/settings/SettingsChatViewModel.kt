@@ -127,6 +127,7 @@ class SettingsChatViewModel(
             globalContextUseCase.set(_globalContext.value)
             val remoteResult = remoteStoreRepository.setRemoteSettings(
                 mapOf(
+                    "aiProvider" to _aiProvider.value.name,
                     "aiModel" to _aiModel.value,
                     "globalContext" to _globalContext.value,
                 )
