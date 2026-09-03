@@ -12,6 +12,7 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.firestore.FirestoreCollectionSelector
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_AI_MODEL
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_AI_PROVIDER
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_API_KEY
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_AUTHOR
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_CHAT_ID
@@ -374,6 +375,7 @@ class RemoteStoreRepositoryImpl(
         emit(
             Result.Success(
                 mapOf(
+                    FIELD_AI_PROVIDER to f?.get(FIELD_AI_PROVIDER)?.stringValue,
                     FIELD_AI_MODEL to f?.get(FIELD_AI_MODEL)?.stringValue,
                     FIELD_API_KEY to f?.get(FIELD_API_KEY)?.stringValue,
                     FIELD_TEMPERATURE to f?.get(FIELD_TEMPERATURE)?.stringValue,
