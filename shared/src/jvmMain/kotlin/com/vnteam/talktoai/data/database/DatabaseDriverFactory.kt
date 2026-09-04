@@ -1,6 +1,8 @@
 package com.vnteam.talktoai.data.database
 
 import app.cash.sqldelight.async.coroutines.awaitCreate
+import app.cash.sqldelight.async.coroutines.awaitMigrate
+import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.vnteam.talktoai.AppDatabase
@@ -14,9 +16,23 @@ actual class DatabaseDriverFactory {
     actual suspend fun createDriver(): SqlDriver {
         val dbDir = File(System.getProperty(JVM_USER_HOME_PROPERTY), JVM_APP_DIR_NAME).also { it.mkdirs() }
         val dbFile = File(dbDir, DEMO_OBJECTS_DB)
+        val isNewDb = !dbFile.exists()
         val driver = JdbcSqliteDriver("jdbc:sqlite:${dbFile.absolutePath}")
-        if (!dbFile.exists()) {
+        val schemaVersion = AppDatabase.Schema.version
+        if (isNewDb) {
             AppDatabase.Schema.awaitCreate(driver)
+            driver.execute(null, "PRAGMA user_version = $schemaVersion", 0)
+        } else {
+            val currentVersion = driver.executeQuery(
+                identifier = null,
+                sql = "PRAGMA user_version",
+                mapper = { cursor -> QueryResult.Value(if (cursor.next().value) cursor.getLong(0) ?: 0L else 0L) },
+                parameters = 0,
+            ).value
+            if (currentVersion < schemaVersion) {
+                AppDatabase.Schema.awaitMigrate(driver, currentVersion, schemaVersion)
+                driver.execute(null, "PRAGMA user_version = $schemaVersion", 0)
+            }
         }
         return driver
     }
