@@ -19,32 +19,21 @@ actual class DatabaseDriverFactory {
         val isNewDb = !dbFile.exists()
         val driver = JdbcSqliteDriver("jdbc:sqlite:${dbFile.absolutePath}")
         val schemaVersion = AppDatabase.Schema.version
-        when {
-            isNewDb -> {
-                AppDatabase.Schema.awaitCreate(driver)
+        if (isNewDb) {
+            AppDatabase.Schema.awaitCreate(driver)
+            driver.execute(null, "PRAGMA user_version = $schemaVersion", 0)
+        } else {
+            val actualVersion = detectActualVersion(driver)
+            driver.execute(null, "PRAGMA user_version = $actualVersion", 0)
+            if (actualVersion < schemaVersion) {
+                AppDatabase.Schema.awaitMigrate(driver, actualVersion, schemaVersion)
                 driver.execute(null, "PRAGMA user_version = $schemaVersion", 0)
-            }
-            else -> {
-                val storedVersion = driver.executeQuery(
-                    identifier = null,
-                    sql = "PRAGMA user_version",
-                    mapper = { cursor -> QueryResult.Value(if (cursor.next().value) cursor.getLong(0) ?: 0L else 0L) },
-                    parameters = 0,
-                ).value
-                val currentVersion = if (storedVersion == 0L) detectLegacyVersion(driver) else storedVersion
-                if (currentVersion != storedVersion) {
-                    driver.execute(null, "PRAGMA user_version = $currentVersion", 0)
-                }
-                if (currentVersion < schemaVersion) {
-                    AppDatabase.Schema.awaitMigrate(driver, currentVersion, schemaVersion)
-                    driver.execute(null, "PRAGMA user_version = $schemaVersion", 0)
-                }
             }
         }
         return driver
     }
 
-    private fun detectLegacyVersion(driver: SqlDriver): Long {
+    private fun detectActualVersion(driver: SqlDriver): Long {
         return try {
             val columns = driver.executeQuery(
                 identifier = null,
