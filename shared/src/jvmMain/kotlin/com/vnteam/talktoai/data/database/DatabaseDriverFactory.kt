@@ -34,24 +34,21 @@ actual class DatabaseDriverFactory {
     }
 
     private fun detectActualVersion(driver: SqlDriver): Long {
-        return try {
-            val columns = driver.executeQuery(
+        fun hasColumn(column: String): Boolean = try {
+            driver.executeQuery(
                 identifier = null,
-                sql = "PRAGMA table_info(ChatDB)",
-                mapper = { cursor ->
-                    val names = mutableSetOf<String>()
-                    while (cursor.next().value) { cursor.getString(1)?.let { names.add(it) } }
-                    QueryResult.Value(names)
-                },
+                sql = "SELECT $column FROM ChatDB LIMIT 0",
+                mapper = { QueryResult.Value(true) },
                 parameters = 0,
             ).value
-            when {
-                "aiProvider" in columns -> 4L
-                "context" in columns -> 3L
-                "aiModel" in columns -> 2L
-                columns.isNotEmpty() -> 1L
-                else -> 0L
-            }
-        } catch (e: Exception) { 0L }
+        } catch (e: Exception) { false }
+
+        return when {
+            hasColumn("aiProvider") -> 4L
+            hasColumn("context") -> 3L
+            hasColumn("aiModel") -> 2L
+            hasColumn("id") -> 1L
+            else -> 0L
+        }
     }
 }
