@@ -1,8 +1,6 @@
 package com.vnteam.talktoai.data.database
 
 import app.cash.sqldelight.async.coroutines.awaitCreate
-import app.cash.sqldelight.async.coroutines.awaitMigrate
-import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.vnteam.talktoai.AppDatabase
@@ -18,37 +16,22 @@ actual class DatabaseDriverFactory {
         val dbFile = File(dbDir, DEMO_OBJECTS_DB)
         val isNewDb = !dbFile.exists()
         val driver = JdbcSqliteDriver("jdbc:sqlite:${dbFile.absolutePath}")
-        val schemaVersion = AppDatabase.Schema.version
         if (isNewDb) {
             AppDatabase.Schema.awaitCreate(driver)
-            driver.execute(null, "PRAGMA user_version = $schemaVersion", 0)
         } else {
-            val actualVersion = detectActualVersion(driver)
-            driver.execute(null, "PRAGMA user_version = $actualVersion", 0)
-            if (actualVersion < schemaVersion) {
-                AppDatabase.Schema.awaitMigrate(driver, actualVersion, schemaVersion)
-                driver.execute(null, "PRAGMA user_version = $schemaVersion", 0)
-            }
+            applyMissingColumns(driver)
         }
         return driver
     }
 
-    private fun detectActualVersion(driver: SqlDriver): Long {
-        fun hasColumn(column: String): Boolean = try {
-            driver.executeQuery(
-                identifier = null,
-                sql = "SELECT $column FROM ChatDB LIMIT 0",
-                mapper = { QueryResult.Value(true) },
-                parameters = 0,
-            ).value
-        } catch (e: Exception) { false }
-
-        return when {
-            hasColumn("aiProvider") -> 4L
-            hasColumn("context") -> 3L
-            hasColumn("aiModel") -> 2L
-            hasColumn("id") -> 1L
-            else -> 0L
+    private fun applyMissingColumns(driver: SqlDriver) {
+        listOf(
+            "ALTER TABLE ChatDB ADD COLUMN aiModel TEXT",
+            "ALTER TABLE ChatDB ADD COLUMN temperature REAL",
+            "ALTER TABLE ChatDB ADD COLUMN context TEXT",
+            "ALTER TABLE ChatDB ADD COLUMN aiProvider TEXT",
+        ).forEach { sql ->
+            try { driver.execute(null, sql, 0) } catch (_: Exception) { }
         }
     }
 }
