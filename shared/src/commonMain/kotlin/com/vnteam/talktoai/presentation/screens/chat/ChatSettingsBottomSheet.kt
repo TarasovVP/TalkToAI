@@ -61,8 +61,9 @@ fun ChatSettingsBottomSheet(
     val providerDropdownExpanded = remember { mutableStateOf(false) }
     val dropdownExpanded = remember { mutableStateOf(false) }
 
-    val effectiveModel = chatModel.value ?: globalAiModel.value
-    val hasOverride = chatModel.value != null && chatModel.value != globalAiModel.value
+    val sameProviderAsGlobal = chatProvider.value == globalProvider.value
+    val effectiveModel = chatModel.value ?: if (sameProviderAsGlobal) globalAiModel.value else AiModels.balancedFor(chatProvider.value).id
+    val hasOverride = sameProviderAsGlobal && chatModel.value != null && chatModel.value != globalAiModel.value
     val currentModelSupportsTemperature = AiModels.forProvider(chatProvider.value)
         .find { it.id == effectiveModel }?.supportsTemperature == true
 
@@ -187,18 +188,20 @@ fun ChatSettingsBottomSheet(
                     expanded = dropdownExpanded.value,
                     onDismissRequest = { dropdownExpanded.value = false }
                 ) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = "$globalModelName (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})",
-                                color = fieldContentColor
-                            )
-                        },
-                        onClick = {
-                            chatModel.value = null
-                            dropdownExpanded.value = false
-                        }
-                    )
+                    if (sameProviderAsGlobal) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = "$globalModelName (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})",
+                                    color = fieldContentColor
+                                )
+                            },
+                            onClick = {
+                                chatModel.value = null
+                                dropdownExpanded.value = false
+                            }
+                        )
+                    }
                     providerModels.forEach { model ->
                         DropdownMenuItem(
                             text = { Text(text = model.displayName, color = fieldContentColor) },
