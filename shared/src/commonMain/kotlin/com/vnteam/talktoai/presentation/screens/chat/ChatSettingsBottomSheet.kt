@@ -63,7 +63,7 @@ fun ChatSettingsBottomSheet(
 
     val sameProviderAsGlobal = chatProvider.value == globalProvider.value
     val effectiveModel = chatModel.value ?: if (sameProviderAsGlobal) globalAiModel.value else AiModels.balancedFor(chatProvider.value).id
-    val hasOverride = sameProviderAsGlobal && chatModel.value != null && chatModel.value != globalAiModel.value
+    val hasOverride = !sameProviderAsGlobal || (chatModel.value != null && chatModel.value != globalAiModel.value)
     val currentModelSupportsTemperature = AiModels.forProvider(chatProvider.value)
         .find { it.id == effectiveModel }?.supportsTemperature == true
 
@@ -217,6 +217,7 @@ fun ChatSettingsBottomSheet(
             if (hasOverride) {
                 TextButton(
                     onClick = {
+                        chatProvider.value = globalProvider.value
                         chatModel.value = null
                     },
                     modifier = Modifier.padding(bottom = 8.dp)
