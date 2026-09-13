@@ -188,7 +188,7 @@ fun ChatSettingsBottomSheet(
                     expanded = dropdownExpanded.value,
                     onDismissRequest = { dropdownExpanded.value = false }
                 ) {
-                    if (sameProviderAsGlobal) {
+                    if (sameProviderAsGlobal && chatModel.value != null) {
                         DropdownMenuItem(
                             text = {
                                 Text(
