@@ -164,7 +164,6 @@ fun ChatSettingsBottomSheet(
             ) {
                 val providerModels = AiModels.forProvider(chatProvider.value)
                 val effectiveModelName = providerModels.find { it.id == effectiveModel }?.displayName ?: effectiveModel
-                val globalModelName = providerModels.find { it.id == globalAiModel.value }?.displayName ?: globalAiModel.value
                 val displayModel = if (chatModel.value == null) {
                     "$effectiveModelName (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})"
                 } else {
@@ -188,23 +187,11 @@ fun ChatSettingsBottomSheet(
                     expanded = dropdownExpanded.value,
                     onDismissRequest = { dropdownExpanded.value = false }
                 ) {
-                    if (sameProviderAsGlobal && chatModel.value != null) {
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = "$globalModelName (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})",
-                                    color = fieldContentColor
-                                )
-                            },
-                            onClick = {
-                                chatModel.value = null
-                                dropdownExpanded.value = false
-                            }
-                        )
-                    }
                     providerModels.forEach { model ->
+                        val isGlobalModel = sameProviderAsGlobal && model.id == globalAiModel.value
+                        val label = if (isGlobalModel) "${model.displayName} (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})" else model.displayName
                         DropdownMenuItem(
-                            text = { Text(text = model.displayName, color = fieldContentColor) },
+                            text = { Text(text = label, color = fieldContentColor) },
                             onClick = {
                                 chatModel.value = model.id
                                 dropdownExpanded.value = false
