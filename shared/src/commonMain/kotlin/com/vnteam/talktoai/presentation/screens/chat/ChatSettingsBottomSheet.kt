@@ -138,8 +138,10 @@ fun ChatSettingsBottomSheet(
                     onDismissRequest = { providerDropdownExpanded.value = false }
                 ) {
                     AiProviderType.entries.forEach { provider ->
+                        val isGlobalProvider = provider == globalProvider.value
+                        val providerLabel = if (isGlobalProvider) "${provider.name} (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})" else provider.name
                         DropdownMenuItem(
-                            text = { Text(text = provider.name, color = fieldContentColor) },
+                            text = { Text(text = providerLabel, color = fieldContentColor) },
                             onClick = {
                                 if (chatProvider.value != provider) {
                                     chatProvider.value = provider
