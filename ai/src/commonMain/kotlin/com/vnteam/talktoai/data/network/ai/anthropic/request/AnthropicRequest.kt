@@ -45,7 +45,7 @@ data class AnthropicImageBlock(
 
 @Serializable
 data class AnthropicImageSource(
-    val type: String = "base64",
+    @EncodeDefault val type: String = "base64",
     @SerialName("media_type") val mediaType: String,
     val data: String,
 )
