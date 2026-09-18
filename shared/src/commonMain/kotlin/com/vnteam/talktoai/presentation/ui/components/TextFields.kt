@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -235,10 +233,9 @@ fun TextFieldWithButton(
         leadingIcon = if (onAttachClick != null) {
             {
                 IconButton(enabled = isEnabled, onClick = onAttachClick) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = LocalStringResources.current.MESSAGE_ATTACH_IMAGE,
-                        tint = if (isEnabled) MaterialTheme.colorScheme.primary else Neutral600
+                    Text(
+                        text = "+",
+                        color = if (isEnabled) MaterialTheme.colorScheme.primary else Neutral600
                     )
                 }
             }

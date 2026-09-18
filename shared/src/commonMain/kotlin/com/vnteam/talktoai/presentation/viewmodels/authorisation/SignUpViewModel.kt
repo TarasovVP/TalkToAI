@@ -7,6 +7,7 @@ import com.vnteam.talktoai.dateToMilliseconds
 import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.models.Message
+import com.vnteam.talktoai.domain.models.MessageContent
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.usecase.execute
 import com.vnteam.talktoai.presentation.uistates.SignUpUIState
@@ -94,7 +95,7 @@ class SignUpViewModel(
                 Message(
                     chatId = chatId,
                     author = Constants.MESSAGE_ROLE_CHAT_GPT,
-                    message = welcomeMessage,
+                    content = listOf(MessageContent.Text(welcomeMessage)),
                     status = MessageStatus.SUCCESS,
                     updatedAt = chatId
                 )
