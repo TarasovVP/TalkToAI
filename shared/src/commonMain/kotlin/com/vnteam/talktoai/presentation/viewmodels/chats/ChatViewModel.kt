@@ -165,18 +165,15 @@ class ChatViewModel(
     }
 
     fun sendMessage(chatId: Long, messageText: String, attachedImage: MessageContent.Image? = null) {
-        val providerType = resolveEffectiveProvider(_currentChatLiveData.value?.aiProvider, _globalProvider.value)
-        if (attachedImage != null && providerType != AiProviderType.ANTHROPIC) {
-            showMessage("Images are only supported for Anthropic provider")
-            return
-        }
+        if (messageText.isBlank() && attachedImage == null) return
         val now = Clock.System.now()
         val userMsgId = now.toEpochMilliseconds()
+        val displayMessage = if (messageText.isBlank() && attachedImage != null) "[Image]" else messageText
         val userMsg = MessageUI(
             id = userMsgId,
             chatId = chatId,
             author = Constants.MESSAGE_ROLE_ME,
-            message = messageText,
+            message = displayMessage,
             updatedAt = now.dateToMilliseconds(),
             status = MessageStatus.SUCCESS,
             attachedImage = attachedImage,
@@ -251,6 +248,15 @@ class ChatViewModel(
         val supportsTemperature = AiModels.forProvider(providerType).find { it.id == model }?.supportsTemperature ?: false
         val temperature = if (supportsTemperature) chatTemperature else null
         launchWithErrorHandling {
+            if (attachedImage != null && providerType != AiProviderType.ANTHROPIC) {
+                insertMessage(
+                    temporaryMessage.copy(
+                        status = MessageStatus.ERROR,
+                        errorMessage = "Image attachments are only supported for Anthropic Claude models."
+                    )
+                )
+                return@launchWithErrorHandling
+            }
             val result = sendRequestUseCase.execute(model, messages, null, providerType, temperature).firstOrNull()
             when (result) {
                 is Result.Success -> {

@@ -551,6 +551,7 @@ fun ChatInputArea(
         }
         TextFieldWithButton(
             isEnabled = isEnabled,
+            hasAttachment = attachedImage.value != null,
             onSendClick = { messageText ->
                 onSend(messageText, attachedImage.value)
                 attachedImage.value = null
