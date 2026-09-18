@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
@@ -20,7 +21,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -31,6 +35,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +47,13 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vnteam.talktoai.data.filepicker.FilePicker
+import com.vnteam.talktoai.domain.models.ImageValidationResult
+import com.vnteam.talktoai.domain.models.MessageContent
+import com.vnteam.talktoai.domain.models.PickedImage
+import com.vnteam.talktoai.domain.models.validate
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Constants
@@ -238,11 +251,18 @@ fun ChatContent(chatId: Long) {
                 }
 
                 else -> {
-                    TextFieldWithButton(
-                        currentChatState.value?.id != null && currentChatState.value?.id != DEFAULT_CHAT_ID
-                    ) { messageText ->
-                        viewModel.sendMessage(currentChatState.value?.id ?: 0, messageText)
-                    }
+                    ChatInputArea(
+                        isEnabled = currentChatState.value?.id != null && currentChatState.value?.id != DEFAULT_CHAT_ID,
+                        stringRes = stringRes,
+                        onSend = { messageText, image ->
+                            viewModel.sendMessage(currentChatState.value?.id ?: 0, messageText, image)
+                        },
+                        onValidationError = { msg ->
+                            screenState.value = screenState.value.copy(
+                                appMessage = AppMessage(message = msg)
+                            )
+                        }
+                    )
                 }
             }
         }
@@ -490,6 +510,74 @@ fun MessageTypingAnimation() {
     viewModel.animationResource.collectAsState().value.let {
         viewModel.animationUtils.MessageTypingAnimation(
             it
+        )
+    }
+}
+
+@Composable
+fun ChatInputArea(
+    isEnabled: Boolean,
+    stringRes: StringResources,
+    onSend: (String, MessageContent.Image?) -> Unit,
+    onValidationError: (String) -> Unit,
+) {
+    val filePicker = koinInject<FilePicker>()
+    val scope = rememberCoroutineScope()
+    val attachedImage = remember { mutableStateOf<MessageContent.Image?>(null) }
+
+    Column {
+        attachedImage.value?.let { image ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
+                    .background(
+                        color = Color.Black.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = image.mimeType,
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    modifier = Modifier.weight(1f)
+                )
+                IconButton(
+                    onClick = { attachedImage.value = null },
+                    modifier = Modifier.size(24.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = stringRes.MESSAGE_IMAGE_REMOVE,
+                        tint = Color.White,
+                    )
+                }
+            }
+        }
+        TextFieldWithButton(
+            isEnabled = isEnabled,
+            onSendClick = { messageText ->
+                onSend(messageText, attachedImage.value)
+                attachedImage.value = null
+            },
+            onAttachClick = {
+                scope.launch {
+                    val picked: PickedImage? = filePicker.pickImage()
+                    if (picked == null) return@launch
+                    when (val result = picked.validate()) {
+                        is ImageValidationResult.Ok -> {
+                            attachedImage.value = MessageContent.Image(
+                                base64Data = picked.base64Data,
+                                mimeType = picked.mimeType,
+                            )
+                        }
+                        is ImageValidationResult.TooLarge -> onValidationError(stringRes.MESSAGE_IMAGE_TOO_LARGE)
+                        is ImageValidationResult.UnsupportedType -> onValidationError(stringRes.MESSAGE_IMAGE_UNSUPPORTED_TYPE)
+                    }
+                }
+            }
         )
     }
 }

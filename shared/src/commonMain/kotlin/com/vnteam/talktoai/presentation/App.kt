@@ -17,12 +17,10 @@ import com.vnteam.talktoai.presentation.ui.theme.AppTheme
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.viewmodels.settings.AppViewModel
-import secrets.Secrets
 
 @Composable
 fun App(appViewModel: AppViewModel) {
     val screenState = appViewModel.screenState.collectAsState()
-    Secrets
     val isSplashScreenVisible = remember { mutableStateOf(true) }
     val localScreenState = remember { mutableStateOf(screenState.value) }
 

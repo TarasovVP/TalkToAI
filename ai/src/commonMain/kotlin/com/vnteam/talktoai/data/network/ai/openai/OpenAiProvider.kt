@@ -8,6 +8,7 @@ import com.vnteam.talktoai.data.network.ai.openai.request.ApiRequest
 import com.vnteam.talktoai.data.network.ai.openai.request.MessageApi
 import com.vnteam.talktoai.data.network.ai.openai.response.ApiResponse
 import com.vnteam.talktoai.data.network.ai.request.Message
+import com.vnteam.talktoai.domain.models.MessageContent
 import io.ktor.client.call.body
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +22,12 @@ class OpenAiProvider(private val service: OpenAiService) : AiProvider {
         apiKey: String?,
         temperature: Float?,
     ): Flow<Result<AiTextResponse>> = flow {
-        val apiMessages = messages.map { MessageApi(role = it.role, content = it.content) }
+        val apiMessages = messages.map { msg ->
+            val textOnly = msg.content
+                .filterIsInstance<MessageContent.Text>()
+                .joinToString("") { it.text }
+            MessageApi(role = msg.role, content = textOnly)
+        }
         val request = ApiRequest(model = model, messages = apiMessages, temperature = temperature)
         val response = try {
             service.sendRequest(request, apiKey)
@@ -42,8 +48,7 @@ class OpenAiProvider(private val service: OpenAiService) : AiProvider {
             }
             emit(Result.Success(parsed))
         } else {
-            val rawBody = response.bodyAsText()
-            emit(Result.Failure(rawBody, response.status.value))
+            emit(Result.Failure(response.bodyAsText(), response.status.value))
         }
     }
 }

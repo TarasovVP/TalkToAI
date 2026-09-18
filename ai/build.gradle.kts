@@ -31,6 +31,7 @@ kotlin {
     }
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.core)
             implementation(projects.network)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlinx.coroutines.core)

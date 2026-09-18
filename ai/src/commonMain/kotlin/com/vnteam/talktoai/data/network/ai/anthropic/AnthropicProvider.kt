@@ -6,7 +6,6 @@ import com.vnteam.talktoai.data.network.ai.AiProvider
 import com.vnteam.talktoai.data.network.ai.AiTextResponse
 import com.vnteam.talktoai.data.network.ai.anthropic.response.AnthropicSseEvent
 import com.vnteam.talktoai.data.network.ai.anthropic.response.parseAnthropicSseEvent
-import com.vnteam.talktoai.data.network.ai.openai.request.MessageApi
 import com.vnteam.talktoai.data.network.ai.request.Message
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.statement.bodyAsText
@@ -23,8 +22,7 @@ class AnthropicProvider(private val service: AnthropicService) : AiProvider {
         apiKey: String?,
         temperature: Float?,
     ): Flow<Result<AiTextResponse>> = flow {
-        val apiMessages = messages.map { MessageApi(role = it.role, content = it.content) }
-        val request = apiMessages.toAnthropicRequest(model, temperature)
+        val request = messages.toAnthropicRequest(model, temperature)
         val response = try {
             service.sendMessage(request, apiKey)
         } catch (e: Exception) {

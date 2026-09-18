@@ -75,6 +75,10 @@ sealed class StringResources(
     var CHAT_SETTINGS_USE_GLOBAL: String,
     var CHAT_SETTINGS_GLOBAL_LABEL: String,
     var CHAT_SETTINGS_TEMPERATURE_LABEL: String,
+    var MESSAGE_ATTACH_IMAGE: String,
+    var MESSAGE_IMAGE_REMOVE: String,
+    var MESSAGE_IMAGE_TOO_LARGE: String,
+    var MESSAGE_IMAGE_UNSUPPORTED_TYPE: String,
 
     // Settings account
     var SETTINGS_ACCOUNT_LOG_OUT_TITLE: String,
@@ -237,6 +241,10 @@ class StringResourcesEN : StringResources(
     CHAT_SETTINGS_USE_GLOBAL = "Reset to global settings",
     CHAT_SETTINGS_GLOBAL_LABEL = "global",
     CHAT_SETTINGS_TEMPERATURE_LABEL = "Temperature",
+    MESSAGE_ATTACH_IMAGE = "Attach image",
+    MESSAGE_IMAGE_REMOVE = "Remove image",
+    MESSAGE_IMAGE_TOO_LARGE = "Image exceeds 5 MB limit",
+    MESSAGE_IMAGE_UNSUPPORTED_TYPE = "Unsupported image type. Allowed: JPEG, PNG, GIF, WEBP",
 
     // Settings account
     SETTINGS_ACCOUNT_LOG_OUT_TITLE = "Logout",
@@ -405,6 +413,10 @@ class StringResourcesUK : StringResources(
     CHAT_SETTINGS_USE_GLOBAL = "Скинути до глобальних налаштувань",
     CHAT_SETTINGS_GLOBAL_LABEL = "глобально",
     CHAT_SETTINGS_TEMPERATURE_LABEL = "Температура",
+    MESSAGE_ATTACH_IMAGE = "Прикріпити зображення",
+    MESSAGE_IMAGE_REMOVE = "Видалити зображення",
+    MESSAGE_IMAGE_TOO_LARGE = "Зображення перевищує ліміт 5 МБ",
+    MESSAGE_IMAGE_UNSUPPORTED_TYPE = "Непідтримуваний тип. Дозволено: JPEG, PNG, GIF, WEBP",
 
     // Settings account
     SETTINGS_ACCOUNT_LOG_OUT_TITLE = "Вийти",

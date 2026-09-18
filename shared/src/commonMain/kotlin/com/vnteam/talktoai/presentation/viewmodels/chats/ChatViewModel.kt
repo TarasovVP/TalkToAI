@@ -13,6 +13,7 @@ import com.vnteam.talktoai.domain.mappers.ChatUIMapper
 import com.vnteam.talktoai.domain.mappers.MessageUIMapper
 import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.models.Chat
+import com.vnteam.talktoai.domain.models.MessageContent
 import com.vnteam.talktoai.presentation.uimodels.ChatUI
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.SendRequestUseCase
@@ -163,7 +164,12 @@ class ChatViewModel(
         }
     }
 
-    fun sendMessage(chatId: Long, messageText: String) {
+    fun sendMessage(chatId: Long, messageText: String, attachedImage: MessageContent.Image? = null) {
+        val providerType = resolveEffectiveProvider(_currentChatLiveData.value?.aiProvider, _globalProvider.value)
+        if (attachedImage != null && providerType != AiProviderType.ANTHROPIC) {
+            showMessage("Images are only supported for Anthropic provider")
+            return
+        }
         val now = Clock.System.now()
         val userMsgId = now.toEpochMilliseconds()
         val userMsg = MessageUI(
@@ -172,7 +178,8 @@ class ChatViewModel(
             author = Constants.MESSAGE_ROLE_ME,
             message = messageText,
             updatedAt = now.dateToMilliseconds(),
-            status = MessageStatus.SUCCESS
+            status = MessageStatus.SUCCESS,
+            attachedImage = attachedImage,
         )
         val tempMsg = MessageUI(
             id = userMsgId + 1,
@@ -193,6 +200,7 @@ class ChatViewModel(
         sendRequest(
             temporaryMessage = tempMsg,
             messageText = messageText,
+            attachedImage = attachedImage,
             systemContext = combinedContext,
             chatAiModel = currentChat?.aiModel,
             chatTemperature = currentChat?.temperature,
@@ -203,6 +211,7 @@ class ChatViewModel(
     private fun sendRequest(
         temporaryMessage: MessageUI,
         messageText: String,
+        attachedImage: MessageContent.Image?,
         systemContext: String?,
         chatAiModel: String?,
         chatTemperature: Float?,
@@ -221,17 +230,21 @@ class ChatViewModel(
             .reversed()
         val messages = buildList {
             if (!systemContext.isNullOrBlank()) {
-                add(AiMessage(role = Constants.MESSAGE_ROLE_SYSTEM, content = systemContext))
+                add(AiMessage(role = Constants.MESSAGE_ROLE_SYSTEM, content = listOf(MessageContent.Text(systemContext))))
             }
             trimmedHistory.forEach { msg ->
                 add(
                     AiMessage(
                         role = if (msg.author == Constants.MESSAGE_ROLE_ME) Constants.MESSAGE_ROLE_USER else Constants.MESSAGE_ROLE_ASSISTANT,
-                        content = msg.message
+                        content = listOf(MessageContent.Text(msg.message))
                     )
                 )
             }
-            add(AiMessage(role = Constants.MESSAGE_ROLE_USER, content = messageText))
+            val userContent = buildList {
+                if (messageText.isNotBlank()) add(MessageContent.Text(messageText))
+                if (attachedImage != null) add(attachedImage)
+            }
+            add(AiMessage(role = Constants.MESSAGE_ROLE_USER, content = userContent))
         }
         val model = chatAiModel ?: _aiModel.value
         val providerType = resolveEffectiveProvider(_currentChatLiveData.value?.aiProvider, _globalProvider.value)
