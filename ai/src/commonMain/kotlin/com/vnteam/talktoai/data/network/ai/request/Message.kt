@@ -1,3 +1,5 @@
 package com.vnteam.talktoai.data.network.ai.request
 
-data class Message(val role: String?, val content: String?)
+import com.vnteam.talktoai.domain.models.MessageContent
+
+data class Message(val role: String?, val content: List<MessageContent>)

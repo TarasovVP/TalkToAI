@@ -5,40 +5,49 @@ import com.vnteam.talktoai.MessageDB
 import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.mappers.MessageDBMapper
 import com.vnteam.talktoai.domain.models.Message
+import com.vnteam.talktoai.domain.models.MessageContent
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+
+private val json = Json { ignoreUnknownKeys = true }
 
 class MessageDBMapperImpl : MessageDBMapper {
 
     override fun mapToImplModel(from: Message): MessageDB {
+        val textFallback = from.message
+        val contentJson = runCatching { json.encodeToString(from.content) }.getOrNull()
         return MessageDB(
             from.id.orZero(),
             from.chatId,
             from.author,
-            from.message,
+            textFallback,
             from.updatedAt,
             from.status?.name,
             from.errorMessage,
-            if (from.truncated) 1 else 0
+            if (from.truncated) 1 else 0,
+            contentJson,
         )
     }
 
     override fun mapFromImplModel(to: MessageDB): Message {
+        val content = to.contentJson
+            ?.let { runCatching { json.decodeFromString<List<MessageContent>>(it) }.getOrNull() }
+            ?: listOf(MessageContent.Text(to.message.orEmpty()))
         return Message(
             to.id,
             to.chatId,
             to.author,
-            to.message,
+            content,
             to.updatedAt,
-            MessageStatus.valueOf(to.status.orEmpty()),
+            to.status?.let { runCatching { MessageStatus.valueOf(it) }.getOrNull() },
             to.errorMessage,
-            to.truncated == 1L
+            to.truncated == 1L,
         )
     }
 
-    override fun mapToImplModelList(fromList: List<Message>): List<MessageDB> {
-        return fromList.map { mapToImplModel(it) }
-    }
+    override fun mapToImplModelList(fromList: List<Message>): List<MessageDB> =
+        fromList.map { mapToImplModel(it) }
 
-    override fun mapFromImplModelList(toList: List<MessageDB>): List<Message> {
-        return toList.map { mapFromImplModel(it) }
-    }
+    override fun mapFromImplModelList(toList: List<MessageDB>): List<Message> =
+        toList.map { mapFromImplModel(it) }
 }

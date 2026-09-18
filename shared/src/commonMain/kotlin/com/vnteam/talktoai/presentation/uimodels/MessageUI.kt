@@ -4,7 +4,9 @@ import androidx.compose.runtime.mutableStateOf
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.domain.enums.MessageStatus
+import com.vnteam.talktoai.domain.models.MessageContent
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
 data class MessageUI(
@@ -16,7 +18,7 @@ data class MessageUI(
     var status: MessageStatus = MessageStatus.REQUESTING,
     var errorMessage: String = String.EMPTY,
     var isTruncated: Boolean = false,
+    @Transient var attachedImage: MessageContent.Image? = null,
 ) {
-
     var isCheckedToDelete = mutableStateOf(false)
 }

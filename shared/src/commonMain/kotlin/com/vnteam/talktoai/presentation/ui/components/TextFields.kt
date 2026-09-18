@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -164,6 +166,7 @@ fun PasswordTextField(inputValue: MutableState<TextFieldValue>, placeHolder: Str
 fun TextFieldWithButton(
     isEnabled: Boolean,
     onSendClick: (String) -> Unit,
+    onAttachClick: (() -> Unit)? = null,
 ) {
 
     val inputValue: MutableState<TextFieldValue> = remember {
@@ -229,6 +232,17 @@ fun TextFieldWithButton(
                 }
             },
         maxLines = 6,
+        leadingIcon = if (onAttachClick != null) {
+            {
+                IconButton(enabled = isEnabled, onClick = onAttachClick) {
+                    Icon(
+                        imageVector = Icons.Default.AttachFile,
+                        contentDescription = LocalStringResources.current.MESSAGE_ATTACH_IMAGE,
+                        tint = if (isEnabled) MaterialTheme.colorScheme.primary else Neutral600
+                    )
+                }
+            }
+        } else null,
         trailingIcon = {
             IconButton(enabled = isEnabled && inputValue.value.text.isNotBlank(), onClick = {
                 sendMessage()
