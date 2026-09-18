@@ -45,6 +45,7 @@ import com.vnteam.talktoai.data.network.firestore.firestoreString
 import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.models.Message
+import com.vnteam.talktoai.domain.models.MessageContent
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
@@ -115,7 +116,7 @@ class RemoteStoreRepositoryImpl(
             id = f[FIELD_ID]?.integerValue?.toLongOrNull(),
             chatId = f[FIELD_CHAT_ID]?.integerValue?.toLongOrNull(),
             author = f[FIELD_AUTHOR]?.stringValue,
-            message = f[FIELD_MESSAGE]?.stringValue,
+            content = listOf(MessageContent.Text(f[FIELD_MESSAGE]?.stringValue.orEmpty())),
             updatedAt = f[FIELD_UPDATED_AT]?.integerValue?.toLongOrNull(),
             status = f[FIELD_STATUS]?.stringValue?.let {
                 runCatching { MessageStatus.valueOf(it) }.getOrNull()
