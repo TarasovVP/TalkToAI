@@ -15,7 +15,8 @@ class MessageDBMapperImpl : MessageDBMapper {
 
     override fun mapToImplModel(from: Message): MessageDB {
         val textFallback = from.message
-        val contentJson = runCatching { json.encodeToString(from.content) }.getOrNull()
+        val textOnly = from.content.filterIsInstance<MessageContent.Text>()
+        val contentJson = runCatching { json.encodeToString<List<MessageContent>>(textOnly) }.getOrNull()
         return MessageDB(
             from.id.orZero(),
             from.chatId,

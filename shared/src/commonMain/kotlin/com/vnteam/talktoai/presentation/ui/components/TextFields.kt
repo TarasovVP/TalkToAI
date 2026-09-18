@@ -4,9 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -165,6 +168,7 @@ fun TextFieldWithButton(
     isEnabled: Boolean,
     onSendClick: (String) -> Unit,
     onAttachClick: (() -> Unit)? = null,
+    hasAttachment: Boolean = false,
 ) {
 
     val inputValue: MutableState<TextFieldValue> = remember {
@@ -176,82 +180,90 @@ fun TextFieldWithButton(
     val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
     val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
 
+    val canSend = inputValue.value.text.isNotBlank() || hasAttachment
     val sendMessage = {
-        if (inputValue.value.text.isNotBlank() && isEnabled) {
+        if (canSend && isEnabled) {
             onSendClick.invoke(inputValue.value.text.trim())
             focusManager.clearFocus()
             inputValue.value = TextFieldValue(String.EMPTY)
         }
     }
 
-    TextField(
-        value = inputValue.value,
-        onValueChange = { newValue ->
-            inputValue.value = newValue
-        },
-        placeholder = {
-            Text(
-                text = LocalStringResources.current.MESSAGE_ENTER_REQUEST,
-                style = TextStyle(color = fieldContentColor.copy(alpha = 0.6f))
-            )
-        },
-        textStyle = TextStyle(color = fieldContentColor),
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = fieldContainerColor,
-            unfocusedContainerColor = fieldContainerColor,
-            disabledContainerColor = fieldContainerColor,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-        ),
-        shape = RoundedCornerShape(16.dp),
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-        keyboardActions = KeyboardActions(onSend = { sendMessage() }),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .border(
-                1.dp,
-                if (isEnabled) Primary500 else Neutral600,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .background(
-                color = fieldContainerColor,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .onPreviewKeyEvent { keyEvent ->
-                if (keyEvent.key == Key.Enter && !keyEvent.isShiftPressed
-                    && keyEvent.type == KeyEventType.KeyDown
-                ) {
-                    sendMessage()
-                    true
-                } else {
-                    false
-                }
-            },
-        maxLines = 6,
-        leadingIcon = if (onAttachClick != null) {
-            {
-                IconButton(enabled = isEnabled, onClick = onAttachClick) {
-                    Text(
-                        text = "+",
-                        color = if (isEnabled) MaterialTheme.colorScheme.primary else Neutral600
-                    )
-                }
-            }
-        } else null,
-        trailingIcon = {
-            IconButton(enabled = isEnabled && inputValue.value.text.isNotBlank(), onClick = {
-                sendMessage()
-            }) {
-                Icon(
-                    painter = painterResource(Res.drawable.ic_message_send),
-                    contentDescription = LocalStringResources.current.MESSAGE_SEND_BUTTON,
-                    tint = if (isEnabled) MaterialTheme.colorScheme.primary else Neutral600
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        if (onAttachClick != null) {
+            IconButton(
+                enabled = isEnabled,
+                onClick = onAttachClick,
+                modifier = Modifier.size(48.dp)
+            ) {
+                Text(
+                    text = "+",
+                    color = if (isEnabled) MaterialTheme.colorScheme.primary else Neutral600
                 )
             }
         }
-    )
+        TextField(
+            value = inputValue.value,
+            onValueChange = { newValue ->
+                inputValue.value = newValue
+            },
+            placeholder = {
+                Text(
+                    text = LocalStringResources.current.MESSAGE_ENTER_REQUEST,
+                    style = TextStyle(color = fieldContentColor.copy(alpha = 0.6f))
+                )
+            },
+            textStyle = TextStyle(color = fieldContentColor),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = fieldContainerColor,
+                unfocusedContainerColor = fieldContainerColor,
+                disabledContainerColor = fieldContainerColor,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+            ),
+            shape = RoundedCornerShape(16.dp),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+            keyboardActions = KeyboardActions(onSend = { sendMessage() }),
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 8.dp, top = 4.dp, bottom = 4.dp)
+                .border(
+                    1.dp,
+                    if (isEnabled) Primary500 else Neutral600,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .background(
+                    color = fieldContainerColor,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .onPreviewKeyEvent { keyEvent ->
+                    if (keyEvent.key == Key.Enter && !keyEvent.isShiftPressed
+                        && keyEvent.type == KeyEventType.KeyDown
+                    ) {
+                        sendMessage()
+                        true
+                    } else {
+                        false
+                    }
+                },
+            maxLines = 6,
+            trailingIcon = {
+                IconButton(enabled = isEnabled && canSend, onClick = {
+                    sendMessage()
+                }) {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_message_send),
+                        contentDescription = LocalStringResources.current.MESSAGE_SEND_BUTTON,
+                        tint = if (isEnabled) MaterialTheme.colorScheme.primary else Neutral600
+                    )
+                }
+            }
+        )
+    }
 }
 
 @Composable
