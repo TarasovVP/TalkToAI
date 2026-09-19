@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ApiRequest(
     val model: String,
-    val messages: List<MessageApi>,
+    val messages: List<OpenAiMessage>,
     @EncodeDefault(EncodeDefault.Mode.NEVER) val temperature: Float? = null,
     @EncodeDefault @SerialName("max_completion_tokens") val maxCompletionTokens: Int = DEFAULT_MAX_COMPLETION_TOKENS,
 ) {

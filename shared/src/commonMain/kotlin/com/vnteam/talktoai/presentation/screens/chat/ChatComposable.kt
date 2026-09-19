@@ -248,8 +248,10 @@ fun ChatContent(chatId: Long) {
                 }
 
                 else -> {
+                    val supportsVision = viewModel.supportsVision.collectAsState()
                     ChatInputArea(
                         isEnabled = currentChatState.value?.id != null && currentChatState.value?.id != DEFAULT_CHAT_ID,
+                        supportsVision = supportsVision.value,
                         stringRes = stringRes,
                         onSend = { messageText, image ->
                             viewModel.sendMessage(currentChatState.value?.id ?: 0, messageText, image)
@@ -514,6 +516,7 @@ fun MessageTypingAnimation() {
 @Composable
 fun ChatInputArea(
     isEnabled: Boolean,
+    supportsVision: Boolean,
     stringRes: StringResources,
     onSend: (String, MessageContent.Image?) -> Unit,
     onValidationError: (String) -> Unit,
@@ -521,6 +524,10 @@ fun ChatInputArea(
     val filePicker = koinInject<FilePicker>()
     val scope = rememberCoroutineScope()
     val attachedImage = remember { mutableStateOf<MessageContent.Image?>(null) }
+
+    LaunchedEffect(supportsVision) {
+        if (!supportsVision) attachedImage.value = null
+    }
 
     Column {
         attachedImage.value?.let { image ->
@@ -556,22 +563,24 @@ fun ChatInputArea(
                 onSend(messageText, attachedImage.value)
                 attachedImage.value = null
             },
-            onAttachClick = {
-                scope.launch {
-                    val picked: PickedImage? = filePicker.pickImage()
-                    if (picked == null) return@launch
-                    when (val result = picked.validate()) {
-                        is ImageValidationResult.Ok -> {
-                            attachedImage.value = MessageContent.Image(
-                                base64Data = picked.base64Data,
-                                mimeType = picked.mimeType,
-                            )
+            onAttachClick = if (supportsVision) {
+                {
+                    scope.launch {
+                        val picked: PickedImage? = filePicker.pickImage()
+                        if (picked == null) return@launch
+                        when (val result = picked.validate()) {
+                            is ImageValidationResult.Ok -> {
+                                attachedImage.value = MessageContent.Image(
+                                    base64Data = picked.base64Data,
+                                    mimeType = picked.mimeType,
+                                )
+                            }
+                            is ImageValidationResult.TooLarge -> onValidationError(stringRes.MESSAGE_IMAGE_TOO_LARGE)
+                            is ImageValidationResult.UnsupportedType -> onValidationError(stringRes.MESSAGE_IMAGE_UNSUPPORTED_TYPE)
                         }
-                        is ImageValidationResult.TooLarge -> onValidationError(stringRes.MESSAGE_IMAGE_TOO_LARGE)
-                        is ImageValidationResult.UnsupportedType -> onValidationError(stringRes.MESSAGE_IMAGE_UNSUPPORTED_TYPE)
                     }
                 }
-            }
+            } else null
         )
     }
 }
