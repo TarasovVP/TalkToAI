@@ -7,4 +7,5 @@ data class AiModel(
     val displayName: String,
     val tier: ModelTier,
     val supportsTemperature: Boolean = false,
+    val supportsVision: Boolean = false,
 )

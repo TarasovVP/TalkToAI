@@ -31,9 +31,13 @@ import com.vnteam.talktoai.utils.AnimationUtils
 import com.vnteam.talktoai.utils.ShareUtils
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.stateIn
 import kotlin.time.Clock
 import com.vnteam.talktoai.data.network.ai.request.Message as AiMessage
 
@@ -66,6 +70,16 @@ class ChatViewModel(
     private val _globalProvider = MutableStateFlow(AiProviderType.OPENAI)
     val globalProvider = _globalProvider.asStateFlow()
     private val _globalContext = MutableStateFlow<String?>(null)
+
+    val supportsVision: StateFlow<Boolean> = combine(
+        _currentChatLiveData,
+        _globalProvider,
+        _aiModel,
+    ) { chat, provider, model ->
+        val effectiveProvider = resolveEffectiveProvider(chat?.aiProvider, provider)
+        val effectiveModel = chat?.aiModel ?: model
+        AiModels.forProvider(effectiveProvider).find { it.id == effectiveModel }?.supportsVision ?: false
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     private val _modelFallback = MutableSharedFlow<Pair<String, String>>(extraBufferCapacity = 1)
     val modelFallback = _modelFallback.asSharedFlow()
@@ -248,11 +262,12 @@ class ChatViewModel(
         val supportsTemperature = AiModels.forProvider(providerType).find { it.id == model }?.supportsTemperature ?: false
         val temperature = if (supportsTemperature) chatTemperature else null
         launchWithErrorHandling {
-            if (attachedImage != null && providerType != AiProviderType.ANTHROPIC) {
+            val modelSupportsVision = AiModels.forProvider(providerType).find { it.id == model }?.supportsVision ?: false
+            if (attachedImage != null && !modelSupportsVision) {
                 insertMessage(
                     temporaryMessage.copy(
                         status = MessageStatus.ERROR,
-                        errorMessage = "Image attachments are only supported for Anthropic Claude models."
+                        errorMessage = "Model $model does not support image attachments."
                     )
                 )
                 return@launchWithErrorHandling

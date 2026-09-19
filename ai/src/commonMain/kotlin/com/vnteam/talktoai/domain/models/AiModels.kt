@@ -5,15 +5,15 @@ import com.vnteam.talktoai.domain.enums.ModelTier
 
 object AiModels {
     val OPENAI = listOf(
-        AiModel("gpt-5.6-luna",  "GPT-5.6 Luna",  ModelTier.FAST),
-        AiModel("gpt-5.6-terra", "GPT-5.6 Terra", ModelTier.BALANCED),
-        AiModel("gpt-5.6-sol",   "GPT-5.6 Sol",   ModelTier.POWERFUL),
+        AiModel("gpt-5.6-luna",  "GPT-5.6 Luna",  ModelTier.FAST,     supportsVision = true),
+        AiModel("gpt-5.6-terra", "GPT-5.6 Terra", ModelTier.BALANCED, supportsVision = true),
+        AiModel("gpt-5.6-sol",   "GPT-5.6 Sol",   ModelTier.POWERFUL, supportsVision = true),
     )
 
     val ANTHROPIC = listOf(
-        AiModel("claude-haiku-4-5-20251001", "Claude Haiku 4.5", ModelTier.FAST, supportsTemperature = true),
-        AiModel("claude-sonnet-5",           "Claude Sonnet 5",  ModelTier.BALANCED),
-        AiModel("claude-opus-4-8",           "Claude Opus 4.8",  ModelTier.POWERFUL),
+        AiModel("claude-haiku-4-5-20251001", "Claude Haiku 4.5", ModelTier.FAST, supportsTemperature = true, supportsVision = true),
+        AiModel("claude-sonnet-5",           "Claude Sonnet 5",  ModelTier.BALANCED, supportsVision = true),
+        AiModel("claude-opus-4-8",           "Claude Opus 4.8",  ModelTier.POWERFUL, supportsVision = true),
     )
 
     fun forProvider(providerType: AiProviderType): List<AiModel> = when (providerType) {

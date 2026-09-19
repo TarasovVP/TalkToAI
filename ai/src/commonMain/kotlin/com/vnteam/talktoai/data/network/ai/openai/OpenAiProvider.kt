@@ -4,11 +4,8 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.UNKNOWN_ERROR
 import com.vnteam.talktoai.data.network.ai.AiProvider
 import com.vnteam.talktoai.data.network.ai.AiTextResponse
-import com.vnteam.talktoai.data.network.ai.openai.request.ApiRequest
-import com.vnteam.talktoai.data.network.ai.openai.request.MessageApi
 import com.vnteam.talktoai.data.network.ai.openai.response.ApiResponse
 import com.vnteam.talktoai.data.network.ai.request.Message
-import com.vnteam.talktoai.domain.models.MessageContent
 import io.ktor.client.call.body
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.flow.Flow
@@ -22,13 +19,7 @@ class OpenAiProvider(private val service: OpenAiService) : AiProvider {
         apiKey: String?,
         temperature: Float?,
     ): Flow<Result<AiTextResponse>> = flow {
-        val apiMessages = messages.map { msg ->
-            val textOnly = msg.content
-                .filterIsInstance<MessageContent.Text>()
-                .joinToString("") { it.text }
-            MessageApi(role = msg.role, content = textOnly)
-        }
-        val request = ApiRequest(model = model, messages = apiMessages, temperature = temperature)
+        val request = messages.toOpenAiRequest(model, temperature)
         val response = try {
             service.sendRequest(request, apiKey)
         } catch (e: Exception) {
