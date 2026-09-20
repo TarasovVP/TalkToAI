@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.presentation.viewmodels.chats
 
+import androidx.lifecycle.viewModelScope
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.SettingsConstants
@@ -7,13 +8,13 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.dateToMilliseconds
 import com.vnteam.talktoai.domain.enums.AiProviderType
-import com.vnteam.talktoai.domain.models.resolveEffectiveProvider
 import com.vnteam.talktoai.domain.enums.MessageStatus
 import com.vnteam.talktoai.domain.mappers.ChatUIMapper
 import com.vnteam.talktoai.domain.mappers.MessageUIMapper
 import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.models.MessageContent
+import com.vnteam.talktoai.domain.models.resolveEffectiveProvider
 import com.vnteam.talktoai.presentation.uimodels.ChatUI
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.ai.SendRequestUseCase
@@ -68,7 +69,6 @@ class ChatViewModel(
     val animationResource = _animationResource.asStateFlow()
     private val _aiModel = MutableStateFlow(SettingsConstants.OPENAI_AI_MODEL_DEFAULT)
     private val _globalProvider = MutableStateFlow(AiProviderType.OPENAI)
-    val globalProvider = _globalProvider.asStateFlow()
     private val _globalContext = MutableStateFlow<String?>(null)
 
     val supportsVision: StateFlow<Boolean> = combine(
