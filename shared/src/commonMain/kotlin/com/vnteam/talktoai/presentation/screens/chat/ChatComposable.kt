@@ -117,6 +117,7 @@ fun ChatContent(chatId: Long) {
     val screenState = LocalScreenState.current
     val stringRes = LocalStringResources.current
     val welcomeChat = viewModel.welcomeChat.collectAsState()
+    val supportsVision = viewModel.supportsVision.collectAsState()
     val isWelcomeChatPending = rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -248,7 +249,6 @@ fun ChatContent(chatId: Long) {
                 }
 
                 else -> {
-                    val supportsVision = viewModel.supportsVision.collectAsState()
                     ChatInputArea(
                         isEnabled = currentChatState.value?.id != null && currentChatState.value?.id != DEFAULT_CHAT_ID,
                         supportsVision = supportsVision.value,

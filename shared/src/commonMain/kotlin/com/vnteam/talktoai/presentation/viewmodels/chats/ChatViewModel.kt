@@ -78,8 +78,16 @@ class ChatViewModel(
     ) { chat, provider, model ->
         val effectiveProvider = resolveEffectiveProvider(chat?.aiProvider, provider)
         val effectiveModel = chat?.aiModel ?: model
-        AiModels.forProvider(effectiveProvider).find { it.id == effectiveModel }?.supportsVision ?: false
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+        val providerModels = AiModels.forProvider(effectiveProvider)
+        providerModels.find { it.id == effectiveModel }?.supportsVision
+            ?: providerModels.any { it.supportsVision }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        AiModels.forProvider(_globalProvider.value).let { models ->
+            models.find { it.id == _aiModel.value }?.supportsVision ?: models.any { it.supportsVision }
+        },
+    )
 
     private val _modelFallback = MutableSharedFlow<Pair<String, String>>(extraBufferCapacity = 1)
     val modelFallback = _modelFallback.asSharedFlow()
@@ -262,7 +270,9 @@ class ChatViewModel(
         val supportsTemperature = AiModels.forProvider(providerType).find { it.id == model }?.supportsTemperature ?: false
         val temperature = if (supportsTemperature) chatTemperature else null
         launchWithErrorHandling {
-            val modelSupportsVision = AiModels.forProvider(providerType).find { it.id == model }?.supportsVision ?: false
+            val providerModels = AiModels.forProvider(providerType)
+            val modelSupportsVision = providerModels.find { it.id == model }?.supportsVision
+                ?: providerModels.any { it.supportsVision }
             if (attachedImage != null && !modelSupportsVision) {
                 insertMessage(
                     temporaryMessage.copy(
