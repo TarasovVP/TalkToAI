@@ -476,11 +476,39 @@ fun Message(
                         )
 
                         message.status == MessageStatus.REQUESTING -> MessageTypingAnimation()
-                        else -> TruncatableText(
-                            message = message.message,
-                            isTruncated = isTruncatedState,
-                            linesCount = linesCount
-                        )
+                        else -> Column {
+                            message.attachedImage?.let { img ->
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 8.dp, vertical = 6.dp)
+                                        .background(
+                                            color = Color.Black.copy(alpha = 0.25f),
+                                            shape = RoundedCornerShape(6.dp)
+                                        )
+                                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                                ) {
+                                    Text(
+                                        text = img.mimeType,
+                                        fontSize = 11.sp,
+                                        color = Color.White.copy(alpha = 0.8f),
+                                    )
+                                }
+                            }
+                            if (message.message.isNotBlank() && message.message != "[Image]") {
+                                TruncatableText(
+                                    message = message.message,
+                                    isTruncated = isTruncatedState,
+                                    linesCount = linesCount
+                                )
+                            } else if (message.attachedImage == null) {
+                                TruncatableText(
+                                    message = message.message,
+                                    isTruncated = isTruncatedState,
+                                    linesCount = linesCount
+                                )
+                            }
+                        }
                     }
                 }
             }

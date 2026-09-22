@@ -319,12 +319,12 @@ class ChatViewModel(
     }
 
     fun insertMessage(message: MessageUI) {
+        val current = _messagesLiveData.value.orEmpty().toMutableList()
+        val idx = current.indexOfFirst { it.id == message.id }
+        if (idx >= 0) current[idx] = message else current.add(message)
+        _messagesLiveData.value = current
         launchWithErrorHandling {
             insertMessageUseCase.execute(messageUIMapper.mapFromImplModel(message))
-            val current = _messagesLiveData.value.orEmpty().toMutableList()
-            val idx = current.indexOfFirst { it.id == message.id }
-            if (idx >= 0) current[idx] = message else current.add(message)
-            _messagesLiveData.value = current
         }
     }
 
