@@ -9,6 +9,7 @@ import com.vnteam.talktoai.domain.repositories.ChatRepository
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import com.vnteam.talktoai.domain.usecase.UseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.TokenRefreshManager
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.firstOrNull
@@ -19,6 +20,7 @@ class InsertChatUseCase(
     private val chatRepository: ChatRepository,
     private val remoteStoreRepository: RemoteStoreRepository,
     private val aiModelUseCase: AiModelUseCase,
+    private val tokenRefreshManager: TokenRefreshManager,
 ) : UseCase<Chat, Result<Chat>> {
 
     override suspend fun execute(params: Chat): Result<Chat> {
@@ -27,7 +29,12 @@ class InsertChatUseCase(
         val userAuth = preferencesRepository.getUserEmail().firstOrNull()
         val authState = userAuth.getUserAuth()
         if (authState.isAuthorisedUser() && networkState.isNetworkAvailable()) {
-            remoteStoreRepository.insertChat(chat).firstOrNull()
+            val result = remoteStoreRepository.insertChat(chat).firstOrNull()
+            if (result is Result.Failure) {
+                runCatching { tokenRefreshManager.tryRefreshToken() }
+                    .getOrNull()
+                    ?.let { remoteStoreRepository.insertChat(chat).firstOrNull() }
+            }
         }
         return Result.Success(chat)
     }

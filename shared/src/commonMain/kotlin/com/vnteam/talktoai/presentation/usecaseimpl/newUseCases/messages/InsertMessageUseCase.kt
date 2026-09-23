@@ -8,6 +8,7 @@ import com.vnteam.talktoai.domain.repositories.MessageRepository
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import com.vnteam.talktoai.domain.usecase.UseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.TokenRefreshManager
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.firstOrNull
 
@@ -16,6 +17,7 @@ class InsertMessageUseCase(
     private val preferencesRepository: PreferencesRepository,
     private val messageRepository: MessageRepository,
     private val remoteStoreRepository: RemoteStoreRepository,
+    private val tokenRefreshManager: TokenRefreshManager,
 ) : UseCase<Message, Result<Unit>> {
 
     override suspend fun execute(params: Message): Result<Unit> {
@@ -23,7 +25,12 @@ class InsertMessageUseCase(
         val userAuth = preferencesRepository.getUserEmail().firstOrNull()
         val authState = userAuth.getUserAuth()
         if (authState.isAuthorisedUser() && networkState.isNetworkAvailable()) {
-            remoteStoreRepository.insertMessage(params).firstOrNull()
+            val result = remoteStoreRepository.insertMessage(params).firstOrNull()
+            if (result is Result.Failure) {
+                runCatching { tokenRefreshManager.tryRefreshToken() }
+                    .getOrNull()
+                    ?.let { remoteStoreRepository.insertMessage(params).firstOrNull() }
+            }
         }
         return Result.Success(Unit)
     }
