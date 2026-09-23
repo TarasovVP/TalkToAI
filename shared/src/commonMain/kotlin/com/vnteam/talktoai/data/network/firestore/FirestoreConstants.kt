@@ -1,7 +1,6 @@
 package com.vnteam.talktoai.data.network.firestore
 
 object FirestoreConstants {
-    const val NULL_VALUE = "NULL_VALUE"
     const val FILTER_OP_EQUAL = "EQUAL"
 
     // Chat fields
