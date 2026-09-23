@@ -113,7 +113,7 @@ val appModule = module {
 
     single { InsertChatsUseCase(get()) }
 
-    single { InsertChatUseCase(get(), get(), get(), get(), get()) }
+    single { InsertChatUseCase(get(), get(), get(), get(), get(), get()) }
 
     single { UpdateChatsUseCase(get(), get(), get(), get()) }
 
@@ -128,7 +128,7 @@ val appModule = module {
 
     single { InsertMessagesUseCase(get()) }
 
-    single { InsertMessageUseCase(get(), get(), get(), get()) }
+    single { InsertMessageUseCase(get(), get(), get(), get(), get()) }
 
     // auth
     single { ExchangeAndStoreTokenUseCase(get(), get()) }
@@ -145,7 +145,7 @@ val appModule = module {
 
     // ViewModels
     viewModel {
-        AppViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
+        AppViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         OnBoardingViewModel(get())

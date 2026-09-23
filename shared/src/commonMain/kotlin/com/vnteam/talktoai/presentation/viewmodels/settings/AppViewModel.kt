@@ -12,6 +12,7 @@ import com.vnteam.talktoai.presentation.uimodels.screen.ScreenState
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.TokenRefreshManager
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.TokenRefreshNetworkException
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteSettingsUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteUserUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiProviderUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
@@ -38,6 +39,7 @@ class AppViewModel(
     val animationUtils: AnimationUtils,
     private val uidUseCase: UidUseCase,
     private val syncRemoteSettingsUseCase: SyncRemoteSettingsUseCase,
+    private val syncRemoteUserUseCase: SyncRemoteUserUseCase,
     private val tokenRefreshManager: TokenRefreshManager,
     private val aiProviderUseCase: AiProviderUseCase,
 ) : BaseViewModel() {
@@ -93,6 +95,7 @@ class AppViewModel(
             val token = (tokenResult as? Result.Success)?.data
             if (!token.isNullOrEmpty()) {
                 syncRemoteSettingsUseCase.execute()
+                syncRemoteUserUseCase.execute()
             }
         }
     }
@@ -156,6 +159,7 @@ class AppViewModel(
                     if (!newIdToken.isNullOrEmpty()) {
                         idTokenUseCase.set(newIdToken)
                         syncRemoteSettingsUseCase.execute()
+                        syncRemoteUserUseCase.execute()
                         return@collect
                     }
                     idTokenUseCase.set(String.EMPTY)
