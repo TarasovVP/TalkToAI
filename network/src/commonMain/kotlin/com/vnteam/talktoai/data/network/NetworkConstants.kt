@@ -10,6 +10,7 @@ object NetworkConstants {
     const val ANTHROPIC_API_KEY_HEADER = "x-api-key"
     const val ANTHROPIC_VERSION_HEADER = "anthropic-version"
     const val ANTHROPIC_VERSION = "2023-06-01"
+    const val ANTHROPIC_BROWSER_ACCESS_HEADER = "anthropic-dangerous-direct-browser-access"
 
     // JSON error response field names
     const val ERROR_KEY = "error"

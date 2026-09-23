@@ -55,12 +55,13 @@ async function createDatabase() {
 function onModuleReady() {
   const data = this.data;
   switch (data && data.action) {
-    case "exec":
+    case "exec": {
       if (!data["sql"]) throw new Error("exec: Missing query string");
-      return postMessage({
-        id: data.id,
-        results: db.exec(data.sql, data.params)[0] ?? { values: [] }
-      });
+      const results = db.exec(data.sql, data.params);
+      const sql = (data.sql || "").trimStart().toUpperCase();
+      if (/^(INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|REPLACE)/.test(sql)) saveToIDB();
+      return postMessage({ id: data.id, results: results[0] ?? { values: [] } });
+    }
     case "begin_transaction":
       return postMessage({ id: data.id, results: db.exec("BEGIN TRANSACTION;") });
     case "end_transaction": {
