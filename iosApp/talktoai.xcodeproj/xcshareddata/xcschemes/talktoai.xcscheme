@@ -8,7 +8,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "C87F05B62BCBB0A200087FCB"
-               BuildableName = "talktoai"
+               BuildableName = "talktoai.app"
                BlueprintName = "talktoai"
                ReferencedContainer = "container:talktoai.xcodeproj">
             </BuildableReference>
@@ -23,10 +23,14 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C87F05B62BCBB0A200087FCB"
-            BuildableName = "talktoai"
+            BuildableName = "talktoai.app"
             BlueprintName = "talktoai"
             ReferencedContainer = "container:talktoai.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <LocationScenarioReference
+         identifier = "com.apple.dt.IDEFoundation.CurrentLocationScenarioIdentifier"
+         referenceType = "1">
+      </LocationScenarioReference>
    </LaunchAction>
 </Scheme>
