@@ -5,6 +5,13 @@ const STORE_NAME = "database";
 const IDB_KEY = "db";
 
 let db = null;
+let inTransaction = false;
+let saveQueue = Promise.resolve();
+
+function queueSaveToIDB() {
+  saveQueue = saveQueue.then(() => saveToIDB());
+  return saveQueue;
+}
 
 function openIDB() {
   return new Promise((resolve, reject) => {
@@ -59,17 +66,20 @@ function onModuleReady() {
       if (!data["sql"]) throw new Error("exec: Missing query string");
       const results = db.exec(data.sql, data.params);
       const sql = (data.sql || "").trimStart().toUpperCase();
-      if (/^(INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|REPLACE)/.test(sql)) saveToIDB();
+      if (!inTransaction && /^(INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|REPLACE)/.test(sql)) queueSaveToIDB();
       return postMessage({ id: data.id, results: results[0] ?? { values: [] } });
     }
     case "begin_transaction":
+      inTransaction = true;
       return postMessage({ id: data.id, results: db.exec("BEGIN TRANSACTION;") });
     case "end_transaction": {
       const results = db.exec("END TRANSACTION;");
-      saveToIDB();
+      inTransaction = false;
+      queueSaveToIDB();
       return postMessage({ id: data.id, results });
     }
     case "rollback_transaction":
+      inTransaction = false;
       return postMessage({ id: data.id, results: db.exec("ROLLBACK TRANSACTION;") });
     default:
       throw new Error(`Unsupported action: ${data && data.action}`);
