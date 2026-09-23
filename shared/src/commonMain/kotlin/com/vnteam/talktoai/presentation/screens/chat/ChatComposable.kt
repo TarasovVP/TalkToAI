@@ -476,37 +476,40 @@ fun Message(
                         )
 
                         message.status == MessageStatus.REQUESTING -> MessageTypingAnimation()
-                        else -> Column {
-                            message.attachedImage?.let { img ->
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 8.dp, vertical = 6.dp)
-                                        .background(
-                                            color = Color.Black.copy(alpha = 0.25f),
-                                            shape = RoundedCornerShape(6.dp)
-                                        )
-                                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                                ) {
+                        else -> {
+                            val hasImage = message.message == "[Image]" ||
+                                    message.message.endsWith("\n[Image]")
+                            val textPart = message.message
+                                .removeSuffix("\n[Image]")
+                                .let { if (it == "[Image]") "" else it }
+                            Column {
+                                if (hasImage) {
                                     Text(
-                                        text = img.mimeType,
+                                        text = "Image",
                                         fontSize = 11.sp,
-                                        color = Color.White.copy(alpha = 0.8f),
+                                        color = Color.White.copy(alpha = 0.7f),
+                                        modifier = Modifier
+                                            .padding(horizontal = 8.dp, vertical = 6.dp)
+                                            .background(
+                                                color = Color.Black.copy(alpha = 0.25f),
+                                                shape = RoundedCornerShape(4.dp)
+                                            )
+                                            .padding(horizontal = 8.dp, vertical = 3.dp)
                                     )
                                 }
-                            }
-                            if (message.message.isNotBlank() && message.message != "[Image]") {
-                                TruncatableText(
-                                    message = message.message,
-                                    isTruncated = isTruncatedState,
-                                    linesCount = linesCount
-                                )
-                            } else if (message.attachedImage == null) {
-                                TruncatableText(
-                                    message = message.message,
-                                    isTruncated = isTruncatedState,
-                                    linesCount = linesCount
-                                )
+                                if (textPart.isNotBlank()) {
+                                    TruncatableText(
+                                        message = textPart,
+                                        isTruncated = isTruncatedState,
+                                        linesCount = linesCount
+                                    )
+                                } else if (!hasImage) {
+                                    TruncatableText(
+                                        message = message.message,
+                                        isTruncated = isTruncatedState,
+                                        linesCount = linesCount
+                                    )
+                                }
                             }
                         }
                     }

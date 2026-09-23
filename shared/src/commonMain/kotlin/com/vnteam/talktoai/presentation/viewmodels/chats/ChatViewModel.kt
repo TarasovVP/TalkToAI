@@ -5,6 +5,7 @@ import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.data.network.Result
+import com.vnteam.talktoai.data.network.UNKNOWN_ERROR
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.dateToMilliseconds
 import com.vnteam.talktoai.domain.enums.AiProviderType
@@ -30,6 +31,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GlobalC
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import com.vnteam.talktoai.utils.AnimationUtils
 import com.vnteam.talktoai.utils.ShareUtils
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -190,7 +192,11 @@ class ChatViewModel(
         if (messageText.isBlank() && attachedImage == null) return
         val now = Clock.System.now()
         val userMsgId = now.toEpochMilliseconds()
-        val displayMessage = if (messageText.isBlank() && attachedImage != null) "[Image]" else messageText
+        val displayMessage = when {
+            messageText.isBlank() && attachedImage != null -> "[Image]"
+            messageText.isNotBlank() && attachedImage != null -> "$messageText\n[Image]"
+            else -> messageText
+        }
         val userMsg = MessageUI(
             id = userMsgId,
             chatId = chatId,
@@ -255,7 +261,7 @@ class ChatViewModel(
                 add(
                     AiMessage(
                         role = if (msg.author == Constants.MESSAGE_ROLE_ME) Constants.MESSAGE_ROLE_USER else Constants.MESSAGE_ROLE_ASSISTANT,
-                        content = listOf(MessageContent.Text(msg.message))
+                        content = listOf(MessageContent.Text(msg.message.removeSuffix("\n[Image]")))
                     )
                 )
             }
@@ -282,7 +288,14 @@ class ChatViewModel(
                 )
                 return@launchWithErrorHandling
             }
-            val result = sendRequestUseCase.execute(model, messages, null, providerType, temperature).firstOrNull()
+            val result = try {
+                sendRequestUseCase.execute(model, messages, null, providerType, temperature).firstOrNull()
+                    ?: Result.Failure(UNKNOWN_ERROR)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (t: Throwable) {
+                Result.Failure(t.message ?: UNKNOWN_ERROR)
+            }
             when (result) {
                 is Result.Success -> {
                     val aiResponse = result.data
