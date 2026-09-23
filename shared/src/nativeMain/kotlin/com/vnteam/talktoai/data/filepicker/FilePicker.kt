@@ -13,11 +13,16 @@ import platform.PhotosUI.PHPickerViewController
 import platform.PhotosUI.PHPickerViewControllerDelegateProtocol
 import platform.UIKit.UIApplication
 import platform.darwin.NSObject
+import platform.posix.memcpy
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class FilePicker {
+
+    // PHPickerViewController keeps its delegate weakly, so retain it until the
+    // picker reports a selection or cancellation.
+    private var activeDelegate: PHPickerViewControllerDelegateProtocol? = null
 
     @OptIn(ExperimentalEncodingApi::class, ExperimentalForeignApi::class)
     actual suspend fun pickImage(): PickedImage? {
@@ -32,6 +37,7 @@ actual class FilePicker {
         val delegate = object : NSObject(), PHPickerViewControllerDelegateProtocol {
             override fun picker(picker: PHPickerViewController, didFinishPicking: List<*>) {
                 picker.dismissViewControllerAnimated(true, null)
+                activeDelegate = null
                 val result = didFinishPicking.firstOrNull() as? PHPickerResult
                 if (result == null) {
                     deferred.complete(null)
@@ -45,7 +51,7 @@ actual class FilePicker {
                     }
                     val bytes = ByteArray(nsData.length.toInt())
                     bytes.usePinned { pinned ->
-                        platform.Foundation.memcpy(pinned.addressOf(0), nsData.bytes, nsData.length)
+                        memcpy(pinned.addressOf(0), nsData.bytes, nsData.length)
                     }
                     val mimeType = detectMimeType(bytes)
                     deferred.complete(
@@ -59,6 +65,7 @@ actual class FilePicker {
             }
         }
 
+        activeDelegate = delegate
         picker.delegate = delegate
         UIApplication.sharedApplication.keyWindow?.rootViewController
             ?.presentViewController(picker, animated = true, completion = null)
