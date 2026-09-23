@@ -25,6 +25,7 @@ class AnthropicHttpClient(json: Json) {
             contentType(ContentType.Application.Json)
             header(NetworkConstants.ANTHROPIC_API_KEY_HEADER, Secrets.ANTHROPIC_API_KEY)
             header(NetworkConstants.ANTHROPIC_VERSION_HEADER, NetworkConstants.ANTHROPIC_VERSION)
+            header(NetworkConstants.ANTHROPIC_BROWSER_ACCESS_HEADER, "true")
         }
         install(Logging) {
             logger = platformLogger()
