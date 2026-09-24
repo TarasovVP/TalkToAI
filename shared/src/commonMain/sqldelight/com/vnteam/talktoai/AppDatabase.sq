@@ -54,16 +54,20 @@ CREATE TABLE IF NOT EXISTS MessageDB (
     truncated INTEGER,
     contentJson TEXT,
     isComplete INTEGER,
+    inputTokens INTEGER,
+    outputTokens INTEGER,
+    cacheReadTokens INTEGER,
+    cacheWriteTokens INTEGER,
     FOREIGN KEY (chatId) REFERENCES ChatDB(id)
 );
 
 insertMessages:
-INSERT OR REPLACE INTO MessageDB (id, chatId, author, message, updatedAt, status, errorMessage, truncated, contentJson, isComplete)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO MessageDB (id, chatId, author, message, updatedAt, status, errorMessage, truncated, contentJson, isComplete, inputTokens, outputTokens, cacheReadTokens, cacheWriteTokens)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 insertMessage:
-INSERT OR REPLACE INTO MessageDB (id, chatId, author, message, updatedAt, status, errorMessage, truncated, contentJson, isComplete)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO MessageDB (id, chatId, author, message, updatedAt, status, errorMessage, truncated, contentJson, isComplete, inputTokens, outputTokens, cacheReadTokens, cacheWriteTokens)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 getMessages:
 SELECT * FROM MessageDB;

@@ -5,6 +5,7 @@ import com.vnteam.talktoai.data.network.UNKNOWN_ERROR
 import com.vnteam.talktoai.data.network.ai.AiProvider
 import com.vnteam.talktoai.data.network.ai.AiTextResponse
 import com.vnteam.talktoai.data.network.ai.EmitThrottler
+import com.vnteam.talktoai.data.network.ai.TokenUsage
 import com.vnteam.talktoai.data.network.ai.anthropic.response.AnthropicSseEvent
 import com.vnteam.talktoai.data.network.ai.anthropic.response.parseAnthropicSseEvent
 import com.vnteam.talktoai.data.network.ai.request.Message
@@ -47,6 +48,8 @@ internal suspend fun FlowCollector<Result<AiTextResponse>>.processSseChannel(
     var detectedModel = initialModel
     var eventType = ""
     var receivedMessageStop = false
+    var startUsage: TokenUsage? = null
+    var finalUsage: TokenUsage? = null
     val throttler = EmitThrottler()
     while (!channel.isClosedForRead) {
         val line = channel.readUTF8Line() ?: break
@@ -55,7 +58,13 @@ internal suspend fun FlowCollector<Result<AiTextResponse>>.processSseChannel(
             line.startsWith("data:") -> {
                 val data = line.removePrefix("data:").trim()
                 when (val event = parseAnthropicSseEvent(eventType, data)) {
-                    is AnthropicSseEvent.MessageStart -> detectedModel = event.model
+                    is AnthropicSseEvent.MessageStart -> {
+                        detectedModel = event.model
+                        startUsage = event.usage
+                    }
+
+                    is AnthropicSseEvent.MessageDelta -> finalUsage = event.usage
+
                     is AnthropicSseEvent.ContentBlockDelta -> {
                         contentBuffer.append(event.text)
                         if (throttler.shouldEmit()) {
@@ -71,7 +80,7 @@ internal suspend fun FlowCollector<Result<AiTextResponse>>.processSseChannel(
         }
         if (receivedMessageStop) break
     }
-    emit(Result.Success(AiTextResponse(model = detectedModel, content = contentBuffer.toString())))
+    emit(Result.Success(AiTextResponse(model = detectedModel, content = contentBuffer.toString(), usage = finalUsage ?: startUsage)))
     if (!receivedMessageStop) {
         emit(Result.Failure("Connection closed before response was complete"))
     }

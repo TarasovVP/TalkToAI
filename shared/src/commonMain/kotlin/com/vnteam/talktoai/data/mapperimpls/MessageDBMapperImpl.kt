@@ -28,6 +28,10 @@ class MessageDBMapperImpl : MessageDBMapper {
             if (from.truncated) 1 else 0,
             contentJson,
             if (from.isComplete) 1 else 0,
+            from.inputTokens?.toLong(),
+            from.outputTokens?.toLong(),
+            from.cacheReadTokens?.toLong(),
+            from.cacheWriteTokens?.toLong(),
         )
     }
 
@@ -45,6 +49,10 @@ class MessageDBMapperImpl : MessageDBMapper {
             to.errorMessage,
             to.truncated == 1L,
             to.isComplete == null || to.isComplete == 1L,
+            to.inputTokens?.toInt(),
+            to.outputTokens?.toInt(),
+            to.cacheReadTokens?.toInt(),
+            to.cacheWriteTokens?.toInt(),
         )
     }
 

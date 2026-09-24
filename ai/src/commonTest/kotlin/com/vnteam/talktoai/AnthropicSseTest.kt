@@ -3,6 +3,8 @@ package com.vnteam.talktoai
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.ai.AiTextResponse
 import com.vnteam.talktoai.data.network.ai.anthropic.processSseChannel
+import com.vnteam.talktoai.data.network.ai.TokenUsage
+import kotlin.test.assertNull
 import io.ktor.utils.io.ByteReadChannel
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -132,5 +134,47 @@ class AnthropicSseTest {
         assertTrue(successes.size < deltaCount, "Expected throttling to reduce emit count below $deltaCount, got ${successes.size}")
         val expectedFullText = (0 until deltaCount).joinToString("") { "$it " }
         assertEquals(expectedFullText, successes.last().data!!.content)
+    }
+
+    private val startWithUsage = """{"type":"message_start","message":{"id":"m","model":"claude-haiku-4-5-20251001","usage":{"input_tokens":13,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0},"output_tokens":1,"service_tier":"standard"}}}"""
+    private val deltaWithUsage = """{"type":"message_delta","delta":{"stop_reason":"end_turn"},"usage":{"input_tokens":13,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":8}}"""
+
+    @Test
+    fun messageDeltaUsageIsUsedAndStartOutputPlaceholderIgnored() = runTest {
+        val results = collect(
+            sseStream(
+                "message_start" to startWithUsage,
+                "content_block_delta" to deltaData1,
+                "message_delta" to deltaWithUsage,
+                "message_stop" to """{"type":"message_stop"}""",
+            ),
+            "x",
+        )
+        val response = (results.last() as Result.Success<AiTextResponse>).data!!
+        assertEquals(TokenUsage(13, 8), response.usage)
+    }
+
+    @Test
+    fun streamCutAfterMessageStartKeepsInputTokensWithNullOutput() = runTest {
+        val results = collect(sseStream("message_start" to startWithUsage), "x")
+        val response = (results.first() as Result.Success<AiTextResponse>).data!!
+        assertEquals(13, response.usage?.inputTokens)
+        assertNull(response.usage?.outputTokens)
+    }
+
+    @Test
+    fun intermediateEmitsHaveNullUsage() = runTest {
+        val results = collect(
+            sseStream(
+                "message_start" to startWithUsage,
+                "content_block_delta" to deltaData1,
+                "message_delta" to deltaWithUsage,
+                "message_stop" to """{"type":"message_stop"}""",
+            ),
+            "x",
+        )
+        val successes = results.filterIsInstance<Result.Success<AiTextResponse>>()
+        assertTrue(successes.size >= 2)
+        successes.dropLast(1).forEach { assertNull(it.data!!.usage) }
     }
 }

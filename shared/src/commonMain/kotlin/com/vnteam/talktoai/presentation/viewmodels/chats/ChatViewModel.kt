@@ -6,6 +6,7 @@ import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.UNKNOWN_ERROR
+import com.vnteam.talktoai.data.network.ai.TokenUsage
 import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.dateToMilliseconds
 import com.vnteam.talktoai.domain.enums.AiProviderType
@@ -292,6 +293,7 @@ class ChatViewModel(
             var lastContent = ""
             var lastModel = temporaryMessage.author
             var terminalHandled = false
+            var lastUsage: TokenUsage? = null
             try {
                 sendRequestUseCase.execute(model, messages, null, providerType, temperature).collect { result ->
                     when (result) {
@@ -299,6 +301,7 @@ class ChatViewModel(
                             val aiResponse = result.data ?: return@collect
                             lastContent = aiResponse.content
                             lastModel = aiResponse.model
+                            aiResponse.usage?.let { lastUsage = it }
                             val fallbackFrom = aiResponse.fallbackFrom
                             if (fallbackFrom != null && !fallbackHandled) {
                                 fallbackHandled = true
@@ -331,6 +334,10 @@ class ChatViewModel(
                                         status = MessageStatus.SUCCESS,
                                         errorMessage = result.errorMessage.orEmpty(),
                                         isComplete = false,
+                                        inputTokens = lastUsage?.inputTokens,
+                                        outputTokens = lastUsage?.outputTokens,
+                                        cacheReadTokens = lastUsage?.cacheReadTokens,
+                                        cacheWriteTokens = lastUsage?.cacheWriteTokens,
                                     )
                                 )
                             } else {
@@ -354,6 +361,10 @@ class ChatViewModel(
                             message = lastContent,
                             status = MessageStatus.SUCCESS,
                             isComplete = true,
+                            inputTokens = lastUsage?.inputTokens,
+                            outputTokens = lastUsage?.outputTokens,
+                            cacheReadTokens = lastUsage?.cacheReadTokens,
+                            cacheWriteTokens = lastUsage?.cacheWriteTokens,
                         )
                     )
                 }

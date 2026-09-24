@@ -5,6 +5,7 @@ import com.vnteam.talktoai.data.network.ai.AiTextResponse
 import com.vnteam.talktoai.data.network.ai.openai.processOpenAiSseChannel
 import com.vnteam.talktoai.data.network.ai.openai.response.OpenAiSseEvent
 import com.vnteam.talktoai.data.network.ai.openai.response.parseOpenAiSseEvent
+import com.vnteam.talktoai.data.network.ai.TokenUsage
 import io.ktor.utils.io.ByteReadChannel
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -93,5 +94,33 @@ class OpenAiSseTest {
         val channel = sseLines(firstChunk, textChunk1)
         val results = collect(channel, "fallback-model")
         assertIs<Result.Failure>(results.last())
+    }
+
+    private val usageChunk =
+        """{"id":"c","object":"chat.completion.chunk","model":"gpt-5.6-terra","choices":[],"usage":{"prompt_tokens":12,"completion_tokens":10,"total_tokens":22,"prompt_tokens_details":{"cached_tokens":3,"cache_write_tokens":4,"audio_tokens":0},"completion_tokens_details":{"reasoning_tokens":0,"audio_tokens":0,"accepted_prediction_tokens":0,"rejected_prediction_tokens":0,"future_field":1}}}"""
+    private val nullUsageChunk =
+        """{"id":"c","model":"gpt-5.6-terra","choices":[{"index":0,"delta":{"content":"Hi"},"finish_reason":null}],"usage":null}"""
+
+    @Test
+    fun chunkWithNullUsageIsNotUsageEvent() {
+        assertIs<OpenAiSseEvent.Chunk>(parseOpenAiSseEvent(nullUsageChunk))
+    }
+
+    @Test
+    fun emptyChoicesUsageChunkParsesWithUnknownDetailFields() {
+        val event = assertIs<OpenAiSseEvent.Usage>(parseOpenAiSseEvent(usageChunk))
+        assertEquals(TokenUsage(12, 10, 3, 4), event.usage)
+    }
+
+    @Test
+    fun usageArrivesAfterFinishReasonAndIntermediateEmitsHaveNullUsage() = runTest {
+        val results = collect(
+            sseLines(firstChunk, textChunk1, textChunk2, finalChunk, usageChunk, "[DONE]"),
+            "x",
+        )
+        val successes = results.filterIsInstance<Result.Success<AiTextResponse>>()
+        assertEquals(TokenUsage(12, 10, 3, 4), successes.last().data!!.usage)
+        successes.dropLast(1).forEach { assertNull(it.data!!.usage) }
+        assertTrue(results.none { it is Result.Failure })
     }
 }

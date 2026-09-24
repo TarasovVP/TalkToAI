@@ -11,8 +11,14 @@ data class ApiRequest(
     @EncodeDefault(EncodeDefault.Mode.NEVER) val temperature: Float? = null,
     @EncodeDefault @SerialName("max_completion_tokens") val maxCompletionTokens: Int = DEFAULT_MAX_COMPLETION_TOKENS,
     @EncodeDefault val stream: Boolean = true,
+    @EncodeDefault @SerialName("stream_options") val streamOptions: StreamOptions = StreamOptions(),
 ) {
     companion object {
         const val DEFAULT_MAX_COMPLETION_TOKENS = 8192
     }
 }
+
+@Serializable
+data class StreamOptions(
+    @EncodeDefault @SerialName("include_usage") val includeUsage: Boolean = true,
+)

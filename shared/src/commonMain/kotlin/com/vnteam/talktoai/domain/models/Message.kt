@@ -15,6 +15,10 @@ data class Message(
     var errorMessage: String? = "",
     var truncated: Boolean = false,
     var isComplete: Boolean = true,
+    var inputTokens: Int? = null,
+    var outputTokens: Int? = null,
+    var cacheReadTokens: Int? = null,
+    var cacheWriteTokens: Int? = null,
 ) {
     @Transient
     val message: String = content.filterIsInstance<MessageContent.Text>().joinToString("") { it.text }
