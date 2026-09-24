@@ -19,6 +19,10 @@ data class MessageUI(
     var errorMessage: String = String.EMPTY,
     var isTruncated: Boolean = false,
     var isComplete: Boolean = true,
+    var inputTokens: Int? = null,
+    var outputTokens: Int? = null,
+    var cacheReadTokens: Int? = null,
+    var cacheWriteTokens: Int? = null,
     @Transient var attachedImage: MessageContent.Image? = null,
 ) {
     var isCheckedToDelete = mutableStateOf(false)

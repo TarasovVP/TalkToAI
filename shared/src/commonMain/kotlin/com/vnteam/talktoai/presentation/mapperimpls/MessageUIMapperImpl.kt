@@ -20,6 +20,10 @@ class MessageUIMapperImpl : MessageUIMapper {
             from.errorMessage.orEmpty(),
             from.truncated,
             from.isComplete,
+            from.inputTokens,
+            from.outputTokens,
+            from.cacheReadTokens,
+            from.cacheWriteTokens,
         )
     }
 
@@ -39,6 +43,10 @@ class MessageUIMapperImpl : MessageUIMapper {
             to.errorMessage,
             to.isTruncated,
             to.isComplete,
+            to.inputTokens,
+            to.outputTokens,
+            to.cacheReadTokens,
+            to.cacheWriteTokens,
         )
     }
 

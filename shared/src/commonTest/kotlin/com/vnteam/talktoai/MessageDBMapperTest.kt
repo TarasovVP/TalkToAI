@@ -32,6 +32,10 @@ class MessageDBMapperTest {
         truncated = 0L,
         contentJson = contentJson,
         isComplete = isComplete,
+        inputTokens = null,
+        outputTokens = null,
+        cacheReadTokens = null,
+        cacheWriteTokens = null,
     )
 
     @Test
@@ -98,16 +102,15 @@ class MessageDBMapperTest {
     }
 
     @Test
-    fun mapToImplModelEncodesContentJson() {
+    fun mapToImplModelStripsImageBlocksFromContentJson() {
         val msg = Message(
             id = 3L,
             content = listOf(MessageContent.Text("With image"), MessageContent.Image("data", "image/png")),
         )
         val db = mapper.mapToImplModel(msg)
         val decoded = testJson.decodeFromString<List<MessageContent>>(db.contentJson!!)
-        assertEquals(2, decoded.size)
+        assertEquals(1, decoded.size)
         assertIs<MessageContent.Text>(decoded[0])
-        assertIs<MessageContent.Image>(decoded[1])
     }
 
     @Test
@@ -179,5 +182,24 @@ class MessageDBMapperTest {
         val msg = Message(id = 1L, content = listOf(MessageContent.Text("done")), isComplete = true)
         val db = mapper.mapToImplModel(msg)
         assertEquals(1L, db.isComplete)
+    }
+
+    @Test
+    fun legacyRowReadsTokenFieldsAsNull() {
+        val result = mapper.mapFromImplModel(makeMessageDB(message = "old"))
+        assertNull(result.inputTokens)
+        assertNull(result.outputTokens)
+        assertNull(result.cacheReadTokens)
+        assertNull(result.cacheWriteTokens)
+    }
+
+    @Test
+    fun tokenFieldsRoundTrip() {
+        val db = mapper.mapToImplModel(Message(inputTokens = 12, outputTokens = 10, cacheReadTokens = 1, cacheWriteTokens = 2))
+        val back = mapper.mapFromImplModel(db)
+        assertEquals(12, back.inputTokens)
+        assertEquals(10, back.outputTokens)
+        assertEquals(1, back.cacheReadTokens)
+        assertEquals(2, back.cacheWriteTokens)
     }
 }

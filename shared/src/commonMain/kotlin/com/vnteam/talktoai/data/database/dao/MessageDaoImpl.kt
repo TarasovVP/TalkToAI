@@ -24,6 +24,10 @@ class MessageDaoImpl(private val appDatabase: SharedDatabase) : MessageDao {
                         message.truncated,
                         message.contentJson,
                         message.isComplete,
+                        message.inputTokens,
+                        message.outputTokens,
+                        message.cacheReadTokens,
+                        message.cacheWriteTokens,
                     )
                 }
             }
@@ -43,6 +47,10 @@ class MessageDaoImpl(private val appDatabase: SharedDatabase) : MessageDao {
                 message.truncated,
                 message.contentJson,
                 message.isComplete,
+                message.inputTokens,
+                message.outputTokens,
+                message.cacheReadTokens,
+                message.cacheWriteTokens,
             )
         }
     }

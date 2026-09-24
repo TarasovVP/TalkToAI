@@ -21,6 +21,10 @@ object FirestoreConstants {
     const val FIELD_ERROR_MESSAGE = "errorMessage"
     const val FIELD_TRUNCATED = "truncated"
     const val FIELD_IS_COMPLETE = "isComplete"
+    const val FIELD_INPUT_TOKENS = "inputTokens"
+    const val FIELD_OUTPUT_TOKENS = "outputTokens"
+    const val FIELD_CACHE_READ_TOKENS = "cacheReadTokens"
+    const val FIELD_CACHE_WRITE_TOKENS = "cacheWriteTokens"
 
     // Settings fields
     const val FIELD_AI_PROVIDER = "aiProvider"

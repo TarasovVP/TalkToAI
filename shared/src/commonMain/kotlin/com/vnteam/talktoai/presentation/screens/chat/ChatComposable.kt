@@ -530,6 +530,18 @@ fun Message(
                     textAlign = if (isUserAuthor) TextAlign.End else TextAlign.Start
                 )
             }
+            val inputTokens = message.inputTokens
+            if (!isUserAuthor && inputTokens != null && message.status == MessageStatus.SUCCESS) {
+                Text(
+                    text = "${formatTokenCount(inputTokens)} → ${message.outputTokens?.let { formatTokenCount(it) } ?: "?"}",
+                    fontSize = 11.sp,
+                    color = Neutral400,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp, vertical = 2.dp),
+                    textAlign = TextAlign.Start
+                )
+            }
             if (!message.isComplete && message.status == MessageStatus.SUCCESS) {
                 Text(
                     text = stringRes.MESSAGE_INTERRUPTED,
@@ -674,3 +686,5 @@ fun MessageActionField(
         }
     }
 }
+private fun formatTokenCount(value: Int): String =
+    value.toString().reversed().chunked(3).joinToString(" ").reversed()

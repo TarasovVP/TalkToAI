@@ -17,4 +17,12 @@ data class AiTextResponse(
     val model: String,
     val content: String,
     val fallbackFrom: String? = null,
+    val usage: TokenUsage? = null,
+)
+
+data class TokenUsage(
+    val inputTokens: Int,
+    val outputTokens: Int?,
+    val cacheReadTokens: Int = 0,
+    val cacheWriteTokens: Int = 0,
 )
