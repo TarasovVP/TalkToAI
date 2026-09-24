@@ -19,6 +19,7 @@ class MessageUIMapperImpl : MessageUIMapper {
             from.status?.name?.let { MessageStatus.valueOf(it) } ?: MessageStatus.REQUESTING,
             from.errorMessage.orEmpty(),
             from.truncated,
+            from.isComplete,
         )
     }
 
@@ -37,6 +38,7 @@ class MessageUIMapperImpl : MessageUIMapper {
             to.status,
             to.errorMessage,
             to.isTruncated,
+            to.isComplete,
         )
     }
 

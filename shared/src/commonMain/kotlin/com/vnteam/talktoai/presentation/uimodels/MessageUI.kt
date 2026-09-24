@@ -18,6 +18,7 @@ data class MessageUI(
     var status: MessageStatus = MessageStatus.REQUESTING,
     var errorMessage: String = String.EMPTY,
     var isTruncated: Boolean = false,
+    var isComplete: Boolean = true,
     @Transient var attachedImage: MessageContent.Image? = null,
 ) {
     var isCheckedToDelete = mutableStateOf(false)

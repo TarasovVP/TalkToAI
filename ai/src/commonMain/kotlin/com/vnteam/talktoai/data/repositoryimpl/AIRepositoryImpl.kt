@@ -1,10 +1,8 @@
 package com.vnteam.talktoai.data.repositoryimpl
 
 import com.vnteam.talktoai.data.network.Result
-import com.vnteam.talktoai.data.network.UNKNOWN_ERROR
+import com.vnteam.talktoai.data.network.ai.AiProvider
 import com.vnteam.talktoai.data.network.ai.AiTextResponse
-import com.vnteam.talktoai.data.network.ai.anthropic.AnthropicProvider
-import com.vnteam.talktoai.data.network.ai.openai.OpenAiProvider
 import com.vnteam.talktoai.data.network.ai.request.Message
 import com.vnteam.talktoai.data.network.isModelNotSupportedError
 import com.vnteam.talktoai.data.network.isTemperatureDeprecatedError
@@ -12,12 +10,12 @@ import com.vnteam.talktoai.data.network.parseErrorMessage
 import com.vnteam.talktoai.domain.enums.AiProviderType
 import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.repositories.AIRepository
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 
 class AIRepositoryImpl(
-    private val openAiProvider: OpenAiProvider,
-    private val anthropicProvider: AnthropicProvider,
+    private val openAiProvider: AiProvider,
+    private val anthropicProvider: AiProvider,
 ) : AIRepository {
 
     override fun sendRequest(
@@ -27,45 +25,60 @@ class AIRepositoryImpl(
         providerType: AiProviderType,
         temperature: Float?,
     ) = flow {
-        emit(doSendRequest(model, messages, apiKey, providerType, temperature, isRetry = false))
+        doSendRequest(this, model, messages, apiKey, providerType, temperature, isRetry = false)
     }
 
     private suspend fun doSendRequest(
+        collector: FlowCollector<Result<AiTextResponse>>,
         model: String,
         messages: List<Message>,
         apiKey: String?,
         providerType: AiProviderType,
         temperature: Float?,
         isRetry: Boolean,
-    ): Result<AiTextResponse> {
+        fallbackFrom: String? = null,
+    ) {
         val provider = when (providerType) {
             AiProviderType.OPENAI -> openAiProvider
             AiProviderType.ANTHROPIC -> anthropicProvider
         }
-        val result = provider.sendMessage(model, messages, apiKey, temperature).firstOrNull()
-            ?: return Result.Failure(UNKNOWN_ERROR)
+        var terminalFailure: Result.Failure? = null
+        provider.sendMessage(model, messages, apiKey, temperature).collect { result ->
+            when (result) {
+                is Result.Success -> {
+                    val data = result.data
+                    collector.emit(
+                        if (fallbackFrom != null && data != null) {
+                            Result.Success(data.copy(fallbackFrom = fallbackFrom))
+                        } else {
+                            result
+                        }
+                    )
+                }
 
-        if (result is Result.Success) return result
-
-        val failure = result as Result.Failure
+                is Result.Failure -> terminalFailure = result
+                else -> Unit
+            }
+        }
+        val failure = terminalFailure ?: return
         val rawBody = failure.errorMessage.orEmpty()
         val statusCode = failure.statusCode ?: 0
 
         if (!isRetry && isTemperatureDeprecatedError(statusCode, rawBody) && temperature != null) {
-            return doSendRequest(model, messages, apiKey, providerType, null, isRetry = true)
+            collector.emit(Result.Success(AiTextResponse(model = model, content = "", fallbackFrom = fallbackFrom)))
+            doSendRequest(collector, model, messages, apiKey, providerType, null, isRetry = true, fallbackFrom = fallbackFrom)
+            return
         }
 
         if (!isRetry && isModelNotSupportedError(statusCode, rawBody)) {
             val balanced = AiModels.balancedFor(providerType)
             if (balanced.id != model) {
-                val retryResult = doSendRequest(balanced.id, messages, apiKey, providerType, temperature, isRetry = true)
-                return when (retryResult) {
-                    is Result.Success -> Result.Success(retryResult.data!!.copy(fallbackFrom = model))
-                    else -> retryResult
-                }
+                collector.emit(Result.Success(AiTextResponse(model = balanced.id, content = "", fallbackFrom = model)))
+                doSendRequest(collector, balanced.id, messages, apiKey, providerType, temperature, isRetry = true, fallbackFrom = model)
+                return
             }
         }
 
-        return Result.Failure(parseErrorMessage(rawBody), statusCode)
+        collector.emit(Result.Failure(parseErrorMessage(rawBody), statusCode))
     }
 }

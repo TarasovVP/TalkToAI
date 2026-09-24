@@ -515,7 +515,7 @@ fun Message(
                     }
                 }
             }
-            if (message.status != MessageStatus.REQUESTING) {
+            if (message.status != MessageStatus.REQUESTING && message.status != MessageStatus.STREAMING) {
                 Text(
                     text = if (isUserAuthor) {
                         (message.updatedAt * 1000).millsSecondsToDateTime()
@@ -524,6 +524,17 @@ fun Message(
                     },
                     fontSize = 11.sp,
                     color = Neutral400,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp, vertical = 2.dp),
+                    textAlign = if (isUserAuthor) TextAlign.End else TextAlign.Start
+                )
+            }
+            if (!message.isComplete && message.status == MessageStatus.SUCCESS) {
+                Text(
+                    text = stringRes.MESSAGE_INTERRUPTED,
+                    fontSize = 11.sp,
+                    color = Color.Red,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 4.dp, vertical = 2.dp),

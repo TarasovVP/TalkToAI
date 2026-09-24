@@ -288,54 +288,98 @@ class ChatViewModel(
                 )
                 return@launchWithErrorHandling
             }
-            val result = try {
-                sendRequestUseCase.execute(model, messages, null, providerType, temperature).firstOrNull()
-                    ?: Result.Failure(UNKNOWN_ERROR)
+            var fallbackHandled = false
+            var lastContent = ""
+            var lastModel = temporaryMessage.author
+            var terminalHandled = false
+            try {
+                sendRequestUseCase.execute(model, messages, null, providerType, temperature).collect { result ->
+                    when (result) {
+                        is Result.Success -> {
+                            val aiResponse = result.data ?: return@collect
+                            lastContent = aiResponse.content
+                            lastModel = aiResponse.model
+                            val fallbackFrom = aiResponse.fallbackFrom
+                            if (fallbackFrom != null && !fallbackHandled) {
+                                fallbackHandled = true
+                                val currentChat = _currentChatLiveData.value
+                                val chatDomain = currentChat?.let { chatUIMapper.mapFromImplModel(it) }
+                                if (chatDomain?.aiModel == fallbackFrom) {
+                                    val updated = chatDomain.copy(aiModel = aiResponse.model)
+                                    updateChatUseCase.execute(updated)
+                                    _currentChatLiveData.value = chatUIMapper.mapToImplModel(updated)
+                                }
+                                _modelFallback.emit(Pair(fallbackFrom, aiResponse.model))
+                            }
+                            updateMessageUiOnly(
+                                temporaryMessage.copy(
+                                    author = lastModel,
+                                    message = lastContent,
+                                    status = streamingStatusFor(lastContent),
+                                    isComplete = false,
+                                )
+                            )
+                        }
+
+                        is Result.Failure -> {
+                            terminalHandled = true
+                            if (lastContent.isNotEmpty()) {
+                                insertMessage(
+                                    temporaryMessage.copy(
+                                        author = lastModel,
+                                        message = lastContent,
+                                        status = MessageStatus.SUCCESS,
+                                        errorMessage = result.errorMessage.orEmpty(),
+                                        isComplete = false,
+                                    )
+                                )
+                            } else {
+                                insertMessage(
+                                    temporaryMessage.copy(
+                                        status = MessageStatus.ERROR,
+                                        errorMessage = result.errorMessage.orEmpty(),
+                                        isComplete = true,
+                                    )
+                                )
+                            }
+                        }
+
+                        else -> Unit
+                    }
+                }
+                if (!terminalHandled) {
+                    insertMessage(
+                        temporaryMessage.copy(
+                            author = lastModel,
+                            message = lastContent,
+                            status = MessageStatus.SUCCESS,
+                            isComplete = true,
+                        )
+                    )
+                }
             } catch (e: CancellationException) {
                 throw e
             } catch (t: Throwable) {
-                Result.Failure(t.message ?: UNKNOWN_ERROR)
-            }
-            when (result) {
-                is Result.Success -> {
-                    val aiResponse = result.data
-                    val fallbackFrom = aiResponse?.fallbackFrom
-                    if (fallbackFrom != null) {
-                        val currentChat = _currentChatLiveData.value
-                        val chatDomain = currentChat?.let { chatUIMapper.mapFromImplModel(it) }
-                        if (chatDomain?.aiModel == fallbackFrom) {
-                            val updated = chatDomain.copy(aiModel = aiResponse.model)
-                            updateChatUseCase.execute(updated)
-                            _currentChatLiveData.value = chatUIMapper.mapToImplModel(updated)
-                        }
-                        _modelFallback.emit(Pair(fallbackFrom, aiResponse.model))
-                    }
-                    insertMessage(
-                        temporaryMessage.copy(
-                            author = aiResponse?.model.orEmpty(),
-                            message = aiResponse?.content.orEmpty(),
-                            status = MessageStatus.SUCCESS
-                        )
+                insertMessage(
+                    temporaryMessage.copy(
+                        status = MessageStatus.ERROR,
+                        errorMessage = t.message ?: UNKNOWN_ERROR,
+                        isComplete = true,
                     )
-                }
-                is Result.Failure -> {
-                    insertMessage(
-                        temporaryMessage.copy(
-                            status = MessageStatus.ERROR,
-                            errorMessage = result.errorMessage.orEmpty()
-                        )
-                    )
-                }
-                else -> Unit
+                )
             }
         }
     }
 
-    fun insertMessage(message: MessageUI) {
+    private fun updateMessageUiOnly(message: MessageUI) {
         val current = _messagesLiveData.value.orEmpty().toMutableList()
         val idx = current.indexOfFirst { it.id == message.id }
         if (idx >= 0) current[idx] = message else current.add(message)
         _messagesLiveData.value = current
+    }
+
+    fun insertMessage(message: MessageUI) {
+        updateMessageUiOnly(message)
         launchWithErrorHandling {
             insertMessageUseCase.execute(messageUIMapper.mapFromImplModel(message))
         }
@@ -363,3 +407,6 @@ class ChatViewModel(
         private fun estimateTokens(text: String): Int = (text.length / 4).coerceAtLeast(1)
     }
 }
+
+internal fun streamingStatusFor(content: String): MessageStatus =
+    if (content.isNotEmpty()) MessageStatus.STREAMING else MessageStatus.REQUESTING

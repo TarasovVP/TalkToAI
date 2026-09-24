@@ -144,6 +144,7 @@ sealed class StringResources(
     var MESSAGE_TRANSFER_CONFIRMATION: String,
     var MESSAGE_DELETE_CONFIRMATION: String,
     var MESSAGE_EMPTY_STATE: String,
+    var MESSAGE_INTERRUPTED: String,
 
     var MESSAGE_DELETE_BUTTON: String,
     var MESSAGE_SHARE_BUTTON: String,
@@ -317,6 +318,7 @@ class StringResourcesEN : StringResources(
     MESSAGE_TRANSFER_CONFIRMATION = "Are you sure you want to transfer the message?",
     MESSAGE_DELETE_CONFIRMATION = "Are you sure you want to delete the message?",
     MESSAGE_EMPTY_STATE = "Message list is empty",
+    MESSAGE_INTERRUPTED = "Response interrupted",
 
     MESSAGE_DELETE_BUTTON = "Delete",
     MESSAGE_SHARE_BUTTON = "Share",
@@ -489,6 +491,7 @@ class StringResourcesUK : StringResources(
     MESSAGE_TRANSFER_CONFIRMATION = "Ви хочете перенести?",
     MESSAGE_DELETE_CONFIRMATION = "Ви хочете видалити?",
     MESSAGE_EMPTY_STATE = "Список повідомлень порожній",
+    MESSAGE_INTERRUPTED = "Відповідь перервано",
     MESSAGE_DELETE_BUTTON = "Кнопка видалення повідомлення",
     MESSAGE_SHARE_BUTTON = "Кнопка переміщення повідомлення",
     MESSAGE_COPY_BUTTON = "Кнопка копіювання повідомлення",

@@ -53,16 +53,17 @@ CREATE TABLE IF NOT EXISTS MessageDB (
     errorMessage TEXT,
     truncated INTEGER,
     contentJson TEXT,
+    isComplete INTEGER,
     FOREIGN KEY (chatId) REFERENCES ChatDB(id)
 );
 
 insertMessages:
-INSERT OR REPLACE INTO MessageDB (id, chatId, author, message, updatedAt, status, errorMessage, truncated, contentJson)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO MessageDB (id, chatId, author, message, updatedAt, status, errorMessage, truncated, contentJson, isComplete)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 insertMessage:
-INSERT OR REPLACE INTO MessageDB (id, chatId, author, message, updatedAt, status, errorMessage, truncated, contentJson)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO MessageDB (id, chatId, author, message, updatedAt, status, errorMessage, truncated, contentJson, isComplete)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 getMessages:
 SELECT * FROM MessageDB;

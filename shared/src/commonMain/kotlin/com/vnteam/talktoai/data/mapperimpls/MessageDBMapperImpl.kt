@@ -27,6 +27,7 @@ class MessageDBMapperImpl : MessageDBMapper {
             from.errorMessage,
             if (from.truncated) 1 else 0,
             contentJson,
+            if (from.isComplete) 1 else 0,
         )
     }
 
@@ -43,6 +44,7 @@ class MessageDBMapperImpl : MessageDBMapper {
             to.status?.let { runCatching { MessageStatus.valueOf(it) }.getOrNull() },
             to.errorMessage,
             to.truncated == 1L,
+            to.isComplete == null || to.isComplete == 1L,
         )
     }
 
