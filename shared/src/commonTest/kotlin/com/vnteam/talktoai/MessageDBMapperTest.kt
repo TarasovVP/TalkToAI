@@ -20,6 +20,7 @@ class MessageDBMapperTest {
         id: Long = 1L,
         message: String? = null,
         contentJson: String? = null,
+        isComplete: Long? = null,
     ) = MessageDB(
         id = id,
         chatId = null,
@@ -30,6 +31,7 @@ class MessageDBMapperTest {
         errorMessage = null,
         truncated = 0L,
         contentJson = contentJson,
+        isComplete = isComplete,
     )
 
     @Test
@@ -145,5 +147,37 @@ class MessageDBMapperTest {
     fun emptyContentListGivesEmptyMessageProperty() {
         val msg = Message(content = emptyList())
         assertEquals("", msg.message)
+    }
+
+    @Test
+    fun nullIsCompleteReadsAsTrue() {
+        val db = makeMessageDB(isComplete = null)
+        assertEquals(true, mapper.mapFromImplModel(db).isComplete)
+    }
+
+    @Test
+    fun zeroIsCompleteReadsAsFalse() {
+        val db = makeMessageDB(isComplete = 0L)
+        assertEquals(false, mapper.mapFromImplModel(db).isComplete)
+    }
+
+    @Test
+    fun oneIsCompleteReadsAsTrue() {
+        val db = makeMessageDB(isComplete = 1L)
+        assertEquals(true, mapper.mapFromImplModel(db).isComplete)
+    }
+
+    @Test
+    fun mapToImplModelEncodesIncompleteAsZero() {
+        val msg = Message(id = 1L, content = listOf(MessageContent.Text("partial")), isComplete = false)
+        val db = mapper.mapToImplModel(msg)
+        assertEquals(0L, db.isComplete)
+    }
+
+    @Test
+    fun mapToImplModelEncodesCompleteAsOne() {
+        val msg = Message(id = 1L, content = listOf(MessageContent.Text("done")), isComplete = true)
+        val db = mapper.mapToImplModel(msg)
+        assertEquals(1L, db.isComplete)
     }
 }

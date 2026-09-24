@@ -22,7 +22,8 @@ class MessageDaoImpl(private val appDatabase: SharedDatabase) : MessageDao {
                         message.status,
                         message.errorMessage,
                         message.truncated,
-                        message.contentJson
+                        message.contentJson,
+                        message.isComplete,
                     )
                 }
             }
@@ -40,7 +41,8 @@ class MessageDaoImpl(private val appDatabase: SharedDatabase) : MessageDao {
                 message.status,
                 message.errorMessage,
                 message.truncated,
-                message.contentJson
+                message.contentJson,
+                message.isComplete,
             )
         }
     }

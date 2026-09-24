@@ -20,6 +20,7 @@ import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_CONTE
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_ERROR_MESSAGE
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_GLOBAL_CONTEXT
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_ID
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_IS_COMPLETE
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_LIST_ORDER
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_MESSAGE
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_NAME
@@ -108,6 +109,7 @@ class RemoteStoreRepositoryImpl(
         FIELD_STATUS to firestoreString(status?.name),
         FIELD_ERROR_MESSAGE to firestoreString(errorMessage),
         FIELD_TRUNCATED to firestoreBool(truncated),
+        FIELD_IS_COMPLETE to firestoreBool(isComplete),
     )
 
     private fun FirestoreDocument.toMessage(): Message? {
@@ -123,6 +125,7 @@ class RemoteStoreRepositoryImpl(
             },
             errorMessage = f[FIELD_ERROR_MESSAGE]?.stringValue.orEmpty(),
             truncated = f[FIELD_TRUNCATED]?.booleanValue ?: false,
+            isComplete = f[FIELD_IS_COMPLETE]?.booleanValue ?: true,
         )
     }
 

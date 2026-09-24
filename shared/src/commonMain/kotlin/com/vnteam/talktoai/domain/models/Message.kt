@@ -14,6 +14,7 @@ data class Message(
     var status: MessageStatus? = null,
     var errorMessage: String? = "",
     var truncated: Boolean = false,
+    var isComplete: Boolean = true,
 ) {
     @Transient
     val message: String = content.filterIsInstance<MessageContent.Text>().joinToString("") { it.text }

@@ -4,6 +4,7 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.UNKNOWN_ERROR
 import com.vnteam.talktoai.data.network.ai.AiProvider
 import com.vnteam.talktoai.data.network.ai.AiTextResponse
+import com.vnteam.talktoai.data.network.ai.EmitThrottler
 import com.vnteam.talktoai.data.network.ai.anthropic.response.AnthropicSseEvent
 import com.vnteam.talktoai.data.network.ai.anthropic.response.parseAnthropicSseEvent
 import com.vnteam.talktoai.data.network.ai.request.Message
@@ -12,6 +13,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.readUTF8Line
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 
 class AnthropicProvider(private val service: AnthropicService) : AiProvider {
@@ -23,28 +25,29 @@ class AnthropicProvider(private val service: AnthropicService) : AiProvider {
         temperature: Float?,
     ): Flow<Result<AiTextResponse>> = flow {
         val request = messages.toAnthropicRequest(model, temperature)
-        val response = try {
-            service.sendMessage(request, apiKey)
+        try {
+            service.sendMessage(request, apiKey) { response ->
+                if (response.status.value !in 200..299) {
+                    emit(Result.Failure(response.bodyAsText(), response.status.value))
+                    return@sendMessage
+                }
+                processSseChannel(response.bodyAsChannel(), model)
+            }
         } catch (e: Exception) {
             emit(Result.Failure(e.message ?: UNKNOWN_ERROR))
-            return@flow
         }
-        if (response.status.value !in 200..299) {
-            emit(Result.Failure(response.bodyAsText(), response.status.value))
-            return@flow
-        }
-        emit(processSseChannel(response.bodyAsChannel(), model))
     }
 }
 
-internal suspend fun processSseChannel(
+internal suspend fun FlowCollector<Result<AiTextResponse>>.processSseChannel(
     channel: ByteReadChannel,
     initialModel: String,
-): Result<AiTextResponse> {
+) {
     val contentBuffer = StringBuilder()
     var detectedModel = initialModel
     var eventType = ""
     var receivedMessageStop = false
+    val throttler = EmitThrottler()
     while (!channel.isClosedForRead) {
         val line = channel.readUTF8Line() ?: break
         when {
@@ -53,16 +56,23 @@ internal suspend fun processSseChannel(
                 val data = line.removePrefix("data:").trim()
                 when (val event = parseAnthropicSseEvent(eventType, data)) {
                     is AnthropicSseEvent.MessageStart -> detectedModel = event.model
-                    is AnthropicSseEvent.ContentBlockDelta -> contentBuffer.append(event.text)
+                    is AnthropicSseEvent.ContentBlockDelta -> {
+                        contentBuffer.append(event.text)
+                        if (throttler.shouldEmit()) {
+                            emit(Result.Success(AiTextResponse(model = detectedModel, content = contentBuffer.toString())))
+                            throttler.markEmitted()
+                        }
+                    }
+
                     is AnthropicSseEvent.MessageStop -> receivedMessageStop = true
                     else -> Unit
                 }
             }
         }
+        if (receivedMessageStop) break
     }
-    return if (receivedMessageStop) {
-        Result.Success(AiTextResponse(model = detectedModel, content = contentBuffer.toString()))
-    } else {
-        Result.Failure("Connection closed before response was complete")
+    emit(Result.Success(AiTextResponse(model = detectedModel, content = contentBuffer.toString())))
+    if (!receivedMessageStop) {
+        emit(Result.Failure("Connection closed before response was complete"))
     }
 }

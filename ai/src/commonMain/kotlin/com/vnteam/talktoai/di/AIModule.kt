@@ -30,5 +30,5 @@ val aiModule = module {
     single { AnthropicService(get()) }
     single { AnthropicProvider(get()) }
 
-    single<AIRepository> { AIRepositoryImpl(get(), get()) }
+    single<AIRepository> { AIRepositoryImpl(get<OpenAiProvider>(), get<AnthropicProvider>()) }
 }

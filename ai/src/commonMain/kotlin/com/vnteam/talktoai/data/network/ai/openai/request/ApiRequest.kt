@@ -10,6 +10,7 @@ data class ApiRequest(
     val messages: List<OpenAiMessage>,
     @EncodeDefault(EncodeDefault.Mode.NEVER) val temperature: Float? = null,
     @EncodeDefault @SerialName("max_completion_tokens") val maxCompletionTokens: Int = DEFAULT_MAX_COMPLETION_TOKENS,
+    @EncodeDefault val stream: Boolean = true,
 ) {
     companion object {
         const val DEFAULT_MAX_COMPLETION_TOKENS = 8192

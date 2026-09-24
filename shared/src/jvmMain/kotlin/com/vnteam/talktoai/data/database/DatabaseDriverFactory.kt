@@ -31,6 +31,7 @@ actual class DatabaseDriverFactory {
             "ALTER TABLE ChatDB ADD COLUMN context TEXT",
             "ALTER TABLE ChatDB ADD COLUMN aiProvider TEXT",
             "ALTER TABLE MessageDB ADD COLUMN contentJson TEXT",
+            "ALTER TABLE MessageDB ADD COLUMN isComplete INTEGER",
         ).forEach { sql ->
             try { driver.execute(null, sql, 0) } catch (_: Exception) { }
         }
