@@ -53,11 +53,12 @@ fun ChatSettingsBottomSheet(
     val initialProvider = chat.aiProvider
         ?.let { runCatching { AiProviderType.valueOf(it) }.getOrNull() }
         ?: globalProvider.value
-    val chatProvider = remember(chat.id) { mutableStateOf(initialProvider) }
+    val providerKey = if (chat.aiProvider == null) globalProvider.value else null
+    val chatProvider = remember(chat.id, providerKey) { mutableStateOf(initialProvider) }
     val validatedChatModel = chat.aiModel
         ?.takeIf { id -> AiModels.forProvider(initialProvider).any { it.id == id } }
         ?: chat.aiModel?.let { AiModels.balancedFor(initialProvider).id }
-    val chatModel = remember(chat.id) { mutableStateOf(validatedChatModel) }
+    val chatModel = remember(chat.id, providerKey) { mutableStateOf(validatedChatModel) }
     val providerDropdownExpanded = remember { mutableStateOf(false) }
     val dropdownExpanded = remember { mutableStateOf(false) }
 
