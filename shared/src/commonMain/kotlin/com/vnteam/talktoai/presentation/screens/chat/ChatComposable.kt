@@ -520,7 +520,10 @@ fun Message(
                     text = if (isUserAuthor) {
                         (message.updatedAt * 1000).millsSecondsToDateTime()
                     } else {
-                        "${message.author}  ·  ${(message.updatedAt * 1000).millsSecondsToDateTime()}"
+                        val tokens = message.inputTokens?.let {
+                            "  ·  ${formatTokenCount(it)} → ${message.outputTokens?.let { out -> formatTokenCount(out) } ?: "?"}"
+                        }.orEmpty()
+                        "${message.author}  ·  ${(message.updatedAt * 1000).millsSecondsToDateTime()}$tokens"
                     },
                     fontSize = 11.sp,
                     color = Neutral400,
@@ -528,18 +531,6 @@ fun Message(
                         .fillMaxWidth()
                         .padding(horizontal = 4.dp, vertical = 2.dp),
                     textAlign = if (isUserAuthor) TextAlign.End else TextAlign.Start
-                )
-            }
-            val inputTokens = message.inputTokens
-            if (!isUserAuthor && inputTokens != null && message.status == MessageStatus.SUCCESS) {
-                Text(
-                    text = "${formatTokenCount(inputTokens)} → ${message.outputTokens?.let { formatTokenCount(it) } ?: "?"}",
-                    fontSize = 11.sp,
-                    color = Neutral400,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 4.dp, vertical = 2.dp),
-                    textAlign = TextAlign.Start
                 )
             }
             if (!message.isComplete && message.status == MessageStatus.SUCCESS) {

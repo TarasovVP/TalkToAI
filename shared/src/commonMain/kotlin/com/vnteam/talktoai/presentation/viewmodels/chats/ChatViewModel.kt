@@ -272,8 +272,10 @@ class ChatViewModel(
             }
             add(AiMessage(role = Constants.MESSAGE_ROLE_USER, content = userContent))
         }
-        val model = chatAiModel ?: _aiModel.value
         val providerType = resolveEffectiveProvider(_currentChatLiveData.value?.aiProvider, _globalProvider.value)
+        val model = (chatAiModel ?: _aiModel.value)
+            .takeIf { id -> AiModels.forProvider(providerType).any { it.id == id } }
+            ?: AiModels.balancedFor(providerType).id
         val supportsTemperature = AiModels.forProvider(providerType).find { it.id == model }?.supportsTemperature ?: false
         val temperature = if (supportsTemperature) chatTemperature else null
         launchWithErrorHandling {
@@ -291,7 +293,7 @@ class ChatViewModel(
             }
             var fallbackHandled = false
             var lastContent = ""
-            var lastModel = temporaryMessage.author
+            var lastModel = model
             var terminalHandled = false
             var lastUsage: TokenUsage? = null
             try {
@@ -343,6 +345,7 @@ class ChatViewModel(
                             } else {
                                 insertMessage(
                                     temporaryMessage.copy(
+                                        author = lastModel,
                                         status = MessageStatus.ERROR,
                                         errorMessage = result.errorMessage.orEmpty(),
                                         isComplete = true,
@@ -373,6 +376,7 @@ class ChatViewModel(
             } catch (t: Throwable) {
                 insertMessage(
                     temporaryMessage.copy(
+                        author = lastModel,
                         status = MessageStatus.ERROR,
                         errorMessage = t.message ?: UNKNOWN_ERROR,
                         isComplete = true,
