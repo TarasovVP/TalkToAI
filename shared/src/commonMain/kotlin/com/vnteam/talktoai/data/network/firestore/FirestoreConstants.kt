@@ -26,6 +26,18 @@ object FirestoreConstants {
     const val FIELD_CACHE_READ_TOKENS = "cacheReadTokens"
     const val FIELD_CACHE_WRITE_TOKENS = "cacheWriteTokens"
 
+    // AI models config fields
+    const val FIELD_SCHEMA_VERSION = "schemaVersion"
+    const val FIELD_MODELS = "models"
+    const val FIELD_DISPLAY_NAME = "displayName"
+    const val FIELD_PROVIDER = "provider"
+    const val FIELD_TIER = "tier"
+    const val FIELD_SUPPORTS_TEMPERATURE = "supportsTemperature"
+    const val FIELD_SUPPORTS_VISION = "supportsVision"
+    const val FIELD_CONTEXT_WINDOW = "contextWindow"
+    const val FIELD_MAX_OUTPUT_TOKENS = "maxOutputTokens"
+    const val FIELD_ENABLED = "enabled"
+
     // Settings fields
     const val FIELD_AI_PROVIDER = "aiProvider"
     const val FIELD_API_KEY = "apiKey"

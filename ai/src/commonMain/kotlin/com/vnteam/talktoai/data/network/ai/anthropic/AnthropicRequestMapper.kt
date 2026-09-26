@@ -7,6 +7,7 @@ import com.vnteam.talktoai.data.network.ai.anthropic.request.AnthropicMessage
 import com.vnteam.talktoai.data.network.ai.anthropic.request.AnthropicRequest
 import com.vnteam.talktoai.data.network.ai.anthropic.request.AnthropicTextBlock
 import com.vnteam.talktoai.data.network.ai.request.Message
+import com.vnteam.talktoai.domain.models.AiModel
 import com.vnteam.talktoai.domain.models.MessageContent
 
 private const val ROLE_SYSTEM = "system"
@@ -16,6 +17,7 @@ private const val ROLE_ASSISTANT = "assistant"
 fun List<Message>.toAnthropicRequest(
     model: String,
     temperature: Float? = null,
+    maxOutputTokens: Int = AiModel.DEFAULT_MAX_OUTPUT_TOKENS,
 ): AnthropicRequest {
     val systemContent = filter { it.role == ROLE_SYSTEM }
         .flatMap { it.content.filterIsInstance<MessageContent.Text>() }
@@ -33,6 +35,7 @@ fun List<Message>.toAnthropicRequest(
     return AnthropicRequest(
         model = model,
         system = systemContent,
+        maxTokens = maxOutputTokens.takeIf { it > 0 } ?: AiModel.DEFAULT_MAX_OUTPUT_TOKENS,
         temperature = temperature,
         messages = anthropicMessages,
     )

@@ -74,6 +74,7 @@ sealed class StringResources(
     // Chat settings override
     var CHAT_SETTINGS_USE_GLOBAL: String,
     var CHAT_SETTINGS_GLOBAL_LABEL: String,
+    var CHAT_SETTINGS_CONTEXT_LABEL: String,
     var CHAT_SETTINGS_TEMPERATURE_LABEL: String,
     var MESSAGE_ATTACH_IMAGE: String,
     var MESSAGE_IMAGE_REMOVE: String,
@@ -241,6 +242,7 @@ class StringResourcesEN : StringResources(
     SETTINGS_CHAT_GLOBAL_CONTEXT_HINT = "Applied to all chats by default",
     CHAT_SETTINGS_USE_GLOBAL = "Reset to global settings",
     CHAT_SETTINGS_GLOBAL_LABEL = "global",
+    CHAT_SETTINGS_CONTEXT_LABEL = "Context at last reply",
     CHAT_SETTINGS_TEMPERATURE_LABEL = "Temperature",
     MESSAGE_ATTACH_IMAGE = "Attach image",
     MESSAGE_IMAGE_REMOVE = "Remove image",
@@ -414,6 +416,7 @@ class StringResourcesUK : StringResources(
     SETTINGS_CHAT_GLOBAL_CONTEXT_HINT = "Застосовується до всіх чатів за замовчуванням",
     CHAT_SETTINGS_USE_GLOBAL = "Скинути до глобальних налаштувань",
     CHAT_SETTINGS_GLOBAL_LABEL = "глобально",
+    CHAT_SETTINGS_CONTEXT_LABEL = "Контекст на последнем ответе",
     CHAT_SETTINGS_TEMPERATURE_LABEL = "Температура",
     MESSAGE_ATTACH_IMAGE = "Прикріпити зображення",
     MESSAGE_IMAGE_REMOVE = "Видалити зображення",

@@ -25,6 +25,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vnteam.talktoai.domain.aimodels.formatContextUsage
 import com.vnteam.talktoai.domain.enums.AiProviderType
 import com.vnteam.talktoai.domain.enums.ModelTier
 import com.vnteam.talktoai.domain.models.AiModels
@@ -46,6 +47,9 @@ fun ChatSettingsBottomSheet(
     val stringRes = LocalStringResources.current
     val globalAiModel = viewModel.globalAiModel.collectAsState()
     val globalProvider = viewModel.globalProvider.collectAsState()
+    AiModels.current.collectAsState()
+    val contextTokens = viewModel.contextTokens.collectAsState()
+    LaunchedEffect(chat.id) { viewModel.loadContextTokens(chat.id ?: 0L) }
 
     val chatName = remember(chat.id) { mutableStateOf(chat.name.orEmpty()) }
     val chatContext = remember(chat.id) { mutableStateOf(chat.context.orEmpty()) }
@@ -202,6 +206,15 @@ fun ChatSettingsBottomSheet(
                         )
                     }
                 }
+            }
+
+            contextTokens.value?.let { used ->
+                val window = AiModels.find(chatProvider.value, effectiveModel)?.contextWindow ?: 0
+                Text(
+                    text = "${stringRes.CHAT_SETTINGS_CONTEXT_LABEL}: ${formatContextUsage(used, window)}",
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
             }
 
             if (hasOverride) {

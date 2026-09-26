@@ -1,5 +1,6 @@
 package com.vnteam.talktoai.data.network.ai.openai.request
 
+import com.vnteam.talktoai.domain.models.AiModel
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -9,14 +10,10 @@ data class ApiRequest(
     val model: String,
     val messages: List<OpenAiMessage>,
     @EncodeDefault(EncodeDefault.Mode.NEVER) val temperature: Float? = null,
-    @EncodeDefault @SerialName("max_completion_tokens") val maxCompletionTokens: Int = DEFAULT_MAX_COMPLETION_TOKENS,
+    @EncodeDefault @SerialName("max_completion_tokens") val maxCompletionTokens: Int = AiModel.DEFAULT_MAX_OUTPUT_TOKENS,
     @EncodeDefault val stream: Boolean = true,
     @EncodeDefault @SerialName("stream_options") val streamOptions: StreamOptions = StreamOptions(),
-) {
-    companion object {
-        const val DEFAULT_MAX_COMPLETION_TOKENS = 8192
-    }
-}
+)
 
 @Serializable
 data class StreamOptions(

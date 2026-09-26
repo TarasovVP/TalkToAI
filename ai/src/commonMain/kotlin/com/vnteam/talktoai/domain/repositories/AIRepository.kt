@@ -4,6 +4,7 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.ai.AiTextResponse
 import com.vnteam.talktoai.data.network.ai.request.Message
 import com.vnteam.talktoai.domain.enums.AiProviderType
+import com.vnteam.talktoai.domain.models.AiModel
 import kotlinx.coroutines.flow.Flow
 
 interface AIRepository {
@@ -13,5 +14,6 @@ interface AIRepository {
         apiKey: String? = null,
         providerType: AiProviderType = AiProviderType.OPENAI,
         temperature: Float? = null,
+        maxOutputTokens: Int = AiModel.DEFAULT_MAX_OUTPUT_TOKENS,
     ): Flow<Result<AiTextResponse>>
 }

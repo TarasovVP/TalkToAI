@@ -33,6 +33,8 @@ object Constants {
     const val MESSAGES = "messages"
     const val SETTINGS = "settings"
     const val PRIVACY_POLICY = "privacyPolicy"
+    const val CONFIG = "config"
+    const val AI_MODELS_CONFIG = "aiModels"
 
     //WebView
     const val MIME_TYPE = "text/html; charset=utf-8"

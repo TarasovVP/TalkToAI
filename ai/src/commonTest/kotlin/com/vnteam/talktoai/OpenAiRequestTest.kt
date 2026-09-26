@@ -98,4 +98,18 @@ class OpenAiRequestTest {
         val result = AiModels.forProvider(AiProviderType.OPENAI).find { it.id == "gpt-3" }?.supportsVision
         assertTrue(result != true)
     }
+
+    @Test
+    fun maxOutputTokensFromModelGoesIntoMaxCompletionTokens() {
+        val messages = listOf(Message(role = "user", content = listOf(MessageContent.Text("Hi"))))
+        assertEquals(12345, messages.toOpenAiRequest(model = "m", maxOutputTokens = 12345).maxCompletionTokens)
+        assertEquals(2000, messages.toOpenAiRequest(model = "m", maxOutputTokens = 2000).maxCompletionTokens)
+    }
+
+    @Test
+    fun invalidMaxOutputTokensFallsBackTo16000ForOpenAi() {
+        val messages = listOf(Message(role = "user", content = listOf(MessageContent.Text("Hi"))))
+        assertEquals(16000, messages.toOpenAiRequest(model = "m", maxOutputTokens = 0).maxCompletionTokens)
+        assertEquals(16000, messages.toOpenAiRequest(model = "m", maxOutputTokens = -5).maxCompletionTokens)
+    }
 }

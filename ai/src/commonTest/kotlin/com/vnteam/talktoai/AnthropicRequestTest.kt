@@ -190,4 +190,18 @@ class AnthropicRequestTest {
         val json = testJson.encodeToString(request)
         assertFalse("temperature" in json)
     }
+
+    @Test
+    fun maxOutputTokensFromModelGoesIntoMaxTokens() {
+        val messages = listOf(Message(role = "user", content = listOf(MessageContent.Text("Hi"))))
+        assertEquals(12345, messages.toAnthropicRequest(model = "m", maxOutputTokens = 12345).maxTokens)
+        assertEquals(2000, messages.toAnthropicRequest(model = "m", maxOutputTokens = 2000).maxTokens)
+    }
+
+    @Test
+    fun invalidMaxOutputTokensFallsBackTo16000ForAnthropic() {
+        val messages = listOf(Message(role = "user", content = listOf(MessageContent.Text("Hi"))))
+        assertEquals(16000, messages.toAnthropicRequest(model = "m", maxOutputTokens = 0).maxTokens)
+        assertEquals(16000, messages.toAnthropicRequest(model = "m", maxOutputTokens = -1).maxTokens)
+    }
 }

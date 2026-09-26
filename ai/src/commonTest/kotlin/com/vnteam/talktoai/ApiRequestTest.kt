@@ -24,7 +24,7 @@ class ApiRequestTest {
         )
         val json = testJson.encodeToString(request)
         assertTrue("\"max_completion_tokens\"" in json)
-        assertTrue("8192" in json)
+        assertTrue("16000" in json)
     }
 
     @Test

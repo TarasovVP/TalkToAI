@@ -1,10 +1,13 @@
 package com.vnteam.talktoai.data.repositoryimpl
 
+import com.vnteam.talktoai.Constants.AI_MODELS_CONFIG
 import com.vnteam.talktoai.Constants.CHATS
+import com.vnteam.talktoai.Constants.CONFIG
 import com.vnteam.talktoai.Constants.MESSAGES
 import com.vnteam.talktoai.Constants.PRIVACY_POLICY
 import com.vnteam.talktoai.Constants.SETTINGS
 import com.vnteam.talktoai.Constants.USERS
+import com.vnteam.talktoai.data.ERROR_FIRESTORE_CONFIG_UNAVAILABLE
 import com.vnteam.talktoai.data.ERROR_FIRESTORE_DELETE_CHAT_FAILED
 import com.vnteam.talktoai.data.ERROR_FIRESTORE_WRITE_FAILED
 import com.vnteam.talktoai.data.ERROR_NOT_AUTHENTICATED
@@ -44,6 +47,8 @@ import com.vnteam.talktoai.data.network.firestore.FirestoreService
 import com.vnteam.talktoai.data.network.firestore.FirestoreStructuredQuery
 import com.vnteam.talktoai.data.network.firestore.FirestoreValue
 import com.vnteam.talktoai.data.network.firestore.firestoreBool
+import com.vnteam.talktoai.data.network.firestore.toRawAiModelsConfig
+import com.vnteam.talktoai.domain.aimodels.RawAiModelsConfig
 import com.vnteam.talktoai.data.network.firestore.firestoreDouble
 import com.vnteam.talktoai.data.network.firestore.firestoreInt
 import com.vnteam.talktoai.data.network.firestore.firestoreString
@@ -377,6 +382,15 @@ class RemoteStoreRepositoryImpl(
         val doc = firestoreService.getDocument("$PRIVACY_POLICY/$appLang", "")
         val text = doc?.fields?.get(FIELD_TEXT)?.stringValue.orEmpty()
         emit(text)
+    }
+
+    override fun getAiModelsConfig(): Flow<Result<RawAiModelsConfig>> = flow {
+        val doc = firestoreService.getDocument("$CONFIG/$AI_MODELS_CONFIG", "")
+        if (doc == null) {
+            emit(Result.Failure(ERROR_FIRESTORE_CONFIG_UNAVAILABLE))
+        } else {
+            emit(Result.Success(doc.toRawAiModelsConfig()))
+        }
     }
 
     override fun getRemoteSettings(): Flow<Result<Map<String, String?>>> = flow {

@@ -24,8 +24,9 @@ class OpenAiProvider(private val service: OpenAiService) : AiProvider {
         messages: List<Message>,
         apiKey: String?,
         temperature: Float?,
+        maxOutputTokens: Int,
     ): Flow<Result<AiTextResponse>> = flow {
-        val request = messages.toOpenAiRequest(model, temperature)
+        val request = messages.toOpenAiRequest(model, temperature, maxOutputTokens)
         try {
             service.sendRequest(request, apiKey) { response ->
                 if (response.status.value !in 200..299) {

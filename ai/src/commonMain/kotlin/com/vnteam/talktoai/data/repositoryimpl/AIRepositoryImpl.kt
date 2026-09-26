@@ -24,8 +24,9 @@ class AIRepositoryImpl(
         apiKey: String?,
         providerType: AiProviderType,
         temperature: Float?,
+        maxOutputTokens: Int,
     ) = flow {
-        doSendRequest(this, model, messages, apiKey, providerType, temperature, isRetry = false)
+        doSendRequest(this, model, messages, apiKey, providerType, temperature, maxOutputTokens, isRetry = false)
     }
 
     private suspend fun doSendRequest(
@@ -35,6 +36,7 @@ class AIRepositoryImpl(
         apiKey: String?,
         providerType: AiProviderType,
         temperature: Float?,
+        maxOutputTokens: Int,
         isRetry: Boolean,
         fallbackFrom: String? = null,
     ) {
@@ -43,7 +45,7 @@ class AIRepositoryImpl(
             AiProviderType.ANTHROPIC -> anthropicProvider
         }
         var terminalFailure: Result.Failure? = null
-        provider.sendMessage(model, messages, apiKey, temperature).collect { result ->
+        provider.sendMessage(model, messages, apiKey, temperature, maxOutputTokens).collect { result ->
             when (result) {
                 is Result.Success -> {
                     val data = result.data
@@ -66,7 +68,7 @@ class AIRepositoryImpl(
 
         if (!isRetry && isTemperatureDeprecatedError(statusCode, rawBody) && temperature != null) {
             collector.emit(Result.Success(AiTextResponse(model = model, content = "", fallbackFrom = fallbackFrom)))
-            doSendRequest(collector, model, messages, apiKey, providerType, null, isRetry = true, fallbackFrom = fallbackFrom)
+            doSendRequest(collector, model, messages, apiKey, providerType, null, maxOutputTokens, isRetry = true, fallbackFrom = fallbackFrom)
             return
         }
 
@@ -74,7 +76,7 @@ class AIRepositoryImpl(
             val balanced = AiModels.balancedFor(providerType)
             if (balanced.id != model) {
                 collector.emit(Result.Success(AiTextResponse(model = balanced.id, content = "", fallbackFrom = model)))
-                doSendRequest(collector, balanced.id, messages, apiKey, providerType, temperature, isRetry = true, fallbackFrom = model)
+                doSendRequest(collector, balanced.id, messages, apiKey, providerType, temperature, balanced.maxOutputTokens, isRetry = true, fallbackFrom = model)
                 return
             }
         }
