@@ -3,8 +3,10 @@ package com.vnteam.talktoai.presentation.viewmodels.chats
 import com.vnteam.talktoai.domain.enums.AiProviderType
 import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.data.network.Result
+import com.vnteam.talktoai.domain.aimodels.lastAssistantInputTokens
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.UpdateChatUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMessagesFromChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiProviderUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
@@ -17,6 +19,7 @@ class ChatSettingsViewModel(
     private val updateChatUseCase: UpdateChatUseCase,
     private val aiModelUseCase: AiModelUseCase,
     private val aiProviderUseCase: AiProviderUseCase,
+    private val getMessagesFromChatUseCase: GetMessagesFromChatUseCase,
 ) : BaseViewModel() {
 
     private val _globalAiModel = MutableStateFlow(AiModels.balancedFor(AiProviderType.OPENAI).id)
@@ -24,6 +27,9 @@ class ChatSettingsViewModel(
 
     private val _globalProvider = MutableStateFlow(AiProviderType.OPENAI)
     val globalProvider = _globalProvider.asStateFlow()
+
+    private val _contextTokens = MutableStateFlow<Int?>(null)
+    val contextTokens = _contextTokens.asStateFlow()
 
     private val _chatSaved = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val chatSaved = _chatSaved.asSharedFlow()
@@ -47,6 +53,16 @@ class ChatSettingsViewModel(
                 if (result is Result.Success && !result.data.isNullOrEmpty()) {
                     _globalProvider.value = runCatching { AiProviderType.valueOf(result.data!!) }
                         .getOrDefault(AiProviderType.OPENAI)
+                }
+            }
+        }
+    }
+
+    fun loadContextTokens(chatId: Long) {
+        launchWithErrorHandling {
+            getMessagesFromChatUseCase.execute(chatId).collect { result ->
+                if (result is Result.Success) {
+                    _contextTokens.value = lastAssistantInputTokens(result.data.orEmpty())
                 }
             }
         }

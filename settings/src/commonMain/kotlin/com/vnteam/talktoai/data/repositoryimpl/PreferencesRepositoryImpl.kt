@@ -1,6 +1,8 @@
 package com.vnteam.talktoai.data.repositoryimpl
 
 import com.vnteam.talktoai.data.AI_MODEL
+import com.vnteam.talktoai.data.AI_MODELS_CACHE
+import com.vnteam.talktoai.data.AI_MODELS_FETCHED_AT
 import com.vnteam.talktoai.data.AI_PROVIDER
 import com.vnteam.talktoai.data.APP_LANGUAGE
 import com.vnteam.talktoai.data.GLOBAL_SYSTEM_CONTEXT
@@ -79,6 +81,22 @@ class PreferencesRepositoryImpl(private val preferencesFactory: PreferencesFacto
 
     override suspend fun setAiProvider(provider: String) {
         preferencesFactory.putString(AI_PROVIDER, provider)
+    }
+
+    override fun getAiModelsCache(): Flow<String?> {
+        return preferencesFactory.getString(AI_MODELS_CACHE)
+    }
+
+    override suspend fun setAiModelsCache(json: String) {
+        preferencesFactory.putString(AI_MODELS_CACHE, json)
+    }
+
+    override fun getAiModelsFetchedAt(): Flow<String?> {
+        return preferencesFactory.getString(AI_MODELS_FETCHED_AT)
+    }
+
+    override suspend fun setAiModelsFetchedAt(timestamp: String) {
+        preferencesFactory.putString(AI_MODELS_FETCHED_AT, timestamp)
     }
 
     override fun getGlobalSystemContext(): Flow<String?> {

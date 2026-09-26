@@ -16,6 +16,7 @@ import com.vnteam.talktoai.domain.mappers.MessageUIMapper
 import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.models.MessageContent
+import com.vnteam.talktoai.domain.models.AiModel
 import com.vnteam.talktoai.domain.models.resolveEffectiveProvider
 import com.vnteam.talktoai.presentation.uimodels.ChatUI
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
@@ -78,7 +79,8 @@ class ChatViewModel(
         _currentChatLiveData,
         _globalProvider,
         _aiModel,
-    ) { chat, provider, model ->
+        AiModels.current,
+    ) { chat, provider, model, _ ->
         val effectiveProvider = resolveEffectiveProvider(chat?.aiProvider, provider)
         val effectiveModel = chat?.aiModel ?: model
         val providerModels = AiModels.forProvider(effectiveProvider)
@@ -276,7 +278,9 @@ class ChatViewModel(
         val model = (chatAiModel ?: _aiModel.value)
             .takeIf { id -> AiModels.forProvider(providerType).any { it.id == id } }
             ?: AiModels.balancedFor(providerType).id
-        val supportsTemperature = AiModels.forProvider(providerType).find { it.id == model }?.supportsTemperature ?: false
+        val selectedModel = AiModels.find(providerType, model)
+        val maxOutputTokens = selectedModel?.maxOutputTokens ?: AiModel.DEFAULT_MAX_OUTPUT_TOKENS
+        val supportsTemperature = selectedModel?.supportsTemperature ?: false
         val temperature = if (supportsTemperature) chatTemperature else null
         launchWithErrorHandling {
             val providerModels = AiModels.forProvider(providerType)
@@ -297,7 +301,7 @@ class ChatViewModel(
             var terminalHandled = false
             var lastUsage: TokenUsage? = null
             try {
-                sendRequestUseCase.execute(model, messages, null, providerType, temperature).collect { result ->
+                sendRequestUseCase.execute(model, messages, null, providerType, temperature, maxOutputTokens).collect { result ->
                     when (result) {
                         is Result.Success -> {
                             val aiResponse = result.data ?: return@collect

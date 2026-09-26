@@ -2,6 +2,7 @@ package com.vnteam.talktoai.data.network.ai
 
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.ai.request.Message
+import com.vnteam.talktoai.domain.models.AiModel
 import kotlinx.coroutines.flow.Flow
 
 interface AiProvider {
@@ -10,6 +11,7 @@ interface AiProvider {
         messages: List<Message>,
         apiKey: String? = null,
         temperature: Float? = null,
+        maxOutputTokens: Int = AiModel.DEFAULT_MAX_OUTPUT_TOKENS,
     ): Flow<Result<AiTextResponse>>
 }
 

@@ -24,8 +24,9 @@ class AnthropicProvider(private val service: AnthropicService) : AiProvider {
         messages: List<Message>,
         apiKey: String?,
         temperature: Float?,
+        maxOutputTokens: Int,
     ): Flow<Result<AiTextResponse>> = flow {
-        val request = messages.toAnthropicRequest(model, temperature)
+        val request = messages.toAnthropicRequest(model, temperature, maxOutputTokens)
         try {
             service.sendMessage(request, apiKey) { response ->
                 if (response.status.value !in 200..299) {

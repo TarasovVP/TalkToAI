@@ -67,6 +67,11 @@ class SettingsChatViewModel(
             syncRemoteSettingsUseCase.execute()
         }
         launchWithErrorHandling {
+            AiModels.current.collect {
+                _availableModels.value = AiModels.forProvider(_aiProvider.value)
+            }
+        }
+        launchWithErrorHandling {
             aiProviderUseCase.get().collect { result ->
                 if (result is Result.Success) {
                     val saved = result.data?.takeIf { it.isNotEmpty() } ?: return@collect

@@ -7,16 +7,26 @@ import com.vnteam.talktoai.data.network.ai.openai.request.OpenAiImageUrl
 import com.vnteam.talktoai.data.network.ai.openai.request.OpenAiMessage
 import com.vnteam.talktoai.data.network.ai.openai.request.OpenAiTextBlock
 import com.vnteam.talktoai.data.network.ai.request.Message
+import com.vnteam.talktoai.domain.models.AiModel
 import com.vnteam.talktoai.domain.models.MessageContent
 
-fun List<Message>.toOpenAiRequest(model: String, temperature: Float? = null): ApiRequest {
+fun List<Message>.toOpenAiRequest(
+    model: String,
+    temperature: Float? = null,
+    maxOutputTokens: Int = AiModel.DEFAULT_MAX_OUTPUT_TOKENS,
+): ApiRequest {
     val apiMessages = map { msg ->
         OpenAiMessage(
             role = msg.role,
             content = msg.content.map { it.toOpenAiBlock() },
         )
     }
-    return ApiRequest(model = model, messages = apiMessages, temperature = temperature)
+    return ApiRequest(
+        model = model,
+        messages = apiMessages,
+        temperature = temperature,
+        maxCompletionTokens = maxOutputTokens.takeIf { it > 0 } ?: AiModel.DEFAULT_MAX_OUTPUT_TOKENS,
+    )
 }
 
 private fun MessageContent.toOpenAiBlock(): OpenAiContentBlock = when (this) {

@@ -13,6 +13,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.To
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.TokenRefreshNetworkException
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteSettingsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteUserUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncAiModelsConfigUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiProviderUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.LanguageUseCase
@@ -42,6 +43,7 @@ class AppViewModel(
     private val syncRemoteUserUseCase: SyncRemoteUserUseCase,
     private val tokenRefreshManager: TokenRefreshManager,
     private val aiProviderUseCase: AiProviderUseCase,
+    private val syncAiModelsConfigUseCase: SyncAiModelsConfigUseCase,
 ) : BaseViewModel() {
 
     private val _screenState = MutableStateFlow(ScreenState())
@@ -66,6 +68,14 @@ class AppViewModel(
         fetchInitialData()
         observeUnauthorizedEvents()
         observeGlobalProvider()
+        syncAiModelsConfig()
+    }
+
+    private fun syncAiModelsConfig() {
+        launchWithErrorHandling {
+            syncAiModelsConfigUseCase.applyCached()
+            syncAiModelsConfigUseCase.refreshIfDue()
+        }
     }
 
     private fun observeGlobalProvider() {

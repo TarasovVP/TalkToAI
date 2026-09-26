@@ -54,6 +54,7 @@ import org.koin.compose.koinInject
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.CommonExtensions.isTrue
 import com.vnteam.talktoai.Constants
+import com.vnteam.talktoai.domain.aimodels.formatTokenCount
 import com.vnteam.talktoai.Constants.DEFAULT_CHAT_ID
 import com.vnteam.talktoai.Res
 import com.vnteam.talktoai.avatar_ai
@@ -521,7 +522,7 @@ fun Message(
                         (message.updatedAt * 1000).millsSecondsToDateTime()
                     } else {
                         val tokens = message.inputTokens?.let {
-                            "  ·  ${formatTokenCount(it)} → ${message.outputTokens?.let { out -> formatTokenCount(out) } ?: "?"}"
+                            "  ·  ↑${formatTokenCount(it)} ↓${message.outputTokens?.let { out -> formatTokenCount(out) } ?: "?"}"
                         }.orEmpty()
                         "${message.author}  ·  ${(message.updatedAt * 1000).millsSecondsToDateTime()}$tokens"
                     },
@@ -677,5 +678,3 @@ fun MessageActionField(
         }
     }
 }
-private fun formatTokenCount(value: Int): String =
-    value.toString().reversed().chunked(3).joinToString(" ").reversed()

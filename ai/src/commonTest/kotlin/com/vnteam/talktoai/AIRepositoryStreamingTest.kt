@@ -6,6 +6,7 @@ import com.vnteam.talktoai.data.network.ai.AiTextResponse
 import com.vnteam.talktoai.data.network.ai.request.Message
 import com.vnteam.talktoai.data.repositoryimpl.AIRepositoryImpl
 import com.vnteam.talktoai.domain.enums.AiProviderType
+import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.models.MessageContent
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,15 +21,18 @@ private class FakeAiProvider(
     private val responsesPerCall: List<Flow<Result<AiTextResponse>>>,
 ) : AiProvider {
     val requestedModels = mutableListOf<String>()
+    val requestedMaxOutputTokens = mutableListOf<Int>()
 
     override fun sendMessage(
         model: String,
         messages: List<Message>,
         apiKey: String?,
         temperature: Float?,
+        maxOutputTokens: Int,
     ): Flow<Result<AiTextResponse>> {
         val response = responsesPerCall[requestedModels.size]
         requestedModels.add(model)
+        requestedMaxOutputTokens.add(maxOutputTokens)
         return response
     }
 }
@@ -96,5 +100,24 @@ class AIRepositoryStreamingTest {
         val successes = results.filterIsInstance<Result.Success<AiTextResponse>>()
         assertEquals(listOf("Hi", "Hi there"), successes.map { it.data!!.content }, "Partial text emits must be untouched")
         assertIs<Result.Failure>(results.last())
+    }
+
+    @Test
+    fun maxOutputTokensIsPassedToProviderAndSwitchesToFallbackModelValue() = runTest {
+        val first = flow<Result<AiTextResponse>> { emit(Result.Failure(MODEL_NOT_SUPPORTED_BODY, statusCode = 400)) }
+        val second = flow<Result<AiTextResponse>> { emit(Result.Success(AiTextResponse(model = "gpt-5.6-terra", content = "ok"))) }
+        val provider = FakeAiProvider(listOf(first, second))
+        val repository = AIRepositoryImpl(openAiProvider = provider, anthropicProvider = provider)
+
+        repository.sendRequest(
+            model = "gpt-5.6-luna",
+            messages = messages(),
+            apiKey = null,
+            providerType = AiProviderType.OPENAI,
+            temperature = null,
+            maxOutputTokens = 4321,
+        ).toList()
+
+        assertEquals(listOf(4321, AiModels.balancedFor(AiProviderType.OPENAI).maxOutputTokens), provider.requestedMaxOutputTokens)
     }
 }

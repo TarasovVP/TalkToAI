@@ -25,6 +25,7 @@ data class FirestoreValue(
     val doubleValue: Double? = null,
     val booleanValue: Boolean? = null,
     val isNull: Boolean = false,
+    val mapValue: Map<String, FirestoreValue>? = null,
 )
 
 object FirestoreValueSerializer : KSerializer<FirestoreValue> {
@@ -53,6 +54,11 @@ object FirestoreValueSerializer : KSerializer<FirestoreValue> {
             doubleValue = obj["doubleValue"]?.jsonPrimitive?.doubleOrNull,
             booleanValue = obj["booleanValue"]?.jsonPrimitive?.booleanOrNull,
             isNull = obj.containsKey("nullValue"),
+            mapValue = obj["mapValue"]?.jsonObject?.let { map ->
+                map["fields"]?.jsonObject
+                    ?.mapValues { (_, value) -> jsonDecoder.json.decodeFromJsonElement(FirestoreValueSerializer, value) }
+                    ?: emptyMap()
+            },
         )
     }
 }

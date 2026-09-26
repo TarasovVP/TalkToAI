@@ -36,6 +36,14 @@ interface PreferencesRepository {
 
     suspend fun setAiProvider(provider: String)
 
+    fun getAiModelsCache(): Flow<String?>
+
+    suspend fun setAiModelsCache(json: String)
+
+    fun getAiModelsFetchedAt(): Flow<String?>
+
+    suspend fun setAiModelsFetchedAt(timestamp: String)
+
     fun getGlobalSystemContext(): Flow<String?>
 
     suspend fun setGlobalSystemContext(context: String)

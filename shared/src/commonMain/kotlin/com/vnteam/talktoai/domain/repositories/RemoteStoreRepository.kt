@@ -1,6 +1,7 @@
 package com.vnteam.talktoai.domain.repositories
 
 import com.vnteam.talktoai.data.network.Result
+import com.vnteam.talktoai.domain.aimodels.RawAiModelsConfig
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.models.Message
 import com.vnteam.talktoai.domain.models.RemoteUser
@@ -41,6 +42,8 @@ interface RemoteStoreRepository {
     fun setReviewVoted(): Flow<Unit>
 
     fun getPrivacyPolicy(appLang: String): Flow<String>
+
+    fun getAiModelsConfig(): Flow<Result<RawAiModelsConfig>>
 
     fun getRemoteSettings(): Flow<Result<Map<String, String?>>>
 
