@@ -245,13 +245,21 @@ class ChatViewModel(
         chatTemperature: Float?,
         history: List<MessageUI>,
     ) {
-        var remainingTokens = MAX_HISTORY_TOKENS -
+        val providerType = resolveEffectiveProvider(_currentChatLiveData.value?.aiProvider, _globalProvider.value)
+        val model = (chatAiModel ?: _aiModel.value)
+            .takeIf { id -> AiModels.forProvider(providerType).any { it.id == id } }
+            ?: AiModels.balancedFor(providerType).id
+        val selectedModel = AiModels.find(providerType, model)
+        val maxOutputTokens = selectedModel?.maxOutputTokens ?: AiModel.DEFAULT_MAX_OUTPUT_TOKENS
+        val contextWindow = selectedModel?.contextWindow?.takeIf { it > 0 } ?: FALLBACK_CONTEXT_WINDOW
+        val historyBudget = ((contextWindow * CONTEXT_WINDOW_FILL_RATIO).toInt() - maxOutputTokens).coerceAtLeast(0)
+        var remainingTokens = historyBudget -
                 estimateTokens(systemContext.orEmpty()) -
                 estimateTokens(messageText)
         val trimmedHistory = history
             .filter { it.status == MessageStatus.SUCCESS && it.message.isNotEmpty() }
             .reversed()
-            .filter { msg ->
+            .takeWhile { msg ->
                 val tokens = estimateTokens(msg.message)
                 (tokens <= remainingTokens).also { fits -> if (fits) remainingTokens -= tokens }
             }
@@ -274,12 +282,6 @@ class ChatViewModel(
             }
             add(AiMessage(role = Constants.MESSAGE_ROLE_USER, content = userContent))
         }
-        val providerType = resolveEffectiveProvider(_currentChatLiveData.value?.aiProvider, _globalProvider.value)
-        val model = (chatAiModel ?: _aiModel.value)
-            .takeIf { id -> AiModels.forProvider(providerType).any { it.id == id } }
-            ?: AiModels.balancedFor(providerType).id
-        val selectedModel = AiModels.find(providerType, model)
-        val maxOutputTokens = selectedModel?.maxOutputTokens ?: AiModel.DEFAULT_MAX_OUTPUT_TOKENS
         val supportsTemperature = selectedModel?.supportsTemperature ?: false
         val temperature = if (supportsTemperature) chatTemperature else null
         launchWithErrorHandling {
@@ -422,7 +424,8 @@ class ChatViewModel(
     }
 
     companion object {
-        private const val MAX_HISTORY_TOKENS = 4000
+        private const val FALLBACK_CONTEXT_WINDOW = 200_000
+        private const val CONTEXT_WINDOW_FILL_RATIO = 0.75
         private fun estimateTokens(text: String): Int = (text.length / 4).coerceAtLeast(1)
     }
 }
