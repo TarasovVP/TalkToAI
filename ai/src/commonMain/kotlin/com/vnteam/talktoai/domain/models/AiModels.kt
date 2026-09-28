@@ -45,8 +45,21 @@ object AiModels {
     fun find(providerType: AiProviderType, id: String): AiModel? =
         forProvider(providerType).firstOrNull { it.id == id }
 
+    fun resolve(providerType: AiProviderType, tier: ModelTier): AiModel? {
+        val models = forProvider(providerType)
+        return models.firstOrNull { it.tier == tier }
+            ?: models.firstOrNull { it.tier == ModelTier.BALANCED }
+            ?: models.firstOrNull()
+    }
+
+    fun displayNameFor(id: String): String =
+        current.value.values.flatten().firstOrNull { it.id == id }?.displayName ?: id
+
     private fun hardcodedFor(providerType: AiProviderType): List<AiModel> = when (providerType) {
         AiProviderType.OPENAI -> OPENAI
         AiProviderType.ANTHROPIC -> ANTHROPIC
     }
 }
+
+fun parseTier(stored: String?): ModelTier =
+    ModelTier.entries.firstOrNull { it.name == stored } ?: ModelTier.BALANCED

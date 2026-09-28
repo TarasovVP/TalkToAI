@@ -4,6 +4,7 @@ import com.vnteam.talktoai.domain.enums.AiProviderType
 import com.vnteam.talktoai.domain.enums.ModelTier
 import com.vnteam.talktoai.domain.models.AiModel
 import com.vnteam.talktoai.domain.models.AiModels
+import com.vnteam.talktoai.domain.models.parseTier
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -115,5 +116,57 @@ class AiModelsTest {
             assertTrue(it.contextWindow > 0, it.id)
             assertEquals(16000, it.maxOutputTokens, it.id)
         }
+    }
+
+    @Test
+    fun resolveReturnsModelForExactTier() {
+        assertEquals("gpt-5.6-luna", AiModels.resolve(AiProviderType.OPENAI, ModelTier.FAST)?.id)
+    }
+
+    @Test
+    fun resolveFallsBackToBalancedWhenExactTierMissing() {
+        try {
+            val balanced = AiModel("only-balanced", "Only Balanced", ModelTier.BALANCED)
+            AiModels.replace(mapOf(AiProviderType.ANTHROPIC to listOf(balanced)))
+            assertEquals("only-balanced", AiModels.resolve(AiProviderType.ANTHROPIC, ModelTier.POWERFUL)?.id)
+        } finally {
+            AiModels.reset()
+        }
+    }
+
+    @Test
+    fun resolveFallsBackToAnyModelWhenNeitherExactNorBalancedExists() {
+        try {
+            val fast = AiModel("only-fast", "Only Fast", ModelTier.FAST)
+            AiModels.replace(mapOf(AiProviderType.OPENAI to listOf(fast)))
+            assertEquals("only-fast", AiModels.resolve(AiProviderType.OPENAI, ModelTier.POWERFUL)?.id)
+        } finally {
+            AiModels.reset()
+        }
+    }
+
+    @Test
+    fun parseTierAcceptsValidTierName() {
+        assertEquals(ModelTier.FAST, parseTier("FAST"))
+    }
+
+    @Test
+    fun parseTierDefaultsToBalancedForUnknownString() {
+        assertEquals(ModelTier.BALANCED, parseTier("claude-haiku-4-5-20251001"))
+    }
+
+    @Test
+    fun parseTierDefaultsToBalancedForNull() {
+        assertEquals(ModelTier.BALANCED, parseTier(null))
+    }
+
+    @Test
+    fun displayNameForReturnsNameWhenIdIsInCurrentRegistry() {
+        assertEquals("Claude Sonnet 5", AiModels.displayNameFor("claude-sonnet-5"))
+    }
+
+    @Test
+    fun displayNameForReturnsRawIdWhenNotFound() {
+        assertEquals("retired-model-id", AiModels.displayNameFor("retired-model-id"))
     }
 }
