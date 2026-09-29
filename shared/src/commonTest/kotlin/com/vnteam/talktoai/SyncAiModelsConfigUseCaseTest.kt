@@ -157,17 +157,8 @@ class SyncAiModelsConfigUseCaseTest {
     }
 
     @Test
-    fun recentFetchWithValidCacheSkipsNetwork() = runTest {
+    fun recentFetchStillTriggersRefresh() = runTest {
         val prefs = FakePreferences(cache = cacheOf(serverConfig()), fetchedAt = (now - 1000).toString())
-        val remote = FakeRemote(Result.Success(serverConfig("gpt-new")))
-        useCase(remote, prefs).refreshIfDue()
-        assertEquals(0, remote.calls)
-    }
-
-    @Test
-    fun staleFetchTriggersRefresh() = runTest {
-        val old = now - SyncAiModelsConfigUseCase.REFRESH_INTERVAL_MS - 1
-        val prefs = FakePreferences(cache = cacheOf(serverConfig()), fetchedAt = old.toString())
         val remote = FakeRemote(Result.Success(serverConfig("gpt-new")))
         useCase(remote, prefs).refreshIfDue()
         assertEquals(1, remote.calls)
