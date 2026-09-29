@@ -77,7 +77,9 @@ class FirestoreService(private val client: FirestoreHttpClient) {
 
     suspend fun getDocument(path: String, idToken: String): FirestoreDocument? = runCatching {
         val response = client.httpClient.get("$base/$path") {
-            header(NetworkConstants.OPENAI_AUTHORIZATION_HEADER, "${NetworkConstants.BEARER_PREFIX}$idToken")
+            if (idToken.isNotBlank()) {
+                header(NetworkConstants.OPENAI_AUTHORIZATION_HEADER, "${NetworkConstants.BEARER_PREFIX}$idToken")
+            }
         }
         if (response.status.isSuccess()) {
             response.body<FirestoreDocument>()
