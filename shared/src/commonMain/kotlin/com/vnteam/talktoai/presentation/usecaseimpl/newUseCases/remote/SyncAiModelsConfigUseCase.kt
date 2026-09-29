@@ -24,7 +24,6 @@ class SyncAiModelsConfigUseCase(
 
     suspend fun refreshIfDue() {
         try {
-            if (!isRefreshDue()) return
             val result = remoteStoreRepository.getAiModelsConfig().firstOrNull()
             if (result !is Result.Success || result.data == null) {
                 log("fetch failed: ${(result as? Result.Failure)?.errorMessage}")
@@ -48,13 +47,6 @@ class SyncAiModelsConfigUseCase(
         }
     }
 
-    private suspend fun isRefreshDue(): Boolean {
-        val lastFetch = preferencesRepository.getAiModelsFetchedAt().firstOrNull()?.toLongOrNull()
-        val elapsed = lastFetch?.let { now() - it }
-        val recent = elapsed != null && elapsed in 0 until REFRESH_INTERVAL_MS
-        return !recent || loadValidCache() == null
-    }
-
     private suspend fun loadValidCache(): AiModelsConfigResult.Valid? {
         val cached = preferencesRepository.getAiModelsCache().firstOrNull()?.takeIf { it.isNotEmpty() } ?: return null
         val raw = AiModelsCacheCodec.decode(cached)
@@ -69,9 +61,5 @@ class SyncAiModelsConfigUseCase(
                 null
             }
         }
-    }
-
-    companion object {
-        const val REFRESH_INTERVAL_MS = 24L * 60 * 60 * 1000
     }
 }
