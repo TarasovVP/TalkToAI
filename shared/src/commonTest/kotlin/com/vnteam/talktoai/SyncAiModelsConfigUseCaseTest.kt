@@ -142,7 +142,7 @@ class SyncAiModelsConfigUseCaseTest {
     fun rejectedServerConfigDoesNotOverwriteCache() = runTest {
         val cache = cacheOf(serverConfig("gpt-cached"))
         val prefs = FakePreferences(cache = cache)
-        useCase(FakeRemote(Result.Success(RawAiModelsConfig(2, serverConfig().models))), prefs).refreshIfDue()
+        useCase(FakeRemote(Result.Success(RawAiModelsConfig(3, serverConfig().models))), prefs).refreshIfDue()
         assertEquals(cache, prefs.cache)
         assertNull(prefs.fetchedAt)
     }
@@ -150,7 +150,7 @@ class SyncAiModelsConfigUseCaseTest {
     @Test
     fun cacheWithNewerSchemaIsIgnoredAndHardcodeUsed() = runTest {
         val newer = AiModelsCacheCodec.encode(1, (AiModelsConfigValidator.validate(serverConfig()) as AiModelsConfigResult.Valid).models)
-            .replace("\"schemaVersion\":1", "\"schemaVersion\":2")
+            .replace("\"schemaVersion\":1", "\"schemaVersion\":3")
         val useCase = useCase(FakeRemote(Result.Failure("offline")), FakePreferences(cache = newer))
         useCase.applyCached()
         assertEquals(AiModels.OPENAI.map { it.id }, openAiIds())

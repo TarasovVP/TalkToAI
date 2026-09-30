@@ -58,7 +58,7 @@ class AiModelsConfigValidatorTest {
 
     @Test
     fun unsupportedSchemaVersionIsRejected() {
-        assertIs<AiModelsConfigResult.Rejected>(AiModelsConfigValidator.validate(validConfig(schemaVersion = 2)))
+        assertIs<AiModelsConfigResult.Rejected>(AiModelsConfigValidator.validate(validConfig(schemaVersion = 3)))
     }
 
     @Test
@@ -124,18 +124,24 @@ class AiModelsConfigValidatorTest {
     fun firestoreDocumentWithUnknownFieldsParsesAndValidates() {
         val body = """
         {"name":"projects/p/databases/(default)/documents/config/aiModels","fields":{
-          "schemaVersion":{"integerValue":"1"},
+          "schemaVersion":{"integerValue":"2"},
           "futureTopLevel":{"stringValue":"ignored"},
-          "models":{"mapValue":{"fields":{
-            "gpt-a":{"mapValue":{"fields":{
-              "displayName":{"stringValue":"GPT A"},"provider":{"stringValue":"OPENAI"},"tier":{"stringValue":"BALANCED"},
-              "supportsTemperature":{"booleanValue":false},"supportsVision":{"booleanValue":true},
-              "contextWindow":{"integerValue":"1050000"},"maxOutputTokens":{"integerValue":"12000"},
-              "enabled":{"booleanValue":true},"newField":{"arrayValue":{"values":[]}}}}},
-            "claude-a":{"mapValue":{"fields":{
-              "displayName":{"stringValue":"Claude A"},"provider":{"stringValue":"ANTHROPIC"},"tier":{"stringValue":"FAST"},
-              "supportsTemperature":{"booleanValue":true},"supportsVision":{"booleanValue":true},
-              "contextWindow":{"integerValue":"200000"},"enabled":{"booleanValue":true}}}}
+          "tiers":{"mapValue":{"fields":{
+            "BALANCED":{"mapValue":{"fields":{
+              "OPENAI":{"mapValue":{"fields":{
+                "id":{"stringValue":"gpt-a"},
+                "displayName":{"stringValue":"GPT A"},
+                "supportsTemperature":{"booleanValue":false},"supportsVision":{"booleanValue":true},
+                "contextWindow":{"integerValue":"1050000"},"maxOutputTokens":{"integerValue":"12000"},
+                "enabled":{"booleanValue":true},"newField":{"arrayValue":{"values":[]}}}}}
+            }}},
+            "FAST":{"mapValue":{"fields":{
+              "ANTHROPIC":{"mapValue":{"fields":{
+                "id":{"stringValue":"claude-a"},
+                "displayName":{"stringValue":"Claude A"},
+                "supportsTemperature":{"booleanValue":true},"supportsVision":{"booleanValue":true},
+                "contextWindow":{"integerValue":"200000"},"enabled":{"booleanValue":true}}}}
+            }}}
           }}}}}
         """.trimIndent()
         val doc = Json { ignoreUnknownKeys = true }.decodeFromString(FirestoreDocument.serializer(), body)
@@ -143,6 +149,58 @@ class AiModelsConfigValidatorTest {
         assertEquals(12000, result.models[AiProviderType.OPENAI]!!.single().maxOutputTokens)
         assertEquals(1_050_000, result.models[AiProviderType.OPENAI]!!.single().contextWindow)
         assertEquals(16000, result.models[AiProviderType.ANTHROPIC]!!.single().maxOutputTokens)
+    }
+
+    @Test
+    fun firestoreDocumentWithProviderMissingFromOneTierOmitsItFromThatTierOnly() {
+        val body = """
+        {"name":"projects/p/databases/(default)/documents/config/aiModels","fields":{
+          "schemaVersion":{"integerValue":"2"},
+          "tiers":{"mapValue":{"fields":{
+            "FAST":{"mapValue":{"fields":{
+              "OPENAI":{"mapValue":{"fields":{
+                "id":{"stringValue":"gpt-fast"},"displayName":{"stringValue":"GPT Fast"},
+                "supportsTemperature":{"booleanValue":false},"supportsVision":{"booleanValue":true},
+                "contextWindow":{"integerValue":"100000"},"maxOutputTokens":{"integerValue":"16000"},
+                "enabled":{"booleanValue":true}}}}
+            }}},
+            "BALANCED":{"mapValue":{"fields":{
+              "OPENAI":{"mapValue":{"fields":{
+                "id":{"stringValue":"gpt-balanced"},"displayName":{"stringValue":"GPT Balanced"},
+                "supportsTemperature":{"booleanValue":false},"supportsVision":{"booleanValue":true},
+                "contextWindow":{"integerValue":"100000"},"maxOutputTokens":{"integerValue":"16000"},
+                "enabled":{"booleanValue":true}}}},
+              "ANTHROPIC":{"mapValue":{"fields":{
+                "id":{"stringValue":"claude-balanced"},"displayName":{"stringValue":"Claude Balanced"},
+                "supportsTemperature":{"booleanValue":false},"supportsVision":{"booleanValue":true},
+                "contextWindow":{"integerValue":"100000"},"maxOutputTokens":{"integerValue":"16000"},
+                "enabled":{"booleanValue":true}}}}
+            }}}
+          }}}}}
+        """.trimIndent()
+        val doc = Json { ignoreUnknownKeys = true }.decodeFromString(FirestoreDocument.serializer(), body)
+        val result = assertIs<AiModelsConfigResult.Valid>(AiModelsConfigValidator.validate(doc.toRawAiModelsConfig()))
+        assertEquals(listOf("gpt-fast", "gpt-balanced"), result.models[AiProviderType.OPENAI]!!.map { it.id })
+        assertEquals(listOf("claude-balanced"), result.models[AiProviderType.ANTHROPIC]!!.map { it.id })
+    }
+
+    @Test
+    fun firestoreDocumentWhereOneProviderHasNoModelsInAnyTierIsRejected() {
+        val body = """
+        {"name":"projects/p/databases/(default)/documents/config/aiModels","fields":{
+          "schemaVersion":{"integerValue":"2"},
+          "tiers":{"mapValue":{"fields":{
+            "BALANCED":{"mapValue":{"fields":{
+              "OPENAI":{"mapValue":{"fields":{
+                "id":{"stringValue":"gpt-balanced"},"displayName":{"stringValue":"GPT Balanced"},
+                "supportsTemperature":{"booleanValue":false},"supportsVision":{"booleanValue":true},
+                "contextWindow":{"integerValue":"100000"},"maxOutputTokens":{"integerValue":"16000"},
+                "enabled":{"booleanValue":true}}}}
+            }}}
+          }}}}}
+        """.trimIndent()
+        val doc = Json { ignoreUnknownKeys = true }.decodeFromString(FirestoreDocument.serializer(), body)
+        assertIs<AiModelsConfigResult.Rejected>(AiModelsConfigValidator.validate(doc.toRawAiModelsConfig()))
     }
 
     @Test
