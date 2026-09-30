@@ -16,7 +16,7 @@ sealed class AiModelsConfigResult {
 
 object AiModelsConfigValidator {
 
-    const val SUPPORTED_SCHEMA_VERSION = 1
+    const val SUPPORTED_SCHEMA_VERSION = 2
 
     fun validate(raw: RawAiModelsConfig): AiModelsConfigResult {
         val version = raw.schemaVersion
