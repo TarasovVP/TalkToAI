@@ -144,7 +144,7 @@ fun ChatContent(chatId: Long) {
                         name = chat.name,
                         updated = chat.updated,
                         listOrder = chat.listOrder,
-                        aiModel = chat.aiModel,
+                        aiTier = chat.aiTier,
                         temperature = chat.temperature,
                         context = chat.context,
                         aiProvider = chat.aiProvider,

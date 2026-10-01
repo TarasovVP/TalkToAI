@@ -14,7 +14,7 @@ import com.vnteam.talktoai.data.ERROR_NOT_AUTHENTICATED
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.firestore.FirestoreCollectionSelector
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants
-import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_AI_MODEL
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_AI_TIER
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_AI_PROVIDER
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_API_KEY
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_AUTHOR
@@ -89,7 +89,7 @@ class RemoteStoreRepositoryImpl(
         FIELD_NAME to firestoreString(name),
         FIELD_UPDATED to firestoreInt(updated),
         FIELD_LIST_ORDER to firestoreInt(listOrder),
-        FIELD_AI_MODEL to firestoreString(aiModel),
+        FIELD_AI_TIER to firestoreString(aiTier),
         FIELD_TEMPERATURE to firestoreDouble(temperature?.toDouble()),
         FIELD_CONTEXT to firestoreString(context),
     )
@@ -101,7 +101,7 @@ class RemoteStoreRepositoryImpl(
             name = f[FIELD_NAME]?.stringValue,
             updated = f[FIELD_UPDATED]?.integerValue?.toLongOrNull(),
             listOrder = f[FIELD_LIST_ORDER]?.integerValue?.toLongOrNull(),
-            aiModel = f[FIELD_AI_MODEL]?.stringValue,
+            aiTier = f[FIELD_AI_TIER]?.stringValue,
             temperature = f[FIELD_TEMPERATURE]?.doubleValue?.toFloat(),
             context = f[FIELD_CONTEXT]?.stringValue,
         )
@@ -406,7 +406,7 @@ class RemoteStoreRepositoryImpl(
             Result.Success(
                 mapOf(
                     FIELD_AI_PROVIDER to f?.get(FIELD_AI_PROVIDER)?.stringValue,
-                    FIELD_AI_MODEL to f?.get(FIELD_AI_MODEL)?.stringValue,
+                    FIELD_AI_TIER to f?.get(FIELD_AI_TIER)?.stringValue,
                     FIELD_API_KEY to f?.get(FIELD_API_KEY)?.stringValue,
                     FIELD_TEMPERATURE to f?.get(FIELD_TEMPERATURE)?.stringValue,
                     FIELD_GLOBAL_CONTEXT to f?.get(FIELD_GLOBAL_CONTEXT)?.stringValue,

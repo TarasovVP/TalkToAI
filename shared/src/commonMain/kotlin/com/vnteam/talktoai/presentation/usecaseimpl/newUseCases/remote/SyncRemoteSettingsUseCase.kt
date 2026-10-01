@@ -1,7 +1,7 @@
 package com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote
 
 import com.vnteam.talktoai.data.network.Result
-import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_AI_MODEL
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_AI_TIER
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_AI_PROVIDER
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_GLOBAL_CONTEXT
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
@@ -19,7 +19,7 @@ class SyncRemoteSettingsUseCase(
             val settings = result.data ?: return
             settings[FIELD_AI_PROVIDER]?.takeIf { it.isNotEmpty() }
                 ?.let { preferencesRepository.setAiProvider(it) }
-            settings[FIELD_AI_MODEL]?.takeIf { it.isNotEmpty() }
+            settings[FIELD_AI_TIER]?.takeIf { it.isNotEmpty() }
                 ?.let { preferencesRepository.setAiTier(it) }
             settings[FIELD_GLOBAL_CONTEXT]?.let { preferencesRepository.setGlobalSystemContext(it) }
         }

@@ -8,7 +8,7 @@ data class Chat(
     var name: String? = null,
     val updated: Long? = null,
     var listOrder: Long? = null,
-    val aiModel: String? = null,
+    val aiTier: String? = null,
     val temperature: Float? = null,
     val context: String? = null,
     val aiProvider: String? = null,

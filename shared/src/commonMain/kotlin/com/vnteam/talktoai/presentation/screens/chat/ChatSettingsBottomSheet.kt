@@ -59,9 +59,9 @@ fun ChatSettingsBottomSheet(
         ?: globalProvider.value
     val providerKey = if (chat.aiProvider == null) globalProvider.value else null
     val chatProvider = remember(chat.id, providerKey) { mutableStateOf(initialProvider) }
-    val validatedChatModel = chat.aiModel
+    val validatedChatModel = chat.aiTier
         ?.takeIf { id -> AiModels.forProvider(initialProvider).any { it.id == id } }
-        ?: chat.aiModel?.let { AiModels.balancedFor(initialProvider).id }
+        ?: chat.aiTier?.let { AiModels.balancedFor(initialProvider).id }
     val chatModel = remember(chat.id, providerKey) { mutableStateOf(validatedChatModel) }
     val providerDropdownExpanded = remember { mutableStateOf(false) }
     val dropdownExpanded = remember { mutableStateOf(false) }
@@ -74,7 +74,7 @@ fun ChatSettingsBottomSheet(
 
     val hasChanges = chatName.value != chat.name.orEmpty() ||
             chatContext.value != chat.context.orEmpty() ||
-            chatModel.value != chat.aiModel ||
+            chatModel.value != chat.aiTier ||
             chatProvider.value != initialProvider ||
             (currentModelSupportsTemperature && chatTemperature.value != (chat.temperature ?: 1.0f))
 
@@ -253,7 +253,7 @@ fun ChatSettingsBottomSheet(
                 val updatedChat = chat.copy(
                     name = chatName.value.takeIf { it.isNotBlank() } ?: chat.name,
                     context = chatContext.value.takeIf { it.isNotBlank() },
-                    aiModel = chatModel.value,
+                    aiTier = chatModel.value,
                     aiProvider = chatProvider.value.name,
                     temperature = if (currentModelSupportsTemperature) chatTemperature.value else null,
                 )

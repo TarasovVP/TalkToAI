@@ -3,6 +3,7 @@ package com.vnteam.talktoai.presentation.viewmodels.settings
 import com.vnteam.talktoai.CommonExtensions.EMPTY
 import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.data.network.Result
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants
 import com.vnteam.talktoai.domain.enums.AiProviderType
 import com.vnteam.talktoai.domain.models.AiModel
 import com.vnteam.talktoai.domain.models.AiModels
@@ -132,8 +133,8 @@ class SettingsChatViewModel(
             globalContextUseCase.set(_globalContext.value)
             val remoteResult = remoteStoreRepository.setRemoteSettings(
                 mapOf(
-                    "aiProvider" to _aiProvider.value.name,
-                    "aiModel" to _aiModel.value,
+                    FirestoreConstants.FIELD_AI_PROVIDER to _aiProvider.value.name,
+                    FirestoreConstants.FIELD_AI_TIER to _aiModel.value,
                     "globalContext" to _globalContext.value,
                 )
             ).firstOrNull()

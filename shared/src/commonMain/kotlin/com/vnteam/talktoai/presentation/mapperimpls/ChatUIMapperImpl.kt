@@ -14,7 +14,7 @@ class ChatUIMapperImpl : ChatUIMapper {
             name = from.name.orEmpty(),
             updated = from.updated.orZero(),
             listOrder = from.listOrder.orZero(),
-            aiModel = from.aiModel,
+            aiTier = from.aiTier,
             temperature = from.temperature,
             context = from.context,
             aiProvider = from.aiProvider
@@ -27,7 +27,7 @@ class ChatUIMapperImpl : ChatUIMapper {
             name = to.name,
             updated = to.updated,
             listOrder = to.listOrder,
-            aiModel = to.aiModel,
+            aiTier = to.aiTier,
             temperature = to.temperature,
             context = to.context,
             aiProvider = to.aiProvider
