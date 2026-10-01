@@ -8,7 +8,7 @@ object FirestoreConstants {
     const val FIELD_NAME = "name"
     const val FIELD_UPDATED = "updated"
     const val FIELD_LIST_ORDER = "listOrder"
-    const val FIELD_AI_MODEL = "aiModel"
+    const val FIELD_AI_TIER = "aiTier"
     const val FIELD_TEMPERATURE = "temperature"
     const val FIELD_CONTEXT = "context"
 

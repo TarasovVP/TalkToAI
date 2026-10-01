@@ -82,7 +82,7 @@ class ChatViewModel(
         AiModels.current,
     ) { chat, provider, model, _ ->
         val effectiveProvider = resolveEffectiveProvider(chat?.aiProvider, provider)
-        val effectiveModel = chat?.aiModel ?: model
+        val effectiveModel = chat?.aiTier ?: model
         val providerModels = AiModels.forProvider(effectiveProvider)
         providerModels.find { it.id == effectiveModel }?.supportsVision
             ?: providerModels.any { it.supportsVision }
@@ -230,7 +230,7 @@ class ChatViewModel(
             messageText = messageText,
             attachedImage = attachedImage,
             systemContext = combinedContext,
-            chatAiModel = currentChat?.aiModel,
+            chatAiModel = currentChat?.aiTier,
             chatTemperature = currentChat?.temperature,
             history = history,
         )
@@ -315,8 +315,8 @@ class ChatViewModel(
                                 fallbackHandled = true
                                 val currentChat = _currentChatLiveData.value
                                 val chatDomain = currentChat?.let { chatUIMapper.mapFromImplModel(it) }
-                                if (chatDomain?.aiModel == fallbackFrom) {
-                                    val updated = chatDomain.copy(aiModel = aiResponse.model)
+                                if (chatDomain?.aiTier == fallbackFrom) {
+                                    val updated = chatDomain.copy(aiTier = aiResponse.model)
                                     updateChatUseCase.execute(updated)
                                     _currentChatLiveData.value = chatUIMapper.mapToImplModel(updated)
                                 }

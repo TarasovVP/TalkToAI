@@ -40,10 +40,10 @@ class InsertChatUseCase(
     }
 
     private suspend fun Chat.withDefaultAiSettings(): Chat {
-        val model = aiModel ?: (
+        val tier = aiTier ?: (
                 aiTierUseCase.get().firstOrNull() as? Result.Success
                 )?.data?.takeIf { it.isNotBlank() } ?: SettingsConstants.OPENAI_AI_MODEL_DEFAULT
 
-        return copy(aiModel = model)
+        return copy(aiTier = tier)
     }
 }
