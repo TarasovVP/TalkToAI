@@ -1,6 +1,6 @@
 package com.vnteam.talktoai.data.repositoryimpl
 
-import com.vnteam.talktoai.data.AI_MODEL
+import com.vnteam.talktoai.data.AI_TIER
 import com.vnteam.talktoai.data.AI_MODELS_CACHE
 import com.vnteam.talktoai.data.AI_MODELS_FETCHED_AT
 import com.vnteam.talktoai.data.AI_PROVIDER
@@ -67,12 +67,12 @@ class PreferencesRepositoryImpl(private val preferencesFactory: PreferencesFacto
         preferencesFactory.putBoolean(IS_REVIEW_VOTE, isReviewVoted)
     }
 
-    override fun getAiModel(): Flow<String?> {
-        return preferencesFactory.getString(AI_MODEL)
+    override fun getAiTier(): Flow<String?> {
+        return preferencesFactory.getString(AI_TIER)
     }
 
-    override suspend fun setAiModel(model: String) {
-        preferencesFactory.putString(AI_MODEL, model)
+    override suspend fun setAiTier(tier: String) {
+        preferencesFactory.putString(AI_TIER, tier)
     }
 
     override fun getAiProvider(): Flow<String?> {

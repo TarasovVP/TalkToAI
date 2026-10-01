@@ -10,7 +10,7 @@ import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import com.vnteam.talktoai.domain.usecase.UseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.authorisation.TokenRefreshManager
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiTierUseCase
 import com.vnteam.talktoai.utils.NetworkState
 import kotlinx.coroutines.flow.firstOrNull
 
@@ -19,7 +19,7 @@ class InsertChatUseCase(
     private val preferencesRepository: PreferencesRepository,
     private val chatRepository: ChatRepository,
     private val remoteStoreRepository: RemoteStoreRepository,
-    private val aiModelUseCase: AiModelUseCase,
+    private val aiTierUseCase: AiTierUseCase,
     private val tokenRefreshManager: TokenRefreshManager,
 ) : UseCase<Chat, Result<Chat>> {
 
@@ -41,7 +41,7 @@ class InsertChatUseCase(
 
     private suspend fun Chat.withDefaultAiSettings(): Chat {
         val model = aiModel ?: (
-                aiModelUseCase.get().firstOrNull() as? Result.Success
+                aiTierUseCase.get().firstOrNull() as? Result.Success
                 )?.data?.takeIf { it.isNotBlank() } ?: SettingsConstants.OPENAI_AI_MODEL_DEFAULT
 
         return copy(aiModel = model)

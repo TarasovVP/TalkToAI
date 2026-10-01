@@ -8,7 +8,7 @@ import com.vnteam.talktoai.domain.models.AiModel
 import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteSettingsUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiTierUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiProviderUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GlobalContextUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.OnboardingUseCase
@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.firstOrNull
 class SettingsChatViewModel(
     private val onboardingUseCase: OnboardingUseCase,
     private val userEmailUseCase: UserEmailUseCase,
-    private val aiModelUseCase: AiModelUseCase,
+    private val aiTierUseCase: AiTierUseCase,
     private val aiProviderUseCase: AiProviderUseCase,
     private val globalContextUseCase: GlobalContextUseCase,
     private val remoteStoreRepository: RemoteStoreRepository,
@@ -84,7 +84,7 @@ class SettingsChatViewModel(
             }
         }
         launchWithErrorHandling {
-            aiModelUseCase.get().collect { result ->
+            aiTierUseCase.get().collect { result ->
                 if (result is Result.Success) {
                     val saved = result.data?.takeIf { it.isNotEmpty() } ?: return@collect
                     val providerModels = AiModels.forProvider(_aiProvider.value)
@@ -128,7 +128,7 @@ class SettingsChatViewModel(
     fun saveSettings() {
         launchWithErrorHandling {
             aiProviderUseCase.set(_aiProvider.value.name)
-            aiModelUseCase.set(_aiModel.value)
+            aiTierUseCase.set(_aiModel.value)
             globalContextUseCase.set(_globalContext.value)
             val remoteResult = remoteStoreRepository.setRemoteSettings(
                 mapOf(

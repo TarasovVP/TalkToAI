@@ -6,12 +6,12 @@ import com.vnteam.talktoai.domain.repositories.PreferencesRepository
 import com.vnteam.talktoai.domain.usecase.DataUseCase
 import kotlinx.coroutines.flow.Flow
 
-class AiModelUseCase(private val preferencesRepository: PreferencesRepository) :
+class AiTierUseCase(private val preferencesRepository: PreferencesRepository) :
     DataUseCase<String, Flow<Result<String?>>> {
 
-    override fun get() = preferencesRepository.getAiModel().asPreferenceResult()
+    override fun get() = preferencesRepository.getAiTier().asPreferenceResult()
 
     override suspend fun set(params: String) {
-        preferencesRepository.setAiModel(params)
+        preferencesRepository.setAiTier(params)
     }
 }

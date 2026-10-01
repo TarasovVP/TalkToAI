@@ -2,7 +2,7 @@ package com.vnteam.talktoai.di
 
 import com.vnteam.talktoai.data.repositoryimpl.PreferencesRepositoryImpl
 import com.vnteam.talktoai.domain.repositories.PreferencesRepository
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiTierUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiProviderUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GlobalContextUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.IdTokenUseCase
@@ -31,7 +31,7 @@ val settingsModule = module {
 
     single { IdTokenUseCase(get()) }
 
-    single { AiModelUseCase(get()) }
+    single { AiTierUseCase(get()) }
 
     single { AiProviderUseCase(get()) }
 

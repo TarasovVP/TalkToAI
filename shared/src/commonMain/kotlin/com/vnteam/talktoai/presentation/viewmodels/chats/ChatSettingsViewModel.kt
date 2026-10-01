@@ -7,7 +7,7 @@ import com.vnteam.talktoai.domain.aimodels.lastAssistantInputTokens
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.UpdateChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMessagesFromChatUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiTierUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiProviderUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class ChatSettingsViewModel(
     private val updateChatUseCase: UpdateChatUseCase,
-    private val aiModelUseCase: AiModelUseCase,
+    private val aiTierUseCase: AiTierUseCase,
     private val aiProviderUseCase: AiProviderUseCase,
     private val getMessagesFromChatUseCase: GetMessagesFromChatUseCase,
 ) : BaseViewModel() {
@@ -40,7 +40,7 @@ class ChatSettingsViewModel(
 
     private fun loadGlobalSettings() {
         launchWithErrorHandling {
-            aiModelUseCase.get().collect { result ->
+            aiTierUseCase.get().collect { result ->
                 if (result is Result.Success) {
                     result.data?.takeIf { it.isNotEmpty() }?.let {
                         _globalAiModel.value = it
