@@ -14,7 +14,7 @@ class ChatDBMapperImpl : ChatDBMapper {
             name = from.name.orEmpty(),
             updated = from.updated.orZero(),
             listOrder = from.listOrder.orZero(),
-            aiModel = from.aiTier,
+            aiTier = from.aiTier,
             temperature = from.temperature?.toDouble(),
             context = from.context,
             aiProvider = from.aiProvider
@@ -27,7 +27,7 @@ class ChatDBMapperImpl : ChatDBMapper {
             name = to.name,
             updated = to.updated,
             listOrder = to.listOrder,
-            aiTier = to.aiModel,
+            aiTier = to.aiTier,
             temperature = to.temperature?.toFloat(),
             context = to.context,
             aiProvider = to.aiProvider

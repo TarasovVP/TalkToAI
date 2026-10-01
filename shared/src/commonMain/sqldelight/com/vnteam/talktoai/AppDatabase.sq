@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS ChatDB (
     name TEXT NOT NULL,
     updated INTEGER NOT NULL,
     listOrder INTEGER NOT NULL,
-    aiModel TEXT,
+    aiTier TEXT,
     temperature REAL,
     context TEXT,
     aiProvider TEXT
@@ -16,11 +16,11 @@ deleteChats:
 DELETE FROM ChatDB WHERE id NOT IN (?);
 
 insertChats:
-INSERT OR REPLACE INTO ChatDB (id, name, updated, listOrder, aiModel, temperature, context, aiProvider)
+INSERT OR REPLACE INTO ChatDB (id, name, updated, listOrder, aiTier, temperature, context, aiProvider)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 insertChat:
-INSERT OR REPLACE INTO ChatDB (id, name, updated, listOrder, aiModel, temperature, context, aiProvider)
+INSERT OR REPLACE INTO ChatDB (id, name, updated, listOrder, aiTier, temperature, context, aiProvider)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 getChats:
@@ -33,11 +33,11 @@ getLastUpdatedChat:
 SELECT * FROM ChatDB ORDER BY updated DESC LIMIT 1;
 
 updateChat:
-UPDATE ChatDB SET name = ?, updated = ?, listOrder = ?, aiModel = ?, temperature = ?, context = ?, aiProvider = ? WHERE id = ?;
+UPDATE ChatDB SET name = ?, updated = ?, listOrder = ?, aiTier = ?, temperature = ?, context = ?, aiProvider = ? WHERE id = ?;
 
 updateChats:
 UPDATE ChatDB
-SET id = ?, name = ?, updated = ?, listOrder = ?, aiModel = ?, temperature = ?, context = ?, aiProvider = ?
+SET id = ?, name = ?, updated = ?, listOrder = ?, aiTier = ?, temperature = ?, context = ?, aiProvider = ?
 WHERE id = ?;
 
 deleteChatById:

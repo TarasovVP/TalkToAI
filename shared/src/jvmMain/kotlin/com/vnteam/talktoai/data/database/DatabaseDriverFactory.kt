@@ -30,6 +30,7 @@ actual class DatabaseDriverFactory {
             "ALTER TABLE ChatDB ADD COLUMN temperature REAL",
             "ALTER TABLE ChatDB ADD COLUMN context TEXT",
             "ALTER TABLE ChatDB ADD COLUMN aiProvider TEXT",
+            "ALTER TABLE ChatDB RENAME COLUMN aiModel TO aiTier",
             "ALTER TABLE MessageDB ADD COLUMN contentJson TEXT",
             "ALTER TABLE MessageDB ADD COLUMN isComplete INTEGER",
             "ALTER TABLE MessageDB ADD COLUMN inputTokens INTEGER",
