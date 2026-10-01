@@ -28,9 +28,9 @@ interface PreferencesRepository {
 
     suspend fun setReviewVoted(isReviewVoted: Boolean)
 
-    fun getAiModel(): Flow<String?>
+    fun getAiTier(): Flow<String?>
 
-    suspend fun setAiModel(model: String)
+    suspend fun setAiTier(tier: String)
 
     fun getAiProvider(): Flow<String?>
 

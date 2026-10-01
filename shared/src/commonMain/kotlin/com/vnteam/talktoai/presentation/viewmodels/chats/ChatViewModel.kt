@@ -27,7 +27,7 @@ import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.UpdateChat
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.DeleteMessagesUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMessagesFromChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.InsertMessageUseCase
-import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiModelUseCase
+import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiTierUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiProviderUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.GlobalContextUseCase
 import com.vnteam.talktoai.presentation.viewmodels.BaseViewModel
@@ -58,7 +58,7 @@ class ChatViewModel(
     private val insertMessageUseCase: InsertMessageUseCase,
     private val sendRequestUseCase: SendRequestUseCase,
     private val updateChatUseCase: UpdateChatUseCase,
-    private val aiModelUseCase: AiModelUseCase,
+    private val aiTierUseCase: AiTierUseCase,
     private val aiProviderUseCase: AiProviderUseCase,
     private val globalContextUseCase: GlobalContextUseCase,
 ) : BaseViewModel() {
@@ -99,7 +99,7 @@ class ChatViewModel(
 
     init {
         launchWithErrorHandling {
-            aiModelUseCase.get().firstOrNull()?.let { result ->
+            aiTierUseCase.get().firstOrNull()?.let { result ->
                 if (result is Result.Success && !result.data.isNullOrEmpty()) {
                     _aiModel.value = result.data!!
                 }

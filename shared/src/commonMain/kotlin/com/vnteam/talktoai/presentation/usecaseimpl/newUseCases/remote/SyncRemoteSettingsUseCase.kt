@@ -20,7 +20,7 @@ class SyncRemoteSettingsUseCase(
             settings[FIELD_AI_PROVIDER]?.takeIf { it.isNotEmpty() }
                 ?.let { preferencesRepository.setAiProvider(it) }
             settings[FIELD_AI_MODEL]?.takeIf { it.isNotEmpty() }
-                ?.let { preferencesRepository.setAiModel(it) }
+                ?.let { preferencesRepository.setAiTier(it) }
             settings[FIELD_GLOBAL_CONTEXT]?.let { preferencesRepository.setGlobalSystemContext(it) }
         }
     }
