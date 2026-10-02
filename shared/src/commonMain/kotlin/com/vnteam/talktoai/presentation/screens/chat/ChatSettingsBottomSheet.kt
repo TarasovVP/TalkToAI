@@ -32,7 +32,9 @@ import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.presentation.ui.components.ChatSheetWrapper
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
+import com.vnteam.talktoai.domain.models.parseTier
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.ui.resources.labelFor
 import com.vnteam.talktoai.presentation.viewmodels.chats.ChatSettingsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -45,7 +47,7 @@ fun ChatSettingsBottomSheet(
 ) {
     val viewModel: ChatSettingsViewModel = koinViewModel()
     val stringRes = LocalStringResources.current
-    val globalAiModel = viewModel.globalAiModel.collectAsState()
+    val globalAiTier = viewModel.globalAiTier.collectAsState()
     val globalProvider = viewModel.globalProvider.collectAsState()
     AiModels.current.collectAsState()
     val contextTokens = viewModel.contextTokens.collectAsState()
@@ -59,22 +61,19 @@ fun ChatSettingsBottomSheet(
         ?: globalProvider.value
     val providerKey = if (chat.aiProvider == null) globalProvider.value else null
     val chatProvider = remember(chat.id, providerKey) { mutableStateOf(initialProvider) }
-    val validatedChatModel = chat.aiTier
-        ?.takeIf { id -> AiModels.forProvider(initialProvider).any { it.id == id } }
-        ?: chat.aiTier?.let { AiModels.balancedFor(initialProvider).id }
-    val chatModel = remember(chat.id, providerKey) { mutableStateOf(validatedChatModel) }
+    val chatTier = remember(chat.id, providerKey) { mutableStateOf(chat.aiTier?.let { parseTier(it) }) }
     val providerDropdownExpanded = remember { mutableStateOf(false) }
     val dropdownExpanded = remember { mutableStateOf(false) }
 
     val sameProviderAsGlobal = chatProvider.value == globalProvider.value
-    val effectiveModel = chatModel.value ?: if (sameProviderAsGlobal) globalAiModel.value else AiModels.balancedFor(chatProvider.value).id
-    val hasOverride = !sameProviderAsGlobal || (chatModel.value != null && chatModel.value != globalAiModel.value)
-    val currentModelSupportsTemperature = AiModels.forProvider(chatProvider.value)
-        .find { it.id == effectiveModel }?.supportsTemperature == true
+    val effectiveTier = chatTier.value ?: if (sameProviderAsGlobal) globalAiTier.value else ModelTier.BALANCED
+    val resolvedModel = AiModels.resolve(chatProvider.value, effectiveTier)
+    val hasOverride = !sameProviderAsGlobal || (chatTier.value != null && chatTier.value != globalAiTier.value)
+    val currentModelSupportsTemperature = resolvedModel?.supportsTemperature == true
 
     val hasChanges = chatName.value != chat.name.orEmpty() ||
             chatContext.value != chat.context.orEmpty() ||
-            chatModel.value != chat.aiTier ||
+            chatTier.value?.name != chat.aiTier ||
             chatProvider.value != initialProvider ||
             (currentModelSupportsTemperature && chatTemperature.value != (chat.temperature ?: 1.0f))
 
@@ -148,10 +147,7 @@ fun ChatSettingsBottomSheet(
                         DropdownMenuItem(
                             text = { Text(text = providerLabel, color = fieldContentColor) },
                             onClick = {
-                                if (chatProvider.value != provider) {
-                                    chatProvider.value = provider
-                                    chatModel.value = AiModels.balancedFor(provider).id
-                                }
+                                chatProvider.value = provider
                                 providerDropdownExpanded.value = false
                             }
                         )
@@ -167,19 +163,17 @@ fun ChatSettingsBottomSheet(
             ExposedDropdownMenuBox(
                 expanded = dropdownExpanded.value,
                 onExpandedChange = { dropdownExpanded.value = it },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
             ) {
-                val providerModels = AiModels.forProvider(chatProvider.value)
-                val effectiveModelName = providerModels.find { it.id == effectiveModel }?.displayName ?: effectiveModel
-                val displayModel = if (chatModel.value == null) {
-                    "$effectiveModelName (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})"
-                } else {
-                    effectiveModelName
-                }
                 val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
                 val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                val displayTier = if (chatTier.value == null) {
+                    "${stringRes.labelFor(effectiveTier)} (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})"
+                } else {
+                    stringRes.labelFor(effectiveTier)
+                }
                 OutlinedTextField(
-                    value = displayModel,
+                    value = displayTier,
                     onValueChange = {},
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownExpanded.value) },
@@ -194,13 +188,13 @@ fun ChatSettingsBottomSheet(
                     expanded = dropdownExpanded.value,
                     onDismissRequest = { dropdownExpanded.value = false }
                 ) {
-                    providerModels.forEach { model ->
-                        val isGlobalModel = sameProviderAsGlobal && model.id == globalAiModel.value
-                        val label = if (isGlobalModel) "${model.displayName} (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})" else model.displayName
+                    ModelTier.entries.forEach { tier ->
+                        val isGlobalTier = sameProviderAsGlobal && tier == globalAiTier.value
+                        val label = if (isGlobalTier) "${stringRes.labelFor(tier)} (${stringRes.CHAT_SETTINGS_GLOBAL_LABEL})" else stringRes.labelFor(tier)
                         DropdownMenuItem(
                             text = { Text(text = label, color = fieldContentColor) },
                             onClick = {
-                                chatModel.value = model.id
+                                chatTier.value = tier
                                 dropdownExpanded.value = false
                             }
                         )
@@ -208,8 +202,14 @@ fun ChatSettingsBottomSheet(
                 }
             }
 
+            Text(
+                text = "${stringRes.CHAT_SETTINGS_RESOLVED_MODEL_LABEL}: ${resolvedModel?.displayName ?: stringRes.CHAT_SETTINGS_NO_MODEL_AVAILABLE}",
+                fontSize = 12.sp,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
             contextTokens.value?.let { used ->
-                val window = AiModels.find(chatProvider.value, effectiveModel)?.contextWindow ?: 0
+                val window = resolvedModel?.contextWindow ?: 0
                 Text(
                     text = "${stringRes.CHAT_SETTINGS_CONTEXT_LABEL}: ${formatContextUsage(used, window)}",
                     fontSize = 12.sp,
@@ -221,7 +221,7 @@ fun ChatSettingsBottomSheet(
                 TextButton(
                     onClick = {
                         chatProvider.value = globalProvider.value
-                        chatModel.value = null
+                        chatTier.value = null
                     },
                     modifier = Modifier.padding(bottom = 8.dp)
                 ) {
@@ -253,7 +253,7 @@ fun ChatSettingsBottomSheet(
                 val updatedChat = chat.copy(
                     name = chatName.value.takeIf { it.isNotBlank() } ?: chat.name,
                     context = chatContext.value.takeIf { it.isNotBlank() },
-                    aiTier = chatModel.value,
+                    aiTier = chatTier.value?.name,
                     aiProvider = chatProvider.value.name,
                     temperature = if (currentModelSupportsTemperature) chatTemperature.value else null,
                 )
