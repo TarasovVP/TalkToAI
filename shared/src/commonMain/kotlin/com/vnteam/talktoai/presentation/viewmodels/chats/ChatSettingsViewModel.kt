@@ -1,10 +1,11 @@
 package com.vnteam.talktoai.presentation.viewmodels.chats
 
 import com.vnteam.talktoai.domain.enums.AiProviderType
-import com.vnteam.talktoai.domain.models.AiModels
+import com.vnteam.talktoai.domain.enums.ModelTier
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.domain.aimodels.lastAssistantInputTokens
 import com.vnteam.talktoai.domain.models.Chat
+import com.vnteam.talktoai.domain.models.parseTier
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats.UpdateChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.messages.GetMessagesFromChatUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiTierUseCase
@@ -22,8 +23,8 @@ class ChatSettingsViewModel(
     private val getMessagesFromChatUseCase: GetMessagesFromChatUseCase,
 ) : BaseViewModel() {
 
-    private val _globalAiModel = MutableStateFlow(AiModels.balancedFor(AiProviderType.OPENAI).id)
-    val globalAiModel = _globalAiModel.asStateFlow()
+    private val _globalAiTier = MutableStateFlow(ModelTier.BALANCED)
+    val globalAiTier = _globalAiTier.asStateFlow()
 
     private val _globalProvider = MutableStateFlow(AiProviderType.OPENAI)
     val globalProvider = _globalProvider.asStateFlow()
@@ -43,7 +44,7 @@ class ChatSettingsViewModel(
             aiTierUseCase.get().collect { result ->
                 if (result is Result.Success) {
                     result.data?.takeIf { it.isNotEmpty() }?.let {
-                        _globalAiModel.value = it
+                        _globalAiTier.value = parseTier(it)
                     }
                 }
             }

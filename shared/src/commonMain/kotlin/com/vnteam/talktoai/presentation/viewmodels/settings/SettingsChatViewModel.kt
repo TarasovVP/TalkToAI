@@ -5,8 +5,7 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants
 import com.vnteam.talktoai.domain.enums.AiProviderType
 import com.vnteam.talktoai.domain.enums.ModelTier
-import com.vnteam.talktoai.domain.models.AiModel
-import com.vnteam.talktoai.domain.models.AiModels
+import com.vnteam.talktoai.domain.models.parseTier
 import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote.SyncRemoteSettingsUseCase
 import com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.settings.AiTierUseCase
@@ -34,14 +33,11 @@ class SettingsChatViewModel(
     private val _aiProvider = MutableStateFlow(AiProviderType.OPENAI)
     val aiProvider = _aiProvider.asStateFlow()
 
-    private val _aiModel = MutableStateFlow(ModelTier.BALANCED.name)
-    val aiModel = _aiModel.asStateFlow()
+    private val _aiTier = MutableStateFlow(ModelTier.BALANCED)
+    val aiTier = _aiTier.asStateFlow()
 
     private val _settingsSaved = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val settingsSaved = _settingsSaved.asSharedFlow()
-
-    private val _availableModels = MutableStateFlow<List<AiModel>>(AiModels.OPENAI)
-    val availableModels = _availableModels.asStateFlow()
 
     private val _hasChanges = MutableStateFlow(false)
     val hasChanges = _hasChanges.asStateFlow()
@@ -50,7 +46,7 @@ class SettingsChatViewModel(
     val globalContext = _globalContext.asStateFlow()
 
     private var initialAiProvider = AiProviderType.OPENAI
-    private var initialAiModel = ModelTier.BALANCED.name
+    private var initialAiTier = ModelTier.BALANCED
     private var initialGlobalContext = String.EMPTY
 
     init {
@@ -59,7 +55,7 @@ class SettingsChatViewModel(
 
     private fun updateHasChanges() {
         _hasChanges.value = _aiProvider.value != initialAiProvider ||
-                _aiModel.value != initialAiModel ||
+                _aiTier.value != initialAiTier ||
                 _globalContext.value != initialGlobalContext
     }
 
@@ -68,18 +64,12 @@ class SettingsChatViewModel(
             syncRemoteSettingsUseCase.execute()
         }
         launchWithErrorHandling {
-            AiModels.current.collect {
-                _availableModels.value = AiModels.forProvider(_aiProvider.value)
-            }
-        }
-        launchWithErrorHandling {
             aiProviderUseCase.get().collect { result ->
                 if (result is Result.Success) {
                     val saved = result.data?.takeIf { it.isNotEmpty() } ?: return@collect
                     val provider = runCatching { AiProviderType.valueOf(saved) }.getOrNull() ?: AiProviderType.OPENAI
                     _aiProvider.value = provider
                     initialAiProvider = provider
-                    _availableModels.value = AiModels.forProvider(provider)
                     updateHasChanges()
                 }
             }
@@ -88,11 +78,9 @@ class SettingsChatViewModel(
             aiTierUseCase.get().collect { result ->
                 if (result is Result.Success) {
                     val saved = result.data?.takeIf { it.isNotEmpty() } ?: return@collect
-                    val providerModels = AiModels.forProvider(_aiProvider.value)
-                    val validated = if (providerModels.any { it.id == saved }) saved
-                    else AiModels.balancedFor(_aiProvider.value).id
-                    _aiModel.value = validated
-                    initialAiModel = validated
+                    val tier = parseTier(saved)
+                    _aiTier.value = tier
+                    initialAiTier = tier
                     updateHasChanges()
                 }
             }
@@ -111,13 +99,11 @@ class SettingsChatViewModel(
 
     fun onProviderSelected(provider: AiProviderType) {
         _aiProvider.value = provider
-        _availableModels.value = AiModels.forProvider(provider)
-        _aiModel.value = AiModels.balancedFor(provider).id
         updateHasChanges()
     }
 
-    fun onModelSelected(model: String) {
-        _aiModel.value = model
+    fun onTierSelected(tier: ModelTier) {
+        _aiTier.value = tier
         updateHasChanges()
     }
 
@@ -129,12 +115,12 @@ class SettingsChatViewModel(
     fun saveSettings() {
         launchWithErrorHandling {
             aiProviderUseCase.set(_aiProvider.value.name)
-            aiTierUseCase.set(_aiModel.value)
+            aiTierUseCase.set(_aiTier.value.name)
             globalContextUseCase.set(_globalContext.value)
             val remoteResult = remoteStoreRepository.setRemoteSettings(
                 mapOf(
                     FirestoreConstants.FIELD_AI_PROVIDER to _aiProvider.value.name,
-                    FirestoreConstants.FIELD_AI_TIER to _aiModel.value,
+                    FirestoreConstants.FIELD_AI_TIER to _aiTier.value.name,
                     "globalContext" to _globalContext.value,
                 )
             ).firstOrNull()
@@ -144,7 +130,7 @@ class SettingsChatViewModel(
                 remoteResult.errorMessage?.takeIf { it.isNotEmpty() }?.let { showMessage(it) }
             }
             initialAiProvider = _aiProvider.value
-            initialAiModel = _aiModel.value
+            initialAiTier = _aiTier.value
             initialGlobalContext = _globalContext.value
             _hasChanges.value = false
             _settingsSaved.emit(Unit)
