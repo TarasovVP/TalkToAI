@@ -1,10 +1,10 @@
 package com.vnteam.talktoai.presentation.viewmodels.settings
 
 import com.vnteam.talktoai.CommonExtensions.EMPTY
-import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants
 import com.vnteam.talktoai.domain.enums.AiProviderType
+import com.vnteam.talktoai.domain.enums.ModelTier
 import com.vnteam.talktoai.domain.models.AiModel
 import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.repositories.RemoteStoreRepository
@@ -34,7 +34,7 @@ class SettingsChatViewModel(
     private val _aiProvider = MutableStateFlow(AiProviderType.OPENAI)
     val aiProvider = _aiProvider.asStateFlow()
 
-    private val _aiModel = MutableStateFlow(SettingsConstants.OPENAI_AI_MODEL_DEFAULT)
+    private val _aiModel = MutableStateFlow(ModelTier.BALANCED.name)
     val aiModel = _aiModel.asStateFlow()
 
     private val _settingsSaved = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
@@ -50,7 +50,7 @@ class SettingsChatViewModel(
     val globalContext = _globalContext.asStateFlow()
 
     private var initialAiProvider = AiProviderType.OPENAI
-    private var initialAiModel = SettingsConstants.OPENAI_AI_MODEL_DEFAULT
+    private var initialAiModel = ModelTier.BALANCED.name
     private var initialGlobalContext = String.EMPTY
 
     init {

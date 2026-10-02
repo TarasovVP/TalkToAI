@@ -3,7 +3,6 @@ package com.vnteam.talktoai.presentation.viewmodels.chats
 import androidx.lifecycle.viewModelScope
 import com.vnteam.talktoai.Constants
 import com.vnteam.talktoai.Res
-import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.UNKNOWN_ERROR
 import com.vnteam.talktoai.data.network.ai.TokenUsage
@@ -11,12 +10,13 @@ import com.vnteam.talktoai.data.network.onSuccess
 import com.vnteam.talktoai.dateToMilliseconds
 import com.vnteam.talktoai.domain.enums.AiProviderType
 import com.vnteam.talktoai.domain.enums.MessageStatus
+import com.vnteam.talktoai.domain.enums.ModelTier
 import com.vnteam.talktoai.domain.mappers.ChatUIMapper
 import com.vnteam.talktoai.domain.mappers.MessageUIMapper
 import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.models.MessageContent
-import com.vnteam.talktoai.domain.models.AiModel
+import com.vnteam.talktoai.domain.models.parseTier
 import com.vnteam.talktoai.domain.models.resolveEffectiveProvider
 import com.vnteam.talktoai.presentation.uimodels.ChatUI
 import com.vnteam.talktoai.presentation.uimodels.MessageUI
@@ -71,27 +71,23 @@ class ChatViewModel(
     val messagesLiveData = _messagesLiveData.asStateFlow()
     private val _animationResource = MutableStateFlow("")
     val animationResource = _animationResource.asStateFlow()
-    private val _aiModel = MutableStateFlow(SettingsConstants.OPENAI_AI_MODEL_DEFAULT)
+    private val _aiTier = MutableStateFlow(ModelTier.BALANCED)
     private val _globalProvider = MutableStateFlow(AiProviderType.OPENAI)
     private val _globalContext = MutableStateFlow<String?>(null)
 
     val supportsVision: StateFlow<Boolean> = combine(
         _currentChatLiveData,
         _globalProvider,
-        _aiModel,
+        _aiTier,
         AiModels.current,
-    ) { chat, provider, model, _ ->
+    ) { chat, provider, tier, _ ->
         val effectiveProvider = resolveEffectiveProvider(chat?.aiProvider, provider)
-        val effectiveModel = chat?.aiTier ?: model
-        val providerModels = AiModels.forProvider(effectiveProvider)
-        providerModels.find { it.id == effectiveModel }?.supportsVision
-            ?: providerModels.any { it.supportsVision }
+        val effectiveTier = chat?.aiTier?.let { parseTier(it) } ?: tier
+        AiModels.resolve(effectiveProvider, effectiveTier)?.supportsVision ?: false
     }.stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
-        AiModels.forProvider(_globalProvider.value).let { models ->
-            models.find { it.id == _aiModel.value }?.supportsVision ?: models.any { it.supportsVision }
-        },
+        AiModels.resolve(_globalProvider.value, _aiTier.value)?.supportsVision ?: false,
     )
 
     private val _modelFallback = MutableSharedFlow<Pair<String, String>>(extraBufferCapacity = 1)
@@ -101,7 +97,7 @@ class ChatViewModel(
         launchWithErrorHandling {
             aiTierUseCase.get().firstOrNull()?.let { result ->
                 if (result is Result.Success && !result.data.isNullOrEmpty()) {
-                    _aiModel.value = result.data!!
+                    _aiTier.value = parseTier(result.data)
                 }
             }
         }
@@ -230,7 +226,7 @@ class ChatViewModel(
             messageText = messageText,
             attachedImage = attachedImage,
             systemContext = combinedContext,
-            chatAiModel = currentChat?.aiTier,
+            chatAiTier = currentChat?.aiTier,
             chatTemperature = currentChat?.temperature,
             history = history,
         )
@@ -241,17 +237,25 @@ class ChatViewModel(
         messageText: String,
         attachedImage: MessageContent.Image?,
         systemContext: String?,
-        chatAiModel: String?,
+        chatAiTier: String?,
         chatTemperature: Float?,
         history: List<MessageUI>,
     ) {
         val providerType = resolveEffectiveProvider(_currentChatLiveData.value?.aiProvider, _globalProvider.value)
-        val model = (chatAiModel ?: _aiModel.value)
-            .takeIf { id -> AiModels.forProvider(providerType).any { it.id == id } }
-            ?: AiModels.balancedFor(providerType).id
-        val selectedModel = AiModels.find(providerType, model)
-        val maxOutputTokens = selectedModel?.maxOutputTokens ?: AiModel.DEFAULT_MAX_OUTPUT_TOKENS
-        val contextWindow = selectedModel?.contextWindow?.takeIf { it > 0 } ?: FALLBACK_CONTEXT_WINDOW
+        val tier = chatAiTier?.let { parseTier(it) } ?: _aiTier.value
+        val selectedModel = AiModels.resolve(providerType, tier)
+        if (selectedModel == null) {
+            insertMessage(
+                temporaryMessage.copy(
+                    status = MessageStatus.ERROR,
+                    errorMessage = "No AI model is available for $providerType right now.",
+                )
+            )
+            return
+        }
+        val model = selectedModel.id
+        val maxOutputTokens = selectedModel.maxOutputTokens
+        val contextWindow = selectedModel.contextWindow.takeIf { it > 0 } ?: FALLBACK_CONTEXT_WINDOW
         val historyBudget = ((contextWindow * CONTEXT_WINDOW_FILL_RATIO).toInt() - maxOutputTokens).coerceAtLeast(0)
         var remainingTokens = historyBudget -
                 estimateTokens(systemContext.orEmpty()) -
@@ -282,13 +286,10 @@ class ChatViewModel(
             }
             add(AiMessage(role = Constants.MESSAGE_ROLE_USER, content = userContent))
         }
-        val supportsTemperature = selectedModel?.supportsTemperature ?: false
+        val supportsTemperature = selectedModel.supportsTemperature
         val temperature = if (supportsTemperature) chatTemperature else null
         launchWithErrorHandling {
-            val providerModels = AiModels.forProvider(providerType)
-            val modelSupportsVision = providerModels.find { it.id == model }?.supportsVision
-                ?: providerModels.any { it.supportsVision }
-            if (attachedImage != null && !modelSupportsVision) {
+            if (attachedImage != null && !selectedModel.supportsVision) {
                 insertMessage(
                     temporaryMessage.copy(
                         status = MessageStatus.ERROR,
@@ -315,8 +316,8 @@ class ChatViewModel(
                                 fallbackHandled = true
                                 val currentChat = _currentChatLiveData.value
                                 val chatDomain = currentChat?.let { chatUIMapper.mapFromImplModel(it) }
-                                if (chatDomain?.aiTier == fallbackFrom) {
-                                    val updated = chatDomain.copy(aiTier = aiResponse.model)
+                                if (chatDomain != null) {
+                                    val updated = chatDomain.copy(aiTier = ModelTier.BALANCED.name)
                                     updateChatUseCase.execute(updated)
                                     _currentChatLiveData.value = chatUIMapper.mapToImplModel(updated)
                                 }

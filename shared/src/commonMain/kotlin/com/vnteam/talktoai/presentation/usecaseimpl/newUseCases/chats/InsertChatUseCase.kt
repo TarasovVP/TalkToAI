@@ -1,8 +1,8 @@
 package com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.chats
 
 import com.vnteam.talktoai.CommonExtensions.getUserAuth
-import com.vnteam.talktoai.SettingsConstants
 import com.vnteam.talktoai.data.network.Result
+import com.vnteam.talktoai.domain.enums.ModelTier
 import com.vnteam.talktoai.domain.enums.isAuthorisedUser
 import com.vnteam.talktoai.domain.models.Chat
 import com.vnteam.talktoai.domain.repositories.ChatRepository
@@ -42,7 +42,7 @@ class InsertChatUseCase(
     private suspend fun Chat.withDefaultAiSettings(): Chat {
         val tier = aiTier ?: (
                 aiTierUseCase.get().firstOrNull() as? Result.Success
-                )?.data?.takeIf { it.isNotBlank() } ?: SettingsConstants.OPENAI_AI_MODEL_DEFAULT
+                )?.data?.takeIf { it.isNotBlank() } ?: ModelTier.BALANCED.name
 
         return copy(aiTier = tier)
     }
