@@ -22,10 +22,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vnteam.talktoai.domain.enums.AiProviderType
+import com.vnteam.talktoai.domain.enums.ModelTier
+import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.presentation.LocalScreenState
 import com.vnteam.talktoai.presentation.ui.components.PrimaryButton
 import com.vnteam.talktoai.presentation.ui.resources.LocalStringResources
+import com.vnteam.talktoai.presentation.ui.resources.labelFor
 import com.vnteam.talktoai.presentation.uimodels.screen.AppMessage
 import com.vnteam.talktoai.presentation.updateScreenState
 import com.vnteam.talktoai.presentation.viewmodels.settings.SettingsChatViewModel
@@ -40,8 +44,7 @@ fun SettingsChatContent() {
 
     val stringRes = LocalStringResources.current
     val aiProvider = viewModel.aiProvider.collectAsState()
-    val aiModel = viewModel.aiModel.collectAsState()
-    val availableModels = viewModel.availableModels.collectAsState()
+    val aiTier = viewModel.aiTier.collectAsState()
     val hasChanges = viewModel.hasChanges.collectAsState()
     val globalContext = viewModel.globalContext.collectAsState()
 
@@ -113,13 +116,12 @@ fun SettingsChatContent() {
         ExposedDropdownMenuBox(
             expanded = dropdownExpanded.value,
             onExpandedChange = { dropdownExpanded.value = it },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
         ) {
             val fieldContainerColor = MaterialTheme.colorScheme.tertiaryContainer
             val fieldContentColor = MaterialTheme.colorScheme.onTertiaryContainer
-            val displayedModelName = availableModels.value.find { it.id == aiModel.value }?.displayName ?: aiModel.value
             OutlinedTextField(
-                value = displayedModelName,
+                value = stringRes.labelFor(aiTier.value),
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownExpanded.value) },
@@ -134,17 +136,25 @@ fun SettingsChatContent() {
                 expanded = dropdownExpanded.value,
                 onDismissRequest = { dropdownExpanded.value = false }
             ) {
-                availableModels.value.forEach { model ->
+                ModelTier.entries.forEach { tier ->
                     DropdownMenuItem(
-                        text = { Text(text = model.displayName, color = fieldContentColor) },
+                        text = { Text(text = stringRes.labelFor(tier), color = fieldContentColor) },
                         onClick = {
-                            viewModel.onModelSelected(model.id)
+                            viewModel.onTierSelected(tier)
                             dropdownExpanded.value = false
                         }
                     )
                 }
             }
         }
+
+        val resolvedModelName = AiModels.resolve(aiProvider.value, aiTier.value)?.displayName
+            ?: stringRes.CHAT_SETTINGS_NO_MODEL_AVAILABLE
+        Text(
+            text = "${stringRes.CHAT_SETTINGS_RESOLVED_MODEL_LABEL}: $resolvedModelName",
+            fontSize = 12.sp,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
         Text(
             text = stringRes.SETTINGS_CHAT_GLOBAL_CONTEXT_TITLE,
