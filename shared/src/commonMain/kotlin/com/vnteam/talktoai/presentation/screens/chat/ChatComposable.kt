@@ -45,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vnteam.talktoai.data.filepicker.FilePicker
+import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.models.ImageValidationResult
 import com.vnteam.talktoai.domain.models.MessageContent
 import com.vnteam.talktoai.domain.models.PickedImage
@@ -524,7 +525,7 @@ fun Message(
                         val tokens = message.inputTokens?.let {
                             "  ·  ↑${formatTokenCount(it)} ↓${message.outputTokens?.let { out -> formatTokenCount(out) } ?: "?"}"
                         }.orEmpty()
-                        "${message.author}  ·  ${(message.updatedAt * 1000).millsSecondsToDateTime()}$tokens"
+                        "${AiModels.displayNameFor(message.author)}  ·  ${(message.updatedAt * 1000).millsSecondsToDateTime()}$tokens"
                     },
                     fontSize = 11.sp,
                     color = Neutral400,
