@@ -24,6 +24,7 @@ class MessageUIMapperImpl : MessageUIMapper {
             from.outputTokens,
             from.cacheReadTokens,
             from.cacheWriteTokens,
+            attachedImage = from.content.filterIsInstance<MessageContent.Image>().firstOrNull(),
         )
     }
 
