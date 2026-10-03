@@ -19,3 +19,4 @@
 local.properties
 /.kotlin
 network/src/commonMain/kotlin/secrets/Secrets.kt
+/docs/
