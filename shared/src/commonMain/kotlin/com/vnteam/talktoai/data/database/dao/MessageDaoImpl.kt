@@ -78,6 +78,14 @@ class MessageDaoImpl(private val appDatabase: SharedDatabase) : MessageDao {
         }
     }
 
+    override suspend fun getMessagesByIds(ids: List<Long>): List<MessageDB> {
+        return appDatabase { db ->
+            ids.chunked(900).flatMap { chunk ->
+                db.appDatabaseQueries.getMessagesByIds(chunk).executeAsList()
+            }
+        }
+    }
+
     override suspend fun deleteMessagesFromChat(chatId: Long) {
         appDatabase { db ->
             db.appDatabaseQueries.deleteMessagesFromChat(chatId)
