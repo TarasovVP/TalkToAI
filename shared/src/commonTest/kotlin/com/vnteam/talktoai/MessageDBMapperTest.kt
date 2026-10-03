@@ -7,8 +7,10 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 private val testJson = Json { ignoreUnknownKeys = true }
 
@@ -106,15 +108,27 @@ class MessageDBMapperTest {
     }
 
     @Test
-    fun mapToImplModelStripsImageBlocksFromContentJson() {
+    fun mapToImplModelKeepsImageBlockWithoutBase64Data() {
         val msg = Message(
             id = 3L,
-            content = listOf(MessageContent.Text("With image"), MessageContent.Image("data", "image/png")),
+            content = listOf(
+                MessageContent.Text("With image"),
+                MessageContent.Image(base64Data = "data", mimeType = "image/png", storageKey = "key.png"),
+            ),
         )
         val db = mapper.mapToImplModel(msg)
+        // Raw-string assertion, not a round-trip through the same data class:
+        // this is what actually catches a regression in @Transient on base64Data.
+        assertTrue(db.contentJson!!.contains("\"storageKey\":\"key.png\""))
+        assertTrue(db.contentJson!!.contains("\"mimeType\":\"image/png\""))
+        assertFalse(db.contentJson!!.contains("base64Data"))
+        assertFalse(db.contentJson!!.contains("\"data\""))
+
         val decoded = testJson.decodeFromString<List<MessageContent>>(db.contentJson!!)
-        assertEquals(1, decoded.size)
-        assertIs<MessageContent.Text>(decoded[0])
+        assertEquals(2, decoded.size)
+        val image = assertIs<MessageContent.Image>(decoded[1])
+        assertEquals(null, image.base64Data)
+        assertEquals("key.png", image.storageKey)
     }
 
     @Test
