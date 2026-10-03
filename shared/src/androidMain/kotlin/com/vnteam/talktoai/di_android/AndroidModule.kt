@@ -2,6 +2,7 @@ package com.vnteam.talktoai.di_android
 
 import com.vnteam.talktoai.data.database.DatabaseDriverFactory
 import com.vnteam.talktoai.data.filepicker.FilePicker
+import com.vnteam.talktoai.data.filestorage.ImageStorage
 import com.vnteam.talktoai.data.local.PreferencesFactory
 import com.vnteam.talktoai.utils.AnimationUtils
 import com.vnteam.talktoai.utils.NetworkState
@@ -27,5 +28,8 @@ val androidModule = module {
     }
     single {
         FilePicker()
+    }
+    single {
+        ImageStorage(androidContext())
     }
 }
