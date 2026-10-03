@@ -23,3 +23,6 @@ data class Message(
     @Transient
     val message: String = content.filterIsInstance<MessageContent.Text>().joinToString("") { it.text }
 }
+
+fun List<Message>.imageStorageKeys(): List<String> =
+    flatMap { it.content.filterIsInstance<MessageContent.Image>() }.mapNotNull { it.storageKey }

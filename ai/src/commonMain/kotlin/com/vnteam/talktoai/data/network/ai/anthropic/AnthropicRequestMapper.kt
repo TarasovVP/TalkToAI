@@ -46,7 +46,7 @@ private fun MessageContent.toAnthropicBlock(): AnthropicContentBlock? = when (th
     is MessageContent.Image -> AnthropicImageBlock(
         source = AnthropicImageSource(
             mediaType = mimeType,
-            data = base64Data,
+            data = base64Data.orEmpty(),
         )
     )
 }

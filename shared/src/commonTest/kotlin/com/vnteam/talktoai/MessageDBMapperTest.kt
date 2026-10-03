@@ -68,9 +68,12 @@ class MessageDBMapperTest {
 
     @Test
     fun rowWithImageContentJsonDeserializesImageBlock() {
+        // base64Data is @Transient and never round-trips through contentJson, by design
+        // (that's what fixes the original CursorWindow overflow) - only mimeType/storageKey
+        // persist. Passing base64Data here is deliberate: it proves encoding ignores it.
         val content = listOf(
             MessageContent.Text("Look at this"),
-            MessageContent.Image(base64Data = "abc123", mimeType = "image/jpeg"),
+            MessageContent.Image(base64Data = "abc123", mimeType = "image/jpeg", storageKey = "key.jpg"),
         )
         val db = makeMessageDB(message = "Look at this", contentJson = testJson.encodeToString(content))
         val result = mapper.mapFromImplModel(db)
@@ -78,8 +81,9 @@ class MessageDBMapperTest {
         val text = assertIs<MessageContent.Text>(result.content[0])
         assertEquals("Look at this", text.text)
         val image = assertIs<MessageContent.Image>(result.content[1])
-        assertEquals("abc123", image.base64Data)
+        assertEquals(null, image.base64Data)
         assertEquals("image/jpeg", image.mimeType)
+        assertEquals("key.jpg", image.storageKey)
     }
 
     @Test
