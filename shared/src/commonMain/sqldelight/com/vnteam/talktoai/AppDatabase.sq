@@ -75,6 +75,9 @@ SELECT * FROM MessageDB;
 getMessagesFromChat:
 SELECT * FROM MessageDB WHERE chatId = ? ORDER BY updatedAt;
 
+getMessagesByIds:
+SELECT * FROM MessageDB WHERE id IN ?;
+
 deleteMessagesFromChat:
 DELETE FROM MessageDB WHERE chatId = ?;
 

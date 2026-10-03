@@ -13,6 +13,8 @@ interface MessageDao {
 
     suspend fun getMessagesFromChat(chatId: Long): Flow<List<MessageDB>>
 
+    suspend fun getMessagesByIds(ids: List<Long>): List<MessageDB>
+
     suspend fun deleteMessagesFromChat(chatId: Long)
 
     suspend fun deleteMessage(id: Long)

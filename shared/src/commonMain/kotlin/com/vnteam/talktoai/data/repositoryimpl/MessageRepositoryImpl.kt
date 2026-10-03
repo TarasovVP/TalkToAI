@@ -35,6 +35,9 @@ class MessageRepositoryImpl(
         }
     }
 
+    override suspend fun getMessagesByIds(ids: List<Long>): List<Message> =
+        messageDao.getMessagesByIds(ids).map { messageDBMapper.mapFromImplModel(it) }
+
     override suspend fun deleteMessage(id: Long) = messageDao.deleteMessage(id)
 
     override suspend fun deleteMessagesFromChat(chatId: Long) =
