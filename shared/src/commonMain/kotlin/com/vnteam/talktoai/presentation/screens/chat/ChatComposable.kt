@@ -2,7 +2,9 @@ package com.vnteam.talktoai.presentation.screens.chat
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,14 +39,20 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
 import com.vnteam.talktoai.data.filepicker.FilePicker
+import com.vnteam.talktoai.data.filestorage.ImageStorage
 import com.vnteam.talktoai.domain.models.AiModels
 import com.vnteam.talktoai.domain.models.ImageValidationResult
 import com.vnteam.talktoai.domain.models.MessageContent
@@ -358,6 +366,7 @@ fun MessagesList(
         )
     } else {
         val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = messages.lastIndex)
+        val fullScreenImagePath = remember { mutableStateOf<String?>(null) }
 
         LaunchedEffect(messages.size) {
             scrollState.animateScrollToItem(index = messages.size - 1)
@@ -376,7 +385,30 @@ fun MessagesList(
                             message = message,
                             isMessageDeleteModeState = isMessageActionModeState,
                             stringRes = stringRes,
-                            onMessageChange
+                            onMessageChange = onMessageChange,
+                            onImageTap = { path -> fullScreenImagePath.value = path },
+                        )
+                    }
+                }
+                fullScreenImagePath.value?.let { path ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.9f))
+                            .pointerInput(Unit) {
+                                detectTapGestures(onTap = { fullScreenImagePath.value = null })
+                            }
+                            .pointerInput(Unit) {
+                                detectVerticalDragGestures { _, dragAmount ->
+                                    if (dragAmount > 40) fullScreenImagePath.value = null
+                                }
+                            }
+                    ) {
+                        AsyncImage(
+                            model = path,
+                            contentDescription = null,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier.align(Alignment.Center).fillMaxWidth()
                         )
                     }
                 }
@@ -392,6 +424,7 @@ fun Message(
     isMessageDeleteModeState: MutableState<Boolean?>,
     stringRes: StringResources,
     onMessageChange: (MessageUI) -> Unit = {},
+    onImageTap: (String) -> Unit = {},
 ) {
     val isTruncatedState = rememberSaveable { mutableStateOf(message.isTruncated) }
     LaunchedEffect(isTruncatedState.value) {
@@ -479,25 +512,40 @@ fun Message(
 
                         message.status == MessageStatus.REQUESTING -> MessageTypingAnimation()
                         else -> {
-                            val hasImage = message.message == "[Image]" ||
-                                    message.message.endsWith("\n[Image]")
                             val textPart = message.message
-                                .removeSuffix("\n[Image]")
-                                .let { if (it == "[Image]") "" else it }
+                            val image = message.attachedImage
                             Column {
-                                if (hasImage) {
-                                    Text(
-                                        text = "Image",
-                                        fontSize = 11.sp,
-                                        color = Color.White.copy(alpha = 0.7f),
-                                        modifier = Modifier
-                                            .padding(horizontal = 8.dp, vertical = 6.dp)
-                                            .background(
-                                                color = Color.Black.copy(alpha = 0.25f),
-                                                shape = RoundedCornerShape(4.dp)
-                                            )
-                                            .padding(horizontal = 8.dp, vertical = 3.dp)
-                                    )
+                                if (image != null) {
+                                    val imageStorage = koinInject<ImageStorage>()
+                                    val path = image.storageKey?.let { imageStorage.pathFor(it) }
+                                    if (path != null) {
+                                        AsyncImage(
+                                            model = ImageRequest.Builder(LocalPlatformContext.current)
+                                                .data(path)
+                                                .size(400)
+                                                .build(),
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .padding(4.dp)
+                                                .size(160.dp)
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .clickable { onImageTap(path) }
+                                        )
+                                    } else {
+                                        Text(
+                                            text = stringRes.MESSAGE_IMAGE_UNAVAILABLE,
+                                            fontSize = 11.sp,
+                                            color = Color.White.copy(alpha = 0.7f),
+                                            modifier = Modifier
+                                                .padding(horizontal = 8.dp, vertical = 6.dp)
+                                                .background(
+                                                    color = Color.Black.copy(alpha = 0.25f),
+                                                    shape = RoundedCornerShape(4.dp)
+                                                )
+                                                .padding(horizontal = 8.dp, vertical = 3.dp)
+                                        )
+                                    }
                                 }
                                 if (textPart.isNotBlank()) {
                                     TruncatableText(
@@ -505,7 +553,7 @@ fun Message(
                                         isTruncated = isTruncatedState,
                                         linesCount = linesCount
                                     )
-                                } else if (!hasImage) {
+                                } else if (image == null) {
                                     TruncatableText(
                                         message = message.message,
                                         isTruncated = isTruncatedState,
@@ -589,6 +637,15 @@ fun ChatInputArea(
                     .padding(horizontal = 12.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalPlatformContext.current)
+                        .data("data:${image.mimeType};base64,${image.base64Data}")
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(40.dp).clip(RoundedCornerShape(4.dp))
+                )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = image.mimeType,
                     color = Color.White,

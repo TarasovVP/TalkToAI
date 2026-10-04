@@ -85,6 +85,7 @@ sealed class StringResources(
     var MESSAGE_IMAGE_REMOVE: String,
     var MESSAGE_IMAGE_TOO_LARGE: String,
     var MESSAGE_IMAGE_UNSUPPORTED_TYPE: String,
+    var MESSAGE_IMAGE_UNAVAILABLE: String,
 
     // Settings account
     var SETTINGS_ACCOUNT_LOG_OUT_TITLE: String,
@@ -258,6 +259,7 @@ class StringResourcesEN : StringResources(
     MESSAGE_IMAGE_REMOVE = "Remove image",
     MESSAGE_IMAGE_TOO_LARGE = "Image exceeds 5 MB limit",
     MESSAGE_IMAGE_UNSUPPORTED_TYPE = "Unsupported image type. Allowed: JPEG, PNG, GIF, WEBP",
+    MESSAGE_IMAGE_UNAVAILABLE = "Image unavailable",
 
     // Settings account
     SETTINGS_ACCOUNT_LOG_OUT_TITLE = "Logout",
@@ -437,6 +439,7 @@ class StringResourcesUK : StringResources(
     MESSAGE_IMAGE_REMOVE = "Видалити зображення",
     MESSAGE_IMAGE_TOO_LARGE = "Зображення перевищує ліміт 5 МБ",
     MESSAGE_IMAGE_UNSUPPORTED_TYPE = "Непідтримуваний тип. Дозволено: JPEG, PNG, GIF, WEBP",
+    MESSAGE_IMAGE_UNAVAILABLE = "Зображення недоступне",
 
     // Settings account
     SETTINGS_ACCOUNT_LOG_OUT_TITLE = "Вийти",
