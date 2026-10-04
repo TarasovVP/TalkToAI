@@ -37,6 +37,7 @@ actual class DatabaseDriverFactory {
             "ALTER TABLE MessageDB ADD COLUMN outputTokens INTEGER",
             "ALTER TABLE MessageDB ADD COLUMN cacheReadTokens INTEGER",
             "ALTER TABLE MessageDB ADD COLUMN cacheWriteTokens INTEGER",
+            "ALTER TABLE MessageDB ADD COLUMN thumbnailBase64 TEXT",
         ).forEach { sql ->
             try { driver.execute(null, sql, 0) } catch (_: Exception) { }
         }

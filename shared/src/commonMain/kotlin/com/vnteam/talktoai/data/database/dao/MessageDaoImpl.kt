@@ -28,6 +28,7 @@ class MessageDaoImpl(private val appDatabase: SharedDatabase) : MessageDao {
                         message.outputTokens,
                         message.cacheReadTokens,
                         message.cacheWriteTokens,
+                        message.thumbnailBase64,
                     )
                 }
             }
@@ -51,6 +52,7 @@ class MessageDaoImpl(private val appDatabase: SharedDatabase) : MessageDao {
                 message.outputTokens,
                 message.cacheReadTokens,
                 message.cacheWriteTokens,
+                message.thumbnailBase64,
             )
         }
     }

@@ -3,7 +3,6 @@ package com.vnteam.talktoai
 import com.vnteam.talktoai.data.mapperimpls.MessageDBMapperImpl
 import com.vnteam.talktoai.domain.models.Message
 import com.vnteam.talktoai.domain.models.MessageContent
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -23,6 +22,7 @@ class MessageDBMapperTest {
         message: String? = null,
         contentJson: String? = null,
         isComplete: Long? = null,
+        thumbnailBase64: String? = null,
     ) = MessageDB(
         id = id,
         chatId = null,
@@ -38,6 +38,7 @@ class MessageDBMapperTest {
         outputTokens = null,
         cacheReadTokens = null,
         cacheWriteTokens = null,
+        thumbnailBase64 = thumbnailBase64,
     )
 
     @Test
@@ -219,5 +220,22 @@ class MessageDBMapperTest {
         assertEquals(10, back.outputTokens)
         assertEquals(1, back.cacheReadTokens)
         assertEquals(2, back.cacheWriteTokens)
+    }
+
+    @Test
+    fun thumbnailBase64RoundTripsThroughMapToAndFromImplModel() {
+        val msg = Message(id = 4L, content = listOf(MessageContent.Text("hi")), thumbnailBase64 = "aGVsbG8=")
+        val db = mapper.mapToImplModel(msg)
+        assertEquals("aGVsbG8=", db.thumbnailBase64)
+        val back = mapper.mapFromImplModel(db)
+        assertEquals("aGVsbG8=", back.thumbnailBase64)
+    }
+
+    @Test
+    fun nullThumbnailBase64RoundTripsAsNull() {
+        val msg = Message(id = 5L, content = listOf(MessageContent.Text("hi")))
+        val db = mapper.mapToImplModel(msg)
+        assertEquals(null, db.thumbnailBase64)
+        assertEquals(null, mapper.mapFromImplModel(db).thumbnailBase64)
     }
 }

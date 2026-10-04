@@ -40,4 +40,14 @@ class MessageUIMapperTest {
         val message = mapper.mapFromImplModel(ui)
         assertEquals(2, message.content.size)
     }
+
+    @Test
+    fun thumbnailBase64RoundTripsThroughMapToAndFromImplModel() {
+        val message = Message(id = 6L, content = listOf(MessageContent.Text("hi")), thumbnailBase64 = "aGVsbG8=")
+        val ui = mapper.mapToImplModel(message)
+        assertEquals("aGVsbG8=", ui.thumbnailBase64)
+        ui.message = "hi"
+        val back = mapper.mapFromImplModel(ui)
+        assertEquals("aGVsbG8=", back.thumbnailBase64)
+    }
 }

@@ -23,6 +23,7 @@ data class MessageUI(
     var outputTokens: Int? = null,
     var cacheReadTokens: Int? = null,
     var cacheWriteTokens: Int? = null,
+    var thumbnailBase64: String? = null,
     @Transient var attachedImage: MessageContent.Image? = null,
 ) {
     var isCheckedToDelete = mutableStateOf(false)
