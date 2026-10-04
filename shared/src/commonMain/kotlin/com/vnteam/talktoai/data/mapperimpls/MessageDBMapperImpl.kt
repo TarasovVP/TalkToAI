@@ -31,6 +31,7 @@ class MessageDBMapperImpl : MessageDBMapper {
             from.outputTokens?.toLong(),
             from.cacheReadTokens?.toLong(),
             from.cacheWriteTokens?.toLong(),
+            from.thumbnailBase64,
         )
     }
 
@@ -52,6 +53,7 @@ class MessageDBMapperImpl : MessageDBMapper {
             to.outputTokens?.toInt(),
             to.cacheReadTokens?.toInt(),
             to.cacheWriteTokens?.toInt(),
+            to.thumbnailBase64,
         )
     }
 

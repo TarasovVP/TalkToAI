@@ -24,6 +24,7 @@ class MessageUIMapperImpl : MessageUIMapper {
             from.outputTokens,
             from.cacheReadTokens,
             from.cacheWriteTokens,
+            from.thumbnailBase64,
             attachedImage = from.content.filterIsInstance<MessageContent.Image>().firstOrNull(),
         )
     }
@@ -48,6 +49,7 @@ class MessageUIMapperImpl : MessageUIMapper {
             to.outputTokens,
             to.cacheReadTokens,
             to.cacheWriteTokens,
+            thumbnailBase64 = to.thumbnailBase64,
         )
     }
 

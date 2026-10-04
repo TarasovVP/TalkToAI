@@ -1,0 +1,1 @@
+ALTER TABLE MessageDB ADD COLUMN thumbnailBase64 TEXT;

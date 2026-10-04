@@ -19,6 +19,7 @@ data class Message(
     var outputTokens: Int? = null,
     var cacheReadTokens: Int? = null,
     var cacheWriteTokens: Int? = null,
+    var thumbnailBase64: String? = null,
 ) {
     @Transient
     val message: String = content.filterIsInstance<MessageContent.Text>().joinToString("") { it.text }
