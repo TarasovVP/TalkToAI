@@ -104,7 +104,7 @@ val appModule = module {
     single { SendRequestUseCase(get()) }
 
     // chats
-    single { DeleteChatUseCase(get(), get(), get(), get(), get()) }
+    single { DeleteChatUseCase(get(), get(), get(), get(), get(), get()) }
 
     single { ClearLocalDataUseCase(get(), get()) }
 
@@ -121,7 +121,7 @@ val appModule = module {
     single { UpdateChatUseCase(get(), get(), get(), get()) }
 
     // messages
-    single { DeleteMessagesUseCase(get(), get(), get(), get()) }
+    single { DeleteMessagesUseCase(get(), get(), get(), get(), get()) }
 
     single { GetMessagesFromChatUseCase(get()) }
 
