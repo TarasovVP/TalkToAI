@@ -7,6 +7,7 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.UNKNOWN_ERROR
 import com.vnteam.talktoai.data.network.ai.TokenUsage
 import com.vnteam.talktoai.data.network.onSuccess
+import com.vnteam.talktoai.data.filestorage.ImageStorage
 import com.vnteam.talktoai.dateToMilliseconds
 import com.vnteam.talktoai.domain.enums.AiProviderType
 import com.vnteam.talktoai.domain.enums.MessageStatus
@@ -61,6 +62,7 @@ class ChatViewModel(
     private val aiTierUseCase: AiTierUseCase,
     private val aiProviderUseCase: AiProviderUseCase,
     private val globalContextUseCase: GlobalContextUseCase,
+    private val imageStorage: ImageStorage,
 ) : BaseViewModel() {
 
     private val _currentChatLiveData = MutableStateFlow<ChatUI?>(null)
@@ -191,16 +193,11 @@ class ChatViewModel(
         if (messageText.isBlank() && attachedImage == null) return
         val now = Clock.System.now()
         val userMsgId = now.toEpochMilliseconds()
-        val displayMessage = when {
-            messageText.isBlank() && attachedImage != null -> "[Image]"
-            messageText.isNotBlank() && attachedImage != null -> "$messageText\n[Image]"
-            else -> messageText
-        }
         val userMsg = MessageUI(
             id = userMsgId,
             chatId = chatId,
             author = Constants.MESSAGE_ROLE_ME,
-            message = displayMessage,
+            message = messageText,
             updatedAt = now.dateToMilliseconds(),
             status = MessageStatus.SUCCESS,
             attachedImage = attachedImage,
@@ -215,21 +212,28 @@ class ChatViewModel(
         )
         val currentChat = _currentChatLiveData.value
         val history = _messagesLiveData.value.orEmpty()
-        insertMessage(userMsg)
-        insertMessage(tempMsg)
-        val combinedContext = listOfNotNull(
-            _globalContext.value?.takeIf { it.isNotBlank() },
-            currentChat?.context?.takeIf { it.isNotBlank() }
-        ).joinToString("\n").takeIf { it.isNotBlank() }
-        sendRequest(
-            temporaryMessage = tempMsg,
-            messageText = messageText,
-            attachedImage = attachedImage,
-            systemContext = combinedContext,
-            chatAiTier = currentChat?.aiTier,
-            chatTemperature = currentChat?.temperature,
-            history = history,
-        )
+        launchWithErrorHandling {
+            val savedImage = attachedImage?.let { img ->
+                val key = imageStorage.save(img.base64Data.orEmpty(), img.mimeType)
+                img.copy(storageKey = key)
+            }
+            val effectiveImage = savedImage ?: attachedImage
+            insertMessage(userMsg.copy(attachedImage = effectiveImage))
+            insertMessage(tempMsg)
+            val combinedContext = listOfNotNull(
+                _globalContext.value?.takeIf { it.isNotBlank() },
+                currentChat?.context?.takeIf { it.isNotBlank() }
+            ).joinToString("\n").takeIf { it.isNotBlank() }
+            sendRequest(
+                temporaryMessage = tempMsg,
+                messageText = messageText,
+                attachedImage = effectiveImage,
+                systemContext = combinedContext,
+                chatAiTier = currentChat?.aiTier,
+                chatTemperature = currentChat?.temperature,
+                history = history,
+            )
+        }
     }
 
     private fun sendRequest(
