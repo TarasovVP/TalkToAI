@@ -47,7 +47,6 @@ class RemoteStoreRepositoryImplTest {
 
     @Test
     fun documentWithNoImageFieldsAtAllDecodesAsPlainText() {
-        // Simulates a message written by this app before this feature existed.
         val doc = FirestoreDocument(
             fields = mapOf(
                 "id" to firestoreInt(3L),

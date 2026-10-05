@@ -392,11 +392,6 @@ class RemoteStoreRepositoryImpl(
     }
 }
 
-// ---- Message extensions ----
-// Top-level (not class members) so they're pure-function testable without constructing a
-// RemoteStoreRepositoryImpl - which would need a real FirestoreHttpClient, which eagerly
-// builds a Ktor HttpClient with no engine declared anywhere on this project's test classpath.
-
 internal fun Message.toFields(): Map<String, FirestoreValue> {
     val image = content.filterIsInstance<MessageContent.Image>().firstOrNull()
     return mapOf(

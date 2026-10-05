@@ -102,11 +102,6 @@ class SyncRemoteUserUseCaseTest {
 
     @Test
     fun executePassesRemoteMessagesStraightToInsertMessagesWithNoMerging() = runTest {
-        // A local message DOES have an image the remote copy lacks (same shape the old
-        // f855f52 merge-workaround used to restore) - this is the case that would
-        // distinguish old merging behavior from the new pass-through behavior. If any
-        // merge logic were still present, `inserted` would differ from `remoteMessages`
-        // (the image would get spliced back in); this test fails under the old code.
         val localImage = MessageContent.Image(mimeType = "image/png", storageKey = "key.png")
         val localMessages = listOf(
             Message(id = 1L, chatId = 10L, content = listOf(MessageContent.Text("hi"), localImage)),
