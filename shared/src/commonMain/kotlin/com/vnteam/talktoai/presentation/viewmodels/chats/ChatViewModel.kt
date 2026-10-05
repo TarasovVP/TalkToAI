@@ -7,6 +7,7 @@ import com.vnteam.talktoai.data.network.Result
 import com.vnteam.talktoai.data.network.UNKNOWN_ERROR
 import com.vnteam.talktoai.data.network.ai.TokenUsage
 import com.vnteam.talktoai.data.network.onSuccess
+import com.vnteam.talktoai.data.filestorage.ImageCompressor
 import com.vnteam.talktoai.data.filestorage.ImageStorage
 import com.vnteam.talktoai.dateToMilliseconds
 import com.vnteam.talktoai.domain.enums.AiProviderType
@@ -63,6 +64,7 @@ class ChatViewModel(
     private val aiProviderUseCase: AiProviderUseCase,
     private val globalContextUseCase: GlobalContextUseCase,
     private val imageStorage: ImageStorage,
+    private val imageCompressor: ImageCompressor,
 ) : BaseViewModel() {
 
     private val _currentChatLiveData = MutableStateFlow<ChatUI?>(null)
@@ -217,8 +219,15 @@ class ChatViewModel(
                 val key = imageStorage.save(img.base64Data.orEmpty(), img.mimeType)
                 img.copy(storageKey = key)
             }
+            val thumbnailBase64 = attachedImage?.let { img ->
+                imageCompressor.makeThumbnail(img.base64Data.orEmpty(), img.mimeType).also { result ->
+                    if (result == null) {
+                        println("ChatViewModel: thumbnail generation failed, sending without synced thumbnail")
+                    }
+                }
+            }
             val effectiveImage = savedImage ?: attachedImage
-            insertMessage(userMsg.copy(attachedImage = effectiveImage))
+            insertMessage(userMsg.copy(attachedImage = effectiveImage, thumbnailBase64 = thumbnailBase64))
             insertMessage(tempMsg)
             val combinedContext = listOfNotNull(
                 _globalContext.value?.takeIf { it.isNotBlank() },
