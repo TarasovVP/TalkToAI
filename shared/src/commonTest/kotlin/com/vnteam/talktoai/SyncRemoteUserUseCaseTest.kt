@@ -18,7 +18,6 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
-import kotlin.test.assertNull
 
 private class FakeMessageRepo(private var messages: List<Message>) : MessageRepository {
     var inserted: List<Message> = emptyList()
@@ -102,13 +101,16 @@ private class FakeSyncPreferences : PreferencesRepository {
 class SyncRemoteUserUseCaseTest {
 
     @Test
-    fun executeRestoresLocalImageStorageKeyLostInRemoteRoundTrip() = runTest {
+    fun executePassesRemoteMessagesStraightToInsertMessagesWithNoMerging() = runTest {
+        // A local message DOES have an image the remote copy lacks (same shape the old
+        // f855f52 merge-workaround used to restore) - this is the case that would
+        // distinguish old merging behavior from the new pass-through behavior. If any
+        // merge logic were still present, `inserted` would differ from `remoteMessages`
+        // (the image would get spliced back in); this test fails under the old code.
         val localImage = MessageContent.Image(mimeType = "image/png", storageKey = "key.png")
         val localMessages = listOf(
             Message(id = 1L, chatId = 10L, content = listOf(MessageContent.Text("hi"), localImage)),
         )
-        // Remote documents never carry storageKey - this simulates what toMessage() produces:
-        // text-only content, even though the same message locally has an attached image.
         val remoteMessages = arrayListOf(
             Message(id = 1L, chatId = 10L, content = listOf(MessageContent.Text("hi"))),
         )
@@ -126,32 +128,6 @@ class SyncRemoteUserUseCaseTest {
         val result = useCase.execute()
 
         assertIs<Result.Success<RemoteUser>>(result)
-        val synced = messageRepo.inserted.single()
-        assertEquals(2, synced.content.size)
-        val image = assertIs<MessageContent.Image>(synced.content[1])
-        assertEquals("key.png", image.storageKey)
-    }
-
-    @Test
-    fun executeLeavesMessagesWithoutALocalImageUntouched() = runTest {
-        val remoteMessages = arrayListOf(
-            Message(id = 2L, chatId = 10L, content = listOf(MessageContent.Text("no image here"))),
-        )
-        val messageRepo = FakeMessageRepo(emptyList())
-        val useCase = SyncRemoteUserUseCase(
-            remoteStoreRepository = FakeRemoteStore(RemoteUser(messages = remoteMessages)),
-            chatRepository = FakeChatRepo(),
-            messageRepository = messageRepo,
-            syncRemoteSettingsUseCase = SyncRemoteSettingsUseCase(
-                FakeRemoteStore(RemoteUser()),
-                FakeSyncPreferences(),
-            ),
-        )
-
-        useCase.execute()
-
-        val synced = messageRepo.inserted.single()
-        assertEquals(1, synced.content.size)
-        assertNull(synced.content.filterIsInstance<MessageContent.Image>().firstOrNull())
+        assertEquals(remoteMessages, messageRepo.inserted)
     }
 }
