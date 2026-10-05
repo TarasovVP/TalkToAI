@@ -1,7 +1,6 @@
 package com.vnteam.talktoai.presentation.usecaseimpl.newUseCases.remote
 
 import com.vnteam.talktoai.data.network.Result
-import com.vnteam.talktoai.domain.models.MessageContent
 import com.vnteam.talktoai.domain.models.RemoteUser
 import com.vnteam.talktoai.domain.repositories.ChatRepository
 import com.vnteam.talktoai.domain.repositories.MessageRepository
@@ -19,24 +18,10 @@ class SyncRemoteUserUseCase(
         return when (val result = remoteStoreRepository.getRemoteUser().firstOrNull()) {
             is Result.Success -> {
                 val remoteUser = result.data ?: RemoteUser()
-                // Remote message documents never carry local-only image data (storageKey is
-                // never written to or read from Firestore), so a full resync would otherwise
-                // silently wipe the locally attached image for every message that has one.
-                val localImagesByMessageId = messageRepository.getMessages().firstOrNull().orEmpty()
-                    .mapNotNull { message ->
-                        message.content.filterIsInstance<MessageContent.Image>()
-                            .firstOrNull { it.storageKey != null }
-                            ?.let { message.id to it }
-                    }
-                    .toMap()
                 messageRepository.clearMessages()
                 chatRepository.clearChats()
                 chatRepository.insertChats(remoteUser.chats)
-                val mergedMessages = remoteUser.messages.map { message ->
-                    val localImage = localImagesByMessageId[message.id] ?: return@map message
-                    message.copy(content = message.content + localImage)
-                }
-                messageRepository.insertMessages(mergedMessages)
+                messageRepository.insertMessages(remoteUser.messages)
                 syncRemoteSettingsUseCase.execute()
                 Result.Success(remoteUser)
             }
