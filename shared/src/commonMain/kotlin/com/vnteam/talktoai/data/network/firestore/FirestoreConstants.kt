@@ -25,6 +25,9 @@ object FirestoreConstants {
     const val FIELD_OUTPUT_TOKENS = "outputTokens"
     const val FIELD_CACHE_READ_TOKENS = "cacheReadTokens"
     const val FIELD_CACHE_WRITE_TOKENS = "cacheWriteTokens"
+    const val FIELD_STORAGE_KEY = "storageKey"
+    const val FIELD_MIME_TYPE = "mimeType"
+    const val FIELD_THUMBNAIL_BASE64 = "thumbnailBase64"
 
     // AI models config fields
     const val FIELD_SCHEMA_VERSION = "schemaVersion"
