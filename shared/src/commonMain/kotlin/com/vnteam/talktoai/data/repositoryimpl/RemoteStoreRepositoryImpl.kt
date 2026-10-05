@@ -30,10 +30,13 @@ import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_IS_CO
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_OUTPUT_TOKENS
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_LIST_ORDER
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_MESSAGE
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_MIME_TYPE
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_NAME
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_STATUS
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_STORAGE_KEY
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_TEMPERATURE
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_TEXT
+import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_THUMBNAIL_BASE64
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_TRUNCATED
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_UPDATED
 import com.vnteam.talktoai.data.network.firestore.FirestoreConstants.FIELD_UPDATED_AT
@@ -104,45 +107,6 @@ class RemoteStoreRepositoryImpl(
             aiTier = f[FIELD_AI_TIER]?.stringValue,
             temperature = f[FIELD_TEMPERATURE]?.doubleValue?.toFloat(),
             context = f[FIELD_CONTEXT]?.stringValue,
-        )
-    }
-
-    // ---- Message extensions ----
-
-    private fun Message.toFields(): Map<String, FirestoreValue> = mapOf(
-        FIELD_ID to firestoreInt(id),
-        FIELD_CHAT_ID to firestoreInt(chatId),
-        FIELD_AUTHOR to firestoreString(author),
-        FIELD_MESSAGE to firestoreString(message),
-        FIELD_UPDATED_AT to firestoreInt(updatedAt),
-        FIELD_STATUS to firestoreString(status?.name),
-        FIELD_ERROR_MESSAGE to firestoreString(errorMessage),
-        FIELD_TRUNCATED to firestoreBool(truncated),
-        FIELD_IS_COMPLETE to firestoreBool(isComplete),
-        FIELD_INPUT_TOKENS to firestoreInt(inputTokens?.toLong()),
-        FIELD_OUTPUT_TOKENS to firestoreInt(outputTokens?.toLong()),
-        FIELD_CACHE_READ_TOKENS to firestoreInt(cacheReadTokens?.toLong()),
-        FIELD_CACHE_WRITE_TOKENS to firestoreInt(cacheWriteTokens?.toLong()),
-    )
-
-    private fun FirestoreDocument.toMessage(): Message? {
-        val f = fields ?: return null
-        return Message(
-            id = f[FIELD_ID]?.integerValue?.toLongOrNull(),
-            chatId = f[FIELD_CHAT_ID]?.integerValue?.toLongOrNull(),
-            author = f[FIELD_AUTHOR]?.stringValue,
-            content = listOf(MessageContent.Text(f[FIELD_MESSAGE]?.stringValue.orEmpty())),
-            updatedAt = f[FIELD_UPDATED_AT]?.integerValue?.toLongOrNull(),
-            status = f[FIELD_STATUS]?.stringValue?.let {
-                runCatching { MessageStatus.valueOf(it) }.getOrNull()
-            },
-            errorMessage = f[FIELD_ERROR_MESSAGE]?.stringValue.orEmpty(),
-            truncated = f[FIELD_TRUNCATED]?.booleanValue ?: false,
-            isComplete = f[FIELD_IS_COMPLETE]?.booleanValue ?: true,
-            inputTokens = f[FIELD_INPUT_TOKENS]?.integerValue?.toIntOrNull(),
-            outputTokens = f[FIELD_OUTPUT_TOKENS]?.integerValue?.toIntOrNull(),
-            cacheReadTokens = f[FIELD_CACHE_READ_TOKENS]?.integerValue?.toIntOrNull(),
-            cacheWriteTokens = f[FIELD_CACHE_WRITE_TOKENS]?.integerValue?.toIntOrNull(),
         )
     }
 
@@ -426,4 +390,59 @@ class RemoteStoreRepositoryImpl(
         val ok = firestoreService.setDocument(userSettingsPath(uid), fields, token)
         if (ok) emit(Result.Success(Unit)) else emit(Result.Failure(ERROR_FIRESTORE_WRITE_FAILED))
     }
+}
+
+// ---- Message extensions ----
+// Top-level (not class members) so they're pure-function testable without constructing a
+// RemoteStoreRepositoryImpl - which would need a real FirestoreHttpClient, which eagerly
+// builds a Ktor HttpClient with no engine declared anywhere on this project's test classpath.
+
+internal fun Message.toFields(): Map<String, FirestoreValue> {
+    val image = content.filterIsInstance<MessageContent.Image>().firstOrNull()
+    return mapOf(
+        FIELD_ID to firestoreInt(id),
+        FIELD_CHAT_ID to firestoreInt(chatId),
+        FIELD_AUTHOR to firestoreString(author),
+        FIELD_MESSAGE to firestoreString(message),
+        FIELD_UPDATED_AT to firestoreInt(updatedAt),
+        FIELD_STATUS to firestoreString(status?.name),
+        FIELD_ERROR_MESSAGE to firestoreString(errorMessage),
+        FIELD_TRUNCATED to firestoreBool(truncated),
+        FIELD_IS_COMPLETE to firestoreBool(isComplete),
+        FIELD_INPUT_TOKENS to firestoreInt(inputTokens?.toLong()),
+        FIELD_OUTPUT_TOKENS to firestoreInt(outputTokens?.toLong()),
+        FIELD_CACHE_READ_TOKENS to firestoreInt(cacheReadTokens?.toLong()),
+        FIELD_CACHE_WRITE_TOKENS to firestoreInt(cacheWriteTokens?.toLong()),
+        FIELD_STORAGE_KEY to firestoreString(image?.storageKey),
+        FIELD_MIME_TYPE to firestoreString(image?.mimeType),
+        FIELD_THUMBNAIL_BASE64 to firestoreString(thumbnailBase64),
+    )
+}
+
+internal fun FirestoreDocument.toMessage(): Message? {
+    val f = fields ?: return null
+    val storageKey = f[FIELD_STORAGE_KEY]?.stringValue
+    val mimeType = f[FIELD_MIME_TYPE]?.stringValue
+    val content = buildList {
+        add(MessageContent.Text(f[FIELD_MESSAGE]?.stringValue.orEmpty()))
+        if (storageKey != null && mimeType != null) {
+            add(MessageContent.Image(mimeType = mimeType, storageKey = storageKey))
+        }
+    }
+    return Message(
+        id = f[FIELD_ID]?.integerValue?.toLongOrNull(),
+        chatId = f[FIELD_CHAT_ID]?.integerValue?.toLongOrNull(),
+        author = f[FIELD_AUTHOR]?.stringValue,
+        content = content,
+        updatedAt = f[FIELD_UPDATED_AT]?.integerValue?.toLongOrNull(),
+        status = f[FIELD_STATUS]?.stringValue?.let { runCatching { MessageStatus.valueOf(it) }.getOrNull() },
+        errorMessage = f[FIELD_ERROR_MESSAGE]?.stringValue.orEmpty(),
+        truncated = f[FIELD_TRUNCATED]?.booleanValue ?: false,
+        isComplete = f[FIELD_IS_COMPLETE]?.booleanValue ?: true,
+        inputTokens = f[FIELD_INPUT_TOKENS]?.integerValue?.toIntOrNull(),
+        outputTokens = f[FIELD_OUTPUT_TOKENS]?.integerValue?.toIntOrNull(),
+        cacheReadTokens = f[FIELD_CACHE_READ_TOKENS]?.integerValue?.toIntOrNull(),
+        cacheWriteTokens = f[FIELD_CACHE_WRITE_TOKENS]?.integerValue?.toIntOrNull(),
+        thumbnailBase64 = f[FIELD_THUMBNAIL_BASE64]?.stringValue,
+    )
 }
