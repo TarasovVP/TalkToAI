@@ -21,7 +21,8 @@ class ImageCompressorTest {
     private val compressor = ImageCompressor()
 
     private fun solidColorImageBase64(width: Int, height: Int, format: String, color: Color): String {
-        val image = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+        val type = if (format == "jpg") BufferedImage.TYPE_INT_RGB else BufferedImage.TYPE_INT_ARGB
+        val image = BufferedImage(width, height, type)
         image.createGraphics().apply {
             this.color = color
             fillRect(0, 0, width, height)
@@ -54,7 +55,6 @@ class ImageCompressorTest {
         val width = 50
         val height = 50
         val image = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
-        // Fully transparent image - corner pixel has alpha = 0.
         val out = ByteArrayOutputStream()
         ImageIO.write(image, "png", out)
         val original = Base64.encode(out.toByteArray())
