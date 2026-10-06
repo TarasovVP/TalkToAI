@@ -4,6 +4,7 @@ import com.vnteam.talktoai.data.JVM_APP_DIR_NAME
 import com.vnteam.talktoai.data.JVM_USER_HOME_PROPERTY
 import com.vnteam.talktoai.data.database.DatabaseDriverFactory
 import com.vnteam.talktoai.data.filepicker.FilePicker
+import com.vnteam.talktoai.data.filestorage.ImageCompressor
 import com.vnteam.talktoai.data.filestorage.ImageStorage
 import com.vnteam.talktoai.data.local.PreferencesFactory
 import com.vnteam.talktoai.utils.AnimationUtils
@@ -22,4 +23,5 @@ val desktopModule = module {
     single {
         ImageStorage(File(System.getProperty(JVM_USER_HOME_PROPERTY), JVM_APP_DIR_NAME).resolve("images"))
     }
+    single { ImageCompressor() }
 }
