@@ -351,6 +351,8 @@ private fun resetMessageActionState(
     showMessageActionDialog.value = false
 }
 
+private data class FullScreenImage(val model: String, val isPreviewOnly: Boolean)
+
 @Composable
 fun MessagesList(
     messages: List<MessageUI>,
@@ -366,7 +368,7 @@ fun MessagesList(
         )
     } else {
         val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = messages.lastIndex)
-        val fullScreenImagePath = remember { mutableStateOf<String?>(null) }
+        val fullScreenImage = remember { mutableStateOf<FullScreenImage?>(null) }
 
         LaunchedEffect(messages.size) {
             scrollState.animateScrollToItem(index = messages.size - 1)
@@ -386,30 +388,38 @@ fun MessagesList(
                             isMessageDeleteModeState = isMessageActionModeState,
                             stringRes = stringRes,
                             onMessageChange = onMessageChange,
-                            onImageTap = { path -> fullScreenImagePath.value = path },
+                            onImageTap = { fsImage -> fullScreenImage.value = fsImage },
                         )
                     }
                 }
-                fullScreenImagePath.value?.let { path ->
+                fullScreenImage.value?.let { fsImage ->
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(Color.Black.copy(alpha = 0.9f))
                             .pointerInput(Unit) {
-                                detectTapGestures(onTap = { fullScreenImagePath.value = null })
+                                detectTapGestures(onTap = { fullScreenImage.value = null })
                             }
                             .pointerInput(Unit) {
                                 detectVerticalDragGestures { _, dragAmount ->
-                                    if (dragAmount > 40) fullScreenImagePath.value = null
+                                    if (dragAmount > 40) fullScreenImage.value = null
                                 }
                             }
                     ) {
                         AsyncImage(
-                            model = path,
+                            model = fsImage.model,
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
                             modifier = Modifier.align(Alignment.Center).fillMaxWidth()
                         )
+                        if (fsImage.isPreviewOnly) {
+                            Text(
+                                text = stringRes.MESSAGE_IMAGE_PREVIEW_ONLY,
+                                color = Color.White,
+                                fontSize = 12.sp,
+                                modifier = Modifier.align(Alignment.BottomCenter).padding(24.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -418,13 +428,13 @@ fun MessagesList(
 }
 
 @Composable
-fun Message(
+private fun Message(
     isUserAuthor: Boolean,
     message: MessageUI,
     isMessageDeleteModeState: MutableState<Boolean?>,
     stringRes: StringResources,
     onMessageChange: (MessageUI) -> Unit = {},
-    onImageTap: (String) -> Unit = {},
+    onImageTap: (FullScreenImage) -> Unit = {},
 ) {
     val isTruncatedState = rememberSaveable { mutableStateOf(message.isTruncated) }
     LaunchedEffect(isTruncatedState.value) {
@@ -514,12 +524,13 @@ fun Message(
                         else -> {
                             val textPart = message.message
                             val image = message.attachedImage
+                            val thumbnail = message.thumbnailBase64
                             Column {
-                                if (image != null) {
+                                if (image != null || thumbnail != null) {
                                     val imageStorage = koinInject<ImageStorage>()
-                                    val path = image.storageKey?.let { imageStorage.pathFor(it) }
-                                    if (path != null) {
-                                        AsyncImage(
+                                    val path = image?.storageKey?.let { imageStorage.pathFor(it) }
+                                    when {
+                                        path != null -> AsyncImage(
                                             model = ImageRequest.Builder(LocalPlatformContext.current)
                                                 .data(path)
                                                 .size(400)
@@ -530,10 +541,33 @@ fun Message(
                                                 .padding(4.dp)
                                                 .size(160.dp)
                                                 .clip(RoundedCornerShape(8.dp))
-                                                .clickable { onImageTap(path) }
+                                                .clickable {
+                                                    onImageTap(FullScreenImage(path, isPreviewOnly = false))
+                                                }
                                         )
-                                    } else {
-                                        Text(
+
+                                        thumbnail != null -> AsyncImage(
+                                            model = ImageRequest.Builder(LocalPlatformContext.current)
+                                                .data("data:image/jpeg;base64,$thumbnail")
+                                                .size(400)
+                                                .build(),
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .padding(4.dp)
+                                                .size(160.dp)
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .clickable {
+                                                    onImageTap(
+                                                        FullScreenImage(
+                                                            "data:image/jpeg;base64,$thumbnail",
+                                                            isPreviewOnly = true
+                                                        )
+                                                    )
+                                                }
+                                        )
+
+                                        else -> Text(
                                             text = stringRes.MESSAGE_IMAGE_UNAVAILABLE,
                                             fontSize = 11.sp,
                                             color = Color.White.copy(alpha = 0.7f),
@@ -553,7 +587,7 @@ fun Message(
                                         isTruncated = isTruncatedState,
                                         linesCount = linesCount
                                     )
-                                } else if (image == null) {
+                                } else if (image == null && thumbnail == null) {
                                     TruncatableText(
                                         message = message.message,
                                         isTruncated = isTruncatedState,
