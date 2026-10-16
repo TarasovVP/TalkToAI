@@ -1,5 +1,9 @@
 # Talk to AI
 
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.3.0-7F52FF.svg?logo=kotlin&logoColor=white)](https://kotlinlang.org/docs/multiplatform.html)
+[![Compose Multiplatform](https://img.shields.io/badge/Compose_Multiplatform-1.9.0-4285F4.svg)](https://www.jetbrains.com/compose-multiplatform/)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+
 A multiplatform app for chatting with AI assistants. Create multiple chats, switch between OpenAI and Anthropic models, attach images, and keep message history on your device — optionally synced to the cloud when signed in.
 
 ---
@@ -44,7 +48,7 @@ A multiplatform app for chatting with AI assistants. Create multiple chats, swit
 - **Coil 3** — Image loading
 - **Lottie** — Animations
 - **DataStore** — Preferences
-- **KMP Secrets** (`io.github.tarasovvp.kmp-secrets-plugin`) — Generates the `Secrets` object from `local.properties`
+- **[KMP Secrets](https://github.com/TarasovVP/KMP-Secrets-Plugin)** (`io.github.tarasovvp.kmp-secrets-plugin`) — Generates the `Secrets` object from `local.properties`
 
 ---
 
@@ -74,7 +78,6 @@ TalkToAI/
 ├── settings/        # Preferences (DataStore) and settings use cases
 ├── core/            # Shared domain models (e.g. MessageContent)
 ├── iosApp/          # Swift/SwiftUI wrapper for iOS
-├── docs/            # Design specs and implementation plans
 └── build.gradle.kts
 ```
 
@@ -84,10 +87,11 @@ Screens (in `shared`): onboarding, login, sign up, chat list, chat (with chat se
 
 ## Requirements
 
-- **JDK 21**
+- **JDK 17+**
 - **Android**: minSdk 24, compileSdk 36
 - **iOS**: Xcode and target setup (iosX64, iosArm64, iosSimulatorArm64)
-- **Gradle**: version from the project wrapper
+- **Gradle**: 8.13
+- **Android Gradle Plugin**: 8.13.2
 
 ---
 
@@ -117,8 +121,9 @@ Or open the project in Android Studio and run the **composeApp** configuration.
 
 1. Build the shared framework:
    ```bash
-   ./gradlew :shared:linkReleaseFrameworkIosArm64
+   ./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64
    ```
+   For a physical device, use `:composeApp:linkReleaseFrameworkIosArm64` instead.
 2. Open `iosApp/talktoai.xcodeproj` in Xcode and run the app on a simulator or device.
 
 ### Tests
@@ -150,6 +155,10 @@ Secrets are read by the KMP Secrets plugin (applied in the `network` module) fro
 | `FIRESTORE_BASE_URL`   | Firestore REST base URL                              |
 | `FIRESTORE_PROJECT_ID` | Firestore / Firebase project ID                      |
 
+### Security
+
+This project calls AI providers directly from client applications, so API keys are included in the compiled artifacts and can be extracted. The KMP Secrets plugin prevents accidental commits of generated values; it does not encrypt or protect credentials at runtime. For production use, route AI requests through a backend and keep provider keys on the server.
+
 ### Android release signing
 
 In the root `local.properties` (optional for release builds):
@@ -163,4 +172,4 @@ In the root `local.properties` (optional for release builds):
 
 ## License
 
-Specify the project license when publishing.
+Licensed under the [Apache License 2.0](LICENSE).
